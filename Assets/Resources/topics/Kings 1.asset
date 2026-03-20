@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ffbf2ebad979aa92359d70452e8d8fa, type: 3}
+  m_Name: Kings 1
+  m_EditorClassIdentifier:
+  topicName: Kings
+  sprites:
+  - {fileID: 21300000, guid: 40bdcc4390c480f43a749ed6f5b2ce61, type: 2}
+  - {fileID: 21300000, guid: b45dca39969b2704299f2f6d85c9a305, type: 2}
+  - {fileID: 21300000, guid: e9fd3707e2d5c5e47bd47f77c3b4a5f5, type: 2}
+  - {fileID: 21300000, guid: 71d6b2116f5f0c6499931c3d6d8f4e28, type: 2}

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ffbf2ebad979aa92359d70452e8d8fa, type: 3}
+  m_Name: Animals Eating Ice Cream
+  m_EditorClassIdentifier:
+  topicName: Animals Eating Ice Cream
+  sprites:
+  - {fileID: 21300000, guid: 84959f4d8a5f2b44ca3719ab02360c8c, type: 2}
+  - {fileID: 21300000, guid: 3d7dd7952f3134b4dbaa70d1f5a0a3ef, type: 2}
+  - {fileID: 21300000, guid: 780c2b5c473944347807ad8bfdf5a024, type: 2}
+  - {fileID: 21300000, guid: b389be12767d9da49b0b418200ec3b0d, type: 2}

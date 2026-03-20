@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ffbf2ebad979aa92359d70452e8d8fa, type: 3}
+  m_Name: Cacti
+  m_EditorClassIdentifier:
+  topicName: Cacti
+  sprites:
+  - {fileID: 21300000, guid: 9c942192e2b7484409a67821bcff769d, type: 2}
+  - {fileID: 21300000, guid: de7b8a4b4e6d7aa48beff813f0a0b6d6, type: 2}
+  - {fileID: 21300000, guid: e2b15cd54e5255642821fbe8839cdc29, type: 2}
+  - {fileID: 21300000, guid: f31bf3c6e288d204d82dab1f7a8eaae4, type: 2}

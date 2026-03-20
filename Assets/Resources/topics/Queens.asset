@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ffbf2ebad979aa92359d70452e8d8fa, type: 3}
+  m_Name: Queens
+  m_EditorClassIdentifier:
+  topicName: Queens
+  sprites:
+  - {fileID: 21300000, guid: e72d17f6bacd8774cb06cf1506d10853, type: 2}
+  - {fileID: 21300000, guid: c29a783309727f4448814b2f743e62d0, type: 2}
+  - {fileID: 21300000, guid: 6eb1e87580ad3cc4eaef82db2742cb32, type: 2}
+  - {fileID: 21300000, guid: d400a8c612459e64d812a3c0ff221a8e, type: 2}

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ffbf2ebad979aa92359d70452e8d8fa, type: 3}
+  m_Name: Blu Haired Astronaut
+  m_EditorClassIdentifier:
+  topicName: Blu Haired Astronaut
+  sprites:
+  - {fileID: 21300000, guid: c78c12e903ce8de449b0347d5a77625d, type: 2}
+  - {fileID: 21300000, guid: 9d42f08f3701dfa498ec2c7d5f1c3f84, type: 2}
+  - {fileID: 21300000, guid: b9eddc4def4d7ba41b0c182c674f2429, type: 2}
+  - {fileID: 21300000, guid: b30a76a9fcce10f4e96544226bb8b125, type: 2}

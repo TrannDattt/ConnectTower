@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ffbf2ebad979aa92359d70452e8d8fa, type: 3}
+  m_Name: Firefighters 1
+  m_EditorClassIdentifier:
+  topicName: Firefighters
+  sprites:
+  - {fileID: 21300000, guid: 5eca5ec6c1ffa1249a67c420493c9dd3, type: 2}
+  - {fileID: 21300000, guid: 97ece8ac039237549bc0a3bce3c28800, type: 2}
+  - {fileID: 21300000, guid: 0deafe52d7d4f9e4b9bae92e871a4f41, type: 2}
+  - {fileID: 21300000, guid: e5b00dca7cb070540a97d6242a530534, type: 2}
