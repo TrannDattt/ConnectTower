@@ -1,0 +1,41 @@
+using Assets._Scripts.Controllers;
+using Assets._Scripts.Datas;
+using Assets._Scripts.Enums;
+using Assets._Scripts.Managers;
+using UnityEngine;
+
+namespace Assets._Scripts.Visuals
+{
+    public class LevelFailedVisual : GamePopupVisual
+    {
+        [SerializeField] private GameButtonVisual _retryButton;
+        [SerializeField] private GameButtonVisual _homeButton;
+
+        private LevelRuntimeData _curLevelData;
+        
+        public void SetData(LevelRuntimeData levelData)
+        {
+            _curLevelData = new(levelData);
+        }
+
+        protected override void Start()
+        {
+            _retryButton.OnClicked.AddListener(() => 
+            {
+                Debug.Log("Retry level");
+                //TODO: Restart level
+                Hide();
+                LevelRuntimeData toRestart = new(_curLevelData);
+                GameManager.Instance.StartLevel(toRestart);
+            });
+            _homeButton.OnClicked.AddListener(() => 
+            {
+                Debug.Log("Go to main menu");
+                Hide();
+                GameManager.Instance.GoToMenu();
+            });
+
+            base.Start();
+        }
+    }
+}

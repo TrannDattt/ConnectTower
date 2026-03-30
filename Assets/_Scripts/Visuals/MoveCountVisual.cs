@@ -11,6 +11,7 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private int _warnThreshold = 5;
 
         private Sequence _warnSequence;
+
         private Color _originalColor;
         private Vector3 _originalScale;
 
@@ -23,10 +24,15 @@ namespace Assets._Scripts.Visuals
             }
         }
 
-        public void UpdateMoveCount(int count)
+        public void UpdateMoveCount(int count, float duration = 0)
         {
             if (_moveCountText == null) return;
 
+            // if (duration > 0)
+            // {
+            //     StopWarningEffect();
+            //     DOTween.To(() => int.Parse(_moveCountText.text), x => _moveCountText.text = x.ToString(), count, duration);
+            // }
             _moveCountText.text = count.ToString();
 
             if (count <= _warnThreshold)

@@ -1,131 +1,215 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Assets._Scripts.Datas;
+using Assets._Scripts.Enums;
+using Assets._Scripts.Interfaces;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Assets._Scripts.Controllers
 {
-    public class PillarController : MonoBehaviour
+    public class PillarController : MonoBehaviour, IMechanicHandler
     {
+        public int Id {get; private set;} = -1;
+        [field: SerializeField] public Transform TopPillar {get; private set;}
         [field: SerializeField] public Transform BlockContainer {get; private set;}
-        private Stack<BlockController> _blocks = new();
-        private int _maxBlocks = 4;
+        private List<BlockController> _blocks = new() {null, null, null, null}; // Block with index 0 is at the bottom, index 3 is at the top.
 
-        public UnityEvent OnPillarClicked = new();
-        public UnityEvent OnFullMatched = new();
+        public const int MAX_BLOCKS = 4;
 
+        public UnityEvent<PillarController> OnPillarClicked = new();
+        public UnityEvent<string> OnFullMatched = new();
+        public EMechanic ActiveMechanic { get; set; } = EMechanic.None;
+        public MechanicVisualControl MechanicVisual { get; set; }
+
+        #region Getter
+        // TODO: Assumed all lower slots have block.
         public int GetBlockCount()
         {
-            return _blocks.Count;
+            var topBlock = GetTopBlock();
+            return topBlock == null ? 0 : GetBlockIndex(topBlock) + 1;
         }
 
-        public Stack<BlockController> GetAllBlocks()
+        public ICollection<BlockController> GetAllBlocks()
         {
-            foreach(Transform child in BlockContainer)
+            return _blocks.Where(b => b != null).ToList();
+        }
+
+        public bool TryGetBlockAt(int index, out BlockController block)
+        {
+            block = null;
+            if (index >= MAX_BLOCKS || index < 0) return false;
+
+            block = _blocks[index];
+            return block != null;
+        }
+
+        public BlockController GetTopBlock()
+        {
+            return _blocks[0] == null ? null : _blocks.Last(b => b != null);
+        }
+
+        public int GetBlockIndex(BlockController block)
+        {
+            return _blocks.Contains(block) ? _blocks.IndexOf(block) : -1;
+        }
+
+        public int GetAvailableSlotCount()
+        {
+            return _blocks.Count(b => b == null);
+        }
+
+        public List<int> GetAvailableSlots()
+        {
+            return _blocks.Select(b => _blocks.IndexOf(b)).Where(i => _blocks[i] == null).ToList();
+        }
+#endregion
+
+        public void Init(PillarData data)
+        {
+            if (data == null) return;
+            Id = data.Id;
+        }
+
+#region Adder
+        public void AddBlockToSlot(int index, BlockController block)
+        {
+            if (_blocks[index] != null)
             {
-                if (child.TryGetComponent(out BlockController block))
-                {
-                    block.transform.position = BlockContainer.transform.position;
-                    _blocks.Push(block);
-                }
+                Debug.Log($"Pillar {name} has already have block at index {index}");
+                return;
             }
-            return _blocks;
-        }
 
-        public void AddBlock(BlockController block)
-        {
-            _blocks.Push(block);
+            _blocks[index] = block;
             block.transform.SetParent(BlockContainer);
         }
 
-        public void AddBlocks(List<BlockController> blocks)
+        public void AddBlockToTop(BlockController block)
+        {
+            var toSlot = 3;
+            while (toSlot >= 0 && _blocks[toSlot] == null)
+            {
+                toSlot--;
+            }
+            toSlot += 1;
+            AddBlockToSlot(toSlot, block);
+        }
+
+        public void AddBlocksToTop(List<BlockController> blocks)
         {
             foreach (var block in blocks)
             {
-                AddBlock(block);
+                AddBlockToTop(block);
             }
+            // Debug.Log($"Moved {blocks.Count} blocks");
+            // Debug.Log($"Check lock: {IsLocked()}");
 
             if (IsLocked())
             {
-                OnFullMatched?.Invoke();
+                Debug.Log("Locked");
+                OnFullMatched?.Invoke(blocks[0].Tag);
                 //TODO: Merge VFX
             }
         }
+#endregion
 
-        public BlockController RemoveTopBlock()
+#region Remover
+        public bool TryRemoveTopBlocks(out List<BlockController> result)
         {
-            if (_blocks.Count == 0)
+            result = new List<BlockController>();
+            if (!HasBlock() || IsLocked())
             {
-                return null;
-            }
-
-            var toRemove = _blocks.Pop();
-            toRemove.transform.SetParent(null);
-            return toRemove;
-        }
-
-        public bool TryRemoveTopBlock(out BlockController block)
-        {
-            if (_blocks.Count == 0)
-            {
-                block = null;
                 return false;
             }
 
-            var toRemove = _blocks.Pop();
-            toRemove.transform.SetParent(null);
-            block = toRemove;
-            return true;
-        }
-
-        public List<BlockController> TryGetBlocks()
-        {
-            if (_blocks.Count == 0)
+            var toCompare = GetTopBlock();
+            if (toCompare == null || !(toCompare as IMechanicHandler).IsInteractable())
             {
-                return new List<BlockController>();
+                return false;
             }
 
-            //TODO: Check for mechanics
-            List<BlockController> result = new()
+            var checkIndex = -1;
+            for (int i = MAX_BLOCKS - 1; i >= 0; i--)
             {
-                _blocks.Pop()
-            };
-            while (_blocks.TryPop(out BlockController block))
-            {
-                if (block.IsSameTag(result[0]))
+                if (_blocks[i] != null)
                 {
-                    result.Add(block);
-                }
-                else
-                {
-                    _blocks.Push(block);
+                    checkIndex = i;
                     break;
                 }
             }
-            return result;
-        }
 
+            if (checkIndex == -1) return false;
+
+            while (checkIndex >= 0)
+            {
+                var toCheck = _blocks[checkIndex];
+                if (toCheck == null) break;
+
+                var handler = toCheck as IMechanicHandler;
+                if (!handler.IsInteractable() || handler.IsHidden())
+                {
+                    break;
+                }
+
+                if (toCheck.IsSameTag(toCompare))
+                {
+                    result.Add(toCheck);
+                    _blocks[checkIndex] = null;
+                    checkIndex--;
+                }
+                else break;
+            }
+
+            return result.Count > 0;
+        }
+#endregion
+
+#region Checker
         public bool IsLocked()
         {
             // TODO: Check for mechanics
-            return _blocks.Count == _maxBlocks
-                   && _blocks.All(b => b.IsSameTag(_blocks.Peek()));
+            return _blocks.All(b => b != null && b.IsSameTag(_blocks[0]));
         }
 
-        public int GetAvailableSpace()
+        public bool HasBlock()
         {
-            return _maxBlocks - _blocks.Count;
+            return _blocks.Any(b => b != null);
+        }
+#endregion
+
+        public void Arrange()
+        {
+            if (!HasBlock()) return;
+
+            BlockController curBlock, nextBlock;
+            for (int i = 0; i < MAX_BLOCKS - 1; i++)
+            {
+                curBlock = _blocks[i];
+                if (curBlock != null) continue;
+
+                int j = i + 1;
+                while (j < MAX_BLOCKS && !_blocks[j]) j++;
+                if (j == MAX_BLOCKS) break;
+
+                nextBlock = _blocks[j];
+                _blocks[i] = nextBlock;
+                _blocks[j] = curBlock;
+            }
         }
 
-        void Start()
+        void Awake()
         {
-            GetAllBlocks();
+            MechanicVisual = GetComponent<MechanicVisualControl>();
         }
 
         void OnMouseDown()
         {
-            OnPillarClicked?.Invoke();
+            // Debug.Log($"Pillar {name} clicked");
+            if ((this as IMechanicHandler).IsInteractable())
+            {
+                OnPillarClicked?.Invoke(this);
+            }
         }
     }
 }

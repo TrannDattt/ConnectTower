@@ -431,6 +431,7 @@ MonoBehaviour:
   _lockBackground: {fileID: 8116590658157978211}
   _baseContent: {fileID: 892167132670545408}
   _countText: {fileID: 6718945185813161376}
+  _iconImage: {fileID: 6645113427981887343}
   _getMoreImage: {fileID: 8717117935350215001}
 --- !u!1 &3303994379413459655
 GameObject:

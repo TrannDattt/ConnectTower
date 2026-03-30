@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c23827125f547b4ea09e6f65db776f4, type: 3}
+  m_Name: IngameHint
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BundleSO
+  Id: 1
+  Name: Hint
+  Icon: {fileID: 21300000, guid: f04a15a39d4017544ad866e0bdee8e9d, type: 2}
+  Reward:
+    CoinAmount: 0
+    HeartAmount: 0
+    ExtraMoveAmount: 0
+    ShuffleAmount: 0
+    HintAmount: 3
+  Detail: Use it to see matched blocks
+  Price: 920
+  UseOnBought: 0

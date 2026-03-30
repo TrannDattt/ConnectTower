@@ -7,19 +7,62 @@ namespace Assets._Scripts.Datas
     {
         public int Index;
         public EDifficulty Difficulty;
+        public int MoveLimit;
         public int MoveCount;
 
         public List<BlockGroup> BlockGroups;
         public int MatchedGroups { get; private set; }
         public int TotalGroups => BlockGroups.Count;
         
+        public List<PillarData> PillarDatas;
+
+
+        public HiddenBlockData HiddenBlockDatas;
+        public List<CoveredPillarData> CoveredPillarDatas;
+        public List<FrozenBlockData> FrozenBlockDatas;
+
+        public int CoinReward;
+
+        public bool IsCleared {get; private set;}
+        
         public LevelRuntimeData(LevelSO levelData)
         {
+            if (levelData == null) return;
             Index = levelData.Index;
             Difficulty = levelData.Difficulty;
-            MoveCount = levelData.MoveLimit;
+            MoveLimit = levelData.MoveLimit;
+            MoveCount = MoveLimit;
+
             BlockGroups = levelData.BlockGroups;
             MatchedGroups = 0;
+            PillarDatas = levelData.PillarDatas;
+
+            HiddenBlockDatas = levelData.HiddenBlockDatas;
+            CoveredPillarDatas = levelData.CoveredPillarDatas;
+            FrozenBlockDatas = levelData.FrozenBlockDatas;
+
+            CoinReward = levelData.CoinReward;
+            //TODO: IsCleared ???
+        }
+
+        public LevelRuntimeData(LevelRuntimeData levelData)
+        {
+            if (levelData == null) return;
+            Index = levelData.Index;
+            Difficulty = levelData.Difficulty;
+            MoveLimit = levelData.MoveLimit;
+            MoveCount = MoveLimit;
+
+            BlockGroups = levelData.BlockGroups;
+            MatchedGroups = levelData.MatchedGroups;
+            PillarDatas = levelData.PillarDatas;
+
+            HiddenBlockDatas = levelData.HiddenBlockDatas;
+            CoveredPillarDatas = levelData.CoveredPillarDatas;
+            FrozenBlockDatas = levelData.FrozenBlockDatas;
+
+            CoinReward = levelData.CoinReward;
+            IsCleared = levelData.IsCleared;
         }
 
         public void ChangeMoveAmount(int amount)
@@ -36,5 +79,7 @@ namespace Assets._Scripts.Datas
         {
             MatchedGroups++;
         }
+
+        public void FinishLevel() => IsCleared = true;
     }
 }

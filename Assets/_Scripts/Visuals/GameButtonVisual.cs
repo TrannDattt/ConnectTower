@@ -20,9 +20,9 @@ namespace Assets._Scripts.Visuals
 
         private Vector3 _originalScale;
 
-        private void Awake()
+        protected virtual void Awake()
         {
-            _originalScale = transform.localScale;
+            _originalScale = _buttonRt.localScale;
             if (_button == null) _button = GetComponent<Button>();
         }
 
@@ -56,7 +56,7 @@ namespace Assets._Scripts.Visuals
         private void Scale(Vector3 targetScale)
         {
             _buttonRt.DOKill();
-            _buttonRt.DOScale(targetScale, _duration).SetEase(Ease.OutSine);
+            _buttonRt.DOScale(targetScale, _duration).SetEase(Ease.OutSine).SetUpdate(true);
         }
 
         private void ResetScale()

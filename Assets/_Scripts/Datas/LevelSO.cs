@@ -13,14 +13,26 @@ namespace Assets._Scripts.Datas
         public EDifficulty Difficulty;
         public int MoveLimit;
         public List<BlockGroup> BlockGroups;
+        public List<PillarData> PillarDatas;
+        public HiddenBlockData HiddenBlockDatas;
+        public List<CoveredPillarData> CoveredPillarDatas;
+        public List<FrozenBlockData> FrozenBlockDatas;
+        public int CoinReward = 20;
     }
 
     [Serializable]
     public class BlockGroup
     {
         public string Tag;
-        public List<int> BlockIds;
+        public List<BlockData> BlockDatas;
         // TODO: Make a list of block data
+    }
+
+    [Serializable]
+    public class BlockData
+    {
+        public int Id;
+        public string IconId;
     }
 
     [Serializable]
@@ -31,8 +43,22 @@ namespace Assets._Scripts.Datas
     }
 
     [Serializable]
-    public class MechanicData
+    public class HiddenBlockData
     {
-        
+        public List<int> BlockIds;
+    }
+
+    [Serializable]
+    public class CoveredPillarData
+    {
+        public string TagToOpen;
+        public List<int> PillarIds;
+    }
+
+    [Serializable]
+    public class FrozenBlockData
+    {
+        public int MoveCountToRemove;
+        public List<int> BlockIds;
     }
 }

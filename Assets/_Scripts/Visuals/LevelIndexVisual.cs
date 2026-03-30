@@ -11,7 +11,7 @@ namespace Assets._Scripts.Visuals
         {
             if (_levelIndexText != null)
             {
-                _levelIndexText.text = $"{index}";
+                _levelIndexText.text = $"Level {index}";
             }
         }
     }

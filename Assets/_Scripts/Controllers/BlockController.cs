@@ -1,29 +1,49 @@
+using Assets._Scripts.Datas;
+using Assets._Scripts.Enums;
+using Assets._Scripts.Helpers;
+using Assets._Scripts.Interfaces;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace Assets._Scripts.Controllers
 {
-    public class BlockController : MonoBehaviour
+    public class BlockController : MonoBehaviour, IMechanicHandler
     {
+        public int Id {get; private set;} = -1;
+        [SerializeField] private Image _icon;
         [SerializeField] private string _tag;
+        public string Tag => _tag;
 
-        public void SetTag(string tag)
+        //TODO:
+        public EMechanic ActiveMechanic {get; set;} = EMechanic.None;
+        public MechanicVisualControl MechanicVisual { get; set; }
+
+        public void Init(BlockData data, string tag)
         {
+            Id = data.Id;
             _tag = tag;
+            _icon.sprite = BlockIconMapper.GetIcon(data.IconId);
+        }
+
+        public bool IsSameTag(string tag)
+        {
+            return _tag == tag;
         }
 
         public bool IsSameTag(BlockController other)
         {
-            return _tag == other._tag;
+            return other != null && _tag == other._tag;
         }
 
         public PillarController GetPillarParent()
         {
             return GetComponentInParent<PillarController>();
         }
-    }
 
-    public class BoardController
-    {
-        
+        void Awake()
+        {
+            MechanicVisual = GetComponent<MechanicVisualControl>();
+        }
     }
 }
