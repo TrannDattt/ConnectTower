@@ -24,6 +24,25 @@ namespace Assets._Scripts.Datas
         public int CoinReward;
 
         public bool IsCleared {get; private set;}
+
+        public LevelRuntimeData()
+        {
+            Index = -1;
+            Difficulty = EDifficulty.Normal;
+            MoveLimit = 0;
+            MoveCount = 0;
+
+            BlockGroups = new List<BlockGroup>();
+            MatchedGroups = 0;
+            PillarDatas = new List<PillarData>();
+
+            HiddenBlockDatas = new HiddenBlockData();
+            CoveredPillarDatas = new List<CoveredPillarData>();
+            FrozenBlockDatas = new List<FrozenBlockData>();
+            
+            CoinReward = 0;
+            IsCleared = false;
+        }
         
         public LevelRuntimeData(LevelSO levelData)
         {

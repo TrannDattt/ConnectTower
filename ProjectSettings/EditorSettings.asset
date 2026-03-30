@@ -2,15 +2,15 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!159 &1
 EditorSettings:
-  serializedVersion: 13
   m_ObjectHideFlags: 0
+  serializedVersion: 15
   m_SerializationMode: 2
   m_LineEndingsForNewScripts: 0
   m_DefaultBehaviorMode: 0
   m_PrefabRegularEnvironment: {fileID: 0}
   m_PrefabUIEnvironment: {fileID: 0}
-  m_SpritePackerMode: 0
-  m_SpritePackerCacheSize: 0
+  m_SpritePackerMode: 4
+  m_SpritePackerCacheSize: 1
   m_SpritePackerPaddingPower: 1
   m_Bc7TextureCompressor: 0
   m_EtcTextureCompressorBehavior: 1
@@ -18,7 +18,7 @@ EditorSettings:
   m_EtcTextureNormalCompressor: 2
   m_EtcTextureBestCompressor: 4
   m_ProjectGenerationIncludedExtensions: txt;xml;fnt;cd;asmdef;rsp;asmref
-  m_ProjectGenerationRootNamespace:
+  m_ProjectGenerationRootNamespace: 
   m_EnableTextureStreamingInEditMode: 1
   m_EnableTextureStreamingInPlayMode: 1
   m_EnableEditorAsyncCPUTextureLoading: 0
@@ -33,10 +33,11 @@ EditorSettings:
   m_UseLegacyProbeSampleCount: 1
   m_SerializeInlineMappingsOnOneLine: 1
   m_DisableCookiesInLightmapper: 0
+  m_ShadowmaskStitching: 0
   m_AssetPipelineMode: 1
   m_RefreshImportMode: 0
   m_CacheServerMode: 0
-  m_CacheServerEndpoint:
+  m_CacheServerEndpoint: 
   m_CacheServerNamespacePrefix: default
   m_CacheServerEnableDownload: 1
   m_CacheServerEnableUpload: 1
@@ -46,3 +47,4 @@ EditorSettings:
   m_CacheServerDownloadBatchSize: 0
   m_EnableEnlightenBakedGI: 0
   m_ReferencedClipsExactNaming: 0
+  m_ForceAssetUnloadAndGCOnSceneLoad: 1

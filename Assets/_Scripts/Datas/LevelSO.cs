@@ -24,7 +24,7 @@ namespace Assets._Scripts.Datas
     public class BlockGroup
     {
         public string Tag;
-        public List<BlockData> BlockDatas;
+        public List<BlockData> BlockDatas = new();
         // TODO: Make a list of block data
     }
 
@@ -39,26 +39,26 @@ namespace Assets._Scripts.Datas
     public class PillarData
     {
         public int Id;
-        public List<int> BlockIds;
+        public HashSet<int> BlockIds = new();
     }
 
     [Serializable]
     public class HiddenBlockData
     {
-        public List<int> BlockIds;
+        public HashSet<int> BlockIds = new();
     }
 
     [Serializable]
     public class CoveredPillarData
     {
         public string TagToOpen;
-        public List<int> PillarIds;
+        public HashSet<int> PillarIds = new();
     }
 
     [Serializable]
     public class FrozenBlockData
     {
         public int MoveCountToRemove;
-        public List<int> BlockIds;
+        public HashSet<int> BlockIds = new();
     }
 }

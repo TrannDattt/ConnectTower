@@ -52,7 +52,7 @@ namespace Assets._Scripts.Controllers
                 int indexOffset = 0;
                 for(int j = 0; j < PillarController.MAX_BLOCKS; j++)
                 {
-                    var blockId = levelData.PillarDatas[i].BlockIds[j];
+                    var blockId = levelData.PillarDatas[i].BlockIds.ElementAt(j);
                     var block = blocks.FirstOrDefault(b => b.Id == blockId);
                     if (block == default(BlockController))
                     {
@@ -68,31 +68,31 @@ namespace Assets._Scripts.Controllers
             }
 
             // Init Mechanics
-            levelData.HiddenBlockDatas.BlockIds.ForEach(id =>
+            foreach (var id in levelData.HiddenBlockDatas.BlockIds)
             {
                 var toApply = blocks.FirstOrDefault(b => b.Id == id);
                 var mechanic = new HiddenBlockMechanic();
                 mechanic.Apply(toApply);
-            });
+            };
 
             levelData.CoveredPillarDatas.ForEach(data =>
             {
-                data.PillarIds.ForEach(id =>
+                foreach (var id in data.PillarIds)
                 {
                     var toApply = _pillars.FirstOrDefault(p => p.Id == id);
                     var mechanic = new CoveredPillarMechanic(data.TagToOpen);
                     mechanic.Apply(toApply);
-                });
+                };
             });
 
             levelData.FrozenBlockDatas.ForEach(data =>
             {
-                data.BlockIds.ForEach(id =>
+                foreach (var id in data.BlockIds)
                 {
                     var toApply = blocks.FirstOrDefault(b => b.Id == id);
                     var mechanic = new FrozenBlockMechanic(data.MoveCountToRemove);
                     mechanic.Apply(toApply);
-                });
+                };
             });
         }
 

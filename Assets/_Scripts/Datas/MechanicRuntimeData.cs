@@ -130,13 +130,13 @@ namespace Assets._Scripts.Datas
 #region Frozen Block
     public class FrozenBlockMechanic : MechanicRuntimeData
     {
-        private int _moveCountToRemove;
+        public int MoveCountToRemove {get; private set;}
         private int _currentMoveCount = 0;
 
         public FrozenBlockMechanic(int moveCountToRemove) : base()
         {
             Key = EMechanic.FrozenBlock;
-            _moveCountToRemove = moveCountToRemove;
+            MoveCountToRemove = moveCountToRemove;
             BlockMovementController.Instance.OnBlocksMoved.AddListener(() =>
             {
                 _currentMoveCount++;
@@ -145,7 +145,7 @@ namespace Assets._Scripts.Datas
 
         protected override bool CheckRemoveCondition()
         {
-            return _currentMoveCount >= _moveCountToRemove;
+            return _currentMoveCount >= MoveCountToRemove;
         }
 
         // protected override void DoApplyAnim(IMechanicHandler target)
