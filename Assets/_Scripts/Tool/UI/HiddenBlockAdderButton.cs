@@ -13,6 +13,15 @@ namespace Assets._Scripts.Tools.UI
             return true;
         }
 
+        protected override void AddMechanicIds(LevelJSON levelJSON)
+        {
+            foreach (var id in levelJSON.HiddenBlockDatas.BlockIds)
+            {
+                _idInput.text = id.ToString();
+                AddId();
+            }
+        }
+
         protected override void Start()
         {
             _mechanicType = EMechanic.HiddenBlock;

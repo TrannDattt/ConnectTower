@@ -20,6 +20,16 @@ namespace Assets._Scripts.Tools.UI
                     Debug.LogWarning("Invalid level index input.");
                 }
             });
+
+            LevelEditor.OnLevelCleared.AddListener(() =>
+            {
+                _levelIndexInput.text = "";
+            });
+
+            LevelEditor.OnLevelLoaded.AddListener((json) =>
+            {
+                _levelIndexInput.text = json.Index.ToString();
+            });
         }
     }
 }

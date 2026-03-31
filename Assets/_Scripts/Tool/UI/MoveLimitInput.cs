@@ -20,6 +20,16 @@ namespace Assets._Scripts.Tools.UI
                     Debug.LogWarning("Invalid move limit input.");
                 }
             });
+
+            LevelEditor.OnLevelCleared.AddListener(() =>
+            {
+                _moveLimitInput.text = "";
+            });
+
+            LevelEditor.OnLevelLoaded.AddListener((json) =>
+            {
+                _moveLimitInput.text = json.MoveLimit.ToString();
+            });
         }
     }
 }

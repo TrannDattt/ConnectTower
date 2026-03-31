@@ -31,6 +31,11 @@ namespace Assets._Scripts.Tools.UI
 
         protected List<int> _ids = new();
 
+        protected virtual void ResetInputs()
+        {
+            _idInput.text = "";
+        }
+
         protected int GetInputId()
         {
             string idString = _idInput.text.Trim();
@@ -62,13 +67,26 @@ namespace Assets._Scripts.Tools.UI
                 Debug.Log($"Id {id} already has mechanic {_mechanicType}");
             }
 
-            _idInput.text = "";
+            ResetInputs();
         }
 
-        protected virtual void RemoveId(int id)
+        private void RemoveId(int id)
         {
             LevelEditor.RemoveMechanic(id, _mechanicType);
         }
+
+        private void ClearAllMechnics()
+        {
+            var idButtons = _idContainer.GetComponentsInChildren<IdButton>();
+            foreach (var idButton in idButtons)
+            {
+                Destroy(idButton.gameObject);
+            }
+
+            ResetInputs();
+        }
+
+        protected abstract void AddMechanicIds(LevelJSON levelJSON);
 
         protected virtual void Start()
         {
@@ -79,6 +97,8 @@ namespace Assets._Scripts.Tools.UI
             }
 
             _addIdButton.onClick.AddListener(AddId);
+            LevelEditor.OnLevelCleared.AddListener(ClearAllMechnics);
+            LevelEditor.OnLevelLoaded.AddListener(AddMechanicIds);
         }
     }
 }

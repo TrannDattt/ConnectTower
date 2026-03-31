@@ -63,6 +63,26 @@ namespace Assets._Scripts.Datas
             CoinReward = levelData.CoinReward;
             //TODO: IsCleared ???
         }
+        
+        public LevelRuntimeData(LevelJSON levelData)
+        {
+            if (levelData == null) return;
+            Index = levelData.Index;
+            Difficulty = levelData.Difficulty;
+            MoveLimit = levelData.MoveLimit;
+            MoveCount = MoveLimit;
+
+            BlockGroups = levelData.BlockGroups;
+            MatchedGroups = 0;
+            PillarDatas = levelData.PillarDatas;
+
+            HiddenBlockDatas = levelData.HiddenBlockDatas;
+            CoveredPillarDatas = levelData.CoveredPillarDatas;
+            FrozenBlockDatas = levelData.FrozenBlockDatas;
+
+            CoinReward = levelData.CoinReward;
+            //TODO: IsCleared ???
+        }
 
         public LevelRuntimeData(LevelRuntimeData levelData)
         {

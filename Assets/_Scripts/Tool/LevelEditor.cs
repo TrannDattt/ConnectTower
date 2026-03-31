@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
+using Assets._Scripts.Helpers;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,9 +10,10 @@ namespace Assets._Scripts.Tools
 {
     public static class LevelEditor
     {
-        private static LevelRuntimeData _levelData = new();
+        private static LevelJSON _levelData = new();
 
         public static List<BlockData> BlockDatas => _levelData.BlockGroups.SelectMany(bg => bg.BlockDatas).ToList();
+        public static List<string> GroupTags => _levelData.BlockGroups.Select(bg => bg.Tag).ToList();
         public static List<PillarData> PillarDatas => _levelData.PillarDatas;
 
         public static void ChangeLevelIndex(int index)
@@ -22,7 +24,6 @@ namespace Assets._Scripts.Tools
         public static void ChangeMoveLimit(int moveLimit)
         {
             _levelData.MoveLimit = moveLimit;
-            _levelData.MoveCount = moveLimit;
         }
 
         public static void ChangeDifficulty(EDifficulty difficulty)
@@ -185,9 +186,41 @@ namespace Assets._Scripts.Tools
             }
         }
 
+        public static void ChangeCoinReward(int coinReward)
+        {
+            _levelData.CoinReward = coinReward;
+        }
+
+        public static UnityEvent OnLevelCleared = new();
+        public static void ClearLevel()
+        {
+            _levelData = new LevelJSON();
+            OnLevelCleared?.Invoke();
+        }
+
+        public static UnityEvent<LevelJSON> OnLevelLoaded = new();
+        public static void LoadLevel()
+        {
+#if UNITY_EDITOR
+            var levelData = LevelDataHelper.OpenLevelFileDialog();
+            if (levelData != null)
+            {
+                _levelData = levelData;
+                OnLevelCleared?.Invoke();
+                OnLevelLoaded?.Invoke(_levelData);
+            }
+#endif
+        }
+
         public static void SaveLevel()
         {
-            
+            LevelDataHelper.SaveLevel(_levelData);
+        }
+
+        private static void RemoveAllListeners()
+        {
+            OnLevelCleared.RemoveAllListeners();
+            OnLevelLoaded.RemoveAllListeners();
         }
     }
 }

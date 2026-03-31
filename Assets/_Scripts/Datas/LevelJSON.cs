@@ -14,5 +14,21 @@ namespace Assets._Scripts.Datas
         public List<CoveredPillarData> CoveredPillarDatas;
         public List<FrozenBlockData> FrozenBlockDatas;
         public int CoinReward = 20;
+
+        public LevelJSON()
+        {
+            Index = -1;
+            Difficulty = EDifficulty.Normal;
+            MoveLimit = 0;
+
+            BlockGroups = new List<BlockGroup>();
+            PillarDatas = new List<PillarData>();
+
+            HiddenBlockDatas = new HiddenBlockData();
+            CoveredPillarDatas = new List<CoveredPillarData>();
+            FrozenBlockDatas = new List<FrozenBlockData>();
+            
+            CoinReward = 0;
+        }
     }
 }

@@ -41,14 +41,34 @@ namespace Assets._Scripts.Tools.UI
         private void CheckFullPillars()
         {
             var pillarCount = _pillarParent.GetComponentsInChildren<Pillar>().Length;
-            if (pillarCount >= MaxPillars)
+            _addPillarButton.gameObject.SetActive(pillarCount < MaxPillars);
+        }
+
+        private void RemoveAllPillars()
+        {
+            var pillars = _pillarParent.GetComponentsInChildren<Pillar>();
+            foreach (var pillar in pillars)
             {
-                _addPillarButton.gameObject.SetActive(false);
+                pillar.gameObject.SetActive(false);
+                Destroy(pillar.gameObject);
             }
-            else
+            _lastPillarId = -1;
+            CheckFullPillars();
+        }
+
+        private void AddPillarsFromLevel(LevelJSON levelJSON)
+        {
+            foreach (var pillarData in levelJSON.PillarDatas)
             {
-                _addPillarButton.gameObject.SetActive(true);
+                var newPillar = Instantiate(_pillarPrefab, _pillarParent);
+                newPillar.SetPillarId(pillarData.Id);
+                newPillar.SetBlockIds(pillarData.BlockIds);
+
+                newPillar.OnPillarRemoved.AddListener(CheckFullPillars);
+                _lastPillarId++;
             }
+            _addPillarButton.transform.SetAsLastSibling();
+            CheckFullPillars();
         }
 
         void Start()
@@ -67,6 +87,9 @@ namespace Assets._Scripts.Tools.UI
             {
                 Debug.LogWarning("Add Pillar Button is not assigned.");
             }
+
+            LevelEditor.OnLevelCleared.AddListener(RemoveAllPillars);
+            LevelEditor.OnLevelLoaded.AddListener(AddPillarsFromLevel);
         }
     }
 }

@@ -34,11 +34,15 @@ namespace Assets._Scripts.Tools
         [field: SerializeField] public UnityEvent OnGroupRemoved { get; private set; } = new();
 
 
-        public void InitGroup(int lastBlockId)
+        public void InitGroup(int lastBlockId, string tag = "", params string[] iconIds)
         {
+            GroupTag = tag;
+            _groupNameInput.text = tag;
+
             for (int i = 0; i < _blocks.Length; i++)
             {
-                _blocks[i].InitBlock(lastBlockId + 1);
+                string iconId = (iconIds != null && i < iconIds.Length) ? iconIds[i] : "";
+                _blocks[i].InitBlock(lastBlockId + 1, iconId);
                 lastBlockId++;
             }
         }

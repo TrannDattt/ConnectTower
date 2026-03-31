@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Tools.UI;
@@ -25,6 +26,15 @@ namespace Assets._Scripts.Tools
             if (_pillarIdText != null)
             {
                 _pillarIdText.text = $"Index: {PillarId}";
+            }
+        }
+
+        public void SetBlockIds(ICollection<int> blockIds)
+        {
+            for (int i = 0; i < _blockIds.Length; i++)
+            {
+                _blockIds[i] = blockIds.ElementAt(i);
+                _selectBlockButtons[i].SetId(_blockIds[i]);
             }
         }
 
@@ -89,7 +99,7 @@ namespace Assets._Scripts.Tools
                 if (_selectBlockButtons[i] == null) continue;
                 
                 int index = i;
-                _selectBlockButtons[index].SetId(-1 - index);
+                _selectBlockButtons[index].SetId(_blockIds[index]);
 
                 _selectBlockButtons[index].AddButton.onClick.AddListener(() =>
                 {
@@ -106,7 +116,7 @@ namespace Assets._Scripts.Tools
                 _selectBlockButtons[index].RemoveButton.onClick.AddListener(() =>
                 {
                     RemoveBlockId(index);
-                    _selectBlockButtons[index].SetId(-1 - index);
+                    _selectBlockButtons[index].SetId(_blockIds[index]);
                 });
             }
         }

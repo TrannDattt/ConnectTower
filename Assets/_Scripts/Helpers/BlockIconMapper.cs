@@ -44,9 +44,9 @@ namespace Assets._Scripts.Helpers
                 foreach (var icon in loadedIcons)
                 {
                     if (icon == null) continue;
-                    string spriteName = icon.name.Replace("(Clone)", "");
+                    icon.name = icon.name.Replace("(Clone)", "");
                     IconList.Add(icon);
-                    IconDict[spriteName.GetHashCode()] = icon;
+                    IconDict[icon.name.GetHashCode()] = icon;
                 }
                 Debug.Log($"[BlockIconMapper] Loaded {IconDict.Count} icons from SpriteAtlas: {atlasPath}");
             }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets._Scripts.Datas;
+using Assets._Scripts.Helpers;
 using Assets._Scripts.Patterns;
 using UnityEngine;
 
@@ -46,7 +47,8 @@ namespace Assets._Scripts.Managers
         {
             base.Awake();
 
-            _levels = _levelDatas.Select(d => new LevelRuntimeData(d)).OrderBy(so => so.Index).ToList();
+            LevelDataHelper.LoadAllLevels(out var levelJSONs);
+            _levels = levelJSONs.Select(d => new LevelRuntimeData(d)).OrderBy(so => so.Index).ToList();
         }
     }
 }

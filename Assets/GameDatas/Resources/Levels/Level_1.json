@@ -1,0 +1,127 @@
+{
+  "Index": 1,
+  "Difficulty": 0,
+  "MoveLimit": 15,
+  "BlockGroups": [
+    {
+      "Tag": "mi",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "C_4_60"
+        },
+        {
+          "Id": 1,
+          "IconId": "B_3_44"
+        },
+        {
+          "Id": 2,
+          "IconId": "E_4_106"
+        },
+        {
+          "Id": 3,
+          "IconId": "A_2_136"
+        }
+      ]
+    },
+    {
+      "Tag": "do",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "B_1_93"
+        },
+        {
+          "Id": 5,
+          "IconId": "B_2_75"
+        },
+        {
+          "Id": 6,
+          "IconId": "B_3_25"
+        },
+        {
+          "Id": 7,
+          "IconId": "E_1_116"
+        }
+      ]
+    },
+    {
+      "Tag": "xi",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "D_2_83"
+        },
+        {
+          "Id": 9,
+          "IconId": "D_4_31"
+        },
+        {
+          "Id": 10,
+          "IconId": "D_3_11"
+        },
+        {
+          "Id": 11,
+          "IconId": "C_4_85"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        7,
+        0,
+        11,
+        10
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        1,
+        2,
+        6,
+        -4
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        3,
+        -2,
+        -3,
+        8
+      ]
+    },
+    {
+      "Id": 3,
+      "BlockIds": [
+        5,
+        -2,
+        9,
+        -4
+      ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        -1,
+        4,
+        -3,
+        -4
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": [
+      8,
+      2,
+      1
+    ]
+  },
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [],
+  "CoinReward": 20
+}

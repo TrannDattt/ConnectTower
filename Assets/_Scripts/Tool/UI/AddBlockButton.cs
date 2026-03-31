@@ -25,8 +25,6 @@ namespace Assets._Scripts.Tools.UI
 
         void Start()
         {
-            RemoveButton.gameObject.SetActive(false);
-
             RemoveButton.onClick.AddListener(() =>
             {
                 RemoveButton.gameObject.SetActive(false);

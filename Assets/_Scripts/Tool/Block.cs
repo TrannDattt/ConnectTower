@@ -16,12 +16,18 @@ namespace Assets._Scripts.Tools
         [SerializeField] private Button _changeIconButton;
         [SerializeField] private Image _blockIcon;
 
-        public void InitBlock(int blockId)
+        public void InitBlock(int blockId, string iconId = "")
         {
             BlockId = blockId;
+            IconId = iconId;
             if (_blockIdText != null)
             {
                 _blockIdText.text = $"{BlockId}";
+            }
+            
+            if (!string.IsNullOrEmpty(IconId))
+            {
+                ChangeIcon(BlockIconMapper.GetIcon(IconId));
             }
         }
 
