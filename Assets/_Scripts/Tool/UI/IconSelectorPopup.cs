@@ -55,15 +55,16 @@ namespace Assets._Scripts.Tools.UI
             }
 
             var allIcons = await BlockIconMapper.GetAllIconsAsync();
-            var unassignedIcons = new List<Sprite>();
+            var unassignedIcons = allIcons;
+            // var unassignedIcons = new List<Sprite>();
 
-            foreach (var icon in allIcons)
-            {
-                if (!assignedIconNames.Contains(icon.name))
-                {
-                    unassignedIcons.Add(icon);
-                }
-            }
+            // foreach (var icon in allIcons)
+            // {
+            //     if (!assignedIconNames.Contains(icon.name))
+            //     {
+            //         unassignedIcons.Add(icon);
+            //     }
+            // }
 
             return unassignedIcons;
         }

@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets._Scripts.Visuals
 {
     public class ShopBundleGroupVisual : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI _groupName;
+        [SerializeField] private Text _groupName;
         [SerializeField] private RectTransform _bundleContainer;
 
         private List<ShopBundleVisual> _bundles = new();

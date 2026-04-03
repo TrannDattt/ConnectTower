@@ -55,6 +55,11 @@ namespace Assets._Scripts.Controllers
             return _blocks.Contains(block) ? _blocks.IndexOf(block) : -1;
         }
 
+        public List<int> GetBlocksIndices(List<BlockController> blocks)
+        {
+            return blocks.Select(b => GetBlockIndex(b)).ToList();
+        }
+
         public int GetAvailableSlotCount()
         {
             return _blocks.Count(b => b == null);
@@ -70,6 +75,7 @@ namespace Assets._Scripts.Controllers
         {
             if (data == null) return;
             Id = data.Id;
+            _isFull = false;
         }
 
 #region Adder
@@ -102,63 +108,59 @@ namespace Assets._Scripts.Controllers
             {
                 AddBlockToTop(block);
             }
-            // Debug.Log($"Moved {blocks.Count} blocks");
-            // Debug.Log($"Check lock: {IsLocked()}");
-
-            if (IsLocked())
-            {
-                Debug.Log("Locked");
-                OnFullMatched?.Invoke(blocks[0].Tag);
-                //TODO: Merge VFX
-            }
         }
 #endregion
 
 #region Remover
-        public bool TryRemoveTopBlocks(out List<BlockController> result)
+        private void RemoveBlock(BlockController block)
+        {
+            var index = GetBlockIndex(block);
+            if (index >= 0)
+            {
+                _blocks[index] = null;
+            }
+        }
+
+        public void RemoveBlocks(List<BlockController> blocks)
+        {
+            foreach (var block in blocks)
+            {
+                RemoveBlock(block);
+            }
+        }
+
+        public bool TryRemoveTopBlocks(out List<BlockController> result, bool skipMechanic = false)
+        {
+            if (TryGetTopBlocks(out result, skipMechanic))
+            {
+                RemoveBlocks(result);
+                return true;
+            }
+            return false;
+        }
+
+        public bool TryGetTopBlocks(out List<BlockController> result, bool skipMechanic = false, bool ignoreLock = false)
         {
             result = new List<BlockController>();
-            if (!HasBlock() || IsLocked())
+            if (!HasBlock() || (IsLocked() && !ignoreLock) || !(this as IMechanicHandler).IsInteractable()) return false;
+
+            int i = MAX_BLOCKS - 1;
+            while (i >= 0 && _blocks[i] == null) i--;
+
+            bool IsInteractable(int idx) => (_blocks[idx] as IMechanicHandler).IsInteractable();
+
+            if (i >= 0 && !IsInteractable(i))
             {
-                return false;
+                if (!skipMechanic) return false;
+                while (i >= 0 && !IsInteractable(i)) i--;
             }
 
-            var toCompare = GetTopBlock();
-            if (toCompare == null || !(toCompare as IMechanicHandler).IsInteractable())
+            if (i < 0) return false;
+
+            BlockController toCompare = _blocks[i];
+            while (i >= 0 && _blocks[i] != null && _blocks[i].IsSameTag(toCompare) && (skipMechanic || IsInteractable(i)))
             {
-                return false;
-            }
-
-            var checkIndex = -1;
-            for (int i = MAX_BLOCKS - 1; i >= 0; i--)
-            {
-                if (_blocks[i] != null)
-                {
-                    checkIndex = i;
-                    break;
-                }
-            }
-
-            if (checkIndex == -1) return false;
-
-            while (checkIndex >= 0)
-            {
-                var toCheck = _blocks[checkIndex];
-                if (toCheck == null) break;
-
-                var handler = toCheck as IMechanicHandler;
-                if (!handler.IsInteractable() || handler.IsHidden())
-                {
-                    break;
-                }
-
-                if (toCheck.IsSameTag(toCompare))
-                {
-                    result.Add(toCheck);
-                    _blocks[checkIndex] = null;
-                    checkIndex--;
-                }
-                else break;
+                result.Add(_blocks[i--]);
             }
 
             return result.Count > 0;
@@ -168,13 +170,24 @@ namespace Assets._Scripts.Controllers
 #region Checker
         public bool IsLocked()
         {
-            // TODO: Check for mechanics
-            return _blocks.All(b => b != null && b.IsSameTag(_blocks[0]));
+            return _blocks.All(b => b != null && b.IsSameTag(_blocks[0]) && (b as IMechanicHandler).IsInteractable());
         }
 
         public bool HasBlock()
         {
             return _blocks.Any(b => b != null);
+        }
+
+        private bool _isFull;
+        public void CheckFullMatch()
+        {
+            if (!_isFull && IsLocked())
+            {
+                Debug.Log("Locked");
+                _isFull = true;
+                OnFullMatched?.Invoke(_blocks[0].Tag);
+                //TODO: Do VFX
+            }
         }
 #endregion
 
@@ -201,6 +214,11 @@ namespace Assets._Scripts.Controllers
         void Awake()
         {
             MechanicVisual = GetComponent<MechanicVisualControl>();
+        }
+
+        void Start()
+        {
+            BlockMovementController.Instance.OnBlocksMoved.AddListener((_) => CheckFullMatch());
         }
 
         void OnMouseDown()

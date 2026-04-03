@@ -7,7 +7,6 @@ using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns;
 using Assets._Scripts.Visuals;
 using DG.Tweening;
-using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -52,9 +51,9 @@ namespace Assets._Scripts.Controllers
             _levelFailedPopup.SetData(data);
         }
 
-        public void UpdateMoveCount(int count, bool doAnim = false)
+        public Tween UpdateMoveCount(int count, bool doAnim = false)
         {
-            _moveCount.UpdateMoveCount(count, doAnim ? 1f : 0f);
+            return _moveCount.UpdateMoveCount(count, doAnim ? 1f : 0f);
         }
 
         public void UpdateProgressBar(int current, int target)

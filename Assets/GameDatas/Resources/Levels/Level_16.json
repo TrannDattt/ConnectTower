@@ -1,0 +1,232 @@
+﻿{
+  "Index": 16,
+  "Difficulty": 0,
+  "MoveLimit": 30,
+  "BlockGroups": [
+    {
+      "Tag": "Keys",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "A_2_22"
+        },
+        {
+          "Id": 1,
+          "IconId": "A_1_51"
+        },
+        {
+          "Id": 2,
+          "IconId": "A_4_11"
+        },
+        {
+          "Id": 3,
+          "IconId": "A_1_51"
+        }
+      ]
+    },
+    {
+      "Tag": "Letters",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "A_2_8"
+        },
+        {
+          "Id": 5,
+          "IconId": "A_1_80"
+        },
+        {
+          "Id": 6,
+          "IconId": "A_3_16"
+        },
+        {
+          "Id": 7,
+          "IconId": "A_4_23"
+        }
+      ]
+    },
+    {
+      "Tag": "Hourglasses",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "A_2_119"
+        },
+        {
+          "Id": 9,
+          "IconId": "A_1_19"
+        },
+        {
+          "Id": 10,
+          "IconId": "A_4_89"
+        },
+        {
+          "Id": 11,
+          "IconId": "A_4_89"
+        }
+      ]
+    },
+    {
+      "Tag": "Drums",
+      "BlockDatas": [
+        {
+          "Id": 12,
+          "IconId": "A_2_10"
+        },
+        {
+          "Id": 13,
+          "IconId": "A_1_25"
+        },
+        {
+          "Id": 14,
+          "IconId": "A_2_16"
+        },
+        {
+          "Id": 15,
+          "IconId": "A_3_0"
+        }
+      ]
+    },
+    {
+      "Tag": "Fairies",
+      "BlockDatas": [
+        {
+          "Id": 20,
+          "IconId": "A_1_136"
+        },
+        {
+          "Id": 21,
+          "IconId": "A_1_137"
+        },
+        {
+          "Id": 22,
+          "IconId": "A_2_106"
+        },
+        {
+          "Id": 23,
+          "IconId": "A_3_139"
+        }
+      ]
+    },
+    {
+      "Tag": "Glasses",
+      "BlockDatas": [
+        {
+          "Id": 24,
+          "IconId": "A_1_130"
+        },
+        {
+          "Id": 25,
+          "IconId": "A_2_23"
+        },
+        {
+          "Id": 26,
+          "IconId": "A_3_18"
+        },
+        {
+          "Id": 27,
+          "IconId": "A_1_130"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 33,
+      "BlockIds": [
+        2,
+        4,
+        22,
+        0
+      ]
+    },
+    {
+      "Id": 34,
+      "BlockIds": [
+        5,
+        8,
+        9,
+        1
+      ]
+    },
+    {
+      "Id": 35,
+      "BlockIds": [
+        14,
+        13,
+        11,
+        12
+      ]
+    },
+    {
+      "Id": 36,
+      "BlockIds": [
+        6,
+        15,
+        26,
+        20
+      ]
+    },
+    {
+      "Id": 37,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 38,
+      "BlockIds": [
+        24,
+        21,
+        7,
+        3
+      ]
+    },
+    {
+      "Id": 39,
+      "BlockIds": [
+        27,
+        23,
+        10,
+        25
+      ]
+    },
+    {
+      "Id": 40,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": [
+      3,
+      7,
+      9,
+      15,
+      18,
+      19,
+      2,
+      23,
+      1,
+      10,
+      11,
+      17,
+      21,
+      22,
+      24,
+      25,
+      26,
+      27
+    ]
+  },
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}

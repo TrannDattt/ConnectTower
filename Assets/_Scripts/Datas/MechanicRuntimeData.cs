@@ -10,11 +10,11 @@ namespace Assets._Scripts.Datas
     {
         public EMechanic Key {get; protected set;}
         protected IMechanicHandler _target;
-        private UnityAction OnCheckCondicion;
+        private UnityAction<bool> OnCheckCondicion;
 
         public MechanicRuntimeData()
         {
-            OnCheckCondicion = () =>
+            OnCheckCondicion = (_) =>
             {
                 if (CheckRemoveCondition())
                 {
@@ -33,7 +33,7 @@ namespace Assets._Scripts.Datas
             
             BlockMovementController.Instance.OnBlocksMoved.AddListener(OnCheckCondicion);
             
-            OnCheckCondicion?.Invoke();
+            OnCheckCondicion?.Invoke(true);
         }
         public virtual void Remove()
         {
@@ -137,9 +137,10 @@ namespace Assets._Scripts.Datas
         {
             Key = EMechanic.FrozenBlock;
             MoveCountToRemove = moveCountToRemove;
-            BlockMovementController.Instance.OnBlocksMoved.AddListener(() =>
+            BlockMovementController.Instance.OnBlocksMoved.AddListener((moveByPlayer) =>
             {
-                _currentMoveCount++;
+                if (moveByPlayer)
+                    _currentMoveCount++;
             });
         }
 

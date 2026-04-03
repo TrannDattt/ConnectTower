@@ -7,6 +7,7 @@ namespace Assets._Scripts.Datas
         public string AvatarURL;
         // CURRENCY
         public int CoinCount;
+        public int HeartCount;
         // PROGRESS
         public int CurrentLevelIndex;
         // BOOSTER
@@ -23,7 +24,8 @@ namespace Assets._Scripts.Datas
 
             CoinCount = 100000;
 
-            CurrentLevelIndex = -2;
+            CurrentLevelIndex = 3;
+            HeartCount = 5;
 
             ExtraMoveCount = 3;
             ShuffleCount = 4;

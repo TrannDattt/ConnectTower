@@ -9,7 +9,6 @@ namespace Assets._Scripts.Tools.UI
     public class FrozenBlockAdderButton : MechanicAdderButton
     {
         [SerializeField] private TMP_InputField _moveCountInput;
-        protected EMechanic _mechanicType = EMechanic.FrozenBlock;
 
         override protected void ResetInputs()
         {
@@ -34,7 +33,7 @@ namespace Assets._Scripts.Tools.UI
             {
                 _idInput.text = fbm.BlockIds.ToString();
                 _moveCountInput.text = fbm.MoveCountToRemove.ToString();
-                AddId();
+                AddIdFromLevel();
             }
         }
 

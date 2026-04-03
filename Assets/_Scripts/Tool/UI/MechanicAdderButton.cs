@@ -40,9 +40,28 @@ namespace Assets._Scripts.Tools.UI
         {
             string idString = _idInput.text.Trim();
             if (string.IsNullOrEmpty(idString)) return -1;
-            if (!int.TryParse(idString, out int id) || !LevelEditor.BlockDatas.Any(block => block.Id == id))
+            if (!int.TryParse(idString, out int id))
             {
-                Debug.Log($"Cant find block with id {idString}");
+                Debug.Log($"Invalid id format: {idString}");
+                return -1;
+            }
+
+            if (_mechanicType == EMechanic.CoveredPillar)
+            {
+                if (!LevelEditor.PillarDatas.Any(pillar => pillar.Id == id))
+                {
+                    Debug.Log($"Cant find pillar with id {idString}");
+                    return -1;
+                }
+                else
+                {
+                    return id;
+                }
+            }
+
+            if(!LevelEditor.BlockDatas.Any(block => block.Id == id))
+            {
+                Debug.Log($"Cant find block with id {idString} for mechanic {_mechanicType}");
                 return -1;
             }
             return id;
@@ -50,7 +69,7 @@ namespace Assets._Scripts.Tools.UI
 
         protected abstract bool TryGetMechanicData(out MechanicRuntimeData data);
 
-        protected virtual void AddId()
+        protected virtual void AddIdToLevel()
         {
             int id = GetInputId();
             if (id == -1) return;
@@ -66,6 +85,18 @@ namespace Assets._Scripts.Tools.UI
             {
                 Debug.Log($"Id {id} already has mechanic {_mechanicType}");
             }
+
+            ResetInputs();
+        }
+
+        protected virtual void AddIdFromLevel()
+        {
+            int id = GetInputId();
+            if (id == -1) return;
+
+            var newIdButton = Instantiate(_idDisplayPrefab, _idContainer);
+            newIdButton.SetId(id);
+            newIdButton.OnRemoveClicked.AddListener(RemoveId);
 
             ResetInputs();
         }
@@ -96,7 +127,7 @@ namespace Assets._Scripts.Tools.UI
                 Destroy(idButton.gameObject);
             }
 
-            _addIdButton.onClick.AddListener(AddId);
+            _addIdButton.onClick.AddListener(AddIdToLevel);
             LevelEditor.OnLevelCleared.AddListener(ClearAllMechnics);
             LevelEditor.OnLevelLoaded.AddListener(AddMechanicIds);
         }

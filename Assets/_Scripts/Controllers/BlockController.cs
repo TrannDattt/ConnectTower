@@ -14,8 +14,7 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private Image _icon;
         [SerializeField] private string _tag;
         public string Tag => _tag;
-
-        //TODO:
+        
         public EMechanic ActiveMechanic {get; set;} = EMechanic.None;
         public MechanicVisualControl MechanicVisual { get; set; }
 

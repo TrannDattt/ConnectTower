@@ -1,12 +1,13 @@
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets._Scripts.Visuals
 {
     public class MoveCountVisual : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI _moveCountText;
+        [SerializeField] private Text _moveCountText;
         [Tooltip("Số lượt còn lại tối thiểu để bắt đầu hiệu ứng cảnh báo")]
         [SerializeField] private int _warnThreshold = 5;
 
@@ -24,17 +25,42 @@ namespace Assets._Scripts.Visuals
             }
         }
 
-        public void UpdateMoveCount(int count, float duration = 0)
+        public Tween UpdateMoveCount(int count, float duration = 0)
         {
-            if (_moveCountText == null) return;
+            if (_moveCountText == null) return null;
 
-            // if (duration > 0)
-            // {
-            //     StopWarningEffect();
-            //     DOTween.To(() => int.Parse(_moveCountText.text), x => _moveCountText.text = x.ToString(), count, duration);
-            // }
-            _moveCountText.text = count.ToString();
+            if (duration <= 0)
+            {
+                _moveCountText.text = count.ToString();
+                UpdateWarning(count);
+                return null;
+            }
 
+            int startVal = 0;
+            int.TryParse(_moveCountText.text, out startVal);
+
+            Sequence sequence = DOTween.Sequence();
+            
+            // 1. Phóng to lên
+            sequence.Append(_moveCountText.transform.DOScale(_originalScale * 1.4f, duration * 0.3f).SetEase(Ease.OutBack));
+            
+            // 2. Chạy số (Join để chạy song song với các hiệu ứng khác nếu cần)
+            sequence.Join(DOTween.To(() => startVal, x => 
+            {
+                startVal = x;
+                _moveCountText.text = x.ToString();
+            }, count, duration).SetEase(Ease.OutQuad));
+
+            // 3. Thu nhỏ lại về ban đầu
+            sequence.Append(_moveCountText.transform.DOScale(_originalScale, duration * 0.3f).SetEase(Ease.InBack));
+
+            sequence.OnComplete(() => UpdateWarning(count));
+            
+            return sequence.Play();
+        }
+
+        private void UpdateWarning(int count)
+        {
             if (count <= _warnThreshold)
             {
                 // Chỉ bắt đầu hiệu ứng nếu nó chưa chạy

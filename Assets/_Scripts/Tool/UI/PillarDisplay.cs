@@ -65,8 +65,8 @@ namespace Assets._Scripts.Tools.UI
                 newPillar.SetBlockIds(pillarData.BlockIds);
 
                 newPillar.OnPillarRemoved.AddListener(CheckFullPillars);
-                _lastPillarId++;
             }
+            _lastPillarId = levelJSON.PillarDatas.Count > 0 ? levelJSON.PillarDatas[^1].Id : -1;
             _addPillarButton.transform.SetAsLastSibling();
             CheckFullPillars();
         }

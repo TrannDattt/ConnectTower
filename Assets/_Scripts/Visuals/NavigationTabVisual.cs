@@ -8,7 +8,7 @@ namespace Assets._Scripts.Visuals
     public class NavigationTabVisual : GameButtonVisual
     {
         [SerializeField] private Image _icon;
-        [SerializeField] private TextMeshProUGUI _name;
+        [SerializeField] private Text _name;
 
         [SerializeField] private float _animDuration = 0.25f;
         [SerializeField] private float _offsetY;

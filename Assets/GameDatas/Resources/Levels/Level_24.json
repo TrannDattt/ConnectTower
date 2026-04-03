@@ -1,0 +1,226 @@
+﻿{
+  "Index": 24,
+  "Difficulty": 0,
+  "MoveLimit": 27,
+  "BlockGroups": [
+    {
+      "Tag": "Boats",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "A_1_105"
+        },
+        {
+          "Id": 1,
+          "IconId": "A_1_128"
+        },
+        {
+          "Id": 2,
+          "IconId": "A_2_102"
+        },
+        {
+          "Id": 3,
+          "IconId": "A_3_9"
+        }
+      ]
+    },
+    {
+      "Tag": "Race Helmets",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "A_1_47"
+        },
+        {
+          "Id": 9,
+          "IconId": "A_1_49"
+        },
+        {
+          "Id": 10,
+          "IconId": "A_2_52"
+        },
+        {
+          "Id": 11,
+          "IconId": "A_3_11"
+        }
+      ]
+    },
+    {
+      "Tag": "Keys",
+      "BlockDatas": [
+        {
+          "Id": 12,
+          "IconId": "A_1_51"
+        },
+        {
+          "Id": 13,
+          "IconId": "A_2_22"
+        },
+        {
+          "Id": 14,
+          "IconId": "A_3_103"
+        },
+        {
+          "Id": 15,
+          "IconId": "A_4_11"
+        }
+      ]
+    },
+    {
+      "Tag": "Wheels",
+      "BlockDatas": [
+        {
+          "Id": 16,
+          "IconId": "A_1_121"
+        },
+        {
+          "Id": 17,
+          "IconId": "A_2_142"
+        },
+        {
+          "Id": 18,
+          "IconId": "A_3_69"
+        },
+        {
+          "Id": 19,
+          "IconId": "A_4_17"
+        }
+      ]
+    },
+    {
+      "Tag": "Donuts",
+      "BlockDatas": [
+        {
+          "Id": 20,
+          "IconId": "A_1_110"
+        },
+        {
+          "Id": 21,
+          "IconId": "A_2_63"
+        },
+        {
+          "Id": 22,
+          "IconId": "A_2_93"
+        },
+        {
+          "Id": 23,
+          "IconId": "A_3_91"
+        }
+      ]
+    },
+    {
+      "Tag": "Glasses",
+      "BlockDatas": [
+        {
+          "Id": 24,
+          "IconId": "A_1_130"
+        },
+        {
+          "Id": 25,
+          "IconId": "A_2_23"
+        },
+        {
+          "Id": 26,
+          "IconId": "A_3_18"
+        },
+        {
+          "Id": 27,
+          "IconId": "A_4_55"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        12,
+        8,
+        0,
+        -4
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        27,
+        23,
+        19,
+        26
+      ]
+    },
+    {
+      "Id": 3,
+      "BlockIds": [
+        9,
+        1,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        15,
+        18,
+        22,
+        14
+      ]
+    },
+    {
+      "Id": 5,
+      "BlockIds": [
+        17,
+        16,
+        24,
+        2
+      ]
+    },
+    {
+      "Id": 6,
+      "BlockIds": [
+        20,
+        3,
+        10,
+        -4
+      ]
+    },
+    {
+      "Id": 7,
+      "BlockIds": [
+        13,
+        11,
+        21,
+        25
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": []
+  },
+  "CoveredPillarDatas": [
+    {
+      "TagToOpen": "Race Helmets",
+      "PillarIds": [
+        2
+      ]
+    },
+    {
+      "TagToOpen": "Boats",
+      "PillarIds": [
+        4
+      ]
+    }
+  ],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}

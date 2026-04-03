@@ -14,7 +14,7 @@ namespace Assets._Scripts.Visuals
         public class BundleItemVisual
         {
             public Image Icon;
-            public TextMeshProUGUI AmountText;
+            public Text AmountText;
 
             public void SetVisual(Sprite icon, int amount)
             {
@@ -23,14 +23,14 @@ namespace Assets._Scripts.Visuals
             }
         }
 
-        [SerializeField] private TextMeshProUGUI _name;
+        [SerializeField] private Text _name;
         [SerializeField] private BundleItemVisual _coin;
         [SerializeField] private BundleItemVisual _extraMove;
         [SerializeField] private BundleItemVisual _shuffle;
         [SerializeField] private BundleItemVisual _hint;
         [SerializeField] private BundleItemVisual _heart;
-        [SerializeField] private TextMeshProUGUI _priceText;
-        [SerializeField] private TextMeshProUGUI _currencyText;
+        [SerializeField] private Text _priceText;
+        [SerializeField] private Text _currencyText;
         [SerializeField] private GameButtonVisual _purchaseButton;
 
         public void InitVisual(BundleSO bundleSO)

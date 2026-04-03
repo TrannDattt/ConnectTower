@@ -9,11 +9,6 @@ namespace Assets._Scripts.Managers
 {
     public class LevelManager : Singleton<LevelManager>
     {
-        //------------------------------
-        //TODO: Load level SO from resource + data from JSON
-        [SerializeField] private List<LevelSO> _levelDatas;
-        //--------------------------
-
         private List<LevelRuntimeData> _levels = new();
         public static LevelRuntimeData PlayingLevel { get; private set; }
 
@@ -27,20 +22,14 @@ namespace Assets._Scripts.Managers
             return _levels.LastOrDefault(l => !l.IsCleared);
         }
 
-        public List<LevelRuntimeData> GetAllLevel()
+        public List<LevelRuntimeData> GetAllLevels()
         {
-            if (_levels.Count == 0)
-                _levels = _levelDatas.Select(d => new LevelRuntimeData(d)).OrderBy(so => so.Index).ToList();
             return _levels;
         }
 
-        public bool TryGetLevelData(int index, out LevelRuntimeData data)
+        public int GetTotalLevelCount()
         {
-            data = null;
-            var levelSO = _levelDatas.First(l => l.Index == index);
-            if (levelSO == null) return false;
-            data = new(levelSO);
-            return true;
+            return _levels.Count;
         }
 
         protected override void Awake()

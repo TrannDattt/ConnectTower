@@ -4,15 +4,6 @@ using Assets._Scripts.Patterns;
 using DG.Tweening;
 using UnityEngine;
 using Assets._Scripts.Managers;
-using Assets._Scripts.Visuals;
-using UnityEngine.UI;
-
-
-
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace Assets._Scripts.Controllers
 {
@@ -31,13 +22,9 @@ namespace Assets._Scripts.Controllers
 
         public void InitData()
         {
-            var extraMoveCount = UserManager.CurUser.ExtraMoveCount;
-            var shuffleCount = UserManager.CurUser.ShuffleCount;
-            var hintCount = UserManager.CurUser.HintCount;
-
-            _extraMoveBoosterData = new(extraMoveCount, false, 5);
-            _shuffleBoosterData = new(shuffleCount, false, new(0, 2, 0));
-            _hintBoosterData = new(hintCount, false);
+            _extraMoveBoosterData = new(false, 5);
+            _shuffleBoosterData = new(false, new(0, 2, 0));
+            _hintBoosterData = new(false);
         }
 
         public Sprite GetBoosterIcon(EBooster type)
@@ -66,9 +53,9 @@ namespace Assets._Scripts.Controllers
         {
             return type switch
             {
-                EBooster.ExtraMove => _extraMoveBoosterData.UseCount,
-                EBooster.Shuffle => _shuffleBoosterData.UseCount,
-                EBooster.Hint => _hintBoosterData.UseCount,
+                EBooster.ExtraMove => UserManager.CurUser.ExtraMoveCount,
+                EBooster.Shuffle => UserManager.CurUser.ShuffleCount,
+                EBooster.Hint => UserManager.CurUser.HintCount,
                 _ => -1
             };
         }
@@ -118,11 +105,7 @@ namespace Assets._Scripts.Controllers
         {
             base.Awake();
 
-            //---------------------
-            _extraMoveBoosterData = new(3, false, 5);
-            _shuffleBoosterData = new(3, false, new(0, 2, 0));
-            _hintBoosterData = new(3, false);
-            //---------------------
+            InitData();
         }
 // #endif
     }

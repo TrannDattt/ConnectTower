@@ -11,8 +11,6 @@ namespace Assets._Scripts.Managers
 {
     public class GameSceneManager : Singleton<GameSceneManager>
     {
-        //----------------------
-        //TODO: Get scene from Resource
         [Serializable]
         public class GameScene
         {
@@ -21,7 +19,6 @@ namespace Assets._Scripts.Managers
         }
 
         [SerializeField] private List<GameScene> _scenes = new();
-        //-----------------------
 
         private Dictionary<EGameScene, GameScene> _sceneDict = new();
         private GameScene _activeScene;
@@ -29,9 +26,8 @@ namespace Assets._Scripts.Managers
         public EGameScene GetActiveScene()
         {
             if (_activeScene != null) return _activeScene.Key;
-            var activeScene = _scenes.First(gs => gs.Scene.activeInHierarchy);
-            if (activeScene == null) return EGameScene.None;
-            return activeScene.Key;
+            _activeScene = _scenes.FirstOrDefault(gs => gs.Scene != null && gs.Scene.activeInHierarchy);
+            return _activeScene?.Key ?? EGameScene.None;
         }
 
         public void ChangeScene(EGameScene scene,  UnityAction onUnload = null, UnityAction onLoad = null)
@@ -80,15 +76,12 @@ namespace Assets._Scripts.Managers
 
             _scenes.ForEach(gs => _sceneDict[gs.Key] = gs);
             Debug.Log($"Found {_scenes.Count} scenes");
-            UnloadAll();
+            // UnloadAll();
         }
-
-        //----------------------
-        //TODO: Init first
+        
         void Start()
         {
-            // ChangeScene(EGameScene.Menu);
+            if(_activeScene == null) GetActiveScene();
         }
-        //-----------------------
     }
 }

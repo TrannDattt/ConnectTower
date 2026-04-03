@@ -88,20 +88,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1221360195103773716, guid: fdce342c60196ba4a93d063493530171, type: 3}
-      propertyPath: m_text
-      value: Privacy Policy
-      objectReference: {fileID: 0}
     - target: {fileID: 2462274248514986271, guid: fdce342c60196ba4a93d063493530171, type: 3}
       propertyPath: m_Name
       value: PolicyButton Variant
       objectReference: {fileID: 0}
-    - target: {fileID: 8702314356085417358, guid: fdce342c60196ba4a93d063493530171, type: 3}
-      propertyPath: m_text
+    - target: {fileID: 8378540483883924002, guid: fdce342c60196ba4a93d063493530171, type: 3}
+      propertyPath: m_Text
       value: Privacy Policy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 949635930838976067, guid: fdce342c60196ba4a93d063493530171, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fdce342c60196ba4a93d063493530171, type: 3}

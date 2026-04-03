@@ -11,24 +11,16 @@ namespace Assets._Scripts.Datas
 {
     public abstract class BoosterRuntimeData
     {
-        public int UseCount { get; private set; }
         public bool LockStatus {get; private set;}
 
-        public BoosterRuntimeData(int initialCount, bool lockStatus)
+        public BoosterRuntimeData(bool lockStatus)
         {
-            UseCount = initialCount;
             LockStatus = lockStatus;
         }
 
         public void Do()
         {
             OnUsed();
-            UseCount--;
-        }
-
-        public void Add(int count)
-        {
-            UseCount += count;
         }
 
         public abstract void OnUsed();
@@ -41,20 +33,20 @@ namespace Assets._Scripts.Datas
     {
         private int _bonusAmount; 
 
-        public ExtraMoveBoosterRuntimeData(int initialCount, bool lockStatus, int bonusAmount) : base(initialCount, lockStatus)
+        public ExtraMoveBoosterRuntimeData(bool lockStatus, int bonusAmount) : base(lockStatus)
         {
             _bonusAmount = bonusAmount;
         }
 
         public override void OnUsed()
         {
-            GameManager.Instance.ChangeMoveCount(_bonusAmount);
+            GameManager.Instance.ChangeMoveCount(_bonusAmount, false);
             Debug.Log("Used Extra Move");
         }
 
         public override Tween DoMechanicAnim()
         {
-            return null;
+            return IngameVisualController.Instance.UpdateMoveCount(LevelManager.PlayingLevel.MoveCount, true);
         }
 
         public override string GetDetail()
@@ -70,7 +62,7 @@ namespace Assets._Scripts.Datas
         private List<BlockController> _availableBlocks;
         private Vector3 _gatherPoint;
 
-        public ShuffleBoosterRuntimeData(int initialCount, bool lockStatus, Vector3 gatherPoint) : base(initialCount, lockStatus)
+        public ShuffleBoosterRuntimeData(bool lockStatus, Vector3 gatherPoint) : base(lockStatus)
         {
             _availableBlocks = new();
             _gatherPoint = gatherPoint;
@@ -130,7 +122,7 @@ namespace Assets._Scripts.Datas
                     
                 }
             }
-            // Debug.Log($"Found {availableSlots.Count} group slots");
+            Debug.Log($"Found {availableSlots.Count} group slots");
 
             // Add block to slot in order
             foreach (var matched in matchedBlocks)
@@ -173,7 +165,7 @@ namespace Assets._Scripts.Datas
             var delayMoveTime = .05f;
             var stayTime = .5f;
 
-            var sequence = DOTween.Sequence();
+            var sequence = DOTween.Sequence().SetTarget(this);
             
             float currentTime = 0f;
             foreach (var block in _availableBlocks)
@@ -202,6 +194,11 @@ namespace Assets._Scripts.Datas
                 currentTime += delayMoveTime;
             }
 
+            sequence.AppendCallback(() => 
+            {
+                BlockMovementController.Instance.OnBlocksMoved?.Invoke(false);
+            });
+
             return sequence.Play();
         }
 
@@ -217,7 +214,7 @@ namespace Assets._Scripts.Datas
     {
         private BlockController _randomBlock, _sameBlock;
 
-        public HintBoosterRuntimeData(int initialCount, bool lockStatus) : base(initialCount, lockStatus)
+        public HintBoosterRuntimeData(bool lockStatus) : base(lockStatus)
         {
         }
 

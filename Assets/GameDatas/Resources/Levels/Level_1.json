@@ -1,68 +1,47 @@
-{
+﻿{
   "Index": 1,
   "Difficulty": 0,
-  "MoveLimit": 15,
+  "MoveLimit": 10,
   "BlockGroups": [
     {
-      "Tag": "mi",
+      "Tag": "High Heels",
       "BlockDatas": [
         {
           "Id": 0,
-          "IconId": "C_4_60"
+          "IconId": "D_3_36"
         },
         {
           "Id": 1,
-          "IconId": "B_3_44"
+          "IconId": "B_2_42"
         },
         {
           "Id": 2,
-          "IconId": "E_4_106"
+          "IconId": "D_2_94"
         },
         {
           "Id": 3,
-          "IconId": "A_2_136"
-        }
-      ]
-    },
-    {
-      "Tag": "do",
-      "BlockDatas": [
-        {
-          "Id": 4,
-          "IconId": "B_1_93"
-        },
-        {
-          "Id": 5,
-          "IconId": "B_2_75"
-        },
-        {
-          "Id": 6,
-          "IconId": "B_3_25"
-        },
-        {
-          "Id": 7,
           "IconId": "E_1_116"
         }
       ]
     },
     {
-      "Tag": "xi",
+      "Tag": "Houses",
       "BlockDatas": [
         {
-          "Id": 8,
-          "IconId": "D_2_83"
+          "Id": 4,
+          "IconId": "B_3_44"
         },
         {
-          "Id": 9,
-          "IconId": "D_4_31"
+          "Id": 5,
+          "IconId": "C_4_60"
         },
         {
-          "Id": 10,
-          "IconId": "D_3_11"
+          "Id": 6,
+          "IconId": "D_3_22"
         },
         {
-          "Id": 11,
-          "IconId": "C_4_85"
+          "Id": 7,
+          "IconId": "E_4_106"
         }
       ]
     }
@@ -71,55 +50,33 @@
     {
       "Id": 0,
       "BlockIds": [
-        7,
+        1,
+        2,
         0,
-        11,
-        10
+        -4
       ]
     },
     {
       "Id": 1,
       "BlockIds": [
-        1,
-        2,
-        6,
-        -4
+        7,
+        5,
+        4,
+        3
       ]
     },
     {
       "Id": 2,
       "BlockIds": [
-        3,
+        6,
         -2,
-        -3,
-        8
-      ]
-    },
-    {
-      "Id": 3,
-      "BlockIds": [
-        5,
-        -2,
-        9,
-        -4
-      ]
-    },
-    {
-      "Id": 4,
-      "BlockIds": [
-        -1,
-        4,
         -3,
         -4
       ]
     }
   ],
   "HiddenBlockDatas": {
-    "BlockIds": [
-      8,
-      2,
-      1
-    ]
+    "BlockIds": []
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],

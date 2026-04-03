@@ -5,21 +5,23 @@ using Assets._Scripts.Enums;
 using Assets._Scripts.Patterns;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Assets._Scripts.Managers
 {
     public class GameManager : Singleton<GameManager>
     {
+        //TODO: Refactor code flow => Make state and sub-state => Make block fall down from top when start level
+
         private StateMachine<EGameState> _gameSM = new();
         private LevelRuntimeData CurrentLevelData => LevelManager.PlayingLevel;
 
         private EGameState _lastState;
 
         public EGameState CurState => _gameSM.CurrentState.Key;
-
-        //--------------------
         private List<PillarController> _pillars = new();
-        //--------------------
+
+        public bool IsPlayTest {get; private set;} = false;
 
         public void GoToMenu()
         {
@@ -51,35 +53,49 @@ namespace Assets._Scripts.Managers
 
         public void FailedLevel()
         {
+            if (IsPlayTest) return;
             Debug.Log("Level Failed");
             _gameSM.ChangeState(EGameState.Lose);
         }
 
-        public void FinishedLevel()
+        public void ClearedLevel()
         {
+            if (IsPlayTest) return;
             Debug.Log("Level Finished");
             _gameSM.ChangeState(EGameState.Win);
         }
 
-        public void ChangeMoveCount(int amount)
+        public void ChangeMoveCount(int amount, bool updateVisual = true)
         {
             CurrentLevelData.ChangeMoveAmount(amount);
-            IngameVisualController.Instance.UpdateMoveCount(CurrentLevelData.MoveCount);
+            if (updateVisual)
+                IngameVisualController.Instance.UpdateMoveCount(CurrentLevelData.MoveCount);
         }
 
-        private void OnBlocksMoved()
+        private void OnBlocksMoved(bool movedByPlayer)
         {
-            ChangeMoveCount(-1);
+            if (movedByPlayer)
+                ChangeMoveCount(-1);
 
             //TODO: Events order is kinda bựa
-            //TODO: Check win condition
+            CheckFinishLevel();
+        }
+
+        private void OnPillarFullMatched(string tag)
+        {
+            CurrentLevelData.IncreaseMatchedPillars();
+            IngameVisualController.Instance.UpdateProgressBar(CurrentLevelData.MatchedGroups, CurrentLevelData.TotalGroups);
+        }
+
+        private void CheckFinishLevel()
+        {
+            Debug.Log($"Check finish level");
             if (CurrentLevelData.MatchedGroups == CurrentLevelData.TotalGroups)
             {
-                FinishedLevel();
+                ClearedLevel();
                 return;
             }
 
-            //TODO: Check lose condition
             if (CurrentLevelData.MoveCount <= 0)
             {
                 if (_gameSM.TryGetState(EGameState.Revive, out var reviveState) && !reviveState.IsFinished)
@@ -94,14 +110,9 @@ namespace Assets._Scripts.Managers
             }
         }
 
-        private void OnPillarFullMatched(string tag)
+        public void StartLevel(LevelRuntimeData levelData, bool isPlayTest = false)
         {
-            CurrentLevelData.IncreaseMatchedPillars();
-            IngameVisualController.Instance.UpdateProgressBar(CurrentLevelData.MatchedGroups, CurrentLevelData.TotalGroups);
-        }
-
-        public void StartLevel(LevelRuntimeData levelData)
-        {
+            IsPlayTest = isPlayTest;
             if (levelData == null)
             {
                 Debug.Log("No level data");
@@ -245,8 +256,8 @@ namespace Assets._Scripts.Managers
             {
                 base.Enter();
 
-                Instance.CurrentLevelData.FinishLevel();
                 IngameVisualController.Instance.ShowFinishedPopup(!Instance.CurrentLevelData.IsCleared);
+                Instance.CurrentLevelData.FinishLevel();
             }
         }
         #endregion

@@ -5,8 +5,6 @@ namespace Assets._Scripts.Tools.UI
 {
     public class HiddenBlockAdderButton : MechanicAdderButton
     {
-        protected EMechanic _mechanicType = EMechanic.HiddenBlock;
-
         protected override bool TryGetMechanicData(out MechanicRuntimeData data)
         {
             data = new HiddenBlockMechanic();
@@ -18,7 +16,7 @@ namespace Assets._Scripts.Tools.UI
             foreach (var id in levelJSON.HiddenBlockDatas.BlockIds)
             {
                 _idInput.text = id.ToString();
-                AddId();
+                AddIdFromLevel();
             }
         }
 

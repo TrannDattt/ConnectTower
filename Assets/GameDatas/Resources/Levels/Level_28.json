@@ -1,0 +1,226 @@
+﻿{
+  "Index": 28,
+  "Difficulty": 0,
+  "MoveLimit": 30,
+  "BlockGroups": [
+    {
+      "Tag": "Wheels",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "A_1_121"
+        },
+        {
+          "Id": 1,
+          "IconId": "A_2_142"
+        },
+        {
+          "Id": 2,
+          "IconId": "A_3_69"
+        },
+        {
+          "Id": 3,
+          "IconId": "A_4_17"
+        }
+      ]
+    },
+    {
+      "Tag": "Race Helmets",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "A_1_47"
+        },
+        {
+          "Id": 5,
+          "IconId": "A_1_49"
+        },
+        {
+          "Id": 6,
+          "IconId": "A_2_52"
+        },
+        {
+          "Id": 7,
+          "IconId": "A_3_11"
+        }
+      ]
+    },
+    {
+      "Tag": "Keys",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "A_1_51"
+        },
+        {
+          "Id": 9,
+          "IconId": "A_2_22"
+        },
+        {
+          "Id": 10,
+          "IconId": "A_3_103"
+        },
+        {
+          "Id": 11,
+          "IconId": "A_4_11"
+        }
+      ]
+    },
+    {
+      "Tag": "Boats",
+      "BlockDatas": [
+        {
+          "Id": 12,
+          "IconId": "A_1_105"
+        },
+        {
+          "Id": 13,
+          "IconId": "A_1_128"
+        },
+        {
+          "Id": 14,
+          "IconId": "A_2_102"
+        },
+        {
+          "Id": 15,
+          "IconId": "A_3_9"
+        }
+      ]
+    },
+    {
+      "Tag": "Donuts",
+      "BlockDatas": [
+        {
+          "Id": 16,
+          "IconId": "A_1_110"
+        },
+        {
+          "Id": 17,
+          "IconId": "A_2_63"
+        },
+        {
+          "Id": 18,
+          "IconId": "A_2_93"
+        },
+        {
+          "Id": 19,
+          "IconId": "A_3_91"
+        }
+      ]
+    },
+    {
+      "Tag": "Drums",
+      "BlockDatas": [
+        {
+          "Id": 20,
+          "IconId": "A_1_71"
+        },
+        {
+          "Id": 21,
+          "IconId": "A_2_10"
+        },
+        {
+          "Id": 22,
+          "IconId": "A_3_0"
+        },
+        {
+          "Id": 23,
+          "IconId": "A_3_93"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        2,
+        21,
+        20,
+        18
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        4,
+        0,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 3,
+      "BlockIds": [
+        5,
+        9,
+        12,
+        8
+      ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        3,
+        23,
+        19,
+        22
+      ]
+    },
+    {
+      "Id": 5,
+      "BlockIds": [
+        10,
+        13,
+        6,
+        -4
+      ]
+    },
+    {
+      "Id": 6,
+      "BlockIds": [
+        11,
+        14,
+        1,
+        16
+      ]
+    },
+    {
+      "Id": 7,
+      "BlockIds": [
+        7,
+        17,
+        15,
+        -4
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": []
+  },
+  "CoveredPillarDatas": [
+    {
+      "TagToOpen": "Boats",
+      "PillarIds": [
+        0
+      ]
+    },
+    {
+      "TagToOpen": "Keys",
+      "PillarIds": [
+        4
+      ]
+    }
+  ],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}

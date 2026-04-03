@@ -227,6 +227,10 @@ PrefabInstance:
       propertyPath: _buttonRt
       value: 
       objectReference: {fileID: 6617734137540031332}
+    - target: {fileID: 8378540483883924002, guid: fdce342c60196ba4a93d063493530171, type: 3}
+      propertyPath: m_Text
+      value: Home
+      objectReference: {fileID: 0}
     - target: {fileID: 8702314356085417358, guid: fdce342c60196ba4a93d063493530171, type: 3}
       propertyPath: m_text
       value: Home
@@ -234,6 +238,14 @@ PrefabInstance:
     - target: {fileID: 8702314356085417358, guid: fdce342c60196ba4a93d063493530171, type: 3}
       propertyPath: m_HorizontalAlignment
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8803854608443546350, guid: fdce342c60196ba4a93d063493530171, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -94.09998
+      objectReference: {fileID: 0}
+    - target: {fileID: 8803854608443546350, guid: fdce342c60196ba4a93d063493530171, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 47.050007
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

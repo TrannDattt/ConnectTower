@@ -9,7 +9,7 @@ namespace Assets._Scripts.Visuals
     {
         [SerializeField] private Image _backgroundImage;
         [SerializeField] private Slider _slider;
-        [SerializeField] private TextMeshProUGUI _progressText;
+        [SerializeField] private Text _progressText;
 
         public void UpdateProgress(int current, int target)
         {

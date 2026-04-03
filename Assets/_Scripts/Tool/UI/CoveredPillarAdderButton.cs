@@ -11,8 +11,6 @@ namespace Assets._Scripts.Tools.UI
     {
         [SerializeField] private TMP_InputField _tagInput;
 
-        protected EMechanic _mechanicType = EMechanic.CoveredPillar;
-
         protected override void ResetInputs()
         {
             base.ResetInputs();
@@ -37,9 +35,12 @@ namespace Assets._Scripts.Tools.UI
         {
             foreach (var cpm in levelJSON.CoveredPillarDatas)
             {
-                _idInput.text = cpm.PillarIds.ToString();
-                _tagInput.text = cpm.TagToOpen;
-                AddId();
+                foreach (var id in cpm.PillarIds)
+                {
+                    _idInput.text = id.ToString();
+                    _tagInput.text = cpm.TagToOpen;
+                    AddIdFromLevel();
+                }
             }
         }
 

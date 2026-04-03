@@ -1,0 +1,229 @@
+﻿{
+  "Index": 39,
+  "Difficulty": 0,
+  "MoveLimit": 28,
+  "BlockGroups": [
+    {
+      "Tag": "Boats",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "A_1_105"
+        },
+        {
+          "Id": 1,
+          "IconId": "A_1_128"
+        },
+        {
+          "Id": 2,
+          "IconId": "A_2_102"
+        },
+        {
+          "Id": 3,
+          "IconId": "A_3_9"
+        }
+      ]
+    },
+    {
+      "Tag": "Hourglasses",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "A_1_19"
+        },
+        {
+          "Id": 5,
+          "IconId": "A_2_119"
+        },
+        {
+          "Id": 6,
+          "IconId": "A_3_119"
+        },
+        {
+          "Id": 7,
+          "IconId": "A_4_89"
+        }
+      ]
+    },
+    {
+      "Tag": "Letters",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "A_1_80"
+        },
+        {
+          "Id": 9,
+          "IconId": "A_2_8"
+        },
+        {
+          "Id": 10,
+          "IconId": "A_3_16"
+        },
+        {
+          "Id": 11,
+          "IconId": "A_4_23"
+        }
+      ]
+    },
+    {
+      "Tag": "Wheels",
+      "BlockDatas": [
+        {
+          "Id": 12,
+          "IconId": "A_1_121"
+        },
+        {
+          "Id": 13,
+          "IconId": "A_2_142"
+        },
+        {
+          "Id": 14,
+          "IconId": "A_3_69"
+        },
+        {
+          "Id": 15,
+          "IconId": "A_4_17"
+        }
+      ]
+    },
+    {
+      "Tag": "Keys",
+      "BlockDatas": [
+        {
+          "Id": 16,
+          "IconId": "A_1_51"
+        },
+        {
+          "Id": 17,
+          "IconId": "A_2_22"
+        },
+        {
+          "Id": 18,
+          "IconId": "A_3_103"
+        },
+        {
+          "Id": 19,
+          "IconId": "A_4_11"
+        }
+      ]
+    },
+    {
+      "Tag": "Donuts",
+      "BlockDatas": [
+        {
+          "Id": 20,
+          "IconId": "A_1_110"
+        },
+        {
+          "Id": 21,
+          "IconId": "A_2_63"
+        },
+        {
+          "Id": 22,
+          "IconId": "A_2_93"
+        },
+        {
+          "Id": 23,
+          "IconId": "A_3_91"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        15,
+        11,
+        3,
+        14
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        6,
+        19,
+        4,
+        0
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        9,
+        12,
+        23,
+        8
+      ]
+    },
+    {
+      "Id": 3,
+      "BlockIds": [
+        10,
+        7,
+        13,
+        -4
+      ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        21,
+        1,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 5,
+      "BlockIds": [
+        16,
+        22,
+        18,
+        5
+      ]
+    },
+    {
+      "Id": 6,
+      "BlockIds": [
+        17,
+        20,
+        2,
+        -4
+      ]
+    },
+    {
+      "Id": 7,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": [
+      18,
+      21,
+      22,
+      19,
+      6,
+      7,
+      10,
+      23
+    ]
+  },
+  "CoveredPillarDatas": [
+    {
+      "TagToOpen": "Donuts",
+      "PillarIds": [
+        0
+      ]
+    }
+  ],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}

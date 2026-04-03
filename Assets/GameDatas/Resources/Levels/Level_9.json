@@ -1,0 +1,162 @@
+﻿{
+  "Index": 9,
+  "Difficulty": 0,
+  "MoveLimit": 26,
+  "BlockGroups": [
+    {
+      "Tag": "Hourglasses",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "A_1_19"
+        },
+        {
+          "Id": 1,
+          "IconId": "A_2_119"
+        },
+        {
+          "Id": 2,
+          "IconId": "A_3_119"
+        },
+        {
+          "Id": 3,
+          "IconId": "A_4_89"
+        }
+      ]
+    },
+    {
+      "Tag": "Boats",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "A_1_128"
+        },
+        {
+          "Id": 5,
+          "IconId": "A_3_9"
+        },
+        {
+          "Id": 6,
+          "IconId": "A_4_138"
+        },
+        {
+          "Id": 7,
+          "IconId": "A_1_105"
+        }
+      ]
+    },
+    {
+      "Tag": "Mail Boxes",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "A_1_81"
+        },
+        {
+          "Id": 9,
+          "IconId": "A_2_115"
+        },
+        {
+          "Id": 10,
+          "IconId": "A_3_33"
+        },
+        {
+          "Id": 11,
+          "IconId": "A_4_125"
+        }
+      ]
+    },
+    {
+      "Tag": "Donuts",
+      "BlockDatas": [
+        {
+          "Id": 12,
+          "IconId": "A_1_110"
+        },
+        {
+          "Id": 13,
+          "IconId": "A_1_64"
+        },
+        {
+          "Id": 14,
+          "IconId": "A_2_93"
+        },
+        {
+          "Id": 15,
+          "IconId": "A_3_126"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        5,
+        4,
+        0,
+        -4
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        12,
+        2,
+        6,
+        -4
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        3,
+        14,
+        8,
+        -4
+      ]
+    },
+    {
+      "Id": 3,
+      "BlockIds": [
+        9,
+        13,
+        11,
+        7
+      ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        15,
+        10,
+        1,
+        -4
+      ]
+    },
+    {
+      "Id": 5,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": [
+      2,
+      3,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ]
+  },
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}

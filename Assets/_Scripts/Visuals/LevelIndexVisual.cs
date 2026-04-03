@@ -1,11 +1,12 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets._Scripts.Visuals
 {
     public class LevelIndexVisual : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI _levelIndexText;
+        [SerializeField] private Text _levelIndexText;
 
         public void SetLevelIndex(int index)
         {

@@ -10,7 +10,7 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Image _lockImage;
         [SerializeField] private Image _lockBackground;
         [SerializeField] private GameObject _baseContent;
-        [SerializeField] private TextMeshProUGUI _countText;
+        [SerializeField] private Text _countText;
         [SerializeField] private Image _iconImage;
         [SerializeField] private Image _getMoreImage;
         //TODO: Add popup text if button is locked and player click on it
@@ -53,23 +53,28 @@ namespace Assets._Scripts.Visuals
             }
         }
 
+        private Vector3 _originalPos, _originalScale;
         public Tween DoOnUseBoosterAnim(Vector3 gatherPoint, System.Action onReachedCenter)
         {
             float duration = .5f;
             float stayDuration = .5f;
             float scaleTime = 1.5f;
-            Vector3 originalPos = _iconImage.transform.position;
-            Vector3 originScale = _iconImage.transform.localScale;
             
+            _iconImage.transform.DOKill();
             Sequence sequence = DOTween.Sequence();
             sequence.Append(_iconImage.transform.DOMove(gatherPoint, duration).SetEase(Ease.OutSine));
-            sequence.Join(_iconImage.transform.DOScale(originScale * scaleTime, duration).SetEase(Ease.OutSine));
+            sequence.Join(_iconImage.transform.DOScale(_originalScale * scaleTime, duration).SetEase(Ease.OutSine));
             sequence.AppendInterval(stayDuration);
             sequence.OnComplete(() => 
             {
-                _iconImage.transform.position = originalPos;
-                _iconImage.transform.localScale = originScale;
+                _iconImage.transform.position = _originalPos;
+                _iconImage.transform.localScale = _originalScale;
                 onReachedCenter?.Invoke();
+            });
+            sequence.OnKill(() =>
+            {
+                _iconImage.transform.position = _originalPos;
+                _iconImage.transform.localScale = _originalScale;
             });
             
             return sequence;
@@ -78,6 +83,14 @@ namespace Assets._Scripts.Visuals
         public void ShowPopupText()
         {
             //TODO: Show popup text if click to lock button
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+
+            _originalPos = _iconImage.transform.position;
+            _originalScale = _iconImage.transform.localScale;
         }
     }
 }

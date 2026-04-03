@@ -34,11 +34,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1299499251447980915, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 170
+      value: 210
       objectReference: {fileID: 0}
     - target: {fileID: 1299499251447980915, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 170
+      value: 210
       objectReference: {fileID: 0}
     - target: {fileID: 1299499251447980915, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_LocalPosition.x
@@ -104,8 +104,54 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: f04a15a39d4017544ad866e0bdee8e9d, type: 2}
+    - target: {fileID: 8345617740352595274, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: _countText
+      value: 
+      objectReference: {fileID: 2225689868157143634}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5395922678548799331, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2225689868157143634}
   m_SourcePrefab: {fileID: 100100000, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+--- !u!1 &6061434097683120539 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5395922678548799331, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+  m_PrefabInstance: {fileID: 2232836692194615032}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2225689868157143634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6061434097683120539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19245279, g: 0.19245279, b: 0.19245279, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: f5bcf7d02045fc04b8aba8f7fcbf598d, type: 3}
+    m_FontSize: 36
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 1
+    m_LineSpacing: 1
+  m_Text: 3

@@ -106,5 +106,14 @@ namespace Assets._Scripts.Managers
             GainBooster(EBooster.Shuffle, reward.ShuffleAmount);
             GainBooster(EBooster.Hint, reward.HintAmount);
         }
+
+        public static void UpdateProgress(int levelIndex)
+        {
+            if (levelIndex > CurUser.CurrentLevelIndex)
+            {
+                CurUser.CurrentLevelIndex = levelIndex;
+                Debug.Log($"Update progress to {CurUser.CurrentLevelIndex}");
+            }
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Sprite _hardTag;
         [SerializeField] private Sprite _superHardTag;
 
-        [SerializeField] private TextMeshProUGUI _difficultyText;
+        [SerializeField] private Text _difficultyText;
 
         public void SetDifficulty(EDifficulty difficulty)
         {

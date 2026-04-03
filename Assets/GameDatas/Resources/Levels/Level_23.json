@@ -1,0 +1,196 @@
+﻿{
+  "Index": 23,
+  "Difficulty": 0,
+  "MoveLimit": 26,
+  "BlockGroups": [
+    {
+      "Tag": "Donuts",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "A_1_110"
+        },
+        {
+          "Id": 1,
+          "IconId": "A_2_63"
+        },
+        {
+          "Id": 2,
+          "IconId": "A_2_93"
+        },
+        {
+          "Id": 3,
+          "IconId": "A_3_91"
+        }
+      ]
+    },
+    {
+      "Tag": "Boats",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "A_1_105"
+        },
+        {
+          "Id": 5,
+          "IconId": "A_1_128"
+        },
+        {
+          "Id": 6,
+          "IconId": "A_2_102"
+        },
+        {
+          "Id": 7,
+          "IconId": "A_3_9"
+        }
+      ]
+    },
+    {
+      "Tag": "Drums",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "A_1_71"
+        },
+        {
+          "Id": 9,
+          "IconId": "A_2_10"
+        },
+        {
+          "Id": 10,
+          "IconId": "A_3_0"
+        },
+        {
+          "Id": 11,
+          "IconId": "A_3_93"
+        }
+      ]
+    },
+    {
+      "Tag": "Glasses",
+      "BlockDatas": [
+        {
+          "Id": 12,
+          "IconId": "A_1_130"
+        },
+        {
+          "Id": 13,
+          "IconId": "A_2_23"
+        },
+        {
+          "Id": 14,
+          "IconId": "A_3_18"
+        },
+        {
+          "Id": 15,
+          "IconId": "A_4_55"
+        }
+      ]
+    },
+    {
+      "Tag": "Wheels",
+      "BlockDatas": [
+        {
+          "Id": 16,
+          "IconId": "A_1_121"
+        },
+        {
+          "Id": 17,
+          "IconId": "A_2_142"
+        },
+        {
+          "Id": 18,
+          "IconId": "A_3_69"
+        },
+        {
+          "Id": 19,
+          "IconId": "A_4_17"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        12,
+        4,
+        8,
+        0
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        14,
+        1,
+        9,
+        13
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        18,
+        2,
+        5,
+        17
+      ]
+    },
+    {
+      "Id": 3,
+      "BlockIds": [
+        15,
+        -2,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        3,
+        7,
+        19,
+        6
+      ]
+    },
+    {
+      "Id": 5,
+      "BlockIds": [
+        11,
+        16,
+        10,
+        -4
+      ]
+    },
+    {
+      "Id": 6,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": []
+  },
+  "CoveredPillarDatas": [
+    {
+      "TagToOpen": "Boats",
+      "PillarIds": [
+        2
+      ]
+    },
+    {
+      "TagToOpen": "Glasses",
+      "PillarIds": [
+        4
+      ]
+    }
+  ],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}

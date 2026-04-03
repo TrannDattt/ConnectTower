@@ -104,6 +104,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 391450862837562642, guid: 97fbb01b96eaa364699d35e325087f1c, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391450862837562642, guid: 97fbb01b96eaa364699d35e325087f1c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391450862837562642, guid: 97fbb01b96eaa364699d35e325087f1c, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391450862837562642, guid: 97fbb01b96eaa364699d35e325087f1c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391450862837562642, guid: 97fbb01b96eaa364699d35e325087f1c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391450862837562642, guid: 97fbb01b96eaa364699d35e325087f1c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 794229264993230302, guid: 97fbb01b96eaa364699d35e325087f1c, type: 3}
+      propertyPath: m_Text
+      value: x2 Coin
+      objectReference: {fileID: 0}
     - target: {fileID: 1779365953087188471, guid: 97fbb01b96eaa364699d35e325087f1c, type: 3}
       propertyPath: m_Type
       value: 0

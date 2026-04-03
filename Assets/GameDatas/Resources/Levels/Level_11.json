@@ -1,0 +1,192 @@
+﻿{
+  "Index": 11,
+  "Difficulty": 0,
+  "MoveLimit": 26,
+  "BlockGroups": [
+    {
+      "Tag": "Tents",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "B_2_27"
+        },
+        {
+          "Id": 1,
+          "IconId": "B_1_16"
+        },
+        {
+          "Id": 2,
+          "IconId": "C_2_39"
+        },
+        {
+          "Id": 3,
+          "IconId": "B_1_16"
+        }
+      ]
+    },
+    {
+      "Tag": "Keys",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "A_1_51"
+        },
+        {
+          "Id": 5,
+          "IconId": "A_2_22"
+        },
+        {
+          "Id": 6,
+          "IconId": "A_3_103"
+        },
+        {
+          "Id": 7,
+          "IconId": "A_4_11"
+        }
+      ]
+    },
+    {
+      "Tag": "Trees",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "A_1_118"
+        },
+        {
+          "Id": 9,
+          "IconId": "A_1_6"
+        },
+        {
+          "Id": 10,
+          "IconId": "A_2_35"
+        },
+        {
+          "Id": 11,
+          "IconId": "A_4_15"
+        }
+      ]
+    },
+    {
+      "Tag": "Donuts",
+      "BlockDatas": [
+        {
+          "Id": 12,
+          "IconId": "B_3_147"
+        },
+        {
+          "Id": 13,
+          "IconId": "A_1_110"
+        },
+        {
+          "Id": 14,
+          "IconId": "A_2_63"
+        },
+        {
+          "Id": 15,
+          "IconId": "A_3_126"
+        }
+      ]
+    },
+    {
+      "Tag": "Scopes",
+      "BlockDatas": [
+        {
+          "Id": 16,
+          "IconId": "B_1_85"
+        },
+        {
+          "Id": 17,
+          "IconId": "B_2_37"
+        },
+        {
+          "Id": 18,
+          "IconId": "B_1_85"
+        },
+        {
+          "Id": 19,
+          "IconId": "B_2_37"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        7,
+        5,
+        4,
+        0
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 3,
+      "BlockIds": [
+        12,
+        13,
+        17,
+        8
+      ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        11,
+        1,
+        15,
+        6
+      ]
+    },
+    {
+      "Id": 5,
+      "BlockIds": [
+        3,
+        2,
+        10,
+        14
+      ]
+    },
+    {
+      "Id": 6,
+      "BlockIds": [
+        19,
+        16,
+        18,
+        9
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": [
+      3,
+      7,
+      10,
+      11,
+      15,
+      17,
+      18,
+      19
+    ]
+  },
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}

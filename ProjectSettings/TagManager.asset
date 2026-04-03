@@ -15,9 +15,9 @@ TagManager:
   - Slot
   - Item
   - Ground
-  - 
-  - 
-  - 
+  - MiddleUI
+  - FrontUI
+  - Block
   - 
   - 
   - 

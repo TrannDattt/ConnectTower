@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4241822806860407}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4682665017437268}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TrailSample
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75,7 +75,7 @@ GameObject:
   - component: {fileID: 33857118189261878}
   - component: {fileID: 23110116275020850}
   - component: {fileID: 65672359290424700}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -187,7 +187,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4569679295437858}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -222,7 +222,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4638504509025325}
   - component: {fileID: 96953895472498050}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -372,7 +372,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4913113080803294}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: UI_Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -406,7 +406,7 @@ GameObject:
   - component: {fileID: 224566313932710188}
   - component: {fileID: 222037820417595008}
   - component: {fileID: 3024288134097522251}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Item_Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -430,7 +430,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -0.2, y: -0.20000002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &222037820417595008
 CanvasRenderer:
@@ -480,8 +480,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4734611783545203}
   - component: {fileID: 114466004919648196}
+  - component: {fileID: 8404380825018531360}
   - component: {fileID: -5823554385853721213}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -519,6 +520,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _icon: {fileID: 3024288134097522251}
   _tag: 
+--- !u!114 &8404380825018531360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604408893110485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ee96450754a3e9489154b8762c12013, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.BlockEffectVisual
+  _blockRenderer: {fileID: 23110116275020850}
+  _blockIcon: {fileID: 3024288134097522251}
 --- !u!114 &-5823554385853721213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -531,10 +546,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1caa7c2446e41984d9f9e9f987a4c49c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.MechanicVisualControl
-  _blockIcon: {fileID: 3024288134097522251}
-  _blockRenderer: {fileID: 23110116275020850}
+  _blockVisual: {fileID: 8404380825018531360}
   _hiddenTexture: {fileID: 2800000, guid: 40f1f92e92025bd4a8a48ac9e9bccf66, type: 3}
   _frozenIcon: {fileID: 8152818007904729742}
+  _frozenMoveCountText: {fileID: 0}
+  _offsetY: 3
+  _clothImage: {fileID: 0}
+  _clothIcon: {fileID: 0}
 --- !u!1 &1618152012296686
 GameObject:
   m_ObjectHideFlags: 0
@@ -546,7 +564,7 @@ GameObject:
   - component: {fileID: 224801563629231018}
   - component: {fileID: 222275635617174753}
   - component: {fileID: 8152818007904729742}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ice_Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -620,7 +638,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224459868782133831}
   - component: {fileID: 223687253271985502}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -680,7 +698,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4845611719317804}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HintHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -713,13 +731,13 @@ GameObject:
   - component: {fileID: 4188974962173942}
   - component: {fileID: 33809261465898096}
   - component: {fileID: 23885813211825755}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: OutlineMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4188974962173942
 Transform:
   m_ObjectHideFlags: 0
@@ -801,7 +819,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4951300938020129}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: VFX (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

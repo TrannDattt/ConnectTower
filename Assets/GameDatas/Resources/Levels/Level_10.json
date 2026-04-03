@@ -1,0 +1,192 @@
+﻿{
+  "Index": 10,
+  "Difficulty": 0,
+  "MoveLimit": 26,
+  "BlockGroups": [
+    {
+      "Tag": "Cars",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "A_1_67"
+        },
+        {
+          "Id": 1,
+          "IconId": "A_2_84"
+        },
+        {
+          "Id": 2,
+          "IconId": "B_1_96"
+        },
+        {
+          "Id": 3,
+          "IconId": "C_1_133"
+        }
+      ]
+    },
+    {
+      "Tag": "Shoes",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "A_1_131"
+        },
+        {
+          "Id": 5,
+          "IconId": "A_2_68"
+        },
+        {
+          "Id": 6,
+          "IconId": "D_3_115"
+        },
+        {
+          "Id": 7,
+          "IconId": "D_1_69"
+        }
+      ]
+    },
+    {
+      "Tag": "Hamsters",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "A_1_56"
+        },
+        {
+          "Id": 9,
+          "IconId": "A_2_41"
+        },
+        {
+          "Id": 10,
+          "IconId": "A_3_58"
+        },
+        {
+          "Id": 11,
+          "IconId": "A_4_110"
+        }
+      ]
+    },
+    {
+      "Tag": "Guitars",
+      "BlockDatas": [
+        {
+          "Id": 12,
+          "IconId": "A_1_104"
+        },
+        {
+          "Id": 13,
+          "IconId": "A_2_112"
+        },
+        {
+          "Id": 14,
+          "IconId": "A_4_28"
+        },
+        {
+          "Id": 15,
+          "IconId": "A_3_10"
+        }
+      ]
+    },
+    {
+      "Tag": "Jackets",
+      "BlockDatas": [
+        {
+          "Id": 16,
+          "IconId": "A_1_10"
+        },
+        {
+          "Id": 17,
+          "IconId": "A_4_30"
+        },
+        {
+          "Id": 18,
+          "IconId": "C_1_114"
+        },
+        {
+          "Id": 19,
+          "IconId": "B_4_67"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        7,
+        3,
+        0,
+        -4
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        12,
+        9,
+        5,
+        4
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        16,
+        13,
+        8,
+        -4
+      ]
+    },
+    {
+      "Id": 3,
+      "BlockIds": [
+        1,
+        -2,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        17,
+        2,
+        6,
+        -4
+      ]
+    },
+    {
+      "Id": 5,
+      "BlockIds": [
+        10,
+        14,
+        18,
+        -4
+      ]
+    },
+    {
+      "Id": 6,
+      "BlockIds": [
+        15,
+        11,
+        19,
+        -4
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": [
+      3,
+      7,
+      9,
+      10,
+      11,
+      13,
+      14,
+      15
+    ]
+  },
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}

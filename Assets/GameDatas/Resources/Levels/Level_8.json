@@ -1,0 +1,163 @@
+﻿{
+  "Index": 8,
+  "Difficulty": 0,
+  "MoveLimit": 24,
+  "BlockGroups": [
+    {
+      "Tag": "Fire Men",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "A_4_79"
+        },
+        {
+          "Id": 1,
+          "IconId": "A_2_51"
+        },
+        {
+          "Id": 2,
+          "IconId": "A_2_51"
+        },
+        {
+          "Id": 3,
+          "IconId": "A_1_24"
+        }
+      ]
+    },
+    {
+      "Tag": "Pants",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "B_2_46"
+        },
+        {
+          "Id": 5,
+          "IconId": "A_2_139"
+        },
+        {
+          "Id": 6,
+          "IconId": "B_1_49"
+        },
+        {
+          "Id": 7,
+          "IconId": "B_4_143"
+        }
+      ]
+    },
+    {
+      "Tag": "Santa Clauses",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "A_4_0"
+        },
+        {
+          "Id": 9,
+          "IconId": "A_3_81"
+        },
+        {
+          "Id": 10,
+          "IconId": "A_2_90"
+        },
+        {
+          "Id": 11,
+          "IconId": "A_1_39"
+        }
+      ]
+    },
+    {
+      "Tag": "Old People",
+      "BlockDatas": [
+        {
+          "Id": 12,
+          "IconId": "A_4_141"
+        },
+        {
+          "Id": 13,
+          "IconId": "A_4_136"
+        },
+        {
+          "Id": 14,
+          "IconId": "A_3_95"
+        },
+        {
+          "Id": 15,
+          "IconId": "A_3_36"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        11,
+        3,
+        6,
+        0
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        2,
+        7,
+        1,
+        4
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 3,
+      "BlockIds": [
+        12,
+        5,
+        13,
+        8
+      ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        14,
+        15,
+        10,
+        9
+      ]
+    },
+    {
+      "Id": 5,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      7,
+      11,
+      12,
+      13
+    ]
+  },
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}

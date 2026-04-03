@@ -1,0 +1,130 @@
+﻿{
+  "Index": 7,
+  "Difficulty": 0,
+  "MoveLimit": 23,
+  "BlockGroups": [
+    {
+      "Tag": "Lugages",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "A_1_117"
+        },
+        {
+          "Id": 1,
+          "IconId": "A_2_11"
+        },
+        {
+          "Id": 2,
+          "IconId": "A_4_26"
+        },
+        {
+          "Id": 3,
+          "IconId": "A_4_26"
+        }
+      ]
+    },
+    {
+      "Tag": "Boats",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "A_1_128"
+        },
+        {
+          "Id": 5,
+          "IconId": "A_1_105"
+        },
+        {
+          "Id": 6,
+          "IconId": "A_3_9"
+        },
+        {
+          "Id": 7,
+          "IconId": "A_4_138"
+        }
+      ]
+    },
+    {
+      "Tag": "Fairies",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "A_1_137"
+        },
+        {
+          "Id": 9,
+          "IconId": "A_1_136"
+        },
+        {
+          "Id": 10,
+          "IconId": "A_1_142"
+        },
+        {
+          "Id": 11,
+          "IconId": "A_2_79"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        1,
+        10,
+        5,
+        0
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        8,
+        6,
+        11,
+        4
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 3,
+      "BlockIds": [
+        9,
+        7,
+        3,
+        2
+      ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": [
+      5,
+      10,
+      11,
+      6,
+      3,
+      7
+    ]
+  },
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}

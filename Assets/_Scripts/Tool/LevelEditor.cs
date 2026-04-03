@@ -3,8 +3,10 @@ using System.Linq;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
+using Assets._Scripts.Managers;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 namespace Assets._Scripts.Tools
 {
@@ -201,7 +203,6 @@ namespace Assets._Scripts.Tools
         public static UnityEvent<LevelJSON> OnLevelLoaded = new();
         public static void LoadLevel()
         {
-#if UNITY_EDITOR
             var levelData = LevelDataHelper.OpenLevelFileDialog();
             if (levelData != null)
             {
@@ -209,12 +210,19 @@ namespace Assets._Scripts.Tools
                 OnLevelCleared?.Invoke();
                 OnLevelLoaded?.Invoke(_levelData);
             }
-#endif
         }
 
         public static void SaveLevel()
         {
             LevelDataHelper.SaveLevel(_levelData);
+        }
+
+        public static void TestCurrentLevel()
+        {
+            GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
+            {
+                GameManager.Instance.StartLevel(new LevelRuntimeData(_levelData), true);
+            });
         }
 
         private static void RemoveAllListeners()

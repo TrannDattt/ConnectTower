@@ -6,12 +6,4 @@ namespace Assets._Scripts.Enums
         Shop,
         Scoreboard,
     }
-
-    public enum EGameScene
-    {
-        Init,
-        Menu,
-        Ingame,
-        None,
-    }
 }

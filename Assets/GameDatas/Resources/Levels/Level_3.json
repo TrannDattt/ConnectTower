@@ -1,0 +1,114 @@
+﻿{
+  "Index": 3,
+  "Difficulty": 0,
+  "MoveLimit": 14,
+  "BlockGroups": [
+    {
+      "Tag": "Purple Things",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "F_3_36"
+        },
+        {
+          "Id": 1,
+          "IconId": "C_2_95"
+        },
+        {
+          "Id": 2,
+          "IconId": "A_2_9"
+        },
+        {
+          "Id": 3,
+          "IconId": "E_4_103"
+        }
+      ]
+    },
+    {
+      "Tag": "Houses",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "B_2_147"
+        },
+        {
+          "Id": 5,
+          "IconId": "C_2_43"
+        },
+        {
+          "Id": 6,
+          "IconId": "B_2_104"
+        },
+        {
+          "Id": 7,
+          "IconId": "C_2_35"
+        }
+      ]
+    },
+    {
+      "Tag": "Horses",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "D_2_83"
+        },
+        {
+          "Id": 9,
+          "IconId": "D_4_31"
+        },
+        {
+          "Id": 10,
+          "IconId": "D_2_83"
+        },
+        {
+          "Id": 11,
+          "IconId": "C_4_85"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        5,
+        4,
+        1,
+        0
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        11,
+        10,
+        7,
+        6
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        9,
+        8,
+        3,
+        2
+      ]
+    },
+    {
+      "Id": 3,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": []
+  },
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}

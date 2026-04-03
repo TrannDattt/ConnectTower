@@ -21,6 +21,7 @@ namespace Assets._Scripts.Controllers
         // TODO: Provide user data
         public void InitVisual()
         {
+            Debug.Log($"Init main menu");
             _homeControl.InitVisual();
             _shopControl.InitVisual();
         }
@@ -31,6 +32,11 @@ namespace Assets._Scripts.Controllers
         }
 
         public void OpenShop() => ChangeTab(EMenuTab.Shop);
+
+        void OnEnable()
+        {
+            InitVisual();
+        }
 
         void Start()
         {

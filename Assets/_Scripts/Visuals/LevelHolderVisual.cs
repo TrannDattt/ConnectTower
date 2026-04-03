@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Assets._Scripts.Datas;
+using Assets._Scripts.Managers;
 using UnityEngine;
 
 namespace Assets._Scripts.Visuals
@@ -9,16 +10,25 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Transform _levelContainer;
         [SerializeField] private LevelButtonVisual _levelButtonPrefabs;
 
+        private List<LevelButtonVisual> _buttons = new();
+
         //TODO: Use pooling to manage level buttons
+        //TODO: Add behaviors to button: Auto focus, scale when scroll, button change color,...
 
         public void InitVisual(List<LevelRuntimeData> levelDatas)
         {
-            ClearAllButtons();
-
-            foreach(var data in levelDatas)
+            for (int i = _buttons.Count; i < levelDatas.Count; i++)
             {
-                var newButton = Instantiate(_levelButtonPrefabs, _levelContainer);
-                newButton.InitVisual(data);
+                _buttons.Add(Instantiate(_levelButtonPrefabs, _levelContainer));
+            }
+            UpdateVisual(levelDatas);
+        }
+
+        public void UpdateVisual(List<LevelRuntimeData> levelDatas)
+        {
+            for(int i = 0; i < levelDatas.Count; i++)
+            {
+                _buttons[i].UpdateVisual(levelDatas[i]);
             }
         }
 
@@ -30,5 +40,16 @@ namespace Assets._Scripts.Visuals
                 Destroy(button.gameObject);
             }
         }
+
+        // void Start()
+        // {
+        //     ClearAllButtons();
+
+        //     foreach(var data in LevelManager.Instance.GetAllLevels())
+        //     {
+        //         var newButton = Instantiate(_levelButtonPrefabs, _levelContainer);
+        //         newButton.InitVisual(data);
+        //     }
+        // }
     }
 }

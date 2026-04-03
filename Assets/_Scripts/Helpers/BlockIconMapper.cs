@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.U2D;
@@ -40,6 +41,7 @@ namespace Assets._Scripts.Helpers
             {
                 Sprite[] loadedIcons = new Sprite[atlas.spriteCount];
                 atlas.GetSprites(loadedIcons);
+                loadedIcons = loadedIcons.OrderBy(s => s.name).ToArray();
                 
                 foreach (var icon in loadedIcons)
                 {

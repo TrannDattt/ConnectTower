@@ -1,0 +1,233 @@
+﻿{
+  "Index": 42,
+  "Difficulty": 0,
+  "MoveLimit": 26,
+  "BlockGroups": [
+    {
+      "Tag": "Keys",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "A_1_51"
+        },
+        {
+          "Id": 1,
+          "IconId": "A_2_22"
+        },
+        {
+          "Id": 2,
+          "IconId": "A_3_103"
+        },
+        {
+          "Id": 3,
+          "IconId": "A_4_11"
+        }
+      ]
+    },
+    {
+      "Tag": "Wheels",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "A_1_121"
+        },
+        {
+          "Id": 5,
+          "IconId": "A_2_142"
+        },
+        {
+          "Id": 6,
+          "IconId": "A_3_69"
+        },
+        {
+          "Id": 7,
+          "IconId": "A_4_17"
+        }
+      ]
+    },
+    {
+      "Tag": "Glasses",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "A_1_130"
+        },
+        {
+          "Id": 9,
+          "IconId": "A_2_23"
+        },
+        {
+          "Id": 10,
+          "IconId": "A_3_18"
+        },
+        {
+          "Id": 11,
+          "IconId": "A_4_55"
+        }
+      ]
+    },
+    {
+      "Tag": "Drums",
+      "BlockDatas": [
+        {
+          "Id": 12,
+          "IconId": "A_1_71"
+        },
+        {
+          "Id": 13,
+          "IconId": "A_2_10"
+        },
+        {
+          "Id": 14,
+          "IconId": "A_3_0"
+        },
+        {
+          "Id": 15,
+          "IconId": "A_3_93"
+        }
+      ]
+    },
+    {
+      "Tag": "Donuts",
+      "BlockDatas": [
+        {
+          "Id": 16,
+          "IconId": "A_1_110"
+        },
+        {
+          "Id": 17,
+          "IconId": "A_2_63"
+        },
+        {
+          "Id": 18,
+          "IconId": "A_2_93"
+        },
+        {
+          "Id": 19,
+          "IconId": "A_3_91"
+        }
+      ]
+    },
+    {
+      "Tag": "Race Helmets",
+      "BlockDatas": [
+        {
+          "Id": 24,
+          "IconId": "A_1_47"
+        },
+        {
+          "Id": 25,
+          "IconId": "A_1_49"
+        },
+        {
+          "Id": 26,
+          "IconId": "A_2_52"
+        },
+        {
+          "Id": 27,
+          "IconId": "A_3_11"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        17,
+        9,
+        14,
+        0
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        2,
+        12,
+        1,
+        8
+      ]
+    },
+    {
+      "Id": 3,
+      "BlockIds": [
+        13,
+        24,
+        25,
+        16
+      ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        10,
+        15,
+        3,
+        4
+      ]
+    },
+    {
+      "Id": 5,
+      "BlockIds": [
+        27,
+        18,
+        11,
+        26
+      ]
+    },
+    {
+      "Id": 6,
+      "BlockIds": [
+        19,
+        7,
+        6,
+        5
+      ]
+    },
+    {
+      "Id": 7,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": [
+      25,
+      9,
+      17,
+      3,
+      10,
+      27
+    ]
+  },
+  "CoveredPillarDatas": [
+    {
+      "TagToOpen": "Keys",
+      "PillarIds": [
+        5
+      ]
+    },
+    {
+      "TagToOpen": "Drums",
+      "PillarIds": [
+        6
+      ]
+    }
+  ],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}

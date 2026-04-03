@@ -4,6 +4,7 @@ using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets._Scripts.Visuals
 {
@@ -11,9 +12,9 @@ namespace Assets._Scripts.Visuals
     {
         [SerializeField] private GameButtonVisual _continueButton;
         [SerializeField] private GameButtonVisual _normalRewardButton;
-        [SerializeField] private TextMeshProUGUI _normalRewardText;
+        [SerializeField] private Text _normalRewardText;
         [SerializeField] private GameButtonVisual _adsRewardButton;
-        [SerializeField] private TextMeshProUGUI _adsRewardText;
+        [SerializeField] private Text _adsRewardText;
 
         private LevelRuntimeData _curLevelData;
 

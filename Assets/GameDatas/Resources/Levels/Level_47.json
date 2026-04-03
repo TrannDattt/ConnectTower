@@ -1,0 +1,229 @@
+﻿{
+  "Index": 47,
+  "Difficulty": 0,
+  "MoveLimit": 31,
+  "BlockGroups": [
+    {
+      "Tag": "Boats",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "A_1_105"
+        },
+        {
+          "Id": 1,
+          "IconId": "A_1_128"
+        },
+        {
+          "Id": 2,
+          "IconId": "A_2_102"
+        },
+        {
+          "Id": 3,
+          "IconId": "A_3_9"
+        }
+      ]
+    },
+    {
+      "Tag": "Race Helmets",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "A_1_47"
+        },
+        {
+          "Id": 5,
+          "IconId": "A_1_49"
+        },
+        {
+          "Id": 6,
+          "IconId": "A_2_52"
+        },
+        {
+          "Id": 7,
+          "IconId": "A_3_11"
+        }
+      ]
+    },
+    {
+      "Tag": "Keys",
+      "BlockDatas": [
+        {
+          "Id": 8,
+          "IconId": "A_1_51"
+        },
+        {
+          "Id": 9,
+          "IconId": "A_2_22"
+        },
+        {
+          "Id": 10,
+          "IconId": "A_3_103"
+        },
+        {
+          "Id": 11,
+          "IconId": "A_4_11"
+        }
+      ]
+    },
+    {
+      "Tag": "Wheels",
+      "BlockDatas": [
+        {
+          "Id": 16,
+          "IconId": "A_1_121"
+        },
+        {
+          "Id": 17,
+          "IconId": "A_2_142"
+        },
+        {
+          "Id": 18,
+          "IconId": "A_3_69"
+        },
+        {
+          "Id": 19,
+          "IconId": "A_4_17"
+        }
+      ]
+    },
+    {
+      "Tag": "Donuts",
+      "BlockDatas": [
+        {
+          "Id": 20,
+          "IconId": "A_1_110"
+        },
+        {
+          "Id": 21,
+          "IconId": "A_2_63"
+        },
+        {
+          "Id": 22,
+          "IconId": "A_2_93"
+        },
+        {
+          "Id": 23,
+          "IconId": "A_3_91"
+        }
+      ]
+    },
+    {
+      "Tag": "Glasses",
+      "BlockDatas": [
+        {
+          "Id": 24,
+          "IconId": "A_1_130"
+        },
+        {
+          "Id": 25,
+          "IconId": "A_2_23"
+        },
+        {
+          "Id": 26,
+          "IconId": "A_3_18"
+        },
+        {
+          "Id": 27,
+          "IconId": "A_4_55"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        2,
+        8,
+        18,
+        0
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        3,
+        11,
+        20,
+        16
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 3,
+      "BlockIds": [
+        7,
+        24,
+        4,
+        21
+      ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        1,
+        9,
+        25,
+        22
+      ]
+    },
+    {
+      "Id": 5,
+      "BlockIds": [
+        27,
+        5,
+        19,
+        6
+      ]
+    },
+    {
+      "Id": 6,
+      "BlockIds": [
+        10,
+        23,
+        26,
+        17
+      ]
+    },
+    {
+      "Id": 7,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": [
+      4,
+      26,
+      1,
+      2,
+      11,
+      3,
+      7,
+      23
+    ]
+  },
+  "CoveredPillarDatas": [
+    {
+      "TagToOpen": "Donuts",
+      "PillarIds": [
+        5
+      ]
+    }
+  ],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}

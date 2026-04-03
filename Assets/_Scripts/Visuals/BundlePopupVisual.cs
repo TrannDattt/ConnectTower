@@ -9,13 +9,13 @@ namespace Assets._Scripts.Visuals
 {
     public class BundlePurchasePopupVisual : GamePopupVisual
     {
-        [SerializeField] protected TextMeshProUGUI _bundleNameText;
+        [SerializeField] protected Text _bundleNameText;
         //----------------
         [SerializeField] protected Image _bundleIcon;
-        [SerializeField] protected TextMeshProUGUI _bundleCountText;
+        [SerializeField] protected Text _bundleCountText;
         //----------------
-        [SerializeField] protected TextMeshProUGUI _bundleDetailText;
-        [SerializeField] protected TextMeshProUGUI _bundlePriceText;
+        [SerializeField] protected Text _bundleDetailText;
+        [SerializeField] protected Text _bundlePriceText;
         [SerializeField] protected GameButtonVisual _buyButton;
 
         private BundleSO _thisBundle;

@@ -4,7 +4,7 @@ using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
 using Assets._Scripts.Interfaces;
 using Assets._Scripts.Managers;
-using Assets._Scripts.Patterns;
+using Assets._Scripts.Visuals;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,8 +15,7 @@ namespace Assets._Scripts.Controllers
     {
         //HiddenBlock
         [Header("Hidden Block")]
-        [SerializeField] private Image _blockIcon;
-        [SerializeField] private MeshRenderer _blockRenderer;
+        [SerializeField] private BlockEffectVisual _blockVisual;
         [SerializeField] private Texture2D _hiddenTexture;
 
         //FrozenBlock
@@ -33,18 +32,6 @@ namespace Assets._Scripts.Controllers
         private Vector2 _clothInitialAnchoredPos;
         private RectTransform _clothRectTransform;
 
-
-        private MaterialPropertyBlock _propertyBlock;
-        private MaterialPropertyBlock PropertyBlock
-        {
-            get
-            {
-                if (_propertyBlock == null)
-                    _propertyBlock = new MaterialPropertyBlock();
-                return _propertyBlock;
-            }
-        }
-
         public void ApplyVisual(MechanicRuntimeData mechanicData)
         {
             var type = mechanicData.Key;
@@ -53,15 +40,8 @@ namespace Assets._Scripts.Controllers
             switch (type)
             {
                 case EMechanic.HiddenBlock:
-                    if (_blockIcon != null) _blockIcon.gameObject.SetActive(false);
-                    
-                    if (_blockRenderer != null)
-                    {
-                        var mb = PropertyBlock;
-                        _blockRenderer.GetPropertyBlock(mb);
-                        mb.SetTexture("_BaseMap", _hiddenTexture);
-                        _blockRenderer.SetPropertyBlock(mb);
-                    }
+                    _blockVisual?.ChangeIconDisplay(false);
+                    _blockVisual?.ChangeTexture(_hiddenTexture);
                     break;
                 case EMechanic.FrozenBlock:
                     if (_frozenIcon != null) _frozenIcon.gameObject.SetActive(true);
@@ -95,13 +75,10 @@ namespace Assets._Scripts.Controllers
             switch (type)
             {
                 case EMechanic.HiddenBlock:
-                    if (_blockIcon != null) _blockIcon.gameObject.SetActive(true);
-                    
-                    if (_blockRenderer != null)
-                    {
-                        _blockRenderer.SetPropertyBlock(null);
-                    }
+                    _blockVisual?.ChangeIconDisplay(true);
+                    _blockVisual?.ChangeTexture(null);
                     //TODO: Play sfx smoke bomb
+                    ParticleManager.Instance.PlayParticle(EParticle.Smoke, transform.position);
                     break;
                 case EMechanic.FrozenBlock:
                     if (_frozenIcon != null) _frozenIcon.gameObject.SetActive(false);

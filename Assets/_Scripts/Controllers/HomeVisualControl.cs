@@ -19,7 +19,7 @@ namespace Assets._Scripts.Controllers
         public void InitVisual()
         {
             //TODO: Fetch and show heart amount and time counter
-            var allLevels = LevelManager.Instance.GetAllLevel();
+            var allLevels = LevelManager.Instance.GetAllLevels();
             _levelHolder.InitVisual(allLevels);
         }
 

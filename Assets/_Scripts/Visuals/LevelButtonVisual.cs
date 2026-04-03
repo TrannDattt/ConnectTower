@@ -9,6 +9,11 @@ namespace Assets._Scripts.Visuals
 {
     public class LevelButtonVisual : GameButtonVisual
     {
+        // First Level
+        // [SerializeField] private Sprite _firstLevelIcon;
+        // [SerializeField] private Sprite _firstLevelClearedIcon;
+
+        // Normal Level
         [SerializeField] private Sprite _clearedIcon;
         [SerializeField] private Sprite _normalIcon;
         [SerializeField] private Sprite _hardIcon;
@@ -19,13 +24,13 @@ namespace Assets._Scripts.Visuals
 
         [SerializeField] private Image _icon;
         [SerializeField] private GameObject _decorateHolder;
-        [SerializeField] private TextMeshProUGUI _indexText;
+        [SerializeField] private Text _indexText;
 
         private LevelRuntimeData _levelData;
 
-        public void InitVisual(LevelRuntimeData data)
+        public void UpdateVisual(LevelRuntimeData data)
         {
-            _levelData = data;
+            _levelData = new(data);
 
             if (_levelData == null) return;
             _icon.sprite = _levelData.Difficulty switch
@@ -35,13 +40,28 @@ namespace Assets._Scripts.Visuals
                 EDifficulty.SuperHard => _superHardIcon,
                 _ => null
             };
-            if (_levelData.IsCleared) _icon.sprite = _clearedIcon;
+            if (IsCleared()) _icon.sprite = _clearedIcon;
 
-            _decorateHolder.SetActive(_levelData.Difficulty != EDifficulty.Normal && !_levelData.IsCleared);
+            _decorateHolder.SetActive(_levelData.Difficulty != EDifficulty.Normal && !IsCleared());
             _hardDecorate.SetActive(_levelData.Difficulty == EDifficulty.Hard);
             _superHardDecorate.SetActive(_levelData.Difficulty == EDifficulty.SuperHard);
 
             _indexText.text = _levelData.Index.ToString();
+        }
+
+        private bool IsCleared()
+        {
+            return _levelData.IsCleared;
+        }
+
+        private bool IsFirstLevel()
+        {
+            return _levelData.Index == 0;
+        }
+
+        private bool IsLastLevel()
+        {
+            return _levelData.Index == LevelManager.Instance.GetTotalLevelCount() - 1;
         }
 
         protected override void Awake()

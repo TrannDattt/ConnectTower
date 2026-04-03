@@ -34,11 +34,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1299499251447980915, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 170
+      value: 210
       objectReference: {fileID: 0}
     - target: {fileID: 1299499251447980915, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 170
+      value: 210
       objectReference: {fileID: 0}
     - target: {fileID: 1299499251447980915, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_LocalPosition.x
@@ -88,10 +88,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -0
       objectReference: {fileID: 0}
+    - target: {fileID: 1364672452820592930, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2024975903056803049, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_Name
       value: AddMoveButton Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 6145751505784053713, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7756754000062758886, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: f5bcf7d02045fc04b8aba8f7fcbf598d, type: 3}
     - target: {fileID: 8345617740352595274, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: _iconImage
       value: 

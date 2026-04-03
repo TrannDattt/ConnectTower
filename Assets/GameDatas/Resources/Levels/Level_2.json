@@ -1,0 +1,84 @@
+﻿{
+  "Index": 2,
+  "Difficulty": 0,
+  "MoveLimit": 16,
+  "BlockGroups": [
+    {
+      "Tag": "Helmets",
+      "BlockDatas": [
+        {
+          "Id": 0,
+          "IconId": "E_2_82"
+        },
+        {
+          "Id": 1,
+          "IconId": "E_4_55"
+        },
+        {
+          "Id": 2,
+          "IconId": "E_1_61"
+        },
+        {
+          "Id": 3,
+          "IconId": "E_4_55"
+        }
+      ]
+    },
+    {
+      "Tag": "Wheels",
+      "BlockDatas": [
+        {
+          "Id": 4,
+          "IconId": "A_3_69"
+        },
+        {
+          "Id": 5,
+          "IconId": "A_2_142"
+        },
+        {
+          "Id": 6,
+          "IconId": "D_4_22"
+        },
+        {
+          "Id": 7,
+          "IconId": "A_4_17"
+        }
+      ]
+    }
+  ],
+  "PillarDatas": [
+    {
+      "Id": 0,
+      "BlockIds": [
+        3,
+        1,
+        4,
+        0
+      ]
+    },
+    {
+      "Id": 1,
+      "BlockIds": [
+        7,
+        6,
+        5,
+        2
+      ]
+    },
+    {
+      "Id": 2,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    }
+  ],
+  "HiddenBlockDatas": {
+    "BlockIds": []
+  },
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [],
+  "CoinReward": 40
+}
