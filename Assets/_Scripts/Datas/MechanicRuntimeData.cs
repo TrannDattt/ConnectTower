@@ -1,6 +1,7 @@
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Interfaces;
+using Assets._Scripts.Managers;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -43,6 +44,15 @@ namespace Assets._Scripts.Datas
             _target = null;
             
             BlockMovementController.Instance.OnBlocksMoved.RemoveListener(OnCheckCondicion);
+
+            var mechanicSFX = Key switch
+            {
+                EMechanic.HiddenBlock => ESfx.HiddenBlockExit,
+                EMechanic.CoveredPillar => ESfx.CoveredPillarExit,
+                EMechanic.FrozenBlock => ESfx.FrozenBlockExit,
+                _ => ESfx.None
+            };
+            SoundManager.Instance.PlayRandomSFX(mechanicSFX);
         }
     }
 

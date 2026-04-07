@@ -10,17 +10,18 @@ namespace Assets._Scripts.Helpers
     {
         private const string AtlasBasePath = "Atlases";
         private const string AtlasName = "BlockIcon";
+        private const string IconsPath = "Icons";
         private readonly static Dictionary<int, Sprite> IconDict = new();
         private readonly static List<Sprite> IconList = new();
 
         private static Task _initTask;
         public static Task InitTask => _initTask ??= InitializeCacheAsync();
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void StartInitialization()
-        {
-            _ = InitTask;
-        }
+        // [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        // private static void StartInitialization()
+        // {
+        //     _ = InitTask;
+        // }
 
         public static async Task InitializeCacheAsync()
         {
@@ -67,13 +68,14 @@ namespace Assets._Scripts.Helpers
         public static Sprite GetIcon(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;
-            int hash = id.GetHashCode();
-            return IconDict.TryGetValue(hash, out var sprite) ? sprite : null;
+            return Resources.Load<Sprite>($"{IconsPath}/{id}");
+            // int hash = id.GetHashCode();
+            // return IconDict.TryGetValue(hash, out var sprite) ? sprite : null;
         }
 
         public static async Task<List<Sprite>> GetAllIconsAsync()
         {
-            await InitTask;
+            // await InitTask;
             return IconList;
         }
 

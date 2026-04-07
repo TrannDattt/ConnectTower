@@ -22,8 +22,6 @@ namespace Assets._Scripts.Visuals
 
             if (tab == null)
             {
-                //TODO: Do popup "Coming soon".
-                Debug.Log("Coming soon");
                 return;
             }
 

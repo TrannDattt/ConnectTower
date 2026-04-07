@@ -48,6 +48,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -64.17395
       objectReference: {fileID: 0}
+    - target: {fileID: 1469103601669177913, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3050399860729476351, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -63,6 +67,14 @@ PrefabInstance:
     - target: {fileID: 3050399860729476351, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -70
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225211348395788882, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
+      propertyPath: m_Text
+      value: Get 5 moves to keep playing
+      objectReference: {fileID: 0}
+    - target: {fileID: 3225211348395788882, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
+      propertyPath: m_FontData.m_FontSize
+      value: 36
       objectReference: {fileID: 0}
     - target: {fileID: 5297859060396046405, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
       propertyPath: m_Name

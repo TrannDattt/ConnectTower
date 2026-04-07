@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c23827125f547b4ea09e6f65db776f4, type: 3}
   m_Name: NoAds
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BundleSO
-  Id: 0
+  Id: 3
   Name: Remove Ads
   Icon: {fileID: 21300000, guid: 3f4f6e2aa80a47144afa2e84c4cc4a8a, type: 2}
   Reward:
@@ -21,6 +21,6 @@ MonoBehaviour:
     ExtraMoveAmount: 0
     ShuffleAmount: 0
     HintAmount: 0
-  Detail: 
+  Detail: Remove ads
   Price: 1000
   UseOnBought: 1

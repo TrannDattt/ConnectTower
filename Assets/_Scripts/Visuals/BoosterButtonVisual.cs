@@ -53,7 +53,7 @@ namespace Assets._Scripts.Visuals
             }
         }
 
-        private Vector3 _originalPos, _originalScale;
+        private Vector3 _originalIconPos, _originalIconScale;
         public Tween DoOnUseBoosterAnim(Vector3 gatherPoint, System.Action onReachedCenter)
         {
             float duration = .5f;
@@ -63,18 +63,18 @@ namespace Assets._Scripts.Visuals
             _iconImage.transform.DOKill();
             Sequence sequence = DOTween.Sequence();
             sequence.Append(_iconImage.transform.DOMove(gatherPoint, duration).SetEase(Ease.OutSine));
-            sequence.Join(_iconImage.transform.DOScale(_originalScale * scaleTime, duration).SetEase(Ease.OutSine));
+            sequence.Join(_iconImage.transform.DOScale(_originalIconScale * scaleTime, duration).SetEase(Ease.OutSine));
             sequence.AppendInterval(stayDuration);
             sequence.OnComplete(() => 
             {
-                _iconImage.transform.position = _originalPos;
-                _iconImage.transform.localScale = _originalScale;
+                _iconImage.transform.position = _originalIconPos;
+                _iconImage.transform.localScale = _originalIconScale;
                 onReachedCenter?.Invoke();
             });
             sequence.OnKill(() =>
             {
-                _iconImage.transform.position = _originalPos;
-                _iconImage.transform.localScale = _originalScale;
+                _iconImage.transform.position = _originalIconPos;
+                _iconImage.transform.localScale = _originalIconScale;
             });
             
             return sequence;
@@ -89,8 +89,8 @@ namespace Assets._Scripts.Visuals
         {
             base.Start();
 
-            _originalPos = _iconImage.transform.position;
-            _originalScale = _iconImage.transform.localScale;
+            _originalIconPos = _iconImage.transform.position;
+            _originalIconScale = _iconImage.transform.localScale;
         }
     }
 }

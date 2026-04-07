@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets._Scripts.Enums;
@@ -31,24 +32,37 @@ namespace Assets._Scripts.Managers
         }
 
         public void ChangeScene(EGameScene scene,  UnityAction onUnload = null, UnityAction onLoad = null)
-        // public void ChangeScene(EGameScene scene,  UnityAction<Scene> onUnload = null, UnityAction<Scene> onLoad = null)
+        {
+            EBgm bgm = scene switch
+            {
+                EGameScene.Menu => EBgm.MenuMusic,
+                EGameScene.Ingame => EBgm.IngameMusic,
+                _ => EBgm.None
+            };
+            onLoad += () => SoundManager.Instance.PlayBGM(bgm);
+            StartCoroutine(DoChangeScene(scene, onUnload, onLoad));
+        }
+
+        private IEnumerator DoChangeScene(EGameScene scene, UnityAction onUnload = null, UnityAction onLoad = null)
         {
             if (!_sceneDict.TryGetValue(scene, out var toLoad))
             {
                 Debug.Log($"Scene {scene} does not exist");
-                return;
+                yield break;
             }
 
-            if (_activeScene == toLoad) return;
+            if (_activeScene == toLoad) yield break;
+
+            yield return PopupManager.Instance.ShowPopup(EPopup.Loading);
 
             TryUnload(_activeScene);
             onUnload?.Invoke();
-            // await SceneManager.LoadSceneAsync(toLoad.SceneName);
             TryLoad(toLoad);
             _activeScene = toLoad;
+
+            yield return new WaitForSeconds(2f);
+            yield return PopupManager.Instance.HidePopup(EPopup.Loading);
             onLoad?.Invoke();
-            // SceneManager.sceneUnloaded += onUnload;
-            // SceneManager.sceneLoaded += onLoad;
         }
 
         private void UnloadAll()

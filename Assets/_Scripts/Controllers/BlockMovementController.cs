@@ -6,6 +6,8 @@ using Assets._Scripts.Patterns;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
+using Assets._Scripts.Managers;
+using Assets._Scripts.Enums;
 
 namespace Assets._Scripts.Controllers
 {
@@ -19,6 +21,11 @@ namespace Assets._Scripts.Controllers
         private float _blockHeight => GameObjectDataHelper.BlockHeight;
 
         //TODO: Handle logic when user do multiple interact at once
+
+        public void Init()
+        {
+            _selectedBlocks.Clear();
+        }
 
         public Vector3 GetBlockPosition(PillarController pillar, int index)
         {
@@ -126,6 +133,7 @@ namespace Assets._Scripts.Controllers
             toPillar.AddBlocksToTop(blocks);
             toPillar.TryGetTopBlocks(out var matched, ignoreLock: true);
 
+            SoundManager.Instance.PlayRandomSFX(ESfx.BlockMoved);
             var moveSequence = DoMoveBlocksAnim(blocks, fromPillar, toPillar);
             
             moveSequence.OnComplete(() =>
@@ -133,10 +141,12 @@ namespace Assets._Scripts.Controllers
                 Sequence feedbackSequence = DOTween.Sequence();
                 if (matched.Count > blocks.Count)
                 {
+                    SoundManager.Instance.PlayChainedSFXs(ESfx.BlockMatched, matched.Count);
                     feedbackSequence.Append(DoMatchAnim(matched));
                 }
                 else if (blocks.Count < toPillar.GetBlockCount())
                 {
+                    SoundManager.Instance.PlayRandomSFX(ESfx.BlockNotMatched);
                     feedbackSequence.Append(DoNotMatchAnim(matched));
                 }
                 

@@ -4,6 +4,6 @@ namespace Assets._Scripts.Enums
     {
         Home,
         Shop,
-        Scoreboard,
+        Ranking,
     }
 }

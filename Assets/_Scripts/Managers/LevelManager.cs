@@ -14,12 +14,12 @@ namespace Assets._Scripts.Managers
 
         public void SetPlayingLevel(LevelRuntimeData levelData)
         {
-            PlayingLevel = levelData;
+            PlayingLevel = new(levelData);
         }
 
         public LevelRuntimeData GetLatestNotClearedLevel()
         {
-            return _levels.LastOrDefault(l => !l.IsCleared);
+            return _levels.FirstOrDefault(l => !l.IsCleared);
         }
 
         public List<LevelRuntimeData> GetAllLevels()

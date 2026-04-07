@@ -7,7 +7,6 @@ namespace Assets._Scripts.Visuals
 {
     public class ProgressBarVisual  : MonoBehaviour
     {
-        [SerializeField] private Image _backgroundImage;
         [SerializeField] private Slider _slider;
         [SerializeField] private Text _progressText;
 

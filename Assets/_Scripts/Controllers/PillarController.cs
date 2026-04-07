@@ -4,6 +4,7 @@ using System.Linq;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Interfaces;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -129,6 +130,12 @@ namespace Assets._Scripts.Controllers
             }
         }
 
+        public void RemoveAllBlocks()
+        {
+            BlockContainer.DetachChildren();
+            _blocks = new() {null, null, null, null};
+        }
+
         public bool TryRemoveTopBlocks(out List<BlockController> result, bool skipMechanic = false)
         {
             if (TryGetTopBlocks(out result, skipMechanic))
@@ -186,7 +193,6 @@ namespace Assets._Scripts.Controllers
                 Debug.Log("Locked");
                 _isFull = true;
                 OnFullMatched?.Invoke(_blocks[0].Tag);
-                //TODO: Do VFX
             }
         }
 #endregion
@@ -211,6 +217,29 @@ namespace Assets._Scripts.Controllers
             }
         }
 
+        public IEnumerator DoSpawnBlockAnim()
+        {
+            if (!(this as IMechanicHandler).IsInteractable()) yield break;
+
+            float fallDuration = .3f;
+            float offsetY = 4.2f;
+
+            var activeBlocks = GetAllBlocks();
+            if (activeBlocks.Count == 0) yield break;
+
+            var sequence = DOTween.Sequence();
+            for (int i = 0; i < activeBlocks.Count; i++)
+            {
+                var block = activeBlocks.ElementAt(i);
+                var targetPos = block.transform.position;
+                block.gameObject.SetActive(true);
+                block.transform.position = targetPos + Vector3.up * offsetY;
+                sequence.Insert(i * .1f, block.transform.DOMove(targetPos, fallDuration).SetEase(Ease.InQuad));
+            }
+
+            yield return sequence.WaitForCompletion();
+        }
+
         void Awake()
         {
             MechanicVisual = GetComponent<MechanicVisualControl>();
@@ -218,7 +247,6 @@ namespace Assets._Scripts.Controllers
 
         void Start()
         {
-            BlockMovementController.Instance.OnBlocksMoved.AddListener((_) => CheckFullMatch());
         }
 
         void OnMouseDown()
@@ -228,6 +256,12 @@ namespace Assets._Scripts.Controllers
             {
                 OnPillarClicked?.Invoke(this);
             }
+        }
+
+        void OnDisable()
+        {
+            OnPillarClicked.RemoveAllListeners();
+            OnFullMatched.RemoveAllListeners();
         }
     }
 }

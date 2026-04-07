@@ -27,13 +27,15 @@ namespace Assets._Scripts.Visuals
         private static int _lastCount;
         private static bool _isFirstAnim = false;
 
+        public void UpdateVisual() => UpdateVisual(UserManager.CurUser.CoinCount - _lastCount);
+
         public void UpdateVisual(int amount)
         {
-            Debug.Log($"Update coin visual");
+            // Debug.Log($"Update coin visual");
             int to = UserManager.CurUser.CoinCount;
             int from = to - amount;
             bool doAnim = (amount != 0) && _isFirstAnim;
-            Debug.Log($"Update coin visual {(doAnim ? "with" : "without")} anim");
+            // Debug.Log($"Update coin visual {(doAnim ? "with" : "without")} anim");
             DoGainCoinAnim(from, to, doAnim ? 1f : 0);
         }
 
@@ -46,6 +48,8 @@ namespace Assets._Scripts.Visuals
                 _coinCountText.text = to.ToString();
                 return;
             }
+
+            SoundManager.Instance.PlayRandomSFX(ESfx.CoinGained);
 
             float coinAnimDelay = .05f;
             float coinFlyDuration = duration * 0.7f;
@@ -97,10 +101,10 @@ namespace Assets._Scripts.Visuals
             }
         }
 
-        void OnEnable()
-        {
-            UpdateVisual(UserManager.CurUser.CoinCount - _lastCount);
-        }
+        // void OnEnable()
+        // {
+        //     UpdateVisual(UserManager.CurUser.CoinCount - _lastCount);
+        // }
 
         private void InitPool()
         {
@@ -130,7 +134,7 @@ namespace Assets._Scripts.Visuals
                 if (activeScene == EGameScene.Menu)
                     MainMenuVisualControl.Instance.OpenShop();
                 else if (activeScene == EGameScene.Ingame)
-                    IngameVisualController.Instance.OpenShop();
+                    StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Shop));
             });
 
             InitPool();

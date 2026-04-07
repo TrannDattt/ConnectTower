@@ -10,10 +10,8 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private CoinDisplayVisual _coinDisplay;
         [SerializeField] private HeartDisplayVisual _heartDisplay;
         [SerializeField] private GameButtonVisual _settingButton;
-        [SerializeField] private SettingPopupVisual _settingPopup;
         [SerializeField] private GameButtonVisual _noAdsButton;
-        [SerializeField] private NoAdsPopupVisual _noAdsPopup;
-        [SerializeField] private GameButtonVisual _playButton;
+        [SerializeField] private LevelPlayButton _playButton;
         [SerializeField] private LevelHolderVisual _levelHolder;
 
         public void InitVisual()
@@ -21,18 +19,21 @@ namespace Assets._Scripts.Controllers
             //TODO: Fetch and show heart amount and time counter
             var allLevels = LevelManager.Instance.GetAllLevels();
             _levelHolder.InitVisual(allLevels);
+            _coinDisplay.UpdateVisual();
+            _playButton.UpdateVisual();
         }
 
         void Start()
         {
             _settingButton.OnClicked.AddListener(() =>
             {
-                _settingPopup.Show();
+                StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Setting));
             });
 
             _noAdsButton.OnClicked.AddListener(() =>
             {
-                _noAdsPopup.ShowBundle(BundleManager.Instance.GetNoAdsBundle());
+                PopupManager.Instance.ShowBundlePopup(EPopup.NoAds, BundleManager.Instance.GetNoAdsBundle());
+                // _noAdsPopup.ShowBundle(BundleManager.Instance.GetNoAdsBundle());
             });
 
             _playButton.OnClicked.AddListener(() => 

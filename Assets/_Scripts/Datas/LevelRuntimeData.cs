@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
+using UnityEngine;
 
 namespace Assets._Scripts.Datas
 {

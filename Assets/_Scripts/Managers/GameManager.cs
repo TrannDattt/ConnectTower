@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Datas;
@@ -22,21 +23,21 @@ namespace Assets._Scripts.Managers
         private List<PillarController> _pillars = new();
 
         public bool IsPlayTest {get; private set;} = false;
+        public bool IsStartNew { get; set; } = false;
 
-        public void GoToMenu()
+        private UnityAction _onGoToMenuCallback;
+
+        public void GoToMenu(UnityAction onLoaded = null)
         {
-            // GameSceneManager.Instance.ChangeScene(EGameScene.Menu, onLoad: () =>
-            // {
-            //     MainMenuVisualControl.Instance.ChangeTab(EMenuTab.Home);
-            // });
-                
-            _gameSM.ChangeState(EGameState.Menu);
+            if (CurState == EGameState.Pause) BoardController.Instance.ClearBoard();
+            _onGoToMenuCallback = onLoaded;
+            _gameSM.ChangeState(EGameState.None);
         }
 
         public void PauseGame()
         {
-            if (_gameSM.CurrentState.Key != EGameState.Pause)
-                _lastState = _gameSM.CurrentState.Key;
+            if (CurState != EGameState.Pause)
+                _lastState = CurState;
             _gameSM.ChangeState(EGameState.Pause);
         }
 
@@ -72,42 +73,10 @@ namespace Assets._Scripts.Managers
                 IngameVisualController.Instance.UpdateMoveCount(CurrentLevelData.MoveCount);
         }
 
-        private void OnBlocksMoved(bool movedByPlayer)
-        {
-            if (movedByPlayer)
-                ChangeMoveCount(-1);
-
-            //TODO: Events order is kinda bựa
-            CheckFinishLevel();
-        }
-
         private void OnPillarFullMatched(string tag)
         {
             CurrentLevelData.IncreaseMatchedPillars();
             IngameVisualController.Instance.UpdateProgressBar(CurrentLevelData.MatchedGroups, CurrentLevelData.TotalGroups);
-        }
-
-        private void CheckFinishLevel()
-        {
-            Debug.Log($"Check finish level");
-            if (CurrentLevelData.MatchedGroups == CurrentLevelData.TotalGroups)
-            {
-                ClearedLevel();
-                return;
-            }
-
-            if (CurrentLevelData.MoveCount <= 0)
-            {
-                if (_gameSM.TryGetState(EGameState.Revive, out var reviveState) && !reviveState.IsFinished)
-                {
-                    _gameSM.ChangeState(EGameState.Revive);
-                    Debug.Log("Waiting for reviving");
-                }
-                else
-                {
-                    FailedLevel();
-                }
-            }
         }
 
         public void StartLevel(LevelRuntimeData levelData, bool isPlayTest = false)
@@ -120,10 +89,13 @@ namespace Assets._Scripts.Managers
             }
             Debug.Log($"Start level {levelData.Index}");
             LevelManager.Instance.SetPlayingLevel(levelData);
+            BlockMovementController.Instance.Init();
+            // BoardController.Instance.ClearBoard();
             BoardController.Instance.InitBoard(CurrentLevelData);
             _pillars = BoardController.Instance.GetAllPillars();
             BoosterController.Instance.InitData();
             IngameVisualController.Instance.InitVisual(CurrentLevelData);
+            IsStartNew = true;
             
             _gameSM.ChangeState(EGameState.Playing);
         }
@@ -132,7 +104,7 @@ namespace Assets._Scripts.Managers
         {
             base.Awake();
 
-            MenuState menuState = new(EGameState.Menu);
+            MenuState menuState = new(EGameState.None);
             PlayingState playingState = new(EGameState.Playing);
             PauseState pauseState = new(EGameState.Pause);
             ReviveState reviveState = new(EGameState.Revive);
@@ -140,7 +112,7 @@ namespace Assets._Scripts.Managers
             LoseState loseState = new(EGameState.Lose);
 
             _gameSM.AddStates(menuState, playingState, pauseState, reviveState, winState, loseState);
-            _gameSM.SetDefaultState(EGameState.Menu);
+            _gameSM.SetDefaultState(EGameState.None);
             _gameSM.ChangeToDefault();
         }
 
@@ -157,8 +129,15 @@ namespace Assets._Scripts.Managers
             _gameSM.DoState();
         }
 
+        public abstract class GameState : AState<EGameState>
+        {
+            protected GameState(EGameState key) : base(key)
+            {
+            }
+        }
+
         #region Menu State
-        public class MenuState : AState<EGameState>
+        public class MenuState : GameState
         {
             public MenuState(EGameState key) : base(key)
             {
@@ -170,47 +149,233 @@ namespace Assets._Scripts.Managers
                 
                 GameSceneManager.Instance.ChangeScene(EGameScene.Menu, onLoad: () =>
                 {
+                    MainMenuVisualControl.Instance.InitVisual();
                     MainMenuVisualControl.Instance.ChangeTab(EMenuTab.Home);
+
+                    Instance._onGoToMenuCallback?.Invoke();
+                    Instance._onGoToMenuCallback = null;
                 });
             }
         }
         #endregion
 
         #region Playing State
-        public class PlayingState : AState<EGameState>
+        public class PlayingState : GameState
         {
+            private enum EPlayingSubState
+            {
+                Opening,
+                WhilePlaying,
+                Closing,
+            }
+
+            private LevelRuntimeData CurLevel => LevelManager.PlayingLevel;
+            private StateMachine<EPlayingSubState> _playingSM = new();
+
             public PlayingState(EGameState key) : base(key)
             {
+                var openingState = new OpeningState(EPlayingSubState.Opening);
+                var whilePlayingState = new WhilePlayingState(EPlayingSubState.WhilePlaying);
+                var closingState = new ClosingState(EPlayingSubState.Closing);
+
+                _playingSM.AddStates(openingState, whilePlayingState, closingState);
+                _playingSM.SetDefaultState(EPlayingSubState.WhilePlaying);
+            }
+
+            public override void Do()
+            {
+                base.Do();
+                _playingSM.DoState();
             }
 
             public override void Enter()
             {
                 base.Enter();
 
-                BlockMovementController.Instance.OnBlocksMoved.AddListener(Instance.OnBlocksMoved);
-                foreach (var pillar in Instance._pillars)
-                {
-                    pillar.OnPillarClicked.AddListener(BlockMovementController.Instance.OnPillarClicked);
-                    pillar.OnFullMatched.AddListener(Instance.OnPillarFullMatched);
-                }
+                _playingSM.ChangeState(EPlayingSubState.Opening);
             }
 
             public override void Exit()
             {
                 base.Exit();
 
-                BlockMovementController.Instance.OnBlocksMoved.RemoveListener(Instance.OnBlocksMoved);
-                foreach (var pillar in Instance._pillars)
+                _playingSM.CurrentState?.Exit();
+            }
+
+            private class PlayingSubState : AState<EPlayingSubState>
+            {
+                public PlayingSubState(EPlayingSubState key) : base(key)
                 {
-                    pillar.OnPillarClicked.RemoveListener(BlockMovementController.Instance.OnPillarClicked);
-                    pillar.OnFullMatched.RemoveListener(Instance.OnPillarFullMatched);
+                }
+            }
+
+            private class OpeningState : PlayingSubState
+            {
+                private Coroutine _coroutine;
+
+                public OpeningState(EPlayingSubState key) : base(key)
+                {
+                }
+
+                public override void Enter()
+                {
+                    base.Enter();
+
+                    if (Instance.IsStartNew)
+                    {
+                        Instance.IsStartNew = false;
+                        _coroutine = Instance.StartCoroutine(DoOpeningAnim());
+                    }
+                    else
+                    {
+                        FinishState();
+                    }
+                }
+
+                public override void Exit()
+                {
+                    base.Exit();
+                    if (_coroutine != null) Instance.StopCoroutine(_coroutine);
+                }
+
+                private IEnumerator DoOpeningAnim()
+                {
+                    IngameVisualController.Instance.PrepareIntroducingAnim();
+
+                    yield return BoardController.Instance.DoSpawnBlockAnim();
+                    yield return IngameVisualController.Instance.DoLevelIntroducingAnim();
+                    FinishState();
+                    Debug.Log($"Finished state {Key}");
+                }
+
+                public override EPlayingSubState GetNextState()
+                {
+                    if (IsFinished) return EPlayingSubState.WhilePlaying;
+
+                    return base.GetNextState();
+                }
+            }
+
+            private class WhilePlayingState : PlayingSubState
+            {
+                public WhilePlayingState(EPlayingSubState key) : base(key)
+                {
+                }
+
+                public override void Enter()
+                {
+                    base.Enter();
+
+                    foreach (var pillar in Instance._pillars)
+                    {
+                        pillar.OnPillarClicked.AddListener(BlockMovementController.Instance.OnPillarClicked);
+                        pillar.OnFullMatched.AddListener(Instance.OnPillarFullMatched);
+                        // BlockMovementController.Instance.OnBlocksMoved.AddListener((_) => pillar.CheckFullMatch());
+                    }
+                    BlockMovementController.Instance.OnBlocksMoved.AddListener(OnBlocksMoved);
+                }
+
+                public override void Exit()
+                {
+                    base.Exit();
+
+                    BlockMovementController.Instance.OnBlocksMoved.RemoveListener(OnBlocksMoved);
+                    foreach (var pillar in Instance._pillars)
+                    {
+                        pillar.OnPillarClicked.RemoveListener(BlockMovementController.Instance.OnPillarClicked);
+                        pillar.OnFullMatched.RemoveListener(Instance.OnPillarFullMatched);
+                    }
+                }
+
+                public override EPlayingSubState GetNextState()
+                {
+                    if (CheckFinsihLevel()) return EPlayingSubState.Closing;
+                    return base.GetNextState();
+                }
+
+                private void OnBlocksMoved(bool byPlayer)
+                {
+                    if (byPlayer) Instance.ChangeMoveCount(-1);
+                    foreach (var pillar in Instance._pillars) pillar.CheckFullMatch();
+                    CheckFinsihLevel();
+                }
+
+                private bool CheckFinsihLevel()
+                {
+                    if (Instance.CurrentLevelData.MatchedGroups == Instance.CurrentLevelData.TotalGroups)
+                    {
+                        return true;
+                    }
+
+                    if (Instance.CurrentLevelData.MoveCount <= 0)
+                    {
+                        if (Instance._gameSM.TryGetState(EGameState.Revive, out var reviveState) && !reviveState.IsFinished)
+                        {
+                            Instance._gameSM.ChangeState(EGameState.Revive);
+                            Debug.Log("Waiting for reviving");
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+            }
+
+            private class ClosingState : PlayingSubState
+            {
+                private Coroutine _coroutine;
+
+                public ClosingState(EPlayingSubState key) : base(key)
+                {
+                }
+
+                public override void Enter()
+                {
+                    base.Enter();
+
+                    _coroutine = Instance.StartCoroutine(WaitAnimFinish());
+                }
+
+                public override void Exit()
+                {
+                    base.Exit();
+                    if (_coroutine != null) Instance.StopCoroutine(_coroutine);
+                }
+
+                private IEnumerator WaitAnimFinish()
+                {
+                    yield return new WaitForSeconds(2f);
+                    FinishLevel();
+                }
+
+                private void FinishLevel()
+                {
+                    BoardController.Instance.ClearBoard();
+                    if (Instance.CurrentLevelData.MatchedGroups == Instance.CurrentLevelData.TotalGroups)
+                    {
+                        Debug.Log("Level Cleared");
+                        Instance.ClearedLevel();
+                        return;
+                    }
+
+                    if (Instance.CurrentLevelData.MoveCount <= 0)
+                    {
+                        Debug.Log("Level Failed");
+                        Instance.FailedLevel();
+                    }
+
+                    Debug.Log("HUH???");
                 }
             }
         }
         #endregion
 
         #region Pause State
-        public class PauseState : AState<EGameState>
+        public class PauseState : GameState
         {
             public PauseState(EGameState key) : base(key)
             {
@@ -231,7 +396,7 @@ namespace Assets._Scripts.Managers
         #endregion
 
         #region Revive State
-        public class ReviveState : AState<EGameState>
+        public class ReviveState : GameState
         {
             public ReviveState(EGameState key) : base(key)
             {
@@ -240,13 +405,13 @@ namespace Assets._Scripts.Managers
             public override void Enter()
             {
                 base.Enter();
-                IngameVisualController.Instance.ShowRevivePopup();
+                PopupManager.Instance.ShowBundlePopup(EPopup.Revive, BundleManager.Instance.GetReviveBundle());
             }
         }
         #endregion
 
         #region Win State
-        public class WinState : AState<EGameState>
+        public class WinState : GameState
         {
             public WinState(EGameState key) : base(key)
             {
@@ -256,14 +421,14 @@ namespace Assets._Scripts.Managers
             {
                 base.Enter();
 
-                IngameVisualController.Instance.ShowFinishedPopup(!Instance.CurrentLevelData.IsCleared);
+                Instance.StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Win));
                 Instance.CurrentLevelData.FinishLevel();
             }
         }
         #endregion
 
         #region Lose State
-        public class LoseState : AState<EGameState>
+        public class LoseState : GameState
         {
             public LoseState(EGameState key) : base(key)
             {
@@ -274,7 +439,7 @@ namespace Assets._Scripts.Managers
                 base.Enter();
 
                 //TODO: Logic reduce heart if not clear before
-                IngameVisualController.Instance.ShowFailedPopup();
+                Instance.StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Lose));
             }
         }
         #endregion

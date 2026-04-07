@@ -2,7 +2,7 @@ namespace Assets._Scripts.Enums
 {
     public enum EGameState
     {
-        Menu,
+        None,
         Playing,
         Pause,
         Win,

@@ -3,12 +3,6 @@ using UnityEngine.Events;
 using UnityEngine;
 using Assets._Scripts.Enums;
 
-
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 namespace Assets._Scripts.Managers
 {
     public static class UserManager
@@ -19,13 +13,15 @@ namespace Assets._Scripts.Managers
 
         //--------------------
         //TODO: Load user
-#if UNITY_EDITOR
-        [InitializeOnLoadMethod]
-        private static void Awake()
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void Initialize()
         {
-            CurUser = new();
+            if (CurUser == null)
+            {
+                CurUser = new UserRuntimeData();
+                Debug.Log("UserManager Initialized");
+            }
         }
-#endif
         //----------------------
 
 #region COIN

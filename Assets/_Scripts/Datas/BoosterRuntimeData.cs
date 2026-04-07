@@ -220,11 +220,17 @@ namespace Assets._Scripts.Datas
 
         public override void OnUsed()
         {
-            var allBlocks = BoardController.Instance.GetAllBlocks();
-            _randomBlock = allBlocks[Random.Range(0, allBlocks.Count)];
-            allBlocks.Remove(_randomBlock);
+            var availablePillars = BoardController.Instance.GetAllPillars().Where(p => !p.IsLocked());
+            List<BlockController> avilableBlocks = new();
+            foreach(var pillar in availablePillars)
+            {
+                avilableBlocks.AddRange(pillar.GetAllBlocks());
+            }
+            
+            _randomBlock = avilableBlocks[Random.Range(0, avilableBlocks.Count)];
+            avilableBlocks.Remove(_randomBlock);
 
-            var sameTag = allBlocks.Where(b => b.IsSameTag(_randomBlock)).ToArray();
+            var sameTag = avilableBlocks.Where(b => b.IsSameTag(_randomBlock)).ToArray();
             _sameBlock = sameTag[Random.Range(0, sameTag.Length)];
 
             Debug.Log("Used Hint");

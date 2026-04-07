@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
@@ -8,7 +6,6 @@ using Assets._Scripts.Patterns;
 using Assets._Scripts.Visuals;
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Assets._Scripts.Controllers
 {
@@ -19,16 +16,10 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private DifficultyTagVisual _difficultyTag;
         [SerializeField] private LevelIndexVisual _levelIndex;
         [SerializeField] private CoinDisplayVisual _coinDisplay;
-        [SerializeField] private ShopVisualControl _shopPanel;
         [SerializeField] private GameButtonVisual _settingButton;
-        [SerializeField] private SettingPopupVisual _settingPopup;
         [SerializeField] private BoosterButtonVisual _extraMoveButton;
         [SerializeField] private BoosterButtonVisual _shuffleButton;
         [SerializeField] private BoosterButtonVisual _hintButton;
-        [SerializeField] private BoosterPurchasePopupVisual _boosterPurchasePopup;
-        [SerializeField] private RevivePopupVisual _revivePopup;
-        [SerializeField] private LevelFinishedVisual _levelFinishedPopup;
-        [SerializeField] private LevelFailedVisual _levelFailedPopup;
         [SerializeField] private Transform _centerPoint;
 
         public void InitVisual(LevelRuntimeData data)
@@ -36,6 +27,7 @@ namespace Assets._Scripts.Controllers
             _moveCount.UpdateMoveCount(data.MoveCount);
             _progressBar.UpdateProgress(0, data.TotalGroups);
             _difficultyTag.SetDifficulty(data.Difficulty);
+            _coinDisplay.UpdateVisual();
             _levelIndex.SetLevelIndex(data.Index);
 
             //TODO: Check if booster is unlocked
@@ -46,9 +38,19 @@ namespace Assets._Scripts.Controllers
             _extraMoveButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.ExtraMove));
             _shuffleButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Shuffle));
             _hintButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Hint));
+        }
 
-            _levelFinishedPopup.SetData(data);
-            _levelFailedPopup.SetData(data);
+        public void PrepareIntroducingAnim()
+        {
+            _levelIndex.PrepareAnim();
+            _difficultyTag.PrepareAnim();
+        }
+
+        public IEnumerator DoLevelIntroducingAnim()
+        {
+            yield return _levelIndex.DoLevelIndexAnim(_centerPoint.position);
+            if (LevelManager.PlayingLevel.Difficulty != EDifficulty.Normal)
+                yield return _difficultyTag.DoDifficultyAnim(_centerPoint.position);
         }
 
         public Tween UpdateMoveCount(int count, bool doAnim = false)
@@ -61,28 +63,11 @@ namespace Assets._Scripts.Controllers
             _progressBar.UpdateProgress(current, target);
         }
 
-        public void ShowRevivePopup()
-        {
-            _revivePopup.ShowBundle(BundleManager.Instance.GetReviveBundle());
-        }
-
-        public void ShowFinishedPopup(bool firstClear)
-        {
-            _levelFinishedPopup.Show();
-        }
-
-        public void ShowFailedPopup()
-        {
-            _levelFailedPopup.Show();
-        }
-
-        public void OpenShop() => _shopPanel.Show();
-
         void Start()
         {
             _settingButton.OnClicked.AddListener(() =>
             {
-                _settingPopup.Show();
+                StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Setting));
             });
 
             UserManager.OnBoosterChanged.AddListener((t, a) =>
@@ -96,58 +81,80 @@ namespace Assets._Scripts.Controllers
                 };
                 if (toUpdate) toUpdate.SetCount(curAmount);
             });
+
+            bool inExtraMove = false;
             _extraMoveButton.OnClicked.AddListener(() => 
             {
                 var useCount = BoosterController.Instance.GetUseCount(EBooster.ExtraMove);
                 if (_extraMoveButton.IsLocked) _extraMoveButton.ShowPopupText();
                 else if (useCount > 0)
                 {
-                    _extraMoveButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
+                    if (!inExtraMove)
                     {
-                        BoosterController.Instance.UseBooster(EBooster.ExtraMove);
-                        _extraMoveButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.ExtraMove));
-                    });
+                        inExtraMove = true;
+                        _extraMoveButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
+                        {
+                            BoosterController.Instance.UseBooster(EBooster.ExtraMove);
+                            _extraMoveButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.ExtraMove));
+                            inExtraMove = false;
+                        });
+                    }
                 }
                 else 
                 {
-                    _boosterPurchasePopup.ShowBundle(BundleManager.Instance.GetIngameBoosterBundle(EBooster.ExtraMove));
+                    PopupManager.Instance.ShowBundlePopup(EPopup.Booster, BundleManager.Instance.GetIngameBoosterBundle(EBooster.ExtraMove));
                     Debug.Log("Extra Move is out of use");
                 }
 
             });
+
+            bool inShuffle = false;
             _shuffleButton.OnClicked.AddListener(() =>
             {
                 var useCount = BoosterController.Instance.GetUseCount(EBooster.Shuffle);
                 if (_shuffleButton.IsLocked) _shuffleButton.ShowPopupText();
                 else if (useCount > 0) 
                 {
-                    _shuffleButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
+                    if (!inShuffle)
                     {
-                        BoosterController.Instance.UseBooster(EBooster.Shuffle);
-                        _shuffleButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Shuffle));
-                    });
+                        inShuffle = true;
+                        
+                        _shuffleButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
+                        {
+                            BoosterController.Instance.UseBooster(EBooster.Shuffle);
+                            _shuffleButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Shuffle));
+                            inShuffle = false;
+                        });
+                    }
                 }
                 else 
-                {
-                    _boosterPurchasePopup.ShowBundle(BundleManager.Instance.GetIngameBoosterBundle(EBooster.Shuffle));
+                {                    
+                    PopupManager.Instance.ShowBundlePopup(EPopup.Booster, BundleManager.Instance.GetIngameBoosterBundle(EBooster.Shuffle));
                     Debug.Log("Shuffle is out of use");
                 }
             });
+
+            bool inHint = false;
             _hintButton.OnClicked.AddListener(() =>
             {
                 var useCount = BoosterController.Instance.GetUseCount(EBooster.Hint);
                 if (_hintButton.IsLocked) _hintButton.ShowPopupText();
                 else if (useCount > 0) 
                 {
-                    _hintButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
+                    if (!inHint)
                     {
-                        BoosterController.Instance.UseBooster(EBooster.Hint);
-                        _hintButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Hint));
-                    });
+                        inHint = true;
+                        _hintButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
+                        {
+                            BoosterController.Instance.UseBooster(EBooster.Hint);
+                            _hintButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Hint));
+                            inHint = false;
+                        });
+                    }
                 }
                 else 
                 {
-                    _boosterPurchasePopup.ShowBundle(BundleManager.Instance.GetIngameBoosterBundle(EBooster.Hint));
+                    PopupManager.Instance.ShowBundlePopup(EPopup.Booster, BundleManager.Instance.GetIngameBoosterBundle(EBooster.Hint));
                     Debug.Log("Hint is out of use");
                 }
             });

@@ -85,8 +85,17 @@ namespace Assets._Scripts.Controllers
             };
 
             if (data == null) return;
-
             _isUsingBooster = true;
+
+            var boosterSFX = type switch
+            {
+                EBooster.ExtraMove => ESfx.ExtraMove,
+                EBooster.Shuffle => ESfx.Shuffle,
+                EBooster.Hint => ESfx.Hint,
+                _ => ESfx.None
+            };
+            SoundManager.Instance.PlayRandomSFX(boosterSFX);
+
             data.Do();
             var anim = data.DoMechanicAnim();
             if (anim != null)

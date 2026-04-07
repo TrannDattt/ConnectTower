@@ -29,5 +29,7 @@ namespace Assets._Scripts.Patterns
         {
             IsFinished = true;
         }
+
+        public virtual T GetNextState() => Key;
     }
 }

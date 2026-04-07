@@ -4,6 +4,7 @@ using System.Linq;
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
+using Assets._Scripts.Managers;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,6 +24,8 @@ namespace Assets._Scripts.Visuals
 
         public void DoLockAnim(string tag)
         {
+            SoundManager.Instance.PlayRandomSFX(ESfx.FullMatched);
+
             float animDuration = .5f;
             Vector3 initialScale = _border.transform.localScale;
             var color = GetRandomColor();
@@ -62,6 +65,11 @@ namespace Assets._Scripts.Visuals
                     visual.ChangeColor(color);
                 }
             }
+        }
+
+        public void ResetVisual()
+        {
+            _lockHolder.SetActive(false);
         }
 
         void Awake()

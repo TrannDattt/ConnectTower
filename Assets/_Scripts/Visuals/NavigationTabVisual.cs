@@ -30,7 +30,7 @@ namespace Assets._Scripts.Visuals
             {
                 _name.gameObject.SetActive(true);
             });
-            Debug.Log($"Tab {name} selected");
+            // Debug.Log($"Tab {name} selected");
         }
 
         public void DoOnDeselectedAnim()
@@ -41,7 +41,7 @@ namespace Assets._Scripts.Visuals
             _iconRt.DOKill();
             _name.gameObject.SetActive(false);
             _iconRt.DOAnchorPos(_originPos, _animDuration).SetEase(Ease.InOutQuad);
-            Debug.Log($"Tab {name} deselected");
+            // Debug.Log($"Tab {name} deselected");
         }
 
         protected override void Awake()

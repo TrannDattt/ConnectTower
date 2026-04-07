@@ -48,6 +48,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1469103601669177913, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2122722087099676311, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
       propertyPath: m_SizeDelta.x
       value: -92.6026
@@ -64,6 +68,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5951997434029985225, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4f4855cf84a43b141b69fb5066f43ca3, type: 3}
     - target: {fileID: 6679343626342767466, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -166,7 +174,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8738072841226589533, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -287
+      value: 411
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 884736722936586005, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
@@ -272,7 +280,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: f5bcf7d02045fc04b8aba8f7fcbf598d, type: 3}
     m_FontSize: 96
     m_FontStyle: 0
     m_BestFit: 0
@@ -311,19 +319,19 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 86
+    m_Font: {fileID: 12800000, guid: f5bcf7d02045fc04b8aba8f7fcbf598d, type: 3}
+    m_FontSize: 55
     m_FontStyle: 0
     m_BestFit: 1
-    m_MinSize: 10
-    m_MaxSize: 86
+    m_MinSize: 5
+    m_MaxSize: 55
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Title
+  m_Text: Remove Ads
 --- !u!114 &6606457051753724849 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 177938259219293475, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
@@ -361,7 +369,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: f5bcf7d02045fc04b8aba8f7fcbf598d, type: 3}
     m_FontSize: 43
     m_FontStyle: 0
     m_BestFit: 0
@@ -373,7 +381,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Use to do something
+  m_Text: Remove Ads
 --- !u!1 &8024846768528997338 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3930248116146316616, guid: 45a16fecaaeb648409ad444cb3cf3401, type: 3}
@@ -400,7 +408,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: f5bcf7d02045fc04b8aba8f7fcbf598d, type: 3}
     m_FontSize: 52
     m_FontStyle: 0
     m_BestFit: 0

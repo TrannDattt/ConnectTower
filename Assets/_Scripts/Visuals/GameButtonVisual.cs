@@ -1,3 +1,5 @@
+using Assets._Scripts.Enums;
+using Assets._Scripts.Managers;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,22 +17,29 @@ namespace Assets._Scripts.Visuals
         [Header("Settings")]
         [SerializeField] private float _pressedScale = 0.8f;
         [SerializeField] private float _duration = 0.1f;
+
+        private bool _isEnabled = true;
         
         public UnityEvent OnClicked = new();
 
         private Vector3 _originalScale;
 
+        public void SetEnable(bool isEnabled) => _isEnabled = isEnabled;
+
         protected virtual void Awake()
         {
             _originalScale = _buttonRt.localScale;
-            if (_button == null) _button = GetComponent<Button>();
         }
 
         protected virtual void Start()
         {
             if (_button != null)
             {
-                _button.onClick.AddListener(() => OnClicked.Invoke());
+                _button.onClick.AddListener(() => 
+                {
+                    OnClicked.Invoke();
+                    SoundManager.Instance.PlayRandomSFX(_isEnabled ? ESfx.ButtonClicked : ESfx.DisabledButtonClicked);
+                });
             }
         }
 

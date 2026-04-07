@@ -68,6 +68,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3039861348109016759, guid: 5704e78df5eb75d41b160cab68bee4f9, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4651027173458407270, guid: 5704e78df5eb75d41b160cab68bee4f9, type: 3}
       propertyPath: playOnAwake
       value: 0
@@ -82,7 +86,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4651027173458407270, guid: 5704e78df5eb75d41b160cab68bee4f9, type: 3}
       propertyPath: EmissionModule.rateOverTime.scalar
-      value: 100
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 6205631425069860304, guid: 5704e78df5eb75d41b160cab68bee4f9, type: 3}
       propertyPath: m_Name

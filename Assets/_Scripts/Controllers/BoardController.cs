@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets._Scripts.Datas;
@@ -5,6 +6,7 @@ using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns;
+using Assets._Scripts.Visuals;
 using UnityEngine;
 
 namespace Assets._Scripts.Controllers
@@ -12,84 +14,89 @@ namespace Assets._Scripts.Controllers
     public class BoardController : Singleton<BoardController>
     {
         [SerializeField] private Transform _boardTransform;
+        [SerializeField] private PillarController _pillarPrefab;
+        [SerializeField] private BlockController _blockPrefab;
 
         private List<PillarController> _pillars = new();
+        private List<BlockController> _blocks = new();
+
+        private Pooling<PillarController> _pillarPool = new();
+        private Pooling<BlockController> _blockPool = new();
 
         public void InitBoard(LevelRuntimeData levelData)
         {
             //Init blocks
-            List<BlockController> blocks = new();
             foreach (var blockGroup in levelData.BlockGroups)
             {
                 blockGroup.BlockDatas.ForEach(d =>
                 {
-                    var newBlock = SlotLayoutManager.Instance.GetBlock(-1, null);
-                    //-------------------------
-                    //TODO:
+                    var newBlock = _blockPool.GetItem();
                     newBlock.Init(d, blockGroup.Tag);
-                    //-----------------------
-                    blocks.Add(newBlock);
+                    _blocks.Add(newBlock);
+                    //-------------------
+                    newBlock.gameObject.SetActive(false);
+                    //-------------------
                 });
             }
 
             //Init pillars
-            if (_pillars.Count == 0)
+            var pillarPos = SlotLayoutManager.Instance.GetPillarPositions(levelData.PillarDatas.Count, _boardTransform);
+            for(int i = 0; i < levelData.PillarDatas.Count; i++)
             {
-                foreach(Transform t in _boardTransform)
-                {
-                    if (t.TryGetComponent(out PillarController pillar))
-                        _pillars.Add(pillar);
-                }
-            }
-            SlotLayoutManager.Instance.ReturnAllPillar(_pillars);
+                var newPillar = _pillarPool.GetItem();
+                newPillar.transform.position = pillarPos[i];
 
-            _pillars = SlotLayoutManager.Instance.GetPillars(levelData.PillarDatas.Count);
-            
-            for (int i = 0; i < _pillars.Count; i++)
-            {
-                _pillars[i].Init(levelData.PillarDatas[i]);
+                newPillar.Init(levelData.PillarDatas[i]);
                 if (levelData.PillarDatas[i].BlockIds.Count == 0) continue;
+
                 int indexOffset = 0;
                 for(int j = 0; j < PillarController.MAX_BLOCKS; j++)
                 {
                     var blockId = levelData.PillarDatas[i].BlockIds.ElementAt(j);
-                    var block = blocks.FirstOrDefault(b => b.Id == blockId);
+                    var block = _blocks.FirstOrDefault(b => b.Id == blockId);
                     if (block == default(BlockController))
                     {
                         indexOffset++;
                     }
                     else
                     {
-                        _pillars[i].AddBlockToSlot(j - indexOffset, block);
-                        block.transform.position = _pillars[i].BlockContainer.transform.position + GameObjectDataHelper.BlockHeight * (j - indexOffset) * Vector3.up;
+                        newPillar.AddBlockToSlot(j - indexOffset, block);
+                        block.transform.position = newPillar.BlockContainer.transform.position + GameObjectDataHelper.BlockHeight * (j - indexOffset) * Vector3.up;
                     }
                 }
-                _pillars[i].Arrange();
+                newPillar.Arrange();
+                _pillars.Add(newPillar);
             }
 
             // Init Mechanics
-            foreach (var id in levelData.HiddenBlockDatas.BlockIds)
+            if (levelData.HiddenBlockDatas?.BlockIds != null)
             {
-                var toApply = blocks.FirstOrDefault(b => b.Id == id);
-                var mechanic = new HiddenBlockMechanic();
-                mechanic.Apply(toApply);
-            };
+                foreach (var id in levelData.HiddenBlockDatas.BlockIds)
+                {
+                    var toApply = _blocks.FirstOrDefault(b => b.Id == id);
+                    if (toApply == null) continue;
+                    var mechanic = new HiddenBlockMechanic();
+                    mechanic.Apply(toApply);
+                }
+            }
 
-            levelData.CoveredPillarDatas.ForEach(data =>
+            levelData.CoveredPillarDatas?.ForEach(data =>
             {
                 foreach (var id in data.PillarIds)
                 {
                     var toApply = _pillars.FirstOrDefault(p => p.Id == id);
+                    if (toApply == null) continue;
                     var mechanic = new CoveredPillarMechanic(data.TagToOpen);
                     mechanic.Apply(toApply);
                 };
             });
 
-            levelData.FrozenBlockDatas.ForEach(data =>
+            levelData.FrozenBlockDatas?.ForEach(data =>
             {
                 foreach (var id in data.BlockIds)
                 {
-                    var toApply = blocks.FirstOrDefault(b => b.Id == id);
+                    var toApply = _blocks.FirstOrDefault(b => b.Id == id);
+                    if (toApply == null) continue;
                     var mechanic = new FrozenBlockMechanic(data.MoveCountToRemove);
                     mechanic.Apply(toApply);
                 };
@@ -119,6 +126,48 @@ namespace Assets._Scripts.Controllers
             }
 
             return (null, -1);
+        }
+        public IEnumerator DoSpawnBlockAnim()
+        {
+            foreach (var pillar in _pillars)
+            {
+                StartCoroutine(pillar.DoSpawnBlockAnim());
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            yield return new WaitForSeconds(.8f);
+            // yield return null;
+        }
+
+        public void ClearBoard()
+        {
+            foreach (var pillar in _pillars)
+            {
+                pillar.RemoveAllBlocks();
+                if (pillar.gameObject.TryGetComponent(out PillarEffectVisual pillarVisual))
+                    pillarVisual.ResetVisual();
+                _pillarPool.ReturnItem(pillar);
+            }
+            _pillars.Clear();
+
+            foreach(var block in _blocks)
+            {
+                if (block.gameObject.TryGetComponent(out BlockEffectVisual blockVisual))
+                    blockVisual.ResetVisual();
+                _blockPool.ReturnItem(block);
+            }
+            _blocks.Clear();
+        } 
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            var pillars = _boardTransform.GetComponentsInChildren<PillarController>();
+            foreach(var pillar in pillars) Destroy(pillar.gameObject);
+
+            _pillarPool = new(_pillarPrefab, 10, _boardTransform);
+            _blockPool = new(_blockPrefab, 40, _boardTransform);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Image _blockIcon;
 
         private BlockController _block;
-
+        private Color _initialColor;
 
         private MaterialPropertyBlock _propertyBlock;
         private MaterialPropertyBlock PropertyBlock
@@ -48,9 +48,17 @@ namespace Assets._Scripts.Visuals
             _blockRenderer.SetPropertyBlock(mb);
         }
 
+        public void ResetVisual()
+        {
+            ChangeIconDisplay(true);
+            ChangeColor(_initialColor);
+            ChangeTexture(null);
+        }
+
         void Awake()
         {
             _block = GetComponent<BlockController>();
+            _initialColor = _blockRenderer.material.color;
         }
     }
 }

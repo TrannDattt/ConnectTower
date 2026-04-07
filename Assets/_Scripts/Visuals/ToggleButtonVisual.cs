@@ -18,12 +18,17 @@ namespace Assets._Scripts.Visuals
             OnToggled?.Invoke(_curState);
         }
 
+        protected override void Awake()
+        {
+            base.Awake();
+
+            OnClicked.AddListener(() => UpdateToggle(!_curState));
+        }
+
         protected override void Start()
         {
             base.Start();
-
             UpdateToggle(true);
-            OnClicked.AddListener(() => UpdateToggle(!_curState));
         }
     }
 }

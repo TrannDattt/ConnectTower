@@ -1,3 +1,4 @@
+using System.Collections;
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
@@ -11,11 +12,12 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private GameButtonVisual _retryButton;
         [SerializeField] private GameButtonVisual _homeButton;
 
-        private LevelRuntimeData _curLevelData;
-        
-        public void SetData(LevelRuntimeData levelData)
+        private LevelRuntimeData _curLevelData => LevelManager.PlayingLevel;
+
+        public override IEnumerator Show()
         {
-            _curLevelData = new(levelData);
+            SoundManager.Instance.PlayRandomSFX(ESfx.Lose);
+            return base.Show();
         }
 
         protected override void Start()

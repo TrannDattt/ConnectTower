@@ -12256,7 +12256,7 @@ GameObject:
   - component: {fileID: 2601645072024547287}
   - component: {fileID: 3579198148863823413}
   - component: {fileID: 128842206884927495}
-  m_Layer: 6
+  m_Layer: 10
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12330,7 +12330,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3103786473782991915}
   - component: {fileID: 887778839139327153}
-  m_Layer: 6
+  m_Layer: 10
   m_Name: Image (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12374,7 +12374,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2677432151818191323}
   - component: {fileID: 4026090932434178601}
-  m_Layer: 6
+  m_Layer: 10
   m_Name: Image (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12751,7 +12751,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7651496138706096702}
   - component: {fileID: 5531613964682742260}
-  m_Layer: 6
+  m_Layer: 10
   m_Name: UI_Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12801,7 +12801,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!1 &5786349809486936094
 GameObject:
@@ -15758,7 +15758,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2748032444997514029}
   - component: {fileID: 4479883735421070681}
-  m_Layer: 6
+  m_Layer: 10
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}

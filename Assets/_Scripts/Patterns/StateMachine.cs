@@ -38,8 +38,8 @@ namespace Assets._Scripts.Patterns
 
         public void AddState(AState<T> state)
         {
-            if (_stateDict.ContainsKey(state.Key)) Debug.Log($"Overrided state {state.Key}");
-            else Debug.Log($"Add new state {state.Key}");
+            // if (_stateDict.ContainsKey(state.Key)) Debug.Log($"Overrided state {state.Key}");
+            // else Debug.Log($"Add new state {state.Key}");
             _stateDict[state.Key] = state;
         }
 
@@ -79,18 +79,21 @@ namespace Assets._Scripts.Patterns
 
             if (_stateDict.Count == 0) 
             {
-                Debug.Log($"State machine has no state");
+                // Debug.Log($"State machine has no state");
                 // Debug.Log($"State machine {name} has no state");
                 return;
             }
 
             ChangeState(_stateDict.First().Key);
-            Debug.Log($"No default state, fallback to {CurrentState.Key} state");
+            // Debug.Log($"No default state, fallback to {CurrentState.Key} state");
         }
 
         public void DoState()
         // void Update()
         {
+            if (!CurrentState.GetNextState().Equals(CurrentState.Key))
+                ChangeState(CurrentState.GetNextState());
+
             if (_stateDict.Count > 0 || CurrentState != null)
                 CurrentState.Do();
         }

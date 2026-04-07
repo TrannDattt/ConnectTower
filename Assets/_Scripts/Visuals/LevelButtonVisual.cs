@@ -30,6 +30,7 @@ namespace Assets._Scripts.Visuals
 
         public void UpdateVisual(LevelRuntimeData data)
         {
+            // if (data.IsCleared) Debug.Log($"Update visual button level {data.Index}");
             _levelData = new(data);
 
             if (_levelData == null) return;
@@ -51,7 +52,7 @@ namespace Assets._Scripts.Visuals
 
         private bool IsCleared()
         {
-            return _levelData.IsCleared;
+            return _levelData != null && _levelData.IsCleared;
         }
 
         private bool IsFirstLevel()
@@ -66,15 +67,21 @@ namespace Assets._Scripts.Visuals
 
         protected override void Awake()
         {
-            base.Awake();
-
             OnClicked.AddListener(() => 
             {
-                GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
-                {
-                    GameManager.Instance.StartLevel(_levelData);
-                });
+                var progress = UserManager.CurUser.CurrentLevelIndex;
+                SetEnable(progress >= _levelData.Index);
+                if (progress >= _levelData.Index)
+                    GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
+                    {
+                        Debug.Log($"Start level {_levelData.Index} with clear state: {_levelData.IsCleared}");
+                        GameManager.Instance.StartLevel(_levelData);
+                    });
+                else
+                    PopupManager.Instance.ShowPopupText("Locked", transform.position);
             });
+
+            base.Awake();
         }
     }
 }
