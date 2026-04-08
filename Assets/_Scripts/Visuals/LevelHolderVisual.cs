@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Windows.Forms;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Managers;
 using UnityEngine;
@@ -29,6 +30,7 @@ namespace Assets._Scripts.Visuals
             for(int i = 0; i < levelDatas.Count; i++)
             {
                 _buttons[i].UpdateVisual(levelDatas[i]);
+                _buttons[i].transform.SetSiblingIndex(i);
             }
         }
 

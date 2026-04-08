@@ -77,8 +77,7 @@ namespace Assets._Scripts.Controllers
                 case EMechanic.HiddenBlock:
                     _blockVisual?.ChangeIconDisplay(true);
                     _blockVisual?.ChangeTexture(null);
-                    //TODO: Play sfx smoke bomb
-                    ParticleManager.Instance.PlayParticle(EParticle.Smoke, transform.position);
+                    StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Smoke, transform.position));
                     break;
                 case EMechanic.FrozenBlock:
                     if (_frozenIcon != null) _frozenIcon.gameObject.SetActive(false);

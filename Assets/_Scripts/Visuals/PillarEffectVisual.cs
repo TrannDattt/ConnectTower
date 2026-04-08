@@ -14,6 +14,7 @@ namespace Assets._Scripts.Visuals
     [RequireComponent(typeof(PillarController))]
     public class PillarEffectVisual : MonoBehaviour
     {
+        [SerializeField] private Canvas _canvas;
         [SerializeField] private GameObject _lockHolder;
         [SerializeField] private Image _border;
         [SerializeField] private Text _tag;
@@ -31,8 +32,7 @@ namespace Assets._Scripts.Visuals
             var color = GetRandomColor();
 
             ChangeLockColor(color);
-            ParticleManager.Instance.PlayParticle(EParticle.ConfettiUp, transform.position);
-
+            StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Confetti, transform.position, _canvas.transform));
             _lockHolder.gameObject.SetActive(true);
             _tag.text = tag;
             _tag.gameObject.SetActive(false);

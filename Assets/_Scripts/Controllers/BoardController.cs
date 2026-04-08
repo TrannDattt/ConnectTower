@@ -155,6 +155,7 @@ namespace Assets._Scripts.Controllers
                 if (block.gameObject.TryGetComponent(out BlockEffectVisual blockVisual))
                     blockVisual.ResetVisual();
                 _blockPool.ReturnItem(block);
+                block.transform.SetParent(transform);
             }
             _blocks.Clear();
         } 

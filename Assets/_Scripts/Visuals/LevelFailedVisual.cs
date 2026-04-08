@@ -25,15 +25,14 @@ namespace Assets._Scripts.Visuals
             _retryButton.OnClicked.AddListener(() => 
             {
                 Debug.Log("Retry level");
-                //TODO: Restart level
-                Hide();
+                StartCoroutine(Hide());
                 LevelRuntimeData toRestart = new(_curLevelData);
                 GameManager.Instance.StartLevel(toRestart);
             });
             _homeButton.OnClicked.AddListener(() => 
             {
                 Debug.Log("Go to main menu");
-                Hide();
+                StartCoroutine(Hide());
                 GameManager.Instance.GoToMenu();
             });
 

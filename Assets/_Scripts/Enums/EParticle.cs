@@ -4,7 +4,7 @@ namespace Assets._Scripts.Enums
     {
         Smoke,
         Sparkle,
-        ConfettiUp,
-        ConfettiDiagonal
+        Confetti,
+        CoinFly
     }
 }

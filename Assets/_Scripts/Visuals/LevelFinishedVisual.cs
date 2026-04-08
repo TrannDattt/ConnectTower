@@ -17,6 +17,11 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private GameButtonVisual _adsRewardButton;
         [SerializeField] private Text _adsRewardText;
 
+        [SerializeField] private ParticleSystem _topConfetti1;
+        [SerializeField] private ParticleSystem _topConfetti2;
+        [SerializeField] private ParticleSystem _bottomConfetti1;
+        [SerializeField] private ParticleSystem _bottomConfetti2;
+
         private LevelRuntimeData _curLevelData => LevelManager.PlayingLevel;
 
         public override IEnumerator Show()
@@ -28,8 +33,20 @@ namespace Assets._Scripts.Visuals
             _adsRewardButton.gameObject.SetActive(!clearedState);
             _adsRewardText.text = (_curLevelData.CoinReward * 2).ToString();
 
-            SoundManager.Instance.PlayRandomSFX(ESfx.Win);
             yield return base.Show();
+
+            SoundManager.Instance.PlayRandomSFX(ESfx.Win);
+
+            yield return PlayParticles();
+        }
+
+        private IEnumerator PlayParticles()
+        {
+            _topConfetti1.Play();
+            _topConfetti2.Play();
+            yield return new WaitForSeconds(.5f);
+            _bottomConfetti1.Play();
+            _bottomConfetti2.Play();
         }
 
         protected override void Start()

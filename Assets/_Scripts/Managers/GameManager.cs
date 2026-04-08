@@ -439,6 +439,7 @@ namespace Assets._Scripts.Managers
                 base.Enter();
 
                 //TODO: Logic reduce heart if not clear before
+                UserManager.LostHeart();
                 Instance.StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Lose));
             }
         }

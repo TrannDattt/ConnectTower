@@ -2,6 +2,7 @@ using Assets._Scripts.Datas;
 using UnityEngine.Events;
 using UnityEngine;
 using Assets._Scripts.Enums;
+using Assets._Scripts.Helpers;
 
 namespace Assets._Scripts.Managers
 {
@@ -51,6 +52,25 @@ namespace Assets._Scripts.Managers
 #endregion
 
 #region Heart
+        public static UnityEvent<int> OnHeartChanged = new();
+        private static void ChangeHeartCount(int amount)
+        {
+            Debug.Log($"Player heart changed by {amount}");
+            CurUser.HeartCount = Mathf.Clamp(CurUser.HeartCount + amount, 0, UserLifeHelper.MAX_LIFE);
+            OnHeartChanged?.Invoke(amount);
+        }
+
+        public static void LostHeart()
+        {
+            ChangeHeartCount(-1);
+            UserLifeHelper.OnLostLife();
+        }
+
+        public static void RecoverHeart()
+        {
+            ChangeHeartCount(1);
+            UserLifeHelper.OnRecovered();
+        }
 #endregion
 
 #region Booster

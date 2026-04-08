@@ -221,7 +221,7 @@ namespace Assets._Scripts.Controllers
         {
             if (!(this as IMechanicHandler).IsInteractable()) yield break;
 
-            float fallDuration = .3f;
+            float fallDuration = .4f;
             float offsetY = 4.2f;
 
             var activeBlocks = GetAllBlocks();

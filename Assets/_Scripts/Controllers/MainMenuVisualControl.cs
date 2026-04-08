@@ -78,9 +78,9 @@ namespace Assets._Scripts.Controllers
             {
                 base.Enter();
 
-                _onChanged?.Invoke();
                 TabControl.gameObject.SetActive(true);
                 Instance._navBar.DoChangeTabAnim(TabVisual);
+                _onChanged?.Invoke();
             }
 
             public override void Exit()

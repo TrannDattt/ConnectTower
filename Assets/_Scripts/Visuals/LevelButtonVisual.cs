@@ -55,16 +55,6 @@ namespace Assets._Scripts.Visuals
             return _levelData != null && _levelData.IsCleared;
         }
 
-        private bool IsFirstLevel()
-        {
-            return _levelData.Index == 0;
-        }
-
-        private bool IsLastLevel()
-        {
-            return _levelData.Index == LevelManager.Instance.GetTotalLevelCount() - 1;
-        }
-
         protected override void Awake()
         {
             OnClicked.AddListener(() => 
@@ -82,6 +72,22 @@ namespace Assets._Scripts.Visuals
             });
 
             base.Awake();
+        }
+    }
+
+    public class PlaceHolderButtonVisual : GameButtonVisual
+    {
+        protected override void Awake()
+        {
+            base.Awake();
+
+            SetEnable(false);
+        }
+
+        protected override void Start()
+        {
+            OnClicked.AddListener(() => PopupManager.Instance.ShowPopupText("Coming soon", transform.position));
+            base.Start();
         }
     }
 }

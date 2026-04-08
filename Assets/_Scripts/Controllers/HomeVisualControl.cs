@@ -16,10 +16,10 @@ namespace Assets._Scripts.Controllers
 
         public void InitVisual()
         {
-            //TODO: Fetch and show heart amount and time counter
             var allLevels = LevelManager.Instance.GetAllLevels();
             _levelHolder.InitVisual(allLevels);
             _coinDisplay.UpdateVisual();
+            _heartDisplay.UpdateVisual();
             _playButton.UpdateVisual();
         }
 

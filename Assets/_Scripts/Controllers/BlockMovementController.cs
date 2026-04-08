@@ -130,6 +130,7 @@ namespace Assets._Scripts.Controllers
         {
             if (blocks.Count == 0) return;
             
+            var lastAmount = toPillar.GetBlockCount();
             toPillar.AddBlocksToTop(blocks);
             toPillar.TryGetTopBlocks(out var matched, ignoreLock: true);
 
@@ -144,7 +145,7 @@ namespace Assets._Scripts.Controllers
                     SoundManager.Instance.PlayChainedSFXs(ESfx.BlockMatched, matched.Count);
                     feedbackSequence.Append(DoMatchAnim(matched));
                 }
-                else if (blocks.Count < toPillar.GetBlockCount())
+                else if (lastAmount > 0)
                 {
                     SoundManager.Instance.PlayRandomSFX(ESfx.BlockNotMatched);
                     feedbackSequence.Append(DoNotMatchAnim(matched));
@@ -250,7 +251,7 @@ namespace Assets._Scripts.Controllers
 
             masterSequence.JoinCallback(() =>
             {
-                ParticleManager.Instance.PlayParticle(Enums.EParticle.Sparkle, blocks[^1].transform.position);
+                StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Sparkle, blocks[^1].transform.position));
             });
 
             return masterSequence.Play();
