@@ -44,6 +44,7 @@ namespace Assets._Scripts.Visuals
                                 .AppendInterval(stayDuration)
                                 .Append(transform.DOMove(_initialPos, _animDuration).SetEase(Ease.OutQuad))
                                 .Join(transform.DOScale(_initialScale, _animDuration).SetEase(Ease.OutQuad))
+                                .SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable)
                                 .WaitForCompletion();
         }
     }

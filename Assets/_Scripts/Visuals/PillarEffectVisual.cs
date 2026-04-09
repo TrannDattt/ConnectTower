@@ -38,10 +38,13 @@ namespace Assets._Scripts.Visuals
             _tag.gameObject.SetActive(false);
             _border.transform.localScale = Vector3.zero;
 
-            _border.transform.DOScale(initialScale, animDuration).SetEase(Ease.OutBack, overshoot: 2f).OnComplete(() =>
-            {
-                _tag.gameObject.SetActive(true);
-            });
+            _border.transform.DOScale(initialScale, animDuration)
+                            .SetEase(Ease.OutBack, overshoot: 2f)
+                            .SetLink(gameObject, LinkBehaviour.KillOnDisable)
+                            .OnComplete(() =>
+                            {
+                                _tag.gameObject.SetActive(true);
+                            });
         }
 
         private Color GetRandomColor()

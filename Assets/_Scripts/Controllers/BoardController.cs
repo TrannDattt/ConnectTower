@@ -7,6 +7,7 @@ using Assets._Scripts.Helpers;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns;
 using Assets._Scripts.Visuals;
+using DG.Tweening;
 using UnityEngine;
 
 namespace Assets._Scripts.Controllers
@@ -25,6 +26,7 @@ namespace Assets._Scripts.Controllers
 
         public void InitBoard(LevelRuntimeData levelData)
         {
+            ClearBoard();
             //Init blocks
             foreach (var blockGroup in levelData.BlockGroups)
             {
@@ -129,14 +131,13 @@ namespace Assets._Scripts.Controllers
         }
         public IEnumerator DoSpawnBlockAnim()
         {
+            var delaySpawn = new WaitForSeconds(.1f);
             foreach (var pillar in _pillars)
             {
-                StartCoroutine(pillar.DoSpawnBlockAnim());
-                yield return new WaitForSeconds(0.1f);
+                pillar.StartCoroutine(pillar.DoSpawnBlockAnim());
+                yield return delaySpawn;
             }
-
             yield return new WaitForSeconds(.8f);
-            // yield return null;
         }
 
         public void ClearBoard()

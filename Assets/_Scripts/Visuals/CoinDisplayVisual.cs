@@ -55,19 +55,21 @@ namespace Assets._Scripts.Visuals
 
         private IEnumerator DoGainCoinAnim(int from, int to, float duration)
         {
-            _coinCountText.DOKill();
-
             SoundManager.Instance.PlayRandomSFX(ESfx.CoinGained);
 
             if (to > from)
             {
-                yield return ParticleManager.Instance.PlayParticle(EParticle.CoinFly, _startPoint.position, transform.parent);
+                yield return ParticleManager.Instance.StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.CoinFly, _startPoint.position, transform.parent));
             }
             
-            yield return DOTween.To(() => from, x => _coinCountText.text = x.ToString(), to, duration).SetTarget(_coinCountText).OnComplete(() =>
-            {
-                _isFirstAnim = false;
-            }).WaitForCompletion();
+            yield return DOTween.To(() => from, x => _coinCountText.text = x.ToString(), to, duration)
+                                .SetTarget(_coinCountText)
+                                .SetLink(gameObject, LinkBehaviour.KillOnDisable)
+                                .OnKill(() =>
+                                {
+                                    _isFirstAnim = false;
+                                })
+                                .WaitForCompletion();
         }
 
         // void OnEnable()
@@ -117,7 +119,9 @@ namespace Assets._Scripts.Visuals
 
         void OnDisable()
         {
-            int.TryParse(_coinCountText.text, out _lastCount);
+            DOTween.Kill(_coinCountText, true);
+            _lastCount = UserManager.CurUser.CoinCount;
+            _coinCountText.text = _lastCount.ToString();
         }
 
         // private void OnDestroy()

@@ -32,7 +32,7 @@ namespace Assets._Scripts.Visuals
             _selectedTab?.DoOnDeselectedAnim();
             _selectedTab = tab;
 
-            _selectedBackground.DOKill();
+            _selectedBackground.DOKill(true);
 
             // Nếu là lần đầu (khi Start), ta cho nó nhảy thẳng tới (0s) thay vì chạy animation
             float duration = isFirstTime ? 0 : _animDuration;
@@ -42,7 +42,9 @@ namespace Assets._Scripts.Visuals
             // _selectedBackground.DOSizeDelta(new Vector2(tabRt.rect.width, tabRt.rect.height), duration);
 
             // Di chuyển tới vị trí Tab
-            _selectedBackground.DOMove(tab.transform.position, duration).SetEase(_easeType);
+            _selectedBackground.DOMove(tab.transform.position, duration)
+                               .SetEase(_easeType)
+                               .SetLink(_selectedBackground.gameObject, LinkBehaviour.CompleteAndKillOnDisable);
             
             _selectedTab.DoOnSelectedAnim();
         }

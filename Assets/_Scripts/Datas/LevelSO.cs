@@ -25,7 +25,6 @@ namespace Assets._Scripts.Datas
     {
         public string Tag;
         public List<BlockData> BlockDatas = new();
-        // TODO: Make a list of block data
     }
 
     [Serializable]

@@ -82,50 +82,40 @@ namespace Assets._Scripts.Controllers
                 if (toUpdate) toUpdate.SetCount(curAmount);
             });
 
-            bool inExtraMove = false;
             _extraMoveButton.OnClicked.AddListener(() => 
             {
+                if (_extraMoveButton.IsInAnim) return;
+
                 var useCount = BoosterController.Instance.GetUseCount(EBooster.ExtraMove);
                 if (_extraMoveButton.IsLocked) _extraMoveButton.ShowPopupText();
                 else if (useCount > 0)
                 {
-                    if (!inExtraMove)
+                    _extraMoveButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
                     {
-                        inExtraMove = true;
-                        _extraMoveButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
-                        {
-                            BoosterController.Instance.UseBooster(EBooster.ExtraMove);
-                            _extraMoveButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.ExtraMove));
-                            inExtraMove = false;
-                        });
-                    }
+                        BoosterController.Instance.UseBooster(EBooster.ExtraMove);
+                        _extraMoveButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.ExtraMove));
+                    });
                 }
                 else 
                 {
                     PopupManager.Instance.ShowBundlePopup(EPopup.Booster, BundleManager.Instance.GetIngameBoosterBundle(EBooster.ExtraMove));
                     Debug.Log("Extra Move is out of use");
                 }
-
             });
 
-            bool inShuffle = false;
             _shuffleButton.OnClicked.AddListener(() =>
             {
+                if (_shuffleButton.IsInAnim) return;
+
                 var useCount = BoosterController.Instance.GetUseCount(EBooster.Shuffle);
                 if (_shuffleButton.IsLocked) _shuffleButton.ShowPopupText();
                 else if (useCount > 0) 
                 {
-                    if (!inShuffle)
+                    _shuffleButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
                     {
-                        inShuffle = true;
-                        
-                        _shuffleButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
-                        {
-                            BoosterController.Instance.UseBooster(EBooster.Shuffle);
-                            _shuffleButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Shuffle));
-                            inShuffle = false;
-                        });
-                    }
+                        BoosterController.Instance.UseBooster(EBooster.Shuffle);
+                        _shuffleButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Shuffle));
+                    });
                 }
                 else 
                 {                    
@@ -134,23 +124,19 @@ namespace Assets._Scripts.Controllers
                 }
             });
 
-            bool inHint = false;
             _hintButton.OnClicked.AddListener(() =>
             {
+                if (_hintButton.IsInAnim) return;
+
                 var useCount = BoosterController.Instance.GetUseCount(EBooster.Hint);
                 if (_hintButton.IsLocked) _hintButton.ShowPopupText();
                 else if (useCount > 0) 
                 {
-                    if (!inHint)
+                    _hintButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
                     {
-                        inHint = true;
-                        _hintButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
-                        {
-                            BoosterController.Instance.UseBooster(EBooster.Hint);
-                            _hintButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Hint));
-                            inHint = false;
-                        });
-                    }
+                        BoosterController.Instance.UseBooster(EBooster.Hint);
+                        _hintButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Hint));
+                    });
                 }
                 else 
                 {

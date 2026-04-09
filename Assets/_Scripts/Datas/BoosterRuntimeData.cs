@@ -46,7 +46,7 @@ namespace Assets._Scripts.Datas
 
         public override Tween DoMechanicAnim()
         {
-            return IngameVisualController.Instance.UpdateMoveCount(LevelManager.PlayingLevel.MoveCount, true);
+            return IngameVisualController.Instance.UpdateMoveCount(LevelManager.PlayingLevel.MoveCount, true).SetTarget(this);
         }
 
         public override string GetDetail()
@@ -71,14 +71,12 @@ namespace Assets._Scripts.Datas
         public override void OnUsed()
         {
             _availableBlocks.Clear();
-            //TODO: Check mechanic of pillars
             var pillars = BoardController.Instance.GetAllPillars().Where(p => !p.IsLocked()).ToList();
 
             // Get all available blocks and group them
             List<List<BlockController>> matchedBlocks = new();
             foreach(var pillar in pillars)
             {
-                //TODO: Check mechanic of blocks
                 while (pillar.TryRemoveTopBlocks(out var toAdd))
                 {
                     matchedBlocks.Add(toAdd);
@@ -242,7 +240,7 @@ namespace Assets._Scripts.Datas
 
             var animDuration = .3f;
             var animDelatTime = .3f;
-            var sequence = DOTween.Sequence();
+            var sequence = DOTween.Sequence().SetTarget(this);
 
             sequence.AppendInterval(animDelatTime);
             sequence.Append(_randomBlock.transform.DOScale(1.3f, animDuration).SetEase(Ease.InSine))

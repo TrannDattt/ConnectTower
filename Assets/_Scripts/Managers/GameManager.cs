@@ -12,7 +12,7 @@ namespace Assets._Scripts.Managers
 {
     public class GameManager : Singleton<GameManager>
     {
-        //TODO: Refactor code flow => Make state and sub-state => Make block fall down from top when start level
+        public bool AllowPlayLockedLevel;
 
         private StateMachine<EGameState> _gameSM = new();
         private LevelRuntimeData CurrentLevelData => LevelManager.PlayingLevel;
@@ -29,7 +29,7 @@ namespace Assets._Scripts.Managers
 
         public void GoToMenu(UnityAction onLoaded = null)
         {
-            if (CurState == EGameState.Pause) BoardController.Instance.ClearBoard();
+            if (CurState != EGameState.None) BoardController.Instance.ClearBoard();
             _onGoToMenuCallback = onLoaded;
             _gameSM.ChangeState(EGameState.None);
         }
@@ -200,6 +200,7 @@ namespace Assets._Scripts.Managers
                 base.Exit();
 
                 _playingSM.CurrentState?.Exit();
+                _playingSM.Reset();
             }
 
             private class PlayingSubState : AState<EPlayingSubState>

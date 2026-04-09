@@ -39,7 +39,7 @@ namespace Assets._Scripts.Visuals
             int startVal = 0;
             int.TryParse(_moveCountText.text, out startVal);
 
-            Sequence sequence = DOTween.Sequence();
+            Sequence sequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable);
             
             // 1. Phóng to lên
             sequence.Append(_moveCountText.transform.DOScale(_originalScale * 1.4f, duration * 0.3f).SetEase(Ease.OutBack));
@@ -71,41 +71,30 @@ namespace Assets._Scripts.Visuals
             }
             else
             {
-                StopWarningEffect();
+                DOTween.Kill(_moveCountText, true);
             }
         }
 
         private void WarnLowMoves()
         {
             // Kill existing to be safe
-            _warnSequence?.Kill();
+            DOTween.Kill(_moveCountText);
 
-            _warnSequence = DOTween.Sequence();
+            _warnSequence = DOTween.Sequence().SetTarget(_moveCountText).SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable);
             
             // Thiết lập hiệu ứng nhấp nháy màu đỏ và phóng to thu nhỏ
             _warnSequence.Append(_moveCountText.DOColor(Color.red, 0.5f).SetEase(Ease.InOutSine))
                         .Join(_moveCountText.transform.DOScale(_originalScale * 1.2f, 0.5f).SetEase(Ease.InOutSine))
-                        .SetLoops(-1, LoopType.Yoyo);
+                        .SetLoops(-1, LoopType.Yoyo)
+                        .OnKill(StopWarningEffect);
             
             _warnSequence.Play();
         }
 
         private void StopWarningEffect()
         {
-            if (_warnSequence != null && _warnSequence.IsActive())
-            {
-                _warnSequence.Kill();
-                
-                // Khôi phục lại trạng thái ban đầu
-                _moveCountText.color = _originalColor;
-                _moveCountText.transform.localScale = _originalScale;
-            }
-        }
-
-        private void OnDestroy()
-        {
-            // Luôn kill tween khi object bị hủy để tránh lỗi rò rỉ bộ nhớ hoặc null reference
-            _warnSequence?.Kill();
+            _moveCountText.color = _originalColor;
+            _moveCountText.transform.localScale = _originalScale;
         }
     }
 }

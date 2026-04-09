@@ -28,6 +28,8 @@ namespace Assets._Scripts.Visuals
 
         private LevelRuntimeData _levelData;
 
+        public int LevelIndex => _levelData == null ? -1 : _levelData.Index;
+
         public void UpdateVisual(LevelRuntimeData data)
         {
             // if (data.IsCleared) Debug.Log($"Update visual button level {data.Index}");
@@ -48,6 +50,7 @@ namespace Assets._Scripts.Visuals
             _superHardDecorate.SetActive(_levelData.Difficulty == EDifficulty.SuperHard);
 
             _indexText.text = _levelData.Index.ToString();
+            gameObject.name = $"Level_{_levelData.Index}";
         }
 
         private bool IsCleared()
@@ -60,8 +63,8 @@ namespace Assets._Scripts.Visuals
             OnClicked.AddListener(() => 
             {
                 var progress = UserManager.CurUser.CurrentLevelIndex;
-                SetEnable(progress >= _levelData.Index);
-                if (progress >= _levelData.Index)
+                SetEnable(!_levelData.IsLocked);
+                if (!_levelData.IsLocked || GameManager.Instance.AllowPlayLockedLevel)
                     GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
                     {
                         Debug.Log($"Start level {_levelData.Index} with clear state: {_levelData.IsCleared}");

@@ -52,42 +52,45 @@ namespace Assets._Scripts.Controllers
         {
             if (blocks.Count == 0) return;
 
+            string tweenId = "Pick up";
+            DOTween.Kill(pillar);
+
+            var sequence = DOTween.Sequence().SetTarget(pillar).SetId(tweenId);
             float tweenDuration = 0.3f;
-            var sequence = DOTween.Sequence();
             float blockOffset = _blockHeight + .1f;
             float firstOffset = _pickupHeight + pillar.GetBlockCount() * _blockHeight + blocks.Count * blockOffset - blockOffset / 2;
+
+            Vector3[] targetPos = new Vector3[blocks.Count];
+
             for (int i = 0; i < blocks.Count; i++)
             {
-                blocks[i].transform.DOKill();
-                var blockPos = firstOffset - i * blockOffset;
-                if (i == 0)
-                    sequence.Append(blocks[i].transform.DOMove(pillar.BlockContainer.transform.position + Vector3.up * firstOffset, tweenDuration).SetEase(Ease.OutQuad));
-                else
-                    sequence.Join(blocks[i].transform.DOMove(pillar.BlockContainer.transform.position + Vector3.up * blockPos, tweenDuration).SetEase(Ease.OutQuad));
+                targetPos[i] = pillar.BlockContainer.transform.position + Vector3.up * (firstOffset - i * blockOffset);
+                sequence.Join(blocks[i].transform.DOMove(targetPos[i], tweenDuration).SetEase(Ease.OutQuad));
             }
 
             sequence.OnComplete(() =>
             {
-                foreach (var block in blocks) DoFloatAnim(block.gameObject);
+                foreach (var block in blocks) DoFloatAnim(block);
             });
             sequence.Play();
         }
 
-        private void DoFloatAnim(GameObject gameObject)
+        private void DoFloatAnim(BlockController target)
         {
             var moveOffset = .12f;
             var rotateOffset = 5f;
 
-            // Di chuyen len xuong
-            gameObject.transform.DOMoveY(moveOffset, 0.6f).SetRelative().SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
-            // Xoay trai phai nhe
-            gameObject.transform.DORotate(new Vector3(0, 0, rotateOffset), 0.8f).SetRelative().SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
-        }
+            string tweenId = "Float";
+            var sequence = DOTween.Sequence().SetRelative().SetTarget(target.GetPillarParent()).SetId(tweenId);
 
-        private void StopFloatAnim(GameObject obj)
-        {
-            obj.transform.DOKill();
-            obj.transform.DORotate(Vector3.zero, 0.2f);
+            // Di chuyen len xuong
+            sequence.Append(target.transform.DOMoveY(moveOffset, 0.6f).SetEase(Ease.InOutSine).SetLoops(int.MaxValue, LoopType.Yoyo));
+            // Xoay trai phai nhe
+            sequence.Join(target.transform.DORotate(new Vector3(0, 0, rotateOffset), 0.8f).SetEase(Ease.InOutSine).SetLoops(int.MaxValue, LoopType.Yoyo));
+            sequence.OnKill(() =>
+            {
+                target.transform.rotation = Quaternion.identity;
+            });
         }
 #endregion
 
@@ -107,19 +110,18 @@ namespace Assets._Scripts.Controllers
         {
             if (blocks.Count == 0) return;
 
+            DOTween.Kill(pillar, true);
+            foreach (var block in blocks) block.transform.DOKill();
+            var tweenId = "Put back";
+            var sequence = DOTween.Sequence().SetTarget(pillar).SetId(tweenId);
             float tweenDuration = 0.3f;
-            var sequence = DOTween.Sequence();
             var firstPos = pillar.BlockContainer.transform.position + _blockHeight * (pillar.GetBlockCount() - blocks.Count) * Vector3.up;
-            StopFloatAnim(blocks[0].gameObject);
 
-            blocks[0].transform.DOKill();
-            sequence.Append(blocks[0].transform.DOMove(firstPos, tweenDuration).SetEase(Ease.InOutQuad));
-            for (int i = 1; i < blocks.Count; i++)
+            Vector3[] targetPos = new Vector3[blocks.Count];
+            for (int i = 0; i < blocks.Count; i++)
             {
-                blocks[i].transform.DOKill();
-                var blockPos = firstPos + Vector3.up * (i * _blockHeight);
-                StopFloatAnim(blocks[i].gameObject);
-                sequence.Join(blocks[i].transform.DOMove(blockPos, tweenDuration).SetEase(Ease.InOutQuad));
+                targetPos[i] = firstPos + _blockHeight * i * Vector3.up;
+                sequence.Join(blocks[i].transform.DOMove(targetPos[i], tweenDuration).SetEase(Ease.InOutQuad));
             }
             sequence.Play();
         }
@@ -130,52 +132,35 @@ namespace Assets._Scripts.Controllers
         {
             if (blocks.Count == 0) return;
             
-            var lastAmount = toPillar.GetBlockCount();
             toPillar.AddBlocksToTop(blocks);
-            toPillar.TryGetTopBlocks(out var matched, ignoreLock: true);
-
-            SoundManager.Instance.PlayRandomSFX(ESfx.BlockMoved);
-            var moveSequence = DoMoveBlocksAnim(blocks, fromPillar, toPillar);
-            
-            moveSequence.OnComplete(() =>
-            {
-                Sequence feedbackSequence = DOTween.Sequence();
-                if (matched.Count > blocks.Count)
-                {
-                    SoundManager.Instance.PlayChainedSFXs(ESfx.BlockMatched, matched.Count);
-                    feedbackSequence.Append(DoMatchAnim(matched));
-                }
-                else if (lastAmount > 0)
-                {
-                    SoundManager.Instance.PlayRandomSFX(ESfx.BlockNotMatched);
-                    feedbackSequence.Append(DoNotMatchAnim(matched));
-                }
-                
-                if (toPillar.IsLocked())
-                    feedbackSequence.OnComplete(() =>
-                    {
-                        toPillar.gameObject.GetComponent<PillarEffectVisual>().DoLockAnim(blocks[0].Tag);
-                    });
-            });
+            DoMoveBlocksAnim(blocks, fromPillar, toPillar);
         }
 
         private Sequence DoMoveBlocksAnim(List<BlockController> blocks, PillarController fromPillar, PillarController toPillar)
         {
             if (blocks.Count == 0 || fromPillar == null || toPillar == null) return null;
 
+            DOTween.Kill(fromPillar, true);
+            foreach (var block in blocks) block.transform.DOKill();
+            string tweenId = "Move";
+            var sequence = DOTween.Sequence().SetTarget(toPillar).SetId(tweenId);
+
             float duration = 0.7f; 
             float staggeredDelay = 0.05f;
             float jumpPower = 1.5f;
             
-            var sequence = DOTween.Sequence();
             int groupStartIndex = toPillar.GetBlockCount() - blocks.Count;
+            bool isLockedThisMove = toPillar.IsLocked();
+            toPillar.TryGetTopBlocks(out var matched, ignoreLock: true);
+
+            SoundManager.Instance.PlayRandomSFX(ESfx.BlockMoved);
+
+            Vector3[] targetPos = new Vector3[blocks.Count];
 
             for (int i = 0; i < blocks.Count; i++)
             {
-                blocks[i].transform.DOKill();
-
                 var targetSlot = groupStartIndex + i;
-                var targetPos = toPillar.BlockContainer.transform.position + Vector3.up * (targetSlot * _blockHeight);
+                targetPos[i] = toPillar.BlockContainer.transform.position + Vector3.up * (targetSlot * _blockHeight);
                 
                 Vector3 fromTop = fromPillar.TopPillar.position;
                 Vector3 toTop = toPillar.TopPillar.position;
@@ -184,13 +169,36 @@ namespace Assets._Scripts.Controllers
                 Vector3 midJump = (fromTop + toTop) / 2f + Vector3.up * jumpPower;
                 
                 // Quy dao: Tu vi tri hien tai (dang hover) -> Qua dinh coc cu -> Qua diem giua -> Qua dinh coc moi -> Roi xuong
-                Vector3[] path = new Vector3[] { fromTop, midJump, toTop, targetPos };
+                Vector3[] path = new Vector3[] { fromTop, midJump, toTop, targetPos[i] };
                 
-                StopFloatAnim(blocks[i].gameObject);
                 sequence.Insert(i * staggeredDelay, 
                     blocks[i].transform.DOPath(path, duration, PathType.CatmullRom)
                     .SetEase(Ease.OutQuad));
             }
+            
+            sequence.OnComplete(() =>
+            {
+                // Return if this tween is force-completed (e.g. blocks picked up again)
+                if (blocks.Count > 0 && _selectedBlocks.Contains(blocks[0])) return;
+
+                Sequence feedbackSequence = DOTween.Sequence();
+                if (matched.Count > blocks.Count)
+                {
+                    SoundManager.Instance.PlayChainedSFXs(ESfx.BlockMatched, matched.Count);
+                    feedbackSequence.Append(DoMatchAnim(matched));
+                }
+                else if (groupStartIndex > 0)
+                {
+                    SoundManager.Instance.PlayRandomSFX(ESfx.BlockNotMatched);
+                    feedbackSequence.Append(DoNotMatchAnim(matched));
+                }
+                
+                if (isLockedThisMove)
+                    feedbackSequence.OnComplete(() =>
+                    {
+                        toPillar.gameObject.GetComponent<PillarEffectVisual>().DoLockAnim(blocks[0].Tag);
+                    });
+            });
             return sequence.Play();
         }
 
@@ -198,12 +206,14 @@ namespace Assets._Scripts.Controllers
         {
             if (blocks == null || blocks.Count == 0) return null;
 
+            var pillar = blocks[0].GetPillarParent();
+            string tweenId = "Match";
+            var masterSequence = DOTween.Sequence().SetId(tweenId).SetTarget(pillar);
+
             float jumpHeight = .5f;
             float jumpDuration = 0.25f;
             float rotateAngle = 7f;
             float staggeredDelay = 0.03f;
-
-            var masterSequence = DOTween.Sequence();
 
             for (int i = 0; i < blocks.Count; i++)
             {
@@ -229,18 +239,20 @@ namespace Assets._Scripts.Controllers
                 masterSequence.Insert(i * staggeredDelay, sequence);
             }
 
-            return masterSequence.Play();
+            return masterSequence;
         }
 
         private Sequence DoNotMatchAnim(List<BlockController> blocks)
         {
             if (blocks == null || blocks.Count == 0) return null;
 
+            var pillar = blocks[0].GetPillarParent();
+            string tweenId = "Not match";
+            var masterSequence = DOTween.Sequence().SetTarget(pillar).SetId(tweenId);
+
             float duration = 0.4f;
             float strength = 0.05f;
             int vibrato = 10;
-
-            var masterSequence = DOTween.Sequence();
 
             foreach (var block in blocks)
             {
@@ -254,7 +266,7 @@ namespace Assets._Scripts.Controllers
                 StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Sparkle, blocks[^1].transform.position));
             });
 
-            return masterSequence.Play();
+            return masterSequence;
         }
 #endregion
 
@@ -274,12 +286,12 @@ namespace Assets._Scripts.Controllers
             }
             else
             {
-                // Debug.Log($"Pillar {pillar.name} is clicked!");
                 var parentPillar = _selectedBlocks[0].GetPillarParent();
                 if (parentPillar == pillar)
                 {
-                    PutBackBlocks(_selectedBlocks, pillar);
+                    var toPutBack = new List<BlockController>(_selectedBlocks);
                     _selectedBlocks.Clear();
+                    PutBackBlocks(toPutBack, pillar);
                     return;
                 }
                 else
@@ -293,6 +305,8 @@ namespace Assets._Scripts.Controllers
                         toReturn = _selectedBlocks.GetRange(availableSpace, _selectedBlocks.Count - availableSpace);
                     }
 
+                    _selectedBlocks.Clear();
+
                     if (toMove.Count > 0)
                     {
                         MoveBlocks(toMove, parentPillar, pillar);
@@ -300,10 +314,9 @@ namespace Assets._Scripts.Controllers
 
                     if (toReturn.Count > 0)
                     {
-                        // Debug.Log(1);
                         PutBackBlocks(toReturn, parentPillar);
                     }
-                    _selectedBlocks.Clear();
+                    
                     OnBlocksMoved?.Invoke(true);
                 }
             }

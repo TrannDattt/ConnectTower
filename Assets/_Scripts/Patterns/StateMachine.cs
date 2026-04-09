@@ -88,6 +88,11 @@ namespace Assets._Scripts.Patterns
             // Debug.Log($"No default state, fallback to {CurrentState.Key} state");
         }
 
+        public void Reset()
+        {
+            CurrentState = null;
+        }
+
         public void DoState()
         // void Update()
         {

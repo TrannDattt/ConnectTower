@@ -22,6 +22,12 @@ namespace Assets._Scripts.Managers
             return _levels.FirstOrDefault(l => !l.IsCleared);
         }
 
+        public LevelRuntimeData GetLevel(int index)
+        {
+            if (index - 1 < 0 || index > _levels.Count) return null;
+            return _levels[index - 1];
+        }
+
         public List<LevelRuntimeData> GetAllLevels()
         {
             return _levels;

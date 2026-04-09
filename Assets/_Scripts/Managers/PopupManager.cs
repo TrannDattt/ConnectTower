@@ -28,7 +28,6 @@ namespace Assets._Scripts.Managers
         [SerializeField] private TextPopupVisual _textPopupPrefab;
         [SerializeField] private int _initAmount;
 
-        //TODO: Pooling
         private Pooling<TextPopupVisual> _textPopupPool = new();
         private Dictionary<EPopup, GamePopupVisual> _popupDict = new();
 

@@ -26,6 +26,7 @@ namespace Assets._Scripts.Datas
         public int CoinReward;
 
         public bool IsCleared => UserManager.CurUser.CurrentLevelIndex > Index;
+        public bool IsLocked => UserManager.CurUser.CurrentLevelIndex < Index;
 
         public LevelRuntimeData()
         {

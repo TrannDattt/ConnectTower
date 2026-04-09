@@ -14,7 +14,10 @@ namespace Assets._Scripts.Visuals
         {
             if (_slider != null)
             {
-                DOTween.To(() => _slider.value, x => _slider.value = x, (float)current / target, 0.5f).SetEase(Ease.InOutSine);
+                DOTween.To(() => _slider.value, x => _slider.value = x, (float)current / target, 0.5f)
+                    .SetEase(Ease.InOutSine)
+                    .SetTarget(gameObject)
+                    .SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable);
             }
 
             if (_progressText != null)

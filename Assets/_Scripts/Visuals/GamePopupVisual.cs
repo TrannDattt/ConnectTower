@@ -28,11 +28,12 @@ namespace Assets._Scripts.Visuals
         {
             if (_popupRt == null) yield break;
             
-            _popupRt.DOKill();
+            _popupRt.DOKill(true);
             _popupRt.localScale = Vector3.zero;
             yield return _popupRt.DOScale(Vector3.one, 0.5f)
                                  .SetEase(Ease.OutBack)
-                                 .SetUpdate(true);
+                                 .SetUpdate(true)
+                                 .SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable);
         }
 
 
@@ -50,10 +51,11 @@ namespace Assets._Scripts.Visuals
 
         protected virtual IEnumerator DoHideAnim(UnityAction onHide)
         {
-            _popupRt.DOKill();
+            _popupRt.DOKill(true);
             yield return _popupRt.DOScale(Vector3.zero, 0.25f)
                                  .SetEase(Ease.InBack)
                                  .SetUpdate(true)
+                                 .SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable)
                                  .OnComplete(() =>
                                  {
                                     onHide?.Invoke();

@@ -11,7 +11,7 @@ namespace Assets._Scripts.Visuals
     [RequireComponent(typeof(RectTransform))]
     public class GameButtonVisual : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
-        [SerializeField] private Button _button;
+        [SerializeField] protected Button _button;
         [SerializeField] private RectTransform _buttonRt;
         
         [Header("Settings")]
@@ -47,30 +47,37 @@ namespace Assets._Scripts.Visuals
         {
             OnClicked.RemoveAllListeners();
             if (_button != null) _button.onClick.RemoveAllListeners();
-            _buttonRt.DOKill();
         }
 
         public virtual void OnPointerDown(PointerEventData eventData)
         {
             if (_button != null && !_button.interactable) return;
-
             Scale(_originalScale * _pressedScale);
         }
 
         public virtual void OnPointerUp(PointerEventData eventData)
         {
+            if (_button != null && !_button.interactable) return;
             ResetScale();
         }
 
         private void Scale(Vector3 targetScale)
         {
             _buttonRt.DOKill();
-            _buttonRt.DOScale(targetScale, _duration).SetEase(Ease.OutSine).SetUpdate(true);
+            _buttonRt.DOScale(targetScale, _duration)
+                     .SetEase(Ease.OutSine)
+                     .SetUpdate(true);
         }
 
         private void ResetScale()
         {
            Scale(_originalScale);
+        }
+
+        void OnDisable()
+        {
+            _buttonRt.DOKill();
+            _buttonRt.localScale = _originalScale;
         }
     }
 }

@@ -26,10 +26,13 @@ namespace Assets._Scripts.Visuals
             _iconRt.DOKill();
             
             _offsetPos = _originPos + new Vector2(0, _offsetY);
-            _iconRt.DOAnchorPos(_offsetPos, _animDuration).SetEase(Ease.InOutQuad).OnComplete(() =>
-            {
-                _name.gameObject.SetActive(true);
-            });
+            _iconRt.DOAnchorPos(_offsetPos, _animDuration)
+                .SetEase(Ease.InOutQuad)
+                .SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable)
+                .OnComplete(() =>
+                {
+                    _name.gameObject.SetActive(true);
+                });
             // Debug.Log($"Tab {name} selected");
         }
 
@@ -40,7 +43,7 @@ namespace Assets._Scripts.Visuals
             _isSelected = false;
             _iconRt.DOKill();
             _name.gameObject.SetActive(false);
-            _iconRt.DOAnchorPos(_originPos, _animDuration).SetEase(Ease.InOutQuad);
+            _iconRt.DOAnchorPos(_originPos, _animDuration).SetEase(Ease.InOutQuad).SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable);
             // Debug.Log($"Tab {name} deselected");
         }
 

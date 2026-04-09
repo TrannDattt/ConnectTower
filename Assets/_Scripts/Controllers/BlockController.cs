@@ -23,6 +23,7 @@ namespace Assets._Scripts.Controllers
             Id = data.Id;
             _tag = tag;
             _icon.sprite = BlockIconMapper.GetIcon(data.IconId);
+            ActiveMechanic = EMechanic.None;
         }
 
         public bool IsSameTag(string tag)

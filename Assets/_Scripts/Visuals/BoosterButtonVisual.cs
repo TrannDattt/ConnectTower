@@ -1,3 +1,4 @@
+using Assets._Scripts.Managers;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -13,9 +14,10 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Text _countText;
         [SerializeField] private Image _iconImage;
         [SerializeField] private Image _getMoreImage;
-        //TODO: Add popup text if button is locked and player click on it
 
         public bool IsLocked {get; private set;}
+        private bool _inAnim = false;
+        public bool IsInAnim => _inAnim;
 
         public void ChangeLockStatus(bool isLock)
         {
@@ -53,28 +55,38 @@ namespace Assets._Scripts.Visuals
             }
         }
 
-        private Vector3 _originalIconPos, _originalIconScale;
+        private Vector3 _originalIconLocalPos, _originalIconScale;
         public Tween DoOnUseBoosterAnim(Vector3 gatherPoint, System.Action onReachedCenter)
         {
+            if (_inAnim) return null;
+
+            _inAnim = true;
+            _button.interactable = false;
             float duration = .5f;
             float stayDuration = .5f;
-            float scaleTime = 1.5f;
+            float scaleTime = 1.2f;
             
-            _iconImage.transform.DOKill();
-            Sequence sequence = DOTween.Sequence();
+            DOTween.Kill(gameObject);
+
+            void reset()
+            {
+                _iconImage.transform.localPosition = _originalIconLocalPos;
+                _iconImage.transform.localScale = _originalIconScale;
+                _button.interactable = true;
+            }
+
+            Sequence sequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.KillOnDisable);
             sequence.Append(_iconImage.transform.DOMove(gatherPoint, duration).SetEase(Ease.OutSine));
             sequence.Join(_iconImage.transform.DOScale(_originalIconScale * scaleTime, duration).SetEase(Ease.OutSine));
             sequence.AppendInterval(stayDuration);
+            sequence.OnKill(() => 
+            {
+                reset();
+                _inAnim = false;
+            });
             sequence.OnComplete(() => 
             {
-                _iconImage.transform.position = _originalIconPos;
-                _iconImage.transform.localScale = _originalIconScale;
                 onReachedCenter?.Invoke();
-            });
-            sequence.OnKill(() =>
-            {
-                _iconImage.transform.position = _originalIconPos;
-                _iconImage.transform.localScale = _originalIconScale;
             });
             
             return sequence;
@@ -82,14 +94,14 @@ namespace Assets._Scripts.Visuals
 
         public void ShowPopupText()
         {
-            //TODO: Show popup text if click to lock button
+            PopupManager.Instance.ShowPopupText("Locked", transform.position);
         }
 
         protected override void Start()
         {
             base.Start();
 
-            _originalIconPos = _iconImage.transform.position;
+            _originalIconLocalPos = _iconImage.transform.localPosition;
             _originalIconScale = _iconImage.transform.localScale;
         }
     }

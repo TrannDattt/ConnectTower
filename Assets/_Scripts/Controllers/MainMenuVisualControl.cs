@@ -19,7 +19,6 @@ namespace Assets._Scripts.Controllers
 
         private StateMachine<EMenuTab> _tabSM = new();
 
-        // TODO: Provide user data
         public void InitVisual()
         {
             Debug.Log($"Init main menu");

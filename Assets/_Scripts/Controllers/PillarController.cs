@@ -25,7 +25,6 @@ namespace Assets._Scripts.Controllers
         public MechanicVisualControl MechanicVisual { get; set; }
 
         #region Getter
-        // TODO: Assumed all lower slots have block.
         public int GetBlockCount()
         {
             var topBlock = GetTopBlock();
@@ -77,6 +76,7 @@ namespace Assets._Scripts.Controllers
             if (data == null) return;
             Id = data.Id;
             _isFull = false;
+            ActiveMechanic = EMechanic.None;
         }
 
 #region Adder
@@ -132,6 +132,7 @@ namespace Assets._Scripts.Controllers
 
         public void RemoveAllBlocks()
         {
+            StopAllCoroutines();
             BlockContainer.DetachChildren();
             _blocks = new() {null, null, null, null};
         }
@@ -219,7 +220,6 @@ namespace Assets._Scripts.Controllers
 
         public IEnumerator DoSpawnBlockAnim()
         {
-            if (!(this as IMechanicHandler).IsInteractable()) yield break;
 
             float fallDuration = .4f;
             float offsetY = 4.2f;
@@ -227,7 +227,7 @@ namespace Assets._Scripts.Controllers
             var activeBlocks = GetAllBlocks();
             if (activeBlocks.Count == 0) yield break;
 
-            var sequence = DOTween.Sequence();
+            var sequence = DOTween.Sequence().SetTarget(this).SetLink(gameObject, LinkBehaviour.KillOnDisable);
             for (int i = 0; i < activeBlocks.Count; i++)
             {
                 var block = activeBlocks.ElementAt(i);

@@ -68,8 +68,8 @@ namespace Assets._Scripts.Visuals
             _difficultyText.transform.position = pos;
             _difficultyText.transform.localScale = startScale;
             _difficultyText.gameObject.SetActive(true);
+            var sequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable);
 
-            var sequence = DOTween.Sequence();
 
             // Scale and move text
             sequence.Append(_difficultyText.transform.DOScale(startScale * 1.15f, scaleDuration * 0.5f).SetEase(Ease.OutQuad))

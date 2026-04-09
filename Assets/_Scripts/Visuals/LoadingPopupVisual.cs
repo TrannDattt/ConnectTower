@@ -20,7 +20,6 @@ namespace Assets._Scripts.Visuals
 
         private Vector2 _targetAnchoredPos;
         private bool _isInitialized;
-        private Tween _textTween;
 
         protected override IEnumerator DoShowAnim()
         {
@@ -32,12 +31,12 @@ namespace Assets._Scripts.Visuals
                 _isInitialized = true;
             }
 
-            _popupRt.DOKill();
+            _popupRt.DOKill(true);
             _popupRt.anchoredPosition = new Vector2(_targetAnchoredPos.x, _targetAnchoredPos.y + _startOffsetY);
 
             StartBounceAnim();
 
-            Sequence showSeq = DOTween.Sequence();
+            Sequence showSeq = DOTween.Sequence().SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable);
             
             float overshootAmount = 40f;
             float dropTime = _animDuration * 0.6f;
@@ -52,7 +51,6 @@ namespace Assets._Scripts.Visuals
 
         private void StartBounceAnim()
         {
-            _textTween?.Kill();
             _loadingText.ForceMeshUpdate();
             
             var textInfo = _loadingText.textInfo;
@@ -61,7 +59,7 @@ namespace Assets._Scripts.Visuals
             float totalActiveDuration = (charCount - 1) * _delayBetweenChars + _bounceDuration;
             
             float bounceValue = 0;
-            Sequence seq = DOTween.Sequence();
+            Sequence seq = DOTween.Sequence().SetTarget(_popupRt).SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable);
             
             // Phần animation nảy
             seq.Append(DOTween.To(() => bounceValue, x => bounceValue = x, totalActiveDuration, totalActiveDuration)
@@ -106,7 +104,6 @@ namespace Assets._Scripts.Visuals
             seq.AppendInterval(_delayBetweenLoops);
             seq.SetLoops(-1, LoopType.Restart);
             seq.SetUpdate(true);
-            _textTween = seq;
         }
 
         protected override IEnumerator DoHideAnim(UnityAction onHide)
@@ -117,12 +114,12 @@ namespace Assets._Scripts.Visuals
                 yield break;
             }
 
-            _textTween?.Kill();
-            _popupRt.DOKill();
+            _popupRt.DOKill(true);
             
             yield return _popupRt.DOAnchorPos(new Vector2(_targetAnchoredPos.x, _targetAnchoredPos.y + _startOffsetY), _animDuration * 0.6f)
                 .SetEase(Ease.InBack)
                 .SetUpdate(true)
+                .SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable)
                 .WaitForCompletion();
             
             onHide?.Invoke();

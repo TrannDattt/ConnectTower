@@ -56,6 +56,7 @@ namespace Assets._Scripts.Patterns
         public void ReturnItem(T toReturn, UnityAction<T> onReturned = null)
         {
             toReturn.gameObject.SetActive(false);
+            toReturn.transform.SetParent(_parent);
             _pool.Enqueue(toReturn);
             onReturned?.Invoke(toReturn);
         }

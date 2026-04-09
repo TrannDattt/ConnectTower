@@ -86,7 +86,7 @@ namespace Assets._Scripts.Controllers
                     if (_clothImage != null) 
                     {
                         var animDuration = .5f;
-                        var seqence = DOTween.Sequence();
+                        var seqence = DOTween.Sequence().SetLink(_clothRectTransform.gameObject, LinkBehaviour.KillOnDisable);
                         seqence.Append(_clothRectTransform.DOAnchorPosY(_clothInitialAnchoredPos.y + _offsetY, animDuration).SetEase(Ease.InSine));
                         seqence.Insert(.5f, _clothImage.DOFade(0, animDuration * (1 - 0.5f)).SetEase(Ease.InSine));
                         seqence.OnComplete(() => 
