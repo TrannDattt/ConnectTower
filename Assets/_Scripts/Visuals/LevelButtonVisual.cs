@@ -27,15 +27,25 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Text _indexText;
 
         private LevelRuntimeData _levelData;
+        private int _placeholderIndex = -1;
 
-        public int LevelIndex => _levelData == null ? -1 : _levelData.Index;
+        public int LevelIndex => _levelData == null ? _placeholderIndex : _levelData.Index;
 
-        public void UpdateVisual(LevelRuntimeData data)
+        public void UpdateVisual(LevelRuntimeData data, int backupIndex = -1)
         {
-            // if (data.IsCleared) Debug.Log($"Update visual button level {data.Index}");
-            _levelData = new(data);
+            _placeholderIndex = backupIndex;
 
-            if (_levelData == null) return;
+            if (data == null)
+            {
+                _levelData = null;
+                _indexText.text = "Coming soon";
+                _icon.sprite = _normalIcon;
+                _decorateHolder.SetActive(false);
+                gameObject.name = $"Level_{backupIndex}_PlaceHolder";
+                return;
+            }
+
+            _levelData = new(data);
             _icon.sprite = _levelData.Difficulty switch
             {
                 EDifficulty.Normal => _normalIcon,
@@ -62,6 +72,12 @@ namespace Assets._Scripts.Visuals
         {
             OnClicked.AddListener(() => 
             {
+                if (_levelData == null) 
+                {
+                    PopupManager.Instance.ShowPopupText("Coming soon", GetCenterPosition());
+                    return;
+                }
+                
                 var progress = UserManager.CurUser.CurrentLevelIndex;
                 SetEnable(!_levelData.IsLocked);
                 if (!_levelData.IsLocked || GameManager.Instance.AllowPlayLockedLevel)
@@ -71,26 +87,15 @@ namespace Assets._Scripts.Visuals
                         GameManager.Instance.StartLevel(_levelData);
                     });
                 else
-                    PopupManager.Instance.ShowPopupText("Locked", transform.position);
+                    PopupManager.Instance.ShowPopupText("Locked", GetCenterPosition());
             });
 
             base.Awake();
         }
-    }
 
-    public class PlaceHolderButtonVisual : GameButtonVisual
-    {
-        protected override void Awake()
+        private Vector3 GetCenterPosition()
         {
-            base.Awake();
-
-            SetEnable(false);
-        }
-
-        protected override void Start()
-        {
-            OnClicked.AddListener(() => PopupManager.Instance.ShowPopupText("Coming soon", transform.position));
-            base.Start();
+            return transform is RectTransform rt ? rt.TransformPoint(rt.rect.center) : transform.position;
         }
     }
 }

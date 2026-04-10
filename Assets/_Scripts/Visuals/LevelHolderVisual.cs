@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Managers;
@@ -14,45 +15,90 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private LevelButtonVisual _levelButtonPrefabs;
         [SerializeField] private float _spacing = 20f;
         [SerializeField] private RectTransform _view;
+        public bool ShowAllLevel = true;
         private float _buttonHeight;
         private Vector2 _detectRange;
 
         private List<LevelButtonVisual> _activeButtons = new();
         private Pooling<LevelButtonVisual> _buttonPool = new();
+
         private int _poolAmount = 10;
-        private int _maxActiveAmount = 7;
+        private int _maxActiveAmount = 10;
         
         //TODO: Add behaviors to button: Auto focus, scale when scroll, button change color,...
 
-        public void InitVisual(int startIndex = 1)
+        public void InitVisual(int targetIndex = -1)
         {
-            if (_activeButtons.Count > 0) return;
+            if (_activeButtons.Count > 0)
+            {
+                for (int i = _activeButtons.Count - 1; i >= 0; i--)
+                {
+                    _buttonPool.ReturnItem(_activeButtons[i]);
+                }
+                _activeButtons.Clear();
+            }
 
-            int totalLevels = LevelManager.Instance.GetTotalLevelCount();
+            var allLevels = LevelManager.Instance.GetAllLevels();
+            var clearedLevel = allLevels.Where(l => l.Index < UserManager.CurUser.CurrentLevelIndex);
+            int totalLevels = ShowAllLevel ? allLevels.Count : clearedLevel.Count() + 4;
+
+            if (UserManager.CurUser.CurrentLevelIndex < allLevels.Count)
+            {
+                totalLevels = Mathf.Min(totalLevels, allLevels.Count);
+            }
+            else
+            {
+                totalLevels = allLevels.Count + 2; // thêm 2 placeholders nếu là level cuối
+            }
+
+            if (targetIndex <= 0)
+            {
+                var currentLevel = LevelManager.Instance.GetLatestNotClearedLevel();
+                targetIndex = currentLevel != null ? currentLevel.Index : totalLevels;
+            }
+
             float totalHeight = totalLevels * _buttonHeight + Mathf.Max(0, totalLevels - 1) * _spacing;
             var containerRt = _levelContainer.GetComponent<RectTransform>();
             containerRt.sizeDelta = new Vector2(containerRt.sizeDelta.x, totalHeight);
 
             // Starting viewport position target (Bottom anchored container Y maps down to 0)
-            float targetY = -(startIndex - 1) * (_buttonHeight + _spacing);
+            float targetY = -(targetIndex - 1) * (_buttonHeight + _spacing);
             
-            // Adjust to rough center using viewport 
+            // Adjust to rough center using viewport bounds
             targetY += _view.rect.height * 0.5f; 
-            if (targetY > 0) targetY = 0; // prevent overscroll at the very bottom
+            
+            // Dịch màn hình cuộn xuống 1 lượng bằng _buttonHeight để level không nằm quá cao
+            targetY -= _buttonHeight;
+            
+            // Prevent scrolling out of boundary
+            if (targetY > 0) targetY = 0; 
+            float minTargetY = -Mathf.Max(0, totalHeight - _view.rect.height);
+            if (targetY < minTargetY) targetY = minTargetY;
             
             containerRt.anchoredPosition = new Vector2(
                 containerRt.anchoredPosition.x, 
                 targetY
             );
 
+            // Tính index đầu tiên hiển thị dựa trên vị trí container sau khi đã scroll
+            // containerY âm nghĩa là cuộn lên -> level có index thấp hơn nằm phía dưới viewport
+            float visibleBottom = -targetY; 
+            int firstVisibleIndex = Mathf.Max(1, Mathf.FloorToInt(visibleBottom / (_buttonHeight + _spacing)) + 1);
+
+            // Spawn nhiều hơn để bao phủ toàn bộ vùng nhìn thấy + buffer 2 bên
+            // Tăng startIndex lùi về sau nhiều hơn để đảm bảo không bị trống phía dưới
+            int startIndex = Mathf.Max(1, firstVisibleIndex - 3);
+
             for(int i = 0; i < _maxActiveAmount; i++)
             {
-                var levelData = LevelManager.Instance.GetLevel(startIndex + i);
-                if (levelData == null) break;
+                int currIndex = startIndex + i;
+                if (currIndex > totalLevels) break;
+
+                var levelData = LevelManager.Instance.GetLevel(currIndex);
 
                 var newButton = _buttonPool.GetItem();
-                newButton.UpdateVisual(levelData);
-                SetButtonPosition(newButton, levelData.Index);
+                newButton.UpdateVisual(levelData, currIndex);
+                SetButtonPosition(newButton, currIndex);
                 newButton.transform.SetSiblingIndex(i + 1);
                 _activeButtons.Add(newButton);
             }
@@ -69,12 +115,22 @@ namespace Assets._Scripts.Visuals
 
         private bool CheckSensorInRange(Transform sensor)
         {
-            return Mathf.Abs(sensor.position.y - _view.position.y) < _detectRange.x;
+            // Chuyển vị trí từ World Space về Local Space của _view để tính toán chính xác
+            // bất kể Canvas đang ở chế độ Overlay hay Camera
+            Vector3 localPos = _view.InverseTransformPoint(sensor.position);
+            
+            float viewHalfHeight = _view.rect.height * 0.5f;
+            float distance = Mathf.Abs(localPos.y); // localPos.y là khoảng cách tới tâm của _view
+            return distance < (viewHalfHeight + _buttonHeight * 2f);
         }
 
         private bool CheckSensorOutRange(Transform sensor)
         {
-            return Mathf.Abs(sensor.position.y - _view.position.y) > _detectRange.y;
+            Vector3 localPos = _view.InverseTransformPoint(sensor.position);
+            
+            float viewHalfHeight = _view.rect.height * 0.5f;
+            float distance = Mathf.Abs(localPos.y);
+            return distance > (viewHalfHeight + _buttonHeight * 3f);
         }
 
         private void CheckAndUpdateVisual()
@@ -89,12 +145,25 @@ namespace Assets._Scripts.Visuals
             // 1. ADD ABOVE (Physically HIGHER, visually going towards Top)
             if (CheckSensorInRange(_activeButtons[^1].transform))
             {
-                var nextLevelData = LevelManager.Instance.GetLevel(_activeButtons[^1].LevelIndex + 1);
-                if (nextLevelData != null)
+                int nextIndex = _activeButtons[^1].LevelIndex + 1;
+                int totalCount = LevelManager.Instance.GetTotalLevelCount();
+                
+                int maxLevels = ShowAllLevel ? totalCount : UserManager.CurUser.CurrentLevelIndex + 3;
+                if (UserManager.CurUser.CurrentLevelIndex < totalCount)
                 {
+                    maxLevels = Mathf.Min(maxLevels, totalCount);
+                }
+                else
+                {
+                    maxLevels = totalCount + 2; // thêm 2 placeholders nếu là level cuối
+                }
+
+                if (nextIndex <= maxLevels)
+                {
+                    var nextLevelData = LevelManager.Instance.GetLevel(nextIndex);
                     var toAdd = _buttonPool.GetItem();
-                    toAdd.UpdateVisual(nextLevelData);
-                    SetButtonPosition(toAdd, nextLevelData.Index);
+                    toAdd.UpdateVisual(nextLevelData, nextIndex);
+                    SetButtonPosition(toAdd, nextIndex);
                     _activeButtons.Add(toAdd);
                     toAdd.transform.SetAsLastSibling();
                 }
@@ -102,12 +171,14 @@ namespace Assets._Scripts.Visuals
             // 2. ADD BELOW (Physically LOWER, visually going towards Bottom)
             else if (CheckSensorInRange(_activeButtons[0].transform))
             {
-                var nextLevelData = LevelManager.Instance.GetLevel(_activeButtons[0].LevelIndex - 1);
-                if (nextLevelData != null)
+                int prevIndex = _activeButtons[0].LevelIndex - 1;
+                
+                if (prevIndex >= 1)
                 {
+                    var prevLevelData = LevelManager.Instance.GetLevel(prevIndex);
                     var toAdd = _buttonPool.GetItem();
-                    toAdd.UpdateVisual(nextLevelData);
-                    SetButtonPosition(toAdd, nextLevelData.Index);
+                    toAdd.UpdateVisual(prevLevelData, prevIndex);
+                    SetButtonPosition(toAdd, prevIndex);
                     _activeButtons.Insert(0, toAdd);
                     toAdd.transform.SetAsFirstSibling();
                 }
@@ -133,11 +204,17 @@ namespace Assets._Scripts.Visuals
         {
             _buttonPool = new(_levelButtonPrefabs, _poolAmount, _levelContainer);
             _buttonHeight = _levelButtonPrefabs.GetComponent<RectTransform>().sizeDelta.y;
-            _detectRange = new(_buttonHeight * 2, _buttonHeight * 5);
+            _detectRange = new(_buttonHeight * 3, _buttonHeight * 3.5f);
         }
 
         void Update()
         {
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                Debug.Log($"Check top sensor: {_activeButtons[^1].LevelIndex} distance: {Mathf.Abs(_activeButtons[^1].transform.position.y - _view.rect.height / 2)}");
+                Debug.Log($"Check bottom sensor: {_activeButtons[0].LevelIndex} distance: {Mathf.Abs(_activeButtons[0].transform.position.y - _view.rect.height / 2)}");
+            }
+
             CheckAndUpdateVisual();
         }
     }

@@ -59,7 +59,7 @@ namespace Assets._Scripts.Visuals
             _textInitialScale = _difficultyText.transform.localScale;
         }
 
-        public IEnumerator DoDifficultyAnim(Vector2 pos)
+        public IEnumerator DoDifficultyAnim(Vector3 pos)
         {
             Vector3 startScale = new(5, 5, 5);
             float scaleDuration = .7f;

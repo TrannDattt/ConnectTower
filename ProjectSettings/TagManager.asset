@@ -18,7 +18,7 @@ TagManager:
   - MiddleUI
   - FrontUI
   - Block
-  - 
+  - Popup
   - 
   - 
   - 
@@ -44,6 +44,15 @@ TagManager:
     locked: 0
   - name: Block
     uniqueID: 4017726927
+    locked: 0
+  - name: Pillar
+    uniqueID: 3476715541
+    locked: 0
+  - name: HUD
+    uniqueID: 2715615065
+    locked: 0
+  - name: Popup
+    uniqueID: 210510021
     locked: 0
   m_RenderingLayers:
   - Default

@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.TextPopupVisual
   _canvasGroup: {fileID: 5138701690592593831}
-  _offsetY: 120
+  _offsetY: 1.2
   _duration: 0.7
   _content: {fileID: 4398758113153792816}
 --- !u!225 &5138701690592593831

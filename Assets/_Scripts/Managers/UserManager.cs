@@ -131,5 +131,11 @@ namespace Assets._Scripts.Managers
                 Debug.Log($"Update progress to {CurUser.CurrentLevelIndex}");
             }
         }
+
+#region Tutorial
+        public static bool HasPlayedTutorial(ETutorial tutorial) => CurUser.HasPlayedTutorial(tutorial);
+
+        public static void MarkTutorialPlayed(ETutorial tutorial) => CurUser.MarkTutorialPlayed(tutorial);
+#endregion
     }
 }

@@ -22,6 +22,19 @@ namespace Assets._Scripts.Managers
 
         private Dictionary<EParticle, Pooling<ParticleSystem>> _particleDict = new();
 
+        public float GetParticleDuration(EParticle key)
+        {
+            foreach (var particle in _gameParticles)
+            {
+                if (particle.Key == key)
+                {
+                    // Trả về thời gian sinh hạt (Emission Duration) 
+                    return particle.ParticlePrefab.main.duration;
+                }
+            }
+            return 0f;
+        }
+
         public IEnumerator PlayParticle(EParticle key, Vector3 position, Transform parent = null)
         {
             if (_particleDict.TryGetValue(key, out var pool))

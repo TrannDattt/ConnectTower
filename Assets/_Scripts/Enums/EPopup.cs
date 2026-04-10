@@ -11,5 +11,6 @@ namespace Assets._Scripts.Enums
         Loading,
         Revive,
         NoAds,
+        Tutorial,
     }
 }

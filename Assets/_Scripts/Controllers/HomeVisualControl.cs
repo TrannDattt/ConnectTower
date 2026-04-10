@@ -17,7 +17,7 @@ namespace Assets._Scripts.Controllers
         public void InitVisual()
         {
             var allLevels = LevelManager.Instance.GetAllLevels();
-            _levelHolder.InitVisual(1);
+            _levelHolder.InitVisual(-1);
             // _levelHolder.InitVisual(allLevels);
             _coinDisplay.UpdateVisual();
             _heartDisplay.UpdateVisual();

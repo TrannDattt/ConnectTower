@@ -55,11 +55,18 @@ namespace Assets._Scripts.Visuals
 
         private IEnumerator DoGainCoinAnim(int from, int to, float duration)
         {
+            float textDelayTime = 0;
             SoundManager.Instance.PlayRandomSFX(ESfx.CoinGained);
 
             if (to > from)
             {
-                yield return ParticleManager.Instance.StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.CoinFly, _startPoint.position, transform.parent));
+                ParticleManager.Instance.StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.CoinFly, _startPoint.position, transform.parent));
+                textDelayTime = ParticleManager.Instance.GetParticleDuration(EParticle.CoinFly) * 0.7f;
+            }
+
+            if (textDelayTime > 0)
+            {
+                yield return new WaitForSeconds(textDelayTime);
             }
             
             yield return DOTween.To(() => from, x => _coinCountText.text = x.ToString(), to, duration)

@@ -26,15 +26,16 @@ namespace Assets._Scripts.Visuals
             gameObject.SetActive(false);
             _initialPos = transform.position;
             _initialScale = transform.localScale;
+            Debug.Log($"Initial pos: {_initialPos}");
         }
 
-        public IEnumerator DoLevelIndexAnim(Vector2 pos)
+        public IEnumerator DoLevelIndexAnim(Vector3 pos)
         {
             Vector3 startScale = new(5, 5, 5);
             float scaleDuration = .7f;
             float stayDuration = .5f;
 
-            transform.position = pos;
+            transform.position = new(pos.x, pos.y, _initialPos.z);
             transform.localScale = startScale;
             gameObject.SetActive(true);
 

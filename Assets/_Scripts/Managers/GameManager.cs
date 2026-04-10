@@ -274,6 +274,11 @@ namespace Assets._Scripts.Managers
                         // BlockMovementController.Instance.OnBlocksMoved.AddListener((_) => pillar.CheckFullMatch());
                     }
                     BlockMovementController.Instance.OnBlocksMoved.AddListener(OnBlocksMoved);
+
+                    if(TutorialManager.CheckCanPlayTutorial(out var toPlay))
+                    {
+                        Instance.StartCoroutine(PopupManager.Instance.ShowTutorial(toPlay));
+                    }
                 }
 
                 public override void Exit()

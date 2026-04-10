@@ -13,6 +13,8 @@ namespace Assets._Scripts.Managers
 {
     public class PopupManager : Singleton<PopupManager>
     {
+        [SerializeField] private Canvas _canvas;
+
         [Header("Game Popup")]
         [SerializeField] private GameObject _ovelayPanel;
         [SerializeField] private ShopVisualControl _shopPopup;
@@ -23,8 +25,9 @@ namespace Assets._Scripts.Managers
         [SerializeField] private LoadingPopupVisual _loadingPopup;
         [SerializeField] private RevivePopupVisual _revivePopup;
         [SerializeField] private SettingPopupVisual _settingPopup;
+        [SerializeField] private TutorialPopupVisual _tutorialPopup;
 
-        [Header("Game Popup")]
+        [Header("Text Popup")]
         [SerializeField] private TextPopupVisual _textPopupPrefab;
         [SerializeField] private int _initAmount;
 
@@ -47,6 +50,13 @@ namespace Assets._Scripts.Managers
             if (popup == null || popup is not BundlePurchasePopupVisual bundlePopup) return;
             _ovelayPanel.SetActive(true);
             StartCoroutine(bundlePopup.ShowBundle(bundle));
+        }
+
+        public IEnumerator ShowTutorial(ETutorial type)
+        {
+            if (_tutorialPopup == null) yield break;
+            _ovelayPanel.SetActive(true);
+            yield return _tutorialPopup.ShowTutorial(type);
         }
 
         public void ShowPopupText(string content, Vector3 pos)
@@ -81,8 +91,17 @@ namespace Assets._Scripts.Managers
             _popupDict[EPopup.Lose] = _losePopup;
             _popupDict[EPopup.Loading] = _loadingPopup;
             _popupDict[EPopup.Booster] = _boosterPopup;
+            _popupDict[EPopup.Tutorial] = _tutorialPopup;
 
             _textPopupPool = new(_textPopupPrefab, _initAmount, transform);
+        }
+
+        void Update()
+        {
+            if (_canvas != null && _canvas.renderMode != RenderMode.ScreenSpaceOverlay && (_canvas.worldCamera == null || !_canvas.worldCamera.gameObject.activeInHierarchy))
+            {
+                _canvas.worldCamera = Camera.main;
+            }
         }
     }
 }

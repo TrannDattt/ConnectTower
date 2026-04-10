@@ -11,6 +11,7 @@ namespace Assets._Scripts.Controllers
 {
     public class IngameVisualController : Singleton<IngameVisualController>
     {
+        [SerializeField] private RectTransform _canvasRt;
         [SerializeField] private MoveCountVisual _moveCount;
         [SerializeField] private ProgressBarVisual _progressBar;
         [SerializeField] private DifficultyTagVisual _difficultyTag;
@@ -20,7 +21,8 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private BoosterButtonVisual _extraMoveButton;
         [SerializeField] private BoosterButtonVisual _shuffleButton;
         [SerializeField] private BoosterButtonVisual _hintButton;
-        [SerializeField] private Transform _centerPoint;
+        // [SerializeField] private Transform _centerPoint;
+        private Vector3 _centerPoint => _canvasRt.TransformPoint(_canvasRt.rect.center);
 
         public void InitVisual(LevelRuntimeData data)
         {
@@ -48,9 +50,9 @@ namespace Assets._Scripts.Controllers
 
         public IEnumerator DoLevelIntroducingAnim()
         {
-            yield return _levelIndex.DoLevelIndexAnim(_centerPoint.position);
+            yield return _levelIndex.DoLevelIndexAnim(_centerPoint);
             if (LevelManager.PlayingLevel.Difficulty != EDifficulty.Normal)
-                yield return _difficultyTag.DoDifficultyAnim(_centerPoint.position);
+                yield return _difficultyTag.DoDifficultyAnim(_centerPoint);
         }
 
         public Tween UpdateMoveCount(int count, bool doAnim = false)
@@ -90,7 +92,7 @@ namespace Assets._Scripts.Controllers
                 if (_extraMoveButton.IsLocked) _extraMoveButton.ShowPopupText();
                 else if (useCount > 0)
                 {
-                    _extraMoveButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
+                    _extraMoveButton.DoOnUseBoosterAnim(_centerPoint, () =>
                     {
                         BoosterController.Instance.UseBooster(EBooster.ExtraMove);
                         _extraMoveButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.ExtraMove));
@@ -111,7 +113,7 @@ namespace Assets._Scripts.Controllers
                 if (_shuffleButton.IsLocked) _shuffleButton.ShowPopupText();
                 else if (useCount > 0) 
                 {
-                    _shuffleButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
+                    _shuffleButton.DoOnUseBoosterAnim(_centerPoint, () =>
                     {
                         BoosterController.Instance.UseBooster(EBooster.Shuffle);
                         _shuffleButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Shuffle));
@@ -132,7 +134,7 @@ namespace Assets._Scripts.Controllers
                 if (_hintButton.IsLocked) _hintButton.ShowPopupText();
                 else if (useCount > 0) 
                 {
-                    _hintButton.DoOnUseBoosterAnim(_centerPoint.position, () =>
+                    _hintButton.DoOnUseBoosterAnim(_centerPoint, () =>
                     {
                         BoosterController.Instance.UseBooster(EBooster.Hint);
                         _hintButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Hint));

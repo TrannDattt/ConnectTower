@@ -13,7 +13,7 @@ namespace Assets._Scripts.Visuals
         // [SerializeField] protected RectTransform _baseRt;
         [SerializeField] protected GameButtonVisual _closeButton;
 
-        public bool IsActive {get; private set;} = false;
+        public bool IsActive {get; protected set;} = false;
 
         public virtual IEnumerator Show()
         {

@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using Assets._Scripts.Enums;
+
 namespace Assets._Scripts.Datas
 {
     public class UserRuntimeData
@@ -14,6 +17,12 @@ namespace Assets._Scripts.Datas
         public int ExtraMoveCount;
         public int ShuffleCount;
         public int HintCount;
+        // TUTORIAL
+        private HashSet<ETutorial> _playedTutorials = new();
+
+        public bool HasPlayedTutorial(ETutorial tutorial) => _playedTutorials.Contains(tutorial);
+
+        public void MarkTutorialPlayed(ETutorial tutorial) => _playedTutorials.Add(tutorial);
 
         //TODO: Use class UserJSON as a parameter
         public UserRuntimeData()
