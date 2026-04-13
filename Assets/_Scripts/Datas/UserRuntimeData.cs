@@ -33,7 +33,7 @@ namespace Assets._Scripts.Datas
 
             CoinCount = 100000;
 
-            CurrentLevelIndex = 3;
+            CurrentLevelIndex = 5;
             HeartCount = 5;
 
             ExtraMoveCount = 3;

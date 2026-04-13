@@ -4,6 +4,8 @@ using Assets._Scripts.Patterns;
 using DG.Tweening;
 using UnityEngine;
 using Assets._Scripts.Managers;
+using Assets._Scripts.Helpers;
+using System.Collections;
 
 namespace Assets._Scripts.Controllers
 {
@@ -22,9 +24,9 @@ namespace Assets._Scripts.Controllers
 
         public void InitData()
         {
-            _extraMoveBoosterData = new(false, 5);
-            _shuffleBoosterData = new(false, new(0, 2, 0));
-            _hintBoosterData = new(false);
+            _extraMoveBoosterData = new(!PlayerProgressHelper.CheckUnlockBooster(EBooster.ExtraMove), 5);
+            _shuffleBoosterData = new(!PlayerProgressHelper.CheckUnlockBooster(EBooster.Shuffle), new(0, 2, 0));
+            _hintBoosterData = new(!PlayerProgressHelper.CheckUnlockBooster(EBooster.Hint));
         }
 
         public Sprite GetBoosterIcon(EBooster type)
@@ -85,9 +87,15 @@ namespace Assets._Scripts.Controllers
             };
 
             if (data == null) return;
-            _isUsingBooster = true;
+            data.Do();
 
-            var boosterSFX = type switch
+            StartCoroutine(DoUseBoosterAnim(data));
+        }
+
+        public IEnumerator DoUseBoosterAnim(BoosterRuntimeData data)
+        {
+            _isUsingBooster = true;
+            var boosterSFX = data.Key switch
             {
                 EBooster.ExtraMove => ESfx.ExtraMove,
                 EBooster.Shuffle => ESfx.Shuffle,
@@ -96,11 +104,11 @@ namespace Assets._Scripts.Controllers
             };
             SoundManager.Instance.PlayRandomSFX(boosterSFX);
 
-            data.Do();
-            var anim = data.DoMechanicAnim();
+            var anim = data.DoBoosterAnim();
             if (anim != null)
             {
                 anim.OnComplete(() => _isUsingBooster = false);
+                yield return anim.WaitForCompletion();
             }
             else
             {

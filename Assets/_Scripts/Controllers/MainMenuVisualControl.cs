@@ -34,7 +34,7 @@ namespace Assets._Scripts.Controllers
             var navState = toChange as NavTabState;
             if (navState.TabControl == null)
             {
-                PopupManager.Instance.ShowPopupText("Coming soon", navState.TabVisual.transform.position);
+                PopupManager.Instance.ShowPopupText("Coming soon", navState.TabVisual.GetCenterPosition());
                 return;
             }
             

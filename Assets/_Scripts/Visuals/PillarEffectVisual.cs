@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets._Scripts.Controllers;
@@ -23,7 +24,7 @@ namespace Assets._Scripts.Visuals
         private static HashSet<EColor> _unusedColor = new();
         private EColor _currentColor = EColor.None;
 
-        public void DoLockAnim(string tag)
+        public IEnumerator DoLockAnim(string tag)
         {
             SoundManager.Instance.PlayRandomSFX(ESfx.FullMatched);
 
@@ -32,19 +33,23 @@ namespace Assets._Scripts.Visuals
             var color = GetRandomColor();
 
             ChangeLockColor(color);
-            StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Confetti, transform.position, _canvas.transform));
+            var particleAnim = ParticleManager.Instance.StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Confetti, transform.position, _canvas.transform));
+            
             _lockHolder.gameObject.SetActive(true);
             _tag.text = tag;
             _tag.gameObject.SetActive(false);
             _border.transform.localScale = Vector3.zero;
 
-            _border.transform.DOScale(initialScale, animDuration)
-                            .SetEase(Ease.OutBack, overshoot: 2f)
-                            .SetLink(gameObject, LinkBehaviour.KillOnDisable)
-                            .OnComplete(() =>
-                            {
-                                _tag.gameObject.SetActive(true);
-                            });
+            var borderAim = _border.transform.DOScale(initialScale, animDuration)
+                                            .SetEase(Ease.OutBack, overshoot: 2f)
+                                            .SetLink(gameObject, LinkBehaviour.KillOnDisable)
+                                            .OnComplete(() =>
+                                            {
+                                                _tag.gameObject.SetActive(true);
+                                            });
+
+            yield return borderAim.WaitForCompletion();
+            yield return particleAnim;
         }
 
         private Color GetRandomColor()

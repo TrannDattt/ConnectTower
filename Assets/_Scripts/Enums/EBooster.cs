@@ -5,5 +5,6 @@ namespace Assets._Scripts.Enums
         ExtraMove,
         Shuffle,
         Hint,
+        None,
     }
 }

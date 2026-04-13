@@ -36,14 +36,13 @@ namespace Assets._Scripts.Visuals
                                  .SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable);
         }
 
-
         public virtual IEnumerator Hide()
         {
             IsActive = false;
             void OnHide()
             {
-                PopupManager.Instance.OnPopupHidden();
                 gameObject.SetActive(false);
+                PopupManager.Instance.OnPopupHidden?.Invoke();
                 if (GameManager.Instance.CurState == EGameState.Pause) GameManager.Instance.ResumeGame();
             }
             yield return DoHideAnim(OnHide);

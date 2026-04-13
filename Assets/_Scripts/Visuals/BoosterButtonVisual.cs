@@ -28,6 +28,7 @@ namespace Assets._Scripts.Visuals
         public void Lock()
         {
             IsLocked = true;
+            SetEnable(false);
             _lockImage.gameObject.SetActive(true);
             _lockBackground.gameObject.SetActive(true);
             _baseContent.SetActive(false);
@@ -36,6 +37,7 @@ namespace Assets._Scripts.Visuals
         public void Unlock()
         {
             IsLocked = false;
+            SetEnable(true);
             _lockImage.gameObject.SetActive(false);
             _lockBackground.gameObject.SetActive(false);
             _baseContent.SetActive(true);
@@ -58,15 +60,11 @@ namespace Assets._Scripts.Visuals
         private Vector3 _originalIconLocalPos, _originalIconScale;
         public Tween DoOnUseBoosterAnim(Vector3 gatherPoint, System.Action onReachedCenter)
         {
-            if (_inAnim) return null;
-
             _inAnim = true;
             _button.interactable = false;
             float duration = .5f;
             float stayDuration = .5f;
-            float scaleTime = 1.2f;
-            
-            DOTween.Kill(gameObject);
+            float scaleTime = 3f;
 
             void reset()
             {
@@ -79,13 +77,15 @@ namespace Assets._Scripts.Visuals
             sequence.Append(_iconImage.transform.DOMove(gatherPoint, duration).SetEase(Ease.OutSine));
             sequence.Join(_iconImage.transform.DOScale(_originalIconScale * scaleTime, duration).SetEase(Ease.OutSine));
             sequence.AppendInterval(stayDuration);
-            sequence.OnKill(() => 
+            // sequence.OnKill(() => 
+            // {
+            //     reset();
+            //     _inAnim = false;
+            // });
+            sequence.OnComplete(() => 
             {
                 reset();
                 _inAnim = false;
-            });
-            sequence.OnComplete(() => 
-            {
                 onReachedCenter?.Invoke();
             });
             
@@ -94,8 +94,9 @@ namespace Assets._Scripts.Visuals
 
         public void ShowPopupText()
         {
-            PopupManager.Instance.ShowPopupText("Locked", transform.position);
+            PopupManager.Instance.ShowPopupText("Locked", _originalIconLocalPos);
         }
+
 
         protected override void Start()
         {

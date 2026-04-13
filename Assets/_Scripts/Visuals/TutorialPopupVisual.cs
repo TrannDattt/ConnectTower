@@ -1,39 +1,48 @@
 using System.Collections;
+using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets._Scripts.Visuals
 {
     public class TutorialPopupVisual : GamePopupVisual
     {
+        [SerializeField] private Text _name;
+        [SerializeField] private Image _image;
+        [SerializeField] private Text _detail;
         [SerializeField] private RectTransform _gameObjectHolder;
         [SerializeField] private TutorialHandVisual _hand;
 
-        private ETutorial _curTutorial = ETutorial.None;
-
         public IEnumerator ShowTutorial(ETutorial type)
         {
-            _curTutorial = type;
-            return type switch
+            var data = TutorialManager.GetTutorialData(type);
+            if (data == null) yield break;
+
+            _name.text = data.Name;
+            _image.sprite = data.Image;
+            _detail.text = data.Detail;
+
+            yield return type switch
             {
-                ETutorial.ExtraMove or ETutorial.Shuffle or ETutorial.Hint => ShowBoosterTutorial(TutorialManager.TutorialToBooster(type)),
-                ETutorial.HiddenBlock or ETutorial.CoveredPillar or ETutorial.FrozenBlock => ShowMechanicTutorial(TutorialManager.TutorialToMechanic(type)),
+                ETutorial.ExtraMove or ETutorial.Shuffle or ETutorial.Hint => ShowBoosterTutorial(data),
+                ETutorial.HiddenBlock or ETutorial.CoveredPillar or ETutorial.FrozenBlock => ShowMechanicTutorial(data),
                 _ => null,
             };
         }
 
-        private IEnumerator ShowMechanicTutorial(EMechanic? type)
+        private IEnumerator ShowMechanicTutorial(TutorialSO data)
         {
-            if (type == null) yield break;
-            Debug.Log($"Show tutorial popup for mechanic {type}");
+            if (data == null) yield break;
+            Debug.Log($"Show tutorial popup for mechanic {data.Type}");
             yield return Show();
         }
 
-        private IEnumerator ShowBoosterTutorial(EBooster? type)
+        private IEnumerator ShowBoosterTutorial(TutorialSO data)
         {
-            if (type == null) yield break;
-            Debug.Log($"Show tutorial popup for booster {type}");
+            if (data == null) yield break;
+            Debug.Log($"Show tutorial popup for booster {data.Type}");
             yield return Show();
         }
 
@@ -42,12 +51,6 @@ namespace Assets._Scripts.Visuals
             IsActive = true;
             gameObject.SetActive(true);
             yield return DoShowAnim();
-        }
-
-        public override IEnumerator Hide()
-        {
-            // UserManager.MarkTutorialPlayed(_curTutorial);
-            return base.Hide();
         }
     }
 }

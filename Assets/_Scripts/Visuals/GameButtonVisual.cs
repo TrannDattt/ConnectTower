@@ -12,7 +12,7 @@ namespace Assets._Scripts.Visuals
     public class GameButtonVisual : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         [SerializeField] protected Button _button;
-        [SerializeField] private RectTransform _buttonRt;
+        [SerializeField] protected RectTransform _buttonRt;
         
         [Header("Settings")]
         [SerializeField] private float _pressedScale = 0.8f;
@@ -78,6 +78,11 @@ namespace Assets._Scripts.Visuals
         {
             _buttonRt.DOKill();
             _buttonRt.localScale = _originalScale;
+        }
+
+        public Vector3 GetCenterPosition()
+        {
+            return _buttonRt != null ? _buttonRt.TransformPoint(_buttonRt.rect.center) : transform.position;
         }
     }
 }

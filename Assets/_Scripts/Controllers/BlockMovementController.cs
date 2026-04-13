@@ -16,11 +16,10 @@ namespace Assets._Scripts.Controllers
         private List<BlockController> _selectedBlocks = new();
 
         [SerializeField] private float _pickupHeight;
+        public Coroutine CompleteCoroutine {get; private set;}
         public UnityEvent<bool> OnBlocksMoved = new();
 
         private float _blockHeight => GameObjectDataHelper.BlockHeight;
-
-        //TODO: Handle logic when user do multiple interact at once
 
         public void Init()
         {
@@ -196,7 +195,7 @@ namespace Assets._Scripts.Controllers
                 if (isLockedThisMove)
                     feedbackSequence.OnComplete(() =>
                     {
-                        toPillar.gameObject.GetComponent<PillarEffectVisual>().DoLockAnim(blocks[0].Tag);
+                        CompleteCoroutine = StartCoroutine(toPillar.gameObject.GetComponent<PillarEffectVisual>().DoLockAnim(blocks[0].Tag));
                     });
             });
             return sequence.Play();

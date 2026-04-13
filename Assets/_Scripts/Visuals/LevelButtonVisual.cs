@@ -93,9 +93,5 @@ namespace Assets._Scripts.Visuals
             base.Awake();
         }
 
-        private Vector3 GetCenterPosition()
-        {
-            return transform is RectTransform rt ? rt.TransformPoint(rt.rect.center) : transform.position;
-        }
     }
 }

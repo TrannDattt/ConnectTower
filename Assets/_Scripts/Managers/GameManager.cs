@@ -165,6 +165,7 @@ namespace Assets._Scripts.Managers
             private enum EPlayingSubState
             {
                 Opening,
+                Tutorial,
                 WhilePlaying,
                 Closing,
             }
@@ -175,10 +176,11 @@ namespace Assets._Scripts.Managers
             public PlayingState(EGameState key) : base(key)
             {
                 var openingState = new OpeningState(EPlayingSubState.Opening);
+                var tutorialState = new TutorialState(EPlayingSubState.Tutorial);
                 var whilePlayingState = new WhilePlayingState(EPlayingSubState.WhilePlaying);
                 var closingState = new ClosingState(EPlayingSubState.Closing);
 
-                _playingSM.AddStates(openingState, whilePlayingState, closingState);
+                _playingSM.AddStates(openingState, tutorialState, whilePlayingState, closingState);
                 _playingSM.SetDefaultState(EPlayingSubState.WhilePlaying);
             }
 
@@ -210,6 +212,7 @@ namespace Assets._Scripts.Managers
                 }
             }
 
+#region Opening State
             private class OpeningState : PlayingSubState
             {
                 private Coroutine _coroutine;
@@ -251,12 +254,64 @@ namespace Assets._Scripts.Managers
 
                 public override EPlayingSubState GetNextState()
                 {
+                    if (IsFinished) return EPlayingSubState.Tutorial;
+
+                    return base.GetNextState();
+                }
+            }
+            #endregion
+
+            #region Tutorial State
+            private class TutorialState : PlayingSubState
+            {
+                private ETutorial _toPlay;
+
+                public TutorialState(EPlayingSubState key) : base(key)
+                {
+                    _toPlay = ETutorial.None;
+                }
+
+                public override void Enter()
+                {
+                    base.Enter();
+
+                    if(TutorialManager.CheckCanPlayTutorial(out var toPlay))
+                    {
+                        _toPlay = toPlay;
+                        Instance.StartCoroutine(PopupManager.Instance.ShowTutorial(toPlay));
+                        PopupManager.Instance.OnPopupHidden.AddListener(FinishState);
+                    }
+                    else
+                    {
+                        FinishState();
+                    }
+                }
+
+                public override void Do()
+                {
+                    base.Do();
+
+                    if (Input.GetKeyDown(KeyCode.F)) FinishState();
+                    //TODO: Finish after complete tutorial
+                }
+
+                public override void Exit()
+                {
+                    if (_toPlay != ETutorial.None) UserManager.MarkTutorialPlayed(_toPlay);
+                    PopupManager.Instance.OnPopupHidden.RemoveListener(FinishState);
+                    base.Exit();
+                }
+
+                public override EPlayingSubState GetNextState()
+                {
                     if (IsFinished) return EPlayingSubState.WhilePlaying;
 
                     return base.GetNextState();
                 }
             }
+            #endregion
 
+            #region While Playing State
             private class WhilePlayingState : PlayingSubState
             {
                 public WhilePlayingState(EPlayingSubState key) : base(key)
@@ -274,11 +329,6 @@ namespace Assets._Scripts.Managers
                         // BlockMovementController.Instance.OnBlocksMoved.AddListener((_) => pillar.CheckFullMatch());
                     }
                     BlockMovementController.Instance.OnBlocksMoved.AddListener(OnBlocksMoved);
-
-                    if(TutorialManager.CheckCanPlayTutorial(out var toPlay))
-                    {
-                        Instance.StartCoroutine(PopupManager.Instance.ShowTutorial(toPlay));
-                    }
                 }
 
                 public override void Exit()
@@ -330,10 +380,13 @@ namespace Assets._Scripts.Managers
                     return false;
                 }
             }
+#endregion
 
+#region Closing State
             private class ClosingState : PlayingSubState
             {
                 private Coroutine _coroutine;
+                private WaitForSeconds _delayFinish = new(.8f);
 
                 public ClosingState(EPlayingSubState key) : base(key)
                 {
@@ -354,7 +407,8 @@ namespace Assets._Scripts.Managers
 
                 private IEnumerator WaitAnimFinish()
                 {
-                    yield return new WaitForSeconds(2f);
+                    yield return _delayFinish;
+                    yield return BlockMovementController.Instance.CompleteCoroutine;
                     FinishLevel();
                 }
 
@@ -377,6 +431,7 @@ namespace Assets._Scripts.Managers
                     Debug.Log("HUH???");
                 }
             }
+#endregion
         }
         #endregion
 

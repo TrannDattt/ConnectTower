@@ -35,7 +35,7 @@ namespace Assets._Scripts.Visuals
             float scaleDuration = .7f;
             float stayDuration = .5f;
 
-            transform.position = new(pos.x, pos.y, _initialPos.z);
+            transform.position = pos;
             transform.localScale = startScale;
             gameObject.SetActive(true);
 

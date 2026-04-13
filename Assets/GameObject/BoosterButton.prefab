@@ -329,7 +329,7 @@ GameObject:
   - component: {fileID: 3676439824153231714}
   - component: {fileID: 8345617740352595274}
   m_Layer: 0
-  m_Name: MechanicButton
+  m_Name: BoosterButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

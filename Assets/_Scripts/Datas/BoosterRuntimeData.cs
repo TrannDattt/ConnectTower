@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets._Scripts.Controllers;
+using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Visuals;
 using DG.Tweening;
@@ -11,6 +12,7 @@ namespace Assets._Scripts.Datas
 {
     public abstract class BoosterRuntimeData
     {
+        public EBooster Key;
         public bool LockStatus {get; private set;}
 
         public BoosterRuntimeData(bool lockStatus)
@@ -24,7 +26,7 @@ namespace Assets._Scripts.Datas
         }
 
         public abstract void OnUsed();
-        public abstract Tween DoMechanicAnim();
+        public abstract Tween DoBoosterAnim();
         public abstract string GetDetail();
     }
 
@@ -36,6 +38,7 @@ namespace Assets._Scripts.Datas
         public ExtraMoveBoosterRuntimeData(bool lockStatus, int bonusAmount) : base(lockStatus)
         {
             _bonusAmount = bonusAmount;
+            Key = EBooster.ExtraMove;
         }
 
         public override void OnUsed()
@@ -44,7 +47,7 @@ namespace Assets._Scripts.Datas
             Debug.Log("Used Extra Move");
         }
 
-        public override Tween DoMechanicAnim()
+        public override Tween DoBoosterAnim()
         {
             return IngameVisualController.Instance.UpdateMoveCount(LevelManager.PlayingLevel.MoveCount, true).SetTarget(this);
         }
@@ -66,6 +69,7 @@ namespace Assets._Scripts.Datas
         {
             _availableBlocks = new();
             _gatherPoint = gatherPoint;
+            Key = EBooster.Shuffle;
         }
 
         public override void OnUsed()
@@ -156,7 +160,7 @@ namespace Assets._Scripts.Datas
             Debug.Log("Used Shuffle");
         }
 
-        public override Tween DoMechanicAnim()
+        public override Tween DoBoosterAnim()
         {
             Debug.Log("Do shuffle anim");
             var moveTime = .5f;
@@ -214,6 +218,7 @@ namespace Assets._Scripts.Datas
 
         public HintBoosterRuntimeData(bool lockStatus) : base(lockStatus)
         {
+            Key = EBooster.Hint;
         }
 
         public override void OnUsed()
@@ -234,7 +239,7 @@ namespace Assets._Scripts.Datas
             Debug.Log("Used Hint");
         }
 
-        public override Tween DoMechanicAnim()
+        public override Tween DoBoosterAnim()
         {
             if (!_sameBlock || !_randomBlock) return null;
 

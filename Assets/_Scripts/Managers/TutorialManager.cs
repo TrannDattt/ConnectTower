@@ -1,12 +1,18 @@
+using System.Collections.Generic;
+using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns;
+using UnityEngine;
 
 namespace Assets._Scripts.Managers
 {
     public static class TutorialManager
     {
+        private static Dictionary<ETutorial, TutorialSO> _tutorialDict = new();
+        private static string _path = "Tutorials";
+
         // ─── PUBLIC API ───────────────────────────────────────────────
 
         public static bool CheckCanPlayTutorial(out ETutorial toPlay)
@@ -38,6 +44,8 @@ namespace Assets._Scripts.Managers
             if (CheckPlayMechanicTutorialBefore(type)) return false;
             return true;
         }
+        
+        public static TutorialSO GetTutorialData(ETutorial type) => _tutorialDict.TryGetValue(type, out var tutorial) ? tutorial : null; 
 
         /// <summary>Đánh dấu một tutorial Booster đã được phát.</summary>
         public static void MarkBoosterTutorialPlayed(EBooster type)
@@ -100,5 +108,17 @@ namespace Assets._Scripts.Managers
             ETutorial.FrozenBlock      => EMechanic.FrozenBlock,
             _ => null
         };
+
+        [RuntimeInitializeOnLoadMethod]
+        private static void Init()
+        {
+            var datas = Resources.LoadAll<TutorialSO>(_path);
+            if (datas.Length == 0) return;
+
+            foreach(var data in datas)
+            {
+                _tutorialDict[data.Type] = data;
+            }
+        }
     }
 }

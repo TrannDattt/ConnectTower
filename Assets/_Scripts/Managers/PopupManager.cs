@@ -7,6 +7,7 @@ using Assets._Scripts.Enums;
 using Assets._Scripts.Patterns;
 using Assets._Scripts.Visuals;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Pool;
 
 namespace Assets._Scripts.Managers
@@ -36,6 +37,8 @@ namespace Assets._Scripts.Managers
 
         private GamePopupVisual GetPopup(EPopup key) => _popupDict.TryGetValue(key, out var popup) ? popup : null;
 
+        public UnityEvent OnPopupHidden;
+
         public IEnumerator ShowPopup(EPopup key)
         {
             var popup = GetPopup(key);
@@ -59,11 +62,13 @@ namespace Assets._Scripts.Managers
             yield return _tutorialPopup.ShowTutorial(type);
         }
 
-        public void ShowPopupText(string content, Vector3 pos)
+        public void ShowPopupText(string content, Vector3 worldPos)
         {
-            Debug.Log($"Show pop up with content: {content}");
+            // Chuyển worldPos từ Canvas nguồn sang toạ độ màn hình (screen space) 
+            // để popup có thể tự định vị đúng trong Canvas của chính nó
+            Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(_canvas.worldCamera, worldPos);
             var popup = _textPopupPool.GetItem();
-            popup.Pop(content, pos, () => _textPopupPool.ReturnItem(popup));
+            popup.Pop(content, screenPos, () => _textPopupPool.ReturnItem(popup));
         }
 
         public IEnumerator HidePopup(EPopup key)
@@ -71,12 +76,6 @@ namespace Assets._Scripts.Managers
             var popup = GetPopup(key);
             if (popup == null) yield break;
             yield return popup.Hide();
-        }
-
-        public void OnPopupHidden()
-        {
-            if (_popupDict.Values.All(p => !p.IsActive))
-                _ovelayPanel.SetActive(false);
         }
 
         protected override void Awake()
@@ -94,14 +93,17 @@ namespace Assets._Scripts.Managers
             _popupDict[EPopup.Tutorial] = _tutorialPopup;
 
             _textPopupPool = new(_textPopupPrefab, _initAmount, transform);
+            
+            OnPopupHidden.AddListener(() =>
+            {
+                if (_popupDict.Values.All(p => !p.IsActive))
+                    _ovelayPanel.SetActive(false);
+            });
         }
 
-        void Update()
+        void OnDestroy()
         {
-            if (_canvas != null && _canvas.renderMode != RenderMode.ScreenSpaceOverlay && (_canvas.worldCamera == null || !_canvas.worldCamera.gameObject.activeInHierarchy))
-            {
-                _canvas.worldCamera = Camera.main;
-            }
+            OnPopupHidden.RemoveAllListeners();
         }
     }
 }
