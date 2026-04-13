@@ -28,14 +28,15 @@ namespace Assets._Scripts.Managers
             {
                 if (particle.Key == key)
                 {
-                    // Trả về thời gian sinh hạt (Emission Duration) 
-                    return particle.ParticlePrefab.main.duration;
+                    // Trả về tổng thời gian (Duration + Lifetime tối đa)
+                    var main = particle.ParticlePrefab.main;
+                    return main.duration + main.startLifetime.constantMax;
                 }
             }
             return 0f;
         }
 
-        public IEnumerator PlayParticle(EParticle key, Vector3 position, Transform parent = null)
+        public IEnumerator<ParticleSystem> PlayParticle(EParticle key, Vector3 position, Transform parent = null)
         {
             if (_particleDict.TryGetValue(key, out var pool))
             {
@@ -49,7 +50,7 @@ namespace Assets._Scripts.Managers
                 particle.Play();
                 
                 // Wait at least one frame to let the particle system initialize its state
-                yield return null;
+                yield return particle;
                 
                 // Wait while particles are still active or system is emitting
                 while (particle != null && particle.IsAlive(true))

@@ -1,3 +1,6 @@
+using System.Collections;
+using Assets._Scripts.Datas;
+using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
 using DG.Tweening;
 using TMPro;
@@ -8,12 +11,14 @@ namespace Assets._Scripts.Visuals
 {
     public class BoosterButtonVisual : GameButtonVisual
     {
+        [SerializeField] private EBooster Key;
         [SerializeField] private Image _lockImage;
         [SerializeField] private Image _lockBackground;
         [SerializeField] private GameObject _baseContent;
         [SerializeField] private Text _countText;
         [SerializeField] private Image _iconImage;
         [SerializeField] private Image _getMoreImage;
+        [SerializeField] private BoosterButtonEffectVisual _effectVisual;
 
         public bool IsLocked {get; private set;}
         private bool _inAnim = false;
@@ -58,45 +63,67 @@ namespace Assets._Scripts.Visuals
         }
 
         private Vector3 _originalIconLocalPos, _originalIconScale;
-        public Tween DoOnUseBoosterAnim(Vector3 gatherPoint, System.Action onReachedCenter)
+        public IEnumerator DoOnUseBoosterAnim(BoosterRuntimeData data, Vector3 gatherPoint)
         {
             _inAnim = true;
             _button.interactable = false;
-            float duration = .5f;
-            float stayDuration = .5f;
-            float scaleTime = 3f;
+            float buttonMoveDuration = .5f;
+            float effectDuration = _effectVisual != null ? _effectVisual.GetTotalDuration() : 0;
+            float scaleTime = 2.5f;
 
             void reset()
             {
                 _iconImage.transform.localPosition = _originalIconLocalPos;
                 _iconImage.transform.localScale = _originalIconScale;
                 _button.interactable = true;
+                _inAnim = false;
             }
 
-            Sequence sequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.KillOnDisable);
-            sequence.Append(_iconImage.transform.DOMove(gatherPoint, duration).SetEase(Ease.OutSine));
-            sequence.Join(_iconImage.transform.DOScale(_originalIconScale * scaleTime, duration).SetEase(Ease.OutSine));
-            sequence.AppendInterval(stayDuration);
-            // sequence.OnKill(() => 
-            // {
-            //     reset();
-            //     _inAnim = false;
-            // });
-            sequence.OnComplete(() => 
+            Sequence beginSequence = DOTween.Sequence()
+                                            .Append(_iconImage.transform.DOMove(gatherPoint, buttonMoveDuration).SetEase(Ease.OutSine))
+                                            .Join(_iconImage.transform.DOScale(_originalIconScale * scaleTime, buttonMoveDuration).SetEase(Ease.OutSine));
+
+            Sequence endSequence = DOTween.Sequence()
+                                          .Append(_iconImage.transform.DOLocalMove(_originalIconLocalPos, buttonMoveDuration).SetEase(Ease.OutSine))
+                                          .Join(_iconImage.transform.DOScale(_originalIconScale, buttonMoveDuration).SetEase(Ease.OutSine));
+
+            Sequence mainSequence = DoBoosterAnim(data);
+
+            Sequence masterSequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            masterSequence.Append(beginSequence).Append(mainSequence)
+            .SetDelay(.5f).Append(endSequence)
+            .OnKill(() =>
             {
                 reset();
-                _inAnim = false;
-                onReachedCenter?.Invoke();
+            })
+            .OnComplete(() => 
+            {
+                reset();
             });
             
-            return sequence;
+            yield return masterSequence.WaitForCompletion();
+        }
+
+        private Sequence DoBoosterAnim(BoosterRuntimeData data)
+        {
+            var boosterSFX = data.Key switch
+            {
+                EBooster.ExtraMove => ESfx.ExtraMove,
+                EBooster.Shuffle => ESfx.Shuffle,
+                EBooster.Hint => ESfx.Hint,
+                _ => ESfx.None
+            };
+            SoundManager.Instance.PlayRandomSFX(boosterSFX);
+
+            return DOTween.Sequence()
+                          .Append(data.DoBoosterAnim())
+                          .Join(data.DoBoosterButtonAnim(_iconImage));
         }
 
         public void ShowPopupText()
         {
             PopupManager.Instance.ShowPopupText("Locked", _originalIconLocalPos);
         }
-
 
         protected override void Start()
         {
@@ -105,5 +132,12 @@ namespace Assets._Scripts.Visuals
             _originalIconLocalPos = _iconImage.transform.localPosition;
             _originalIconScale = _iconImage.transform.localScale;
         }
+    }
+
+    [RequireComponent(typeof(BoosterButtonVisual))]
+    public abstract class BoosterButtonEffectVisual : MonoBehaviour
+    {
+        public abstract Sequence DoEffectAnim(Image target);
+        public abstract float GetTotalDuration();
     }
 }

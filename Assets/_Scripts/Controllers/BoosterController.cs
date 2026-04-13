@@ -11,16 +11,9 @@ namespace Assets._Scripts.Controllers
 {
     public class BoosterController : Singleton<BoosterController>
     {
-        [SerializeField] private Sprite _extraMoveBoosterIcon;
-        [SerializeField] private Sprite _shuffleBoosterIcon;
-        [SerializeField] private Sprite _hintBoosterIcon;
-        [SerializeField] private Transform _gatherPoint;
-
         private ExtraMoveBoosterRuntimeData _extraMoveBoosterData;
         private ShuffleBoosterRuntimeData _shuffleBoosterData;
         private HintBoosterRuntimeData _hintBoosterData;
-
-        private bool _isUsingBooster = false;
 
         public void InitData()
         {
@@ -29,13 +22,13 @@ namespace Assets._Scripts.Controllers
             _hintBoosterData = new(!PlayerProgressHelper.CheckUnlockBooster(EBooster.Hint));
         }
 
-        public Sprite GetBoosterIcon(EBooster type)
+        public BoosterRuntimeData GetBoosterData(EBooster type)
         {
             return type switch
             {
-                EBooster.ExtraMove => _extraMoveBoosterIcon,
-                EBooster.Shuffle => _shuffleBoosterIcon,
-                EBooster.Hint => _hintBoosterIcon,
+                EBooster.ExtraMove => _extraMoveBoosterData,
+                EBooster.Shuffle => _shuffleBoosterData,
+                EBooster.Hint => _hintBoosterData,
                 _ => null
             };
         }
@@ -75,8 +68,6 @@ namespace Assets._Scripts.Controllers
 
         public void UseBooster(EBooster type)
         {
-            if (_isUsingBooster) return;
-
             UserManager.TryLoseBooster(type, 1);
             BoosterRuntimeData data = type switch
             {
@@ -88,32 +79,6 @@ namespace Assets._Scripts.Controllers
 
             if (data == null) return;
             data.Do();
-
-            StartCoroutine(DoUseBoosterAnim(data));
-        }
-
-        public IEnumerator DoUseBoosterAnim(BoosterRuntimeData data)
-        {
-            _isUsingBooster = true;
-            var boosterSFX = data.Key switch
-            {
-                EBooster.ExtraMove => ESfx.ExtraMove,
-                EBooster.Shuffle => ESfx.Shuffle,
-                EBooster.Hint => ESfx.Hint,
-                _ => ESfx.None
-            };
-            SoundManager.Instance.PlayRandomSFX(boosterSFX);
-
-            var anim = data.DoBoosterAnim();
-            if (anim != null)
-            {
-                anim.OnComplete(() => _isUsingBooster = false);
-                yield return anim.WaitForCompletion();
-            }
-            else
-            {
-                _isUsingBooster = false;
-            }
         }
 
         // #if UNITY_EDITOR

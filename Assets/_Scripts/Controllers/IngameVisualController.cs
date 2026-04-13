@@ -84,68 +84,31 @@ namespace Assets._Scripts.Controllers
                 if (toUpdate) toUpdate.SetCount(curAmount);
             });
 
-            _extraMoveButton.OnClicked.AddListener(() => 
+            void UseBoosterButton(BoosterButtonVisual button, EBooster type)
             {
-                if (_extraMoveButton.IsInAnim) return;
+                if (button.IsInAnim) return;
 
-                var useCount = BoosterController.Instance.GetUseCount(EBooster.ExtraMove);
-                if (_extraMoveButton.IsLocked) _extraMoveButton.ShowPopupText();
+                var boosterData = BoosterController.Instance.GetBoosterData(type);
+                if (boosterData == null) return;
+                
+                var useCount = BoosterController.Instance.GetUseCount(type);
+                if (button.IsLocked) button.ShowPopupText();
                 else if (useCount > 0)
                 {
-                    _extraMoveButton.DoOnUseBoosterAnim(_centerPoint, () =>
-                    {
-                        BoosterController.Instance.UseBooster(EBooster.ExtraMove);
-                        _extraMoveButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.ExtraMove));
-                    });
+                    BoosterController.Instance.UseBooster(type);
+                    button.SetCount(BoosterController.Instance.GetUseCount(type));
+                    StartCoroutine(button.DoOnUseBoosterAnim(boosterData, _centerPoint));
                 }
                 else 
                 {
-                    PopupManager.Instance.ShowBundlePopup(EPopup.Booster, BundleManager.Instance.GetIngameBoosterBundle(EBooster.ExtraMove));
-                    Debug.Log("Extra Move is out of use");
+                    PopupManager.Instance.ShowBundlePopup(EPopup.Booster, BundleManager.Instance.GetIngameBoosterBundle(type));
+                    Debug.Log($"{type} is out of use");
                 }
-            });
+            }
 
-            _shuffleButton.OnClicked.AddListener(() =>
-            {
-                if (_shuffleButton.IsInAnim) return;
-
-                var useCount = BoosterController.Instance.GetUseCount(EBooster.Shuffle);
-                if (_shuffleButton.IsLocked) _shuffleButton.ShowPopupText();
-                else if (useCount > 0) 
-                {
-                    _shuffleButton.DoOnUseBoosterAnim(_centerPoint, () =>
-                    {
-                        BoosterController.Instance.UseBooster(EBooster.Shuffle);
-                        _shuffleButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Shuffle));
-                    });
-                }
-                else 
-                {                    
-                    PopupManager.Instance.ShowBundlePopup(EPopup.Booster, BundleManager.Instance.GetIngameBoosterBundle(EBooster.Shuffle));
-                    Debug.Log("Shuffle is out of use");
-                }
-            });
-
-            _hintButton.OnClicked.AddListener(() =>
-            {
-                if (_hintButton.IsInAnim) return;
-
-                var useCount = BoosterController.Instance.GetUseCount(EBooster.Hint);
-                if (_hintButton.IsLocked) _hintButton.ShowPopupText();
-                else if (useCount > 0) 
-                {
-                    _hintButton.DoOnUseBoosterAnim(_centerPoint, () =>
-                    {
-                        BoosterController.Instance.UseBooster(EBooster.Hint);
-                        _hintButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Hint));
-                    });
-                }
-                else 
-                {
-                    PopupManager.Instance.ShowBundlePopup(EPopup.Booster, BundleManager.Instance.GetIngameBoosterBundle(EBooster.Hint));
-                    Debug.Log("Hint is out of use");
-                }
-            });
+            _extraMoveButton.OnClicked.AddListener(() => UseBoosterButton(_extraMoveButton, EBooster.ExtraMove));
+            _shuffleButton.OnClicked.AddListener(() => UseBoosterButton(_shuffleButton, EBooster.Shuffle));
+            _hintButton.OnClicked.AddListener(() => UseBoosterButton(_hintButton, EBooster.Hint));
         }
     }
 }

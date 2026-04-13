@@ -5,6 +5,7 @@ namespace Assets._Scripts.Enums
         Smoke,
         Sparkle,
         Confetti,
-        CoinFly
+        CoinFly,
+        Firefly,
     }
 }

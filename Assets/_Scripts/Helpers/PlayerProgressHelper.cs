@@ -13,8 +13,9 @@ namespace Assets._Scripts.Helpers
         public const int HintMilestone = 25;
         public const int FrozenBlockMilestone = 100;
 
-        public static bool CheckUnlockBooster(EBooster type)
+        public static bool CheckUnlockBooster(EBooster type, bool exactLevel = false)
         {
+            var curIndex = UserManager.CurUser.CurrentLevelIndex;
             var toCompare = type switch
             {
                 EBooster.ExtraMove => ExtraMoveMilestone,
@@ -22,7 +23,7 @@ namespace Assets._Scripts.Helpers
                 EBooster.Hint => HintMilestone,
                 _ => Mathf.Infinity
             };
-            return UserManager.CurUser.CurrentLevelIndex >= toCompare;
+            return exactLevel ? curIndex == toCompare : curIndex >= toCompare;
         }
 
         public static bool CheckUnlockMechanic(EMechanic type)

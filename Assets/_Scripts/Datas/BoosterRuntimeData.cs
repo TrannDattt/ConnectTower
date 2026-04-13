@@ -5,8 +5,10 @@ using Assets._Scripts.Controllers;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Visuals;
+using Coffee.UIExtensions;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets._Scripts.Datas
 {
@@ -27,6 +29,7 @@ namespace Assets._Scripts.Datas
 
         public abstract void OnUsed();
         public abstract Tween DoBoosterAnim();
+        public abstract Tween DoBoosterButtonAnim(Image target);
         public abstract string GetDetail();
     }
 
@@ -55,6 +58,27 @@ namespace Assets._Scripts.Datas
         public override string GetDetail()
         {
             return $"Use it to get {_bonusAmount} extra moves";
+        }
+
+        public override Tween DoBoosterButtonAnim(Image target)
+        {
+            ParticleSystem particle = null;
+            var attractor = Object.FindFirstObjectByType<MoveCountVisual>().GetComponentInChildren<UIParticleAttractor>();
+            return DOTween.Sequence().AppendCallback(() => 
+            {
+                var it = ParticleManager.Instance.PlayParticle(EParticle.Firefly, target.transform.position, target.transform.parent);
+                BoosterController.Instance.StartCoroutine(it);
+                particle = it.Current;
+                
+                if (particle != null && attractor != null)
+                    attractor.AddParticleSystem(particle);
+            })
+            .AppendInterval(ParticleManager.Instance.GetParticleDuration(EParticle.Firefly))
+            .OnComplete(() =>
+            {
+                if (particle != null && attractor != null)
+                    attractor.RemoveParticleSystem(particle);
+            });
         }
     }
 #endregion
@@ -164,7 +188,9 @@ namespace Assets._Scripts.Datas
         {
             Debug.Log("Do shuffle anim");
             var moveTime = .5f;
-            var delayMoveTime = .05f;
+            var totalDelayMove = 1.5f;
+            var defaultDelayMove = .05f;
+            var delayMoveTime = Mathf.Min(totalDelayMove / (_availableBlocks.Count - 1), defaultDelayMove);
             var stayTime = .5f;
 
             var sequence = DOTween.Sequence().SetTarget(this);
@@ -207,6 +233,11 @@ namespace Assets._Scripts.Datas
         public override string GetDetail()
         {
             return $"Use it to get shuffle all available blocks";
+        }
+
+        public override Tween DoBoosterButtonAnim(Image target)
+        {
+            throw new System.NotImplementedException();
         }
     }
 #endregion
@@ -259,6 +290,11 @@ namespace Assets._Scripts.Datas
         public override string GetDetail()
         {
             return $"Use it to see {2} blocks with same tag";
+        }
+
+        public override Tween DoBoosterButtonAnim(Image target)
+        {
+            throw new System.NotImplementedException();
         }
     }
 

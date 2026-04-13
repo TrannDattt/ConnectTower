@@ -275,7 +275,7 @@ namespace Assets._Scripts.Managers
                 {
                     base.Enter();
 
-                    if(TutorialManager.CheckCanPlayTutorial(out var toPlay))
+                    if(Instance.CurrentLevelData.Index == UserManager.CurUser.CurrentLevelIndex && TutorialManager.CheckCanPlayTutorial(out var toPlay))
                     {
                         _toPlay = toPlay;
                         Instance.StartCoroutine(PopupManager.Instance.ShowTutorial(toPlay));
