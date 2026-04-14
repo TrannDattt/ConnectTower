@@ -11,6 +11,7 @@ namespace TMPro.Examples
 
         public AnimationCurve VertexCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.25f, 2.0f), new Keyframe(0.5f, 0), new Keyframe(0.75f, 2.0f), new Keyframe(1, 0f));
         public float CurveScale = 1.0f;
+        private float _curCurveScale;
 
         void Awake()
         {
@@ -30,16 +31,26 @@ namespace TMPro.Examples
 
         void Start()
         {
-            if (Application.isPlaying)
-                StartCoroutine(WarpTextCoroutine());
+            _curCurveScale = CurveScale;
+            // StartCoroutine(WarpTextCoroutine());
         }
 
         IEnumerator WarpTextCoroutine()
         {
             while (true)
             {
+                _curCurveScale = CurveScale;
                 DoWarpText();
                 yield return new WaitForSeconds(0.05f);
+            }
+        }
+
+        void Update()
+        {
+            if (_curCurveScale != CurveScale)
+            {
+                _curCurveScale = CurveScale;
+                DoWarpText();
             }
         }
 
@@ -75,8 +86,8 @@ namespace TMPro.Examples
                 // Tính toán độ cong và góc xoay
                 float x0 = (charMidBaseline.x - boundsMinX) / (boundsMaxX - boundsMinX);
                 float x1 = x0 + 0.0001f;
-                float y0 = VertexCurve.Evaluate(x0) * CurveScale;
-                float y1 = VertexCurve.Evaluate(x1) * CurveScale;
+                float y0 = VertexCurve.Evaluate(x0) * _curCurveScale;
+                float y1 = VertexCurve.Evaluate(x1) * _curCurveScale;
 
                 float angle = Mathf.Atan2(y1 - y0, (x1 - x0) * (boundsMaxX - boundsMinX)) * Mathf.Rad2Deg;
                 Matrix4x4 matrix = Matrix4x4.TRS(new Vector3(0, y0, 0), Quaternion.Euler(0, 0, angle), Vector3.one);

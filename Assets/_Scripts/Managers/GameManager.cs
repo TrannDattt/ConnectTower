@@ -87,6 +87,11 @@ namespace Assets._Scripts.Managers
 
         public void StartLevel(LevelRuntimeData levelData, bool isPlayTest = false)
         {
+            if (UserManager.CurUser.HeartCount == 0)
+            {
+                //TODO: Show buy heart popup
+            }
+
 #if UNITY_EDITOR
             IsPlayTest = isPlayTest;
 #endif
@@ -157,6 +162,7 @@ namespace Assets._Scripts.Managers
                 
                 GameSceneManager.Instance.ChangeScene(EGameScene.Menu, onLoad: () =>
                 {
+                    LevelManager.Instance.SetPlayingLevel(null);
                     MainMenuVisualControl.Instance.InitVisual();
                     MainMenuVisualControl.Instance.ChangeTab(EMenuTab.Home);
 
@@ -394,7 +400,7 @@ namespace Assets._Scripts.Managers
             private class ClosingState : PlayingSubState
             {
                 private Coroutine _coroutine;
-                private WaitForSeconds _delayFinish = new(1.5f);
+                private WaitForSeconds _delayFinish = new(3f);
 
                 public ClosingState(EPlayingSubState key) : base(key)
                 {
@@ -417,7 +423,7 @@ namespace Assets._Scripts.Managers
                 {
                     yield return _delayFinish;
                     // yield return ParticleManager.Instance.GetParticleDuration(EParticle.Confetti, true);
-                    yield return BlockMovementController.Instance.CompleteCoroutine;
+                    // yield return BlockMovementController.Instance.CompleteCoroutine;
                     FinishLevel();
                 }
 

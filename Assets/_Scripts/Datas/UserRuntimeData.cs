@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Assets._Scripts.Enums;
+using Newtonsoft.Json;
 
 namespace Assets._Scripts.Datas
 {
@@ -17,14 +18,16 @@ namespace Assets._Scripts.Datas
         public int ExtraMoveCount;
         public int ShuffleCount;
         public int HintCount;
+        
         // TUTORIAL
+        [JsonProperty]
         private HashSet<ETutorial> _playedTutorials = new();
 
         public bool HasPlayedTutorial(ETutorial tutorial) => _playedTutorials.Contains(tutorial);
 
         public void MarkTutorialPlayed(ETutorial tutorial) => _playedTutorials.Add(tutorial);
 
-        //TODO: Use class UserJSON as a parameter
+        // Constructor for new users
         public UserRuntimeData()
         {
             Id = "Admin_0";
@@ -33,12 +36,15 @@ namespace Assets._Scripts.Datas
 
             CoinCount = 100000;
 
-            CurrentLevelIndex = 5;
+            CurrentLevelIndex = 1;
             HeartCount = 5;
 
             ExtraMoveCount = 3;
             ShuffleCount = 4;
             HintCount = 5;
         }
+
+        // JsonConstructor for deserialization if needed, 
+        // but default constructor works fine for public fields.
     }
 }

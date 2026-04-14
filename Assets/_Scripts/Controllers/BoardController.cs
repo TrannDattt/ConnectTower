@@ -21,6 +21,7 @@ namespace Assets._Scripts.Controllers
 
         private List<PillarController> _pillars = new();
         private List<BlockController> _blocks = new();
+        private List<MechanicRuntimeData> _mechanics = new();
 
         private Pooling<PillarController> _pillarPool = new();
         private Pooling<BlockController> _blockPool = new();
@@ -80,6 +81,7 @@ namespace Assets._Scripts.Controllers
                     if (toApply == null) continue;
                     var mechanic = new HiddenBlockMechanic();
                     mechanic.Apply(toApply);
+                    _mechanics.Add(mechanic);
                 }
             }
 
@@ -91,6 +93,7 @@ namespace Assets._Scripts.Controllers
                     if (toApply == null) continue;
                     var mechanic = new CoveredPillarMechanic(data.TagToOpen);
                     mechanic.Apply(toApply);
+                    _mechanics.Add(mechanic);
                 };
             });
 
@@ -102,6 +105,7 @@ namespace Assets._Scripts.Controllers
                     if (toApply == null) continue;
                     var mechanic = new FrozenBlockMechanic(data.MoveCountToRemove);
                     mechanic.Apply(toApply);
+                    _mechanics.Add(mechanic);
                 };
             });
         }
@@ -143,6 +147,12 @@ namespace Assets._Scripts.Controllers
 
         public void ClearBoard()
         {
+            foreach (var mechanic in _mechanics)
+            {
+                mechanic.Remove(false);
+            }
+            _mechanics.Clear();
+
             foreach (var pillar in _pillars)
             {
                 pillar.RemoveAllBlocks();

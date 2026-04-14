@@ -19,6 +19,8 @@ namespace Assets._Scripts.Controllers
         private ShuffleBoosterRuntimeData _shuffleBoosterData;
         private HintBoosterRuntimeData _hintBoosterData;
 
+        public bool IsInMechanic {get; private set;}
+
         public void InitData()
         {
             _extraMoveBoosterData = new(!PlayerProgressHelper.CheckUnlockBooster(EBooster.ExtraMove), 5);
@@ -86,8 +88,11 @@ namespace Assets._Scripts.Controllers
             };
 
             if (data == null) return;
+            IsInMechanic = true;
             data.Do();
         }
+
+        public void FinishBooster() => IsInMechanic = false;
 
         // #if UNITY_EDITOR
         //         [InitializeOnEnterPlayMode]

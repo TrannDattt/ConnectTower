@@ -36,7 +36,8 @@ namespace Assets._Scripts.Datas
             
             OnCheckCondicion?.Invoke(true);
         }
-        public virtual void Remove()
+
+        public virtual void Remove(bool doEffect = true)
         {
             Debug.Log($"Removing mechanic {Key} from {_target}");
             if (_target == null) return;
@@ -44,6 +45,8 @@ namespace Assets._Scripts.Datas
             _target = null;
             
             BlockMovementController.Instance.OnBlocksMoved.RemoveListener(OnCheckCondicion);
+
+            if (!doEffect) return;
 
             var mechanicSFX = Key switch
             {
@@ -103,7 +106,7 @@ namespace Assets._Scripts.Datas
             pillars.ForEach(p => p.OnFullMatched.AddListener(OnCheckCondicion));
         }
 
-        public override void Remove()
+        public override void Remove(bool doEffect = true)
         {
             if (_target == null) return;
             _target.ClearMechanic();

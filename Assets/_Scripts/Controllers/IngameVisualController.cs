@@ -86,7 +86,7 @@ namespace Assets._Scripts.Controllers
 
             void UseBoosterButton(BoosterButtonVisual button, EBooster type)
             {
-                if (button.IsInAnim) return;
+                if (BoosterController.Instance.IsInMechanic) return;
 
                 var boosterData = BoosterController.Instance.GetBoosterData(type);
                 if (boosterData == null) return;

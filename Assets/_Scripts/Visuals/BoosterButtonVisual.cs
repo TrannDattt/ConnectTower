@@ -1,4 +1,5 @@
 using System.Collections;
+using Assets._Scripts.Controllers;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
@@ -21,8 +22,6 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private BoosterButtonEffectVisual _effectVisual;
 
         public bool IsLocked {get; private set;}
-        private bool _inAnim = false;
-        public bool IsInAnim => _inAnim;
 
         public void ChangeLockStatus(bool isLock)
         {
@@ -66,7 +65,6 @@ namespace Assets._Scripts.Visuals
         private Quaternion _originalIconRotation;
         public IEnumerator DoOnUseBoosterAnim(BoosterRuntimeData data, Vector3 gatherPoint)
         {
-            _inAnim = true;
             _button.interactable = false;
             float buttonMoveDuration = .5f;
             float effectDuration = _effectVisual != null ? _effectVisual.GetTotalDuration() : 0;
@@ -78,7 +76,7 @@ namespace Assets._Scripts.Visuals
                 _iconImage.transform.localScale = _originalIconScale;
                 _iconImage.transform.localRotation = _originalIconRotation;
                 _button.interactable = true;
-                _inAnim = false;
+                BoosterController.Instance.FinishBooster();
             }
 
             Sequence beginSequence = DOTween.Sequence()

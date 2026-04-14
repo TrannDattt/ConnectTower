@@ -12,18 +12,22 @@ namespace Assets._Scripts.Managers
         public static UnityEvent<int> OnCoinChanged = new();
         public static UnityEvent<EBooster, int> OnBoosterChanged = new();
 
-        //--------------------
-        //TODO: Load user
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
         {
             if (CurUser == null)
             {
-                CurUser = new UserRuntimeData();
+                CurUser = UserDataHelper.LoadUser();
                 Debug.Log("UserManager Initialized");
             }
+
+            Application.quitting += SaveData;
         }
-        //----------------------
+
+        public static void SaveData()
+        {
+            UserDataHelper.SaveUser(CurUser);
+        }
 
 #region COIN
         private static void ChangeCoin(int amount)
@@ -31,6 +35,7 @@ namespace Assets._Scripts.Managers
             if (amount == 0) return;
             CurUser.CoinCount += amount;
             OnCoinChanged?.Invoke(amount);
+            SaveData();
         }
 
         public static void GainCoin(int amount)
@@ -58,6 +63,7 @@ namespace Assets._Scripts.Managers
             Debug.Log($"Player heart changed by {amount}");
             CurUser.HeartCount = Mathf.Clamp(CurUser.HeartCount + amount, 0, UserLifeHelper.MAX_LIFE);
             OnHeartChanged?.Invoke(amount);
+            SaveData();
         }
 
         public static void LostHeart()
@@ -90,6 +96,7 @@ namespace Assets._Scripts.Managers
                     break;
             }
             OnBoosterChanged?.Invoke(type, amount);
+            SaveData();
         }
 
         public static void GainBooster(EBooster type, int amount)
