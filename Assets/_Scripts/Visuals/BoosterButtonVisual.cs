@@ -63,6 +63,7 @@ namespace Assets._Scripts.Visuals
         }
 
         private Vector3 _originalIconLocalPos, _originalIconScale;
+        private Quaternion _originalIconRotation;
         public IEnumerator DoOnUseBoosterAnim(BoosterRuntimeData data, Vector3 gatherPoint)
         {
             _inAnim = true;
@@ -75,6 +76,7 @@ namespace Assets._Scripts.Visuals
             {
                 _iconImage.transform.localPosition = _originalIconLocalPos;
                 _iconImage.transform.localScale = _originalIconScale;
+                _iconImage.transform.localRotation = _originalIconRotation;
                 _button.interactable = true;
                 _inAnim = false;
             }
@@ -113,11 +115,11 @@ namespace Assets._Scripts.Visuals
                 EBooster.Hint => ESfx.Hint,
                 _ => ESfx.None
             };
-            SoundManager.Instance.PlayRandomSFX(boosterSFX);
 
             return DOTween.Sequence()
-                          .Append(data.DoBoosterAnim())
-                          .Join(data.DoBoosterButtonAnim(_iconImage));
+                          .Append(data.DoBoosterButtonAnim(_iconImage))
+                          .Insert(.5f, data.DoBoosterAnim())
+                          .JoinCallback(() => SoundManager.Instance.PlayRandomSFX(boosterSFX));
         }
 
         public void ShowPopupText()
@@ -131,6 +133,7 @@ namespace Assets._Scripts.Visuals
 
             _originalIconLocalPos = _iconImage.transform.localPosition;
             _originalIconScale = _iconImage.transform.localScale;
+            _originalIconRotation = _iconImage.transform.localRotation;
         }
     }
 

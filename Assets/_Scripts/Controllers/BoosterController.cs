@@ -11,6 +11,10 @@ namespace Assets._Scripts.Controllers
 {
     public class BoosterController : Singleton<BoosterController>
     {
+#if UNITY_EDITOR
+        [SerializeField] private bool _ignoreMilestone;
+#endif
+
         private ExtraMoveBoosterRuntimeData _extraMoveBoosterData;
         private ShuffleBoosterRuntimeData _shuffleBoosterData;
         private HintBoosterRuntimeData _hintBoosterData;
@@ -57,6 +61,10 @@ namespace Assets._Scripts.Controllers
 
         public bool GetLockStatus(EBooster type)
         {
+#if UNITY_EDITOR
+            if (_ignoreMilestone) return false;
+#endif
+
             return type switch
             {
                 EBooster.ExtraMove => _extraMoveBoosterData.LockStatus,

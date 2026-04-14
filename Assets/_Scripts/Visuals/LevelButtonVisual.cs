@@ -80,6 +80,7 @@ namespace Assets._Scripts.Visuals
                 
                 var progress = UserManager.CurUser.CurrentLevelIndex;
                 SetEnable(!_levelData.IsLocked);
+#if UNITY_EDITOR
                 if (!_levelData.IsLocked || GameManager.Instance.AllowPlayLockedLevel)
                     GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
                     {
@@ -87,6 +88,7 @@ namespace Assets._Scripts.Visuals
                         GameManager.Instance.StartLevel(_levelData);
                     });
                 else
+#endif
                     PopupManager.Instance.ShowPopupText("Locked", GetCenterPosition());
             });
 

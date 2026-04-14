@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Enums;
+using Assets._Scripts.Helpers;
+using Assets._Scripts.Interfaces;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Visuals;
 using Coffee.UIExtensions;
@@ -73,8 +75,13 @@ namespace Assets._Scripts.Datas
                 if (particle != null && attractor != null)
                     attractor.AddParticleSystem(particle);
             })
-            .AppendInterval(ParticleManager.Instance.GetParticleDuration(EParticle.Firefly))
+            .AppendInterval(ParticleManager.Instance.GetParticleDuration(EParticle.Firefly) + .3f)
             .OnComplete(() =>
+            {
+                if (particle != null && attractor != null)
+                    attractor.RemoveParticleSystem(particle);
+            })
+            .OnKill(() =>
             {
                 if (particle != null && attractor != null)
                     attractor.RemoveParticleSystem(particle);
@@ -237,7 +244,10 @@ namespace Assets._Scripts.Datas
 
         public override Tween DoBoosterButtonAnim(Image target)
         {
-            throw new System.NotImplementedException();
+            float duration = 4f;
+            float cycles = 10;
+            return target.transform.DORotate(new Vector3(0, 0, -360 * cycles), duration, RotateMode.FastBeyond360)
+                .SetEase(Ease.InOutCubic);
         }
     }
 #endregion
@@ -254,11 +264,11 @@ namespace Assets._Scripts.Datas
 
         public override void OnUsed()
         {
-            var availablePillars = BoardController.Instance.GetAllPillars().Where(p => !p.IsLocked());
+            var availablePillars = BoardController.Instance.GetAllPillars().Where(p => !p.IsLocked() && (p as IMechanicHandler).IsInteractable());
             List<BlockController> avilableBlocks = new();
             foreach(var pillar in availablePillars)
             {
-                avilableBlocks.AddRange(pillar.GetAllBlocks());
+                avilableBlocks.AddRange(pillar.GetAllBlocks().Where(b => (b as IMechanicHandler).IsInteractable()));
             }
             
             _randomBlock = avilableBlocks[Random.Range(0, avilableBlocks.Count)];
@@ -275,16 +285,41 @@ namespace Assets._Scripts.Datas
             if (!_sameBlock || !_randomBlock) return null;
 
             var animDuration = .3f;
-            var animDelatTime = .3f;
+            var animDelayTime = .5f;
             var sequence = DOTween.Sequence().SetTarget(this);
 
-            sequence.AppendInterval(animDelatTime);
-            sequence.Append(_randomBlock.transform.DOScale(1.3f, animDuration).SetEase(Ease.InSine))
+            sequence.AppendInterval(animDelayTime)
+                    .Append(_randomBlock.transform.DOScale(1.3f, animDuration).SetEase(Ease.InSine))
                     .Join(_sameBlock.transform.DOScale(1.3f, animDuration).SetEase(Ease.InSine))
                     .Append(_randomBlock.transform.DOScale(1f, animDuration).SetEase(Ease.InSine))
-                    .Join(_sameBlock.transform.DOScale(1f, animDuration).SetEase(Ease.InSine));
+                    .Join(_sameBlock.transform.DOScale(1f, animDuration).SetEase(Ease.InSine))
+                    .AppendCallback(() =>
+                    {
+                        var randomBlockVisual = _randomBlock.GetComponent<BlockEffectVisual>();
+                        var sameBlockVisual = _sameBlock.GetComponent<BlockEffectVisual>();
+                        var toChange = randomBlockVisual.GetCurrentColor() != EColor.None ?
+                                        randomBlockVisual.GetCurrentColor() : sameBlockVisual.GetCurrentColor() != EColor.None ?
+                                        sameBlockVisual.GetCurrentColor() : GetRandomUnusedColor();
+
+                        randomBlockVisual.ChangeColor(toChange);
+                        sameBlockVisual.ChangeColor(toChange);
+                    });
 
             return sequence.Play();
+        }
+
+        private EColor GetRandomUnusedColor()
+        {
+            var blockVisuals = BoardController.Instance.GetAllBlocks().Select(b => b.GetComponent<BlockEffectVisual>());
+            HashSet<EColor> usedColors = new();
+            foreach(var visual in blockVisuals)
+            {
+                usedColors.Add(visual.GetCurrentColor());
+            }
+
+            var availableColors = ColorMapper.GetAllColors().Where(c => !usedColors.Contains(c)).ToArray();
+            if (availableColors.Length == 0) return usedColors.First();
+            return availableColors[Random.Range(0, availableColors.Length)];
         }
 
         public override string GetDetail()
@@ -294,7 +329,31 @@ namespace Assets._Scripts.Datas
 
         public override Tween DoBoosterButtonAnim(Image target)
         {
-            throw new System.NotImplementedException();
+            return DOTween.Sequence().AppendCallback(() =>
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    var it = ParticleManager.Instance.PlayParticle(EParticle.Hint, target.transform.position, target.transform.parent);
+                    BoosterController.Instance.StartCoroutine(it);
+                    var hintImg = it.Current;
+                    var hintTarget = i == 0 ? _randomBlock : _sameBlock;
+                    var attractor = hintTarget.gameObject.AddComponent<UIParticleAttractor>();
+                    attractor.AddParticleSystem(hintImg);
+                    attractor.movement = UIParticleAttractor.Movement.Sphere;
+                    attractor.maxSpeed = .3f;
+                }
+            })
+            .AppendInterval(ParticleManager.Instance.GetParticleDuration(EParticle.Hint) + .3f)
+            .OnComplete(() =>
+            {
+                if (_randomBlock != null && _randomBlock.TryGetComponent<UIParticleAttractor>(out var a1)) Object.Destroy(a1);
+                if (_sameBlock != null && _sameBlock.TryGetComponent<UIParticleAttractor>(out var a2)) Object.Destroy(a2);
+            })
+            .OnKill(() =>
+            {
+                if (_randomBlock != null && _randomBlock.TryGetComponent<UIParticleAttractor>(out var a1)) Object.Destroy(a1);
+                if (_sameBlock != null && _sameBlock.TryGetComponent<UIParticleAttractor>(out var a2)) Object.Destroy(a2);
+            });
         }
     }
 

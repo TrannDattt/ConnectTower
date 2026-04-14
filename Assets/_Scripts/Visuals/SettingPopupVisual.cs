@@ -33,12 +33,14 @@ namespace Assets._Scripts.Visuals
             {
                 //TODO: Popup warning
 
+#if UNITY_EDITOR
                 if (GameManager.Instance.IsPlayTest)
                 {
                     StartCoroutine(Hide());
                     GameSceneManager.Instance.ChangeScene(Enums.EGameScene.Editor);
                     return;
                 }
+#endif
 
                 Debug.Log("Home button clicked");
                 StartCoroutine(Hide());

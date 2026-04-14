@@ -4,6 +4,7 @@ using System.Linq;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
+using Assets._Scripts.Interfaces;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns;
 using Assets._Scripts.Visuals;
@@ -132,7 +133,7 @@ namespace Assets._Scripts.Controllers
         public IEnumerator DoSpawnBlockAnim()
         {
             var delaySpawn = new WaitForSeconds(.1f);
-            foreach (var pillar in _pillars)
+            foreach (var pillar in _pillars.Where(p => (p as IMechanicHandler).IsInteractable()))
             {
                 pillar.StartCoroutine(pillar.DoSpawnBlockAnim());
                 yield return delaySpawn;

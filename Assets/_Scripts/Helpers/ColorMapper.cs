@@ -20,6 +20,8 @@ namespace Assets._Scripts.Helpers
             {EColor.Gray, new(.78f, .78f, .78f)},
         };
 
+        public static IEnumerable<EColor> GetAllColors() => _colorDict.Keys;
+
         public static Color GetColor(EColor key) => _colorDict.TryGetValue(key, out var color) ? color : Color.clear;
     }
 }

@@ -15,7 +15,9 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private LevelButtonVisual _levelButtonPrefabs;
         [SerializeField] private float _spacing = 20f;
         [SerializeField] private RectTransform _view;
-        public bool ShowAllLevel = true;
+#if UNITY_EDITOR
+        [SerializeField] private bool _showAllLevel = true;
+#endif
         private float _buttonHeight;
         private Vector2 _detectRange;
 
@@ -40,7 +42,13 @@ namespace Assets._Scripts.Visuals
 
             var allLevels = LevelManager.Instance.GetAllLevels();
             var clearedLevel = allLevels.Where(l => l.Index < UserManager.CurUser.CurrentLevelIndex);
-            int totalLevels = ShowAllLevel ? allLevels.Count : clearedLevel.Count() + 4;
+            int totalLevels;
+#if UNITY_EDITOR
+            if (_showAllLevel)
+                totalLevels = allLevels.Count;
+            else
+#endif
+                totalLevels = clearedLevel.Count() + 4;
 
             if (UserManager.CurUser.CurrentLevelIndex < allLevels.Count)
             {
@@ -148,7 +156,13 @@ namespace Assets._Scripts.Visuals
                 int nextIndex = _activeButtons[^1].LevelIndex + 1;
                 int totalCount = LevelManager.Instance.GetTotalLevelCount();
                 
-                int maxLevels = ShowAllLevel ? totalCount : UserManager.CurUser.CurrentLevelIndex + 3;
+                int maxLevels;
+#if UNITY_EDITOR
+                if (_showAllLevel)
+                    maxLevels = totalCount;
+                else
+#endif
+                    maxLevels = UserManager.CurUser.CurrentLevelIndex + 3;
                 if (UserManager.CurUser.CurrentLevelIndex < totalCount)
                 {
                     maxLevels = Mathf.Min(maxLevels, totalCount);

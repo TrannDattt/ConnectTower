@@ -31,52 +31,62 @@ namespace Assets._Scripts.Visuals
             float animDuration = .5f;
             Vector3 initialScale = _border.transform.localScale;
             var color = GetRandomColor();
-
-            ChangeLockColor(color);
-            var particleAnim = ParticleManager.Instance.StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Confetti, transform.position, _canvas.transform));
             
             _lockHolder.gameObject.SetActive(true);
             _tag.text = tag;
             _tag.gameObject.SetActive(false);
             _border.transform.localScale = Vector3.zero;
 
-            var borderAim = _border.transform.DOScale(initialScale, animDuration)
-                                            .SetEase(Ease.OutBack, overshoot: 2f)
-                                            .SetLink(gameObject, LinkBehaviour.KillOnDisable)
-                                            .OnComplete(() =>
-                                            {
-                                                _tag.gameObject.SetActive(true);
-                                            });
+            var sequence = DOTween.Sequence().SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            sequence.AppendInterval(ParticleManager.Instance.GetParticleDuration(EParticle.Confetti))
+            .JoinCallback(() =>
+            {
+                ParticleManager.Instance.StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Confetti, transform.position, _canvas.transform));
+                ChangeLockColor(color);
+            })
+            .Join(_border.transform.DOScale(initialScale, animDuration).SetEase(Ease.OutBack, overshoot: 2f))
+            .OnComplete(() =>
+            {
+                _tag.gameObject.SetActive(true);
+            });
 
-            yield return borderAim.WaitForCompletion();
-            yield return particleAnim;
+            yield return sequence.WaitForCompletion();
         }
 
-        private Color GetRandomColor()
+        private EColor GetRandomColor()
         {
             int index = UnityEngine.Random.Range(0, _unusedColor.Count);
             var key = _unusedColor.ElementAt(index);
             _unusedColor.Remove(key);
-            return ColorMapper.GetColor(key);
+            return key;
         }
 
-        private void ChangeLockColor(Color color)
+        private void ChangeLockColor(EColor key)
         {
-            _border.color = color;
-            var blocks = _pillar?.GetAllBlocks();
-
-            if (blocks == null) return;
-            foreach(var block in blocks)
+            _currentColor = key;
+            var blockVisuals = _pillar?.GetAllBlocks().Select(b => b.GetComponent<BlockEffectVisual>());
+            foreach(var blockVisual in blockVisuals)
             {
-                if (block.TryGetComponent<BlockEffectVisual>(out var visual))
+                var blockColor = blockVisual.GetCurrentColor();
+                if (blockColor != EColor.None && blockColor != _currentColor) 
                 {
-                    visual.ChangeColor(color);
+                    _currentColor = blockColor;
+                    break;
                 }
             }
+
+            if (blockVisuals == null) return;
+            foreach(var blockVisual in blockVisuals)
+            {
+                blockVisual.ChangeColor(_currentColor);
+            }
+
+            _border.color = ColorMapper.GetColor(_currentColor);
         }
 
         public void ResetVisual()
         {
+            _currentColor = EColor.None;
             _lockHolder.SetActive(false);
         }
 

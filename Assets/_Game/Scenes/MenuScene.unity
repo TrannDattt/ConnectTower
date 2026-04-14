@@ -2941,6 +2941,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95a4743e88e16ec4d918c0a0affd3bc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.BoosterController
+  _ignoreMilestone: 1
 --- !u!1 &351674382
 GameObject:
   m_ObjectHideFlags: 0
@@ -7949,7 +7950,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e674274ca3c0084db9370c1fa194997, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Managers.GameManager
-  AllowPlayLockedLevel: 1
+  <AllowPlayLockedLevel>k__BackingField: 0
 --- !u!1 &1698585660
 GameObject:
   m_ObjectHideFlags: 0
@@ -8153,6 +8154,8 @@ MonoBehaviour:
     ParticlePrefab: {fileID: 7071353075151292126, guid: 8ab7cf9f4717efc4ba419ab48010752f, type: 3}
   - Key: 4
     ParticlePrefab: {fileID: 6971876632165620789, guid: 663519e249f6a5a4e81d3657225f07db, type: 3}
+  - Key: 5
+    ParticlePrefab: {fileID: 6971876632165620789, guid: 4ab85dda807f9b7458cb08d8b764fdde, type: 3}
   _initialPool: 5
 --- !u!1 &1775651110
 GameObject:
@@ -9031,7 +9034,7 @@ MonoBehaviour:
   _levelButtonPrefabs: {fileID: 7984780607263391798, guid: 7f98c1e6bc37ba2499f57b123590172b, type: 3}
   _spacing: 0
   _view: {fileID: 1795253430}
-  ShowAllLevel: 1
+  _showAllLevel: 1
 --- !u!1 &2067327610
 GameObject:
   m_ObjectHideFlags: 0

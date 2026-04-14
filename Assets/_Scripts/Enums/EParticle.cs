@@ -7,5 +7,6 @@ namespace Assets._Scripts.Enums
         Confetti,
         CoinFly,
         Firefly,
+        Hint,
     }
 }

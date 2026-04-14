@@ -22,15 +22,14 @@ namespace Assets._Scripts.Managers
 
         private Dictionary<EParticle, Pooling<ParticleSystem>> _particleDict = new();
 
-        public float GetParticleDuration(EParticle key)
+        public float GetParticleDuration(EParticle key, bool includeLifetime = false)
         {
             foreach (var particle in _gameParticles)
             {
                 if (particle.Key == key)
                 {
-                    // Trả về tổng thời gian (Duration + Lifetime tối đa)
                     var main = particle.ParticlePrefab.main;
-                    return main.duration + main.startLifetime.constantMax;
+                    return main.startDelay.constantMax + main.duration + (includeLifetime ? main.startLifetime.constantMax : 0);
                 }
             }
             return 0f;

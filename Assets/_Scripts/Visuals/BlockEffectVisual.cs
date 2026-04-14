@@ -1,4 +1,6 @@
 using Assets._Scripts.Controllers;
+using Assets._Scripts.Enums;
+using Assets._Scripts.Helpers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +14,7 @@ namespace Assets._Scripts.Visuals
 
         private BlockController _block;
         private Color _initialColor;
+        private EColor _curColor = EColor.None;
 
         private MaterialPropertyBlock _propertyBlock;
         private MaterialPropertyBlock PropertyBlock
@@ -40,7 +43,16 @@ namespace Assets._Scripts.Visuals
             _blockRenderer.SetPropertyBlock(mb);
         }
 
-        public void ChangeColor(Color color)
+        public EColor GetCurrentColor() => _curColor;
+
+        public void ChangeColor(EColor key)
+        {
+            _curColor = key;
+            var color = ColorMapper.GetColor(key);
+            ChangeColor(color);
+        }
+
+        private void ChangeColor(Color color)
         {
             var mb = PropertyBlock;
             _blockRenderer.GetPropertyBlock(mb);
@@ -50,6 +62,7 @@ namespace Assets._Scripts.Visuals
 
         public void ResetVisual()
         {
+            _curColor = EColor.None;
             ChangeIconDisplay(true);
             ChangeColor(_initialColor);
             ChangeTexture(null);

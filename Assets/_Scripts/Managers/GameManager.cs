@@ -12,7 +12,10 @@ namespace Assets._Scripts.Managers
 {
     public class GameManager : Singleton<GameManager>
     {
-        public bool AllowPlayLockedLevel;
+#if UNITY_EDITOR
+        [field: SerializeField] public bool AllowPlayLockedLevel {get; private set;}
+        public bool IsPlayTest {get; private set;} = false;
+#endif
 
         private StateMachine<EGameState> _gameSM = new();
         private LevelRuntimeData CurrentLevelData => LevelManager.PlayingLevel;
@@ -22,7 +25,6 @@ namespace Assets._Scripts.Managers
         public EGameState CurState => _gameSM.CurrentState.Key;
         private List<PillarController> _pillars = new();
 
-        public bool IsPlayTest {get; private set;} = false;
         public bool IsStartNew { get; set; } = false;
 
         private UnityAction _onGoToMenuCallback;
@@ -54,14 +56,18 @@ namespace Assets._Scripts.Managers
 
         public void FailedLevel()
         {
+#if UNITY_EDITOR
             if (IsPlayTest) return;
+#endif
             Debug.Log("Level Failed");
             _gameSM.ChangeState(EGameState.Lose);
         }
 
         public void ClearedLevel()
         {
+#if UNITY_EDITOR
             if (IsPlayTest) return;
+#endif
             Debug.Log("Level Finished");
             _gameSM.ChangeState(EGameState.Win);
         }
@@ -81,7 +87,9 @@ namespace Assets._Scripts.Managers
 
         public void StartLevel(LevelRuntimeData levelData, bool isPlayTest = false)
         {
+#if UNITY_EDITOR
             IsPlayTest = isPlayTest;
+#endif
             if (levelData == null)
             {
                 Debug.Log("No level data");
@@ -386,7 +394,7 @@ namespace Assets._Scripts.Managers
             private class ClosingState : PlayingSubState
             {
                 private Coroutine _coroutine;
-                private WaitForSeconds _delayFinish = new(.8f);
+                private WaitForSeconds _delayFinish = new(1.5f);
 
                 public ClosingState(EPlayingSubState key) : base(key)
                 {
@@ -408,6 +416,7 @@ namespace Assets._Scripts.Managers
                 private IEnumerator WaitAnimFinish()
                 {
                     yield return _delayFinish;
+                    // yield return ParticleManager.Instance.GetParticleDuration(EParticle.Confetti, true);
                     yield return BlockMovementController.Instance.CompleteCoroutine;
                     FinishLevel();
                 }
