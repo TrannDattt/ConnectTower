@@ -22,17 +22,15 @@ namespace Assets._Scripts.Visuals
 
         protected override void Start()
         {
-            _audioButton.OnToggled.AddListener((isActive) => 
-            {
-                SoundManager.Instance.gameObject.SetActive(isActive);
-            });
-            _vibrateButton.OnClicked.AddListener(() => Debug.Log("Vibrate button clicked"));
+            _audioButton.UpdateToggle(SoundManager.Instance.IsEnable, false);
+            _vibrateButton.UpdateToggle(HapticManager.IsEnable, false);
+
+            _audioButton.OnToggled.AddListener((isActive) => SoundManager.Instance.SetEnable(isActive));
+            _vibrateButton.OnToggled.AddListener((isActive) => HapticManager.SetEnable(isActive));
             _supportButton.OnClicked.AddListener(() => Debug.Log("Support button clicked"));
             _policyButton.OnClicked.AddListener(() => Debug.Log("Policy button clicked"));
             _homeButton.OnClicked.AddListener(() => 
             {
-                //TODO: Popup warning
-
 #if UNITY_EDITOR
                 if (GameManager.Instance.IsPlayTest)
                 {
@@ -40,11 +38,19 @@ namespace Assets._Scripts.Visuals
                     GameSceneManager.Instance.ChangeScene(Enums.EGameScene.Editor);
                     return;
                 }
-#endif
 
+#endif
                 Debug.Log("Home button clicked");
-                StartCoroutine(Hide());
-                GameManager.Instance.GoToMenu();
+                StartCoroutine(PopupManager.Instance.ShowConfirmPopup("Are you sure to go to Main menu?\n You will lose a heart.",
+                                                                      "Home",
+                                                                      () =>
+                                                                      {
+                                                                          StartCoroutine(Hide());
+                                                                          GameManager.Instance.GoToMenu();
+                                                                      },
+                                                                      "Cancel",
+                                                                      null));
+                
             });
 
             base.Start();

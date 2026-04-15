@@ -13,6 +13,7 @@ namespace Assets._Scripts.Visuals
     {
         [SerializeField] protected Button _button;
         [SerializeField] protected RectTransform _buttonRt;
+        [SerializeField] protected Text _content;
         
         [Header("Settings")]
         [SerializeField] private float _pressedScale = 0.8f;
@@ -38,6 +39,7 @@ namespace Assets._Scripts.Visuals
                 _button.onClick.AddListener(() => 
                 {
                     OnClicked.Invoke();
+                    HapticManager.DoLightFeedback();
                     SoundManager.Instance.PlayRandomSFX(_isEnabled ? ESfx.ButtonClicked : ESfx.DisabledButtonClicked);
                 });
             }
@@ -83,6 +85,12 @@ namespace Assets._Scripts.Visuals
         public Vector3 GetCenterPosition()
         {
             return _buttonRt != null ? _buttonRt.TransformPoint(_buttonRt.rect.center) : transform.position;
+        }
+
+        public void SetContent(string content)
+        {
+            if (_content == null) return;
+            _content.text = content;
         }
     }
 }

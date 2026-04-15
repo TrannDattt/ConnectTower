@@ -11,11 +11,11 @@ namespace Assets._Scripts.Visuals
         public UnityEvent<bool> OnToggled {get; private set;} = new();
         private bool _curState;
 
-        private void UpdateToggle(bool isOn)
+        public void UpdateToggle(bool isOn, bool isNotify = true)
         {
             _curState = isOn;
             _disableIcon.gameObject.SetActive(!isOn);
-            OnToggled?.Invoke(_curState);
+            if (isNotify) OnToggled?.Invoke(_curState);
         }
 
         protected override void Awake()
@@ -23,12 +23,6 @@ namespace Assets._Scripts.Visuals
             base.Awake();
 
             OnClicked.AddListener(() => UpdateToggle(!_curState));
-        }
-
-        protected override void Start()
-        {
-            base.Start();
-            UpdateToggle(true);
         }
     }
 }

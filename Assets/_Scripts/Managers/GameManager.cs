@@ -24,9 +24,7 @@ namespace Assets._Scripts.Managers
 
         public EGameState CurState => _gameSM.CurrentState.Key;
         private List<PillarController> _pillars = new();
-
-        public bool IsStartNew { get; set; } = false;
-
+        private UnityEvent<int> _onStartNewLevel = new();
         private UnityAction _onGoToMenuCallback;
 
         public void GoToMenu(UnityAction onLoaded = null)
@@ -108,13 +106,15 @@ namespace Assets._Scripts.Managers
             _pillars = BoardController.Instance.GetAllPillars();
             BoosterController.Instance.InitData();
             IngameVisualController.Instance.InitVisual(CurrentLevelData);
-            IsStartNew = true;
+            _onStartNewLevel?.Invoke(CurrentLevelData.Index);
             
             _gameSM.ChangeState(EGameState.Playing);
         }
 
         protected override void Awake()
         {
+            Application.targetFrameRate = 60;
+
             base.Awake();
 
             MenuState menuState = new(EGameState.None);
@@ -162,12 +162,12 @@ namespace Assets._Scripts.Managers
                 
                 GameSceneManager.Instance.ChangeScene(EGameScene.Menu, onLoad: () =>
                 {
-                    LevelManager.Instance.SetPlayingLevel(null);
                     MainMenuVisualControl.Instance.InitVisual();
                     MainMenuVisualControl.Instance.ChangeTab(EMenuTab.Home);
 
                     Instance._onGoToMenuCallback?.Invoke();
                     Instance._onGoToMenuCallback = null;
+                    LevelManager.Instance.SetPlayingLevel(null);
                 });
             }
         }
@@ -230,18 +230,21 @@ namespace Assets._Scripts.Managers
             private class OpeningState : PlayingSubState
             {
                 private Coroutine _coroutine;
+                private bool _playOpening;
 
                 public OpeningState(EPlayingSubState key) : base(key)
                 {
+                    _playOpening = false;
+                    Instance._onStartNewLevel.AddListener((_) => _playOpening = false);
                 }
 
                 public override void Enter()
                 {
                     base.Enter();
 
-                    if (Instance.IsStartNew)
+                    if (!_playOpening)
                     {
-                        Instance.IsStartNew = false;
+                        _playOpening = true;
                         _coroutine = Instance.StartCoroutine(DoOpeningAnim());
                     }
                     else
@@ -305,7 +308,7 @@ namespace Assets._Scripts.Managers
                 {
                     base.Do();
 
-                    if (Input.GetKeyDown(KeyCode.F)) FinishState();
+                    // if (Input.GetKeyDown(KeyCode.F)) FinishState();
                     //TODO: Finish after complete tutorial
                 }
 
@@ -328,8 +331,11 @@ namespace Assets._Scripts.Managers
             #region While Playing State
             private class WhilePlayingState : PlayingSubState
             {
+                private bool _doRevive = false;
+
                 public WhilePlayingState(EPlayingSubState key) : base(key)
                 {
+                    Instance._onStartNewLevel.AddListener((_) => _doRevive = false);
                 }
 
                 public override void Enter()
@@ -379,8 +385,9 @@ namespace Assets._Scripts.Managers
 
                     if (Instance.CurrentLevelData.MoveCount <= 0)
                     {
-                        if (Instance._gameSM.TryGetState(EGameState.Revive, out var reviveState) && !reviveState.IsFinished)
+                        if (!_doRevive)
                         {
+                            _doRevive = true;
                             Instance._gameSM.ChangeState(EGameState.Revive);
                             Debug.Log("Waiting for reviving");
                             return false;
@@ -400,7 +407,8 @@ namespace Assets._Scripts.Managers
             private class ClosingState : PlayingSubState
             {
                 private Coroutine _coroutine;
-                private WaitForSeconds _delayFinish = new(3f);
+                private WaitForSeconds _delayCleared = new(3f);
+                private WaitForSeconds _delayFailed = new(1f);
 
                 public ClosingState(EPlayingSubState key) : base(key)
                 {
@@ -419,31 +427,53 @@ namespace Assets._Scripts.Managers
                     if (_coroutine != null) Instance.StopCoroutine(_coroutine);
                 }
 
-                private IEnumerator WaitAnimFinish()
+                private bool CheckLevelCleared()
                 {
-                    yield return _delayFinish;
-                    // yield return ParticleManager.Instance.GetParticleDuration(EParticle.Confetti, true);
-                    // yield return BlockMovementController.Instance.CompleteCoroutine;
-                    FinishLevel();
+                    if (Instance.CurrentLevelData.MatchedGroups == Instance.CurrentLevelData.TotalGroups)
+                    {
+                        return true;
+                    }
+
+                    return false;
                 }
 
-                private void FinishLevel()
+                private IEnumerator WaitAnimFinish()
+                {
+                    var clearState = CheckLevelCleared();
+                    yield return clearState ? _delayCleared : _delayFailed;
+                    // yield return ParticleManager.Instance.GetParticleDuration(EParticle.Confetti, true);
+                    // yield return BlockMovementController.Instance.CompleteCoroutine;
+                    FinishLevel(clearState);
+                }
+
+                private void FinishLevel(bool clearState)
                 {
                     BoardController.Instance.ClearBoard();
-                    if (Instance.CurrentLevelData.MatchedGroups == Instance.CurrentLevelData.TotalGroups)
+
+                    if (clearState)
                     {
                         Debug.Log("Level Cleared");
                         Instance.ClearedLevel();
-                        return;
                     }
-
-                    if (Instance.CurrentLevelData.MoveCount <= 0)
+                    else
                     {
                         Debug.Log("Level Failed");
                         Instance.FailedLevel();
                     }
+                    // if (Instance.CurrentLevelData.MatchedGroups == Instance.CurrentLevelData.TotalGroups)
+                    // {
+                    //     Debug.Log("Level Cleared");
+                    //     Instance.ClearedLevel();
+                    //     return;
+                    // }
 
-                    Debug.Log("HUH???");
+                    // if (Instance.CurrentLevelData.MoveCount <= 0)
+                    // {
+                    //     Debug.Log("Level Failed");
+                    //     Instance.FailedLevel();
+                    // }
+
+                    // Debug.Log("HUH???");
                 }
             }
 #endregion
@@ -514,7 +544,6 @@ namespace Assets._Scripts.Managers
             {
                 base.Enter();
 
-                //TODO: Logic reduce heart if not clear before
                 UserManager.LostHeart();
                 Instance.StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Lose));
             }

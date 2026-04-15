@@ -41,7 +41,7 @@ namespace Assets._Scripts.Datas
         {
             Debug.Log($"Removing mechanic {Key} from {_target}");
             if (_target == null) return;
-            _target.ClearMechanic();
+            _target.ClearMechanic(doEffect);
             _target = null;
             
             BlockMovementController.Instance.OnBlocksMoved.RemoveListener(OnCheckCondicion);
@@ -150,11 +150,11 @@ namespace Assets._Scripts.Datas
         {
             Key = EMechanic.FrozenBlock;
             MoveCountToRemove = moveCountToRemove;
-            BlockMovementController.Instance.OnBlocksMoved.AddListener((moveByPlayer) =>
-            {
-                if (moveByPlayer)
-                    _currentMoveCount++;
-            });
+            // BlockMovementController.Instance.OnBlocksMoved.AddListener((moveByPlayer) =>
+            // {
+            //     if (moveByPlayer)
+            //         _currentMoveCount++;
+            // });
         }
 
         protected override bool CheckRemoveCondition()

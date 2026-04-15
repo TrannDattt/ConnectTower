@@ -9,6 +9,7 @@ namespace Assets._Scripts.Managers
     public class BundleManager : Singleton<BundleManager>
     {
         [SerializeField] private BundleSO _noAdsBundle;
+        // [SerializeField] private
         [SerializeField] private BundleSO _ingameExtraMoveBundle;
         [SerializeField] private BundleSO _ingameShuffleBundle;
         [SerializeField] private BundleSO _ingameHintBundle;

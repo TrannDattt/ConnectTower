@@ -124,7 +124,7 @@ namespace Assets._Scripts.Managers
         {
             var reward = bundle.Reward;
             GainCoin(reward.CoinAmount);
-            //TODO: Logic with heart and Ads
+            //TODO: Add logic with heart and Ads
             GainBooster(EBooster.ExtraMove, reward.ExtraMoveAmount);
             GainBooster(EBooster.Shuffle, reward.ShuffleAmount);
             GainBooster(EBooster.Hint, reward.HintAmount);

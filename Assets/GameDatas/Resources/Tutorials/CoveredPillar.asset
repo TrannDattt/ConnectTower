@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.TutorialSO
   Type: 5
   Image: {fileID: 21300000, guid: bc0b575f247dc7d4fb4df702eda812ef, type: 3}
-  Detail: 
+  Detail: Connect block to reveal

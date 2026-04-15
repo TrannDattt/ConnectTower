@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8845587630415509075}
   - component: {fileID: 8294893279395785782}
   - component: {fileID: 4333627607860967776}
+  - component: {fileID: 2522215058963798053}
   m_Layer: 0
   m_Name: CloseText
   m_TagString: Untagged
@@ -92,9 +93,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 1, y: -1}
+  m_EffectColor: {r: 0.2905661, g: 0.14165197, b: 0.0038376502, a: 1}
+  m_EffectDistance: {x: 2.32, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &2522215058963798053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 148626978415663350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60e432a6dfb0aa94d9cc39b8978b229a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.CustomTextGradient
+  m_color1: {r: 0.509434, g: 0.11078598, b: 0.037486594, a: 1}
+  m_angle: 180
+  m_blend: 0.504
+  m_isGlobal: 1
 --- !u!1 &1442062564513118663
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,6 +204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.GameButtonVisual
   _button: {fileID: 9020191612763546480}
   _buttonRt: {fileID: 1692170455575155015}
+  _content: {fileID: 0}
   _pressedScale: 1
   _duration: 0.1
   OnClicked:
@@ -320,6 +338,7 @@ GameObject:
   - component: {fileID: 3108847756313699926}
   - component: {fileID: 2222136397890230505}
   - component: {fileID: 4889565555975408716}
+  - component: {fileID: 7191301166217236510}
   m_Layer: 0
   m_Name: UnlockText
   m_TagString: Untagged
@@ -400,9 +419,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 1, y: -1}
+  m_EffectColor: {r: 0.2905661, g: 0.14165197, b: 0.0038376502, a: 1}
+  m_EffectDistance: {x: 2.32, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &7191301166217236510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3575838778815259136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60e432a6dfb0aa94d9cc39b8978b229a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.CustomTextGradient
+  m_color1: {r: 0.8039216, g: 0.45102257, b: 0.22745095, a: 1}
+  m_angle: -180
+  m_blend: 0.688
+  m_isGlobal: 1
 --- !u!1 &4571372503070106053
 GameObject:
   m_ObjectHideFlags: 0
@@ -414,6 +449,8 @@ GameObject:
   - component: {fileID: 6914710002113859458}
   - component: {fileID: 4694826540956679029}
   - component: {fileID: 3434409836904286628}
+  - component: {fileID: 4719558995922794512}
+  - component: {fileID: 8756291336940337402}
   m_Layer: 0
   m_Name: NameText
   m_TagString: Untagged
@@ -461,7 +498,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.8726114, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -482,6 +519,37 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Hidden Block
+--- !u!114 &4719558995922794512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4571372503070106053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0.2905661, g: 0.14165197, b: 0.0038376502, a: 1}
+  m_EffectDistance: {x: 2.32, y: -1}
+  m_UseGraphicAlpha: 1
+--- !u!114 &8756291336940337402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4571372503070106053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60e432a6dfb0aa94d9cc39b8978b229a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.CustomTextGradient
+  m_color1: {r: 0.509434, g: 0.11078598, b: 0.037486594, a: 1}
+  m_angle: 180
+  m_blend: 0.504
+  m_isGlobal: 1
 --- !u!1 &4685363628988054929
 GameObject:
   m_ObjectHideFlags: 0
@@ -830,6 +898,7 @@ GameObject:
   - component: {fileID: 3428953158334896224}
   - component: {fileID: 1343163133662853127}
   - component: {fileID: 7954205009237869732}
+  - component: {fileID: 6957033993419459576}
   m_Layer: 0
   m_Name: Detail
   m_TagString: Untagged
@@ -910,9 +979,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 1, y: -1}
+  m_EffectColor: {r: 0.2905661, g: 0.14165197, b: 0.0038376502, a: 1}
+  m_EffectDistance: {x: 2.32, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &6957033993419459576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6361591156909769121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60e432a6dfb0aa94d9cc39b8978b229a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.CustomTextGradient
+  m_color1: {r: 0.8039216, g: 0.4509804, b: 0.22745098, a: 1}
+  m_angle: 180
+  m_blend: 0.688
+  m_isGlobal: 1
 --- !u!1001 &288770356124760411
 PrefabInstance:
   m_ObjectHideFlags: 0

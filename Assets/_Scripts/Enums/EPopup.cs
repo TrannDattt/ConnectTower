@@ -12,5 +12,6 @@ namespace Assets._Scripts.Enums
         Revive,
         NoAds,
         Tutorial,
+        Confirmation,
     }
 }

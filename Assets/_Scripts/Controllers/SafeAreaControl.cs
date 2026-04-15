@@ -15,6 +15,14 @@ namespace Assets._Scripts.Controllers
             Refresh();
         }
 
+        void Update()
+        {
+            if (lastSafeArea != Screen.safeArea)
+            {
+                Refresh();
+            }
+        }
+
         void Refresh()
         {
             Rect safeArea = Screen.safeArea;

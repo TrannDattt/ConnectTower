@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.ayutaz.uigradients": {
+      "version": "1.0.3",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
     "com.coffee.ui-effect": {
       "version": "https://github.com/mob-sakai/UIEffect.git?path=Packages/src",
       "depth": 0,
@@ -204,6 +211,13 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.mobile.android-logcat": {
+      "version": "1.4.7",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.nuget.mono-cecil": {
       "version": "1.11.6",
       "depth": 3,
@@ -246,6 +260,15 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
+    },
+    "xyz.candycoded.hapticfeedback": {
+      "version": "https://github.com/CandyCoded/HapticFeedback.git#v1.0.3",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.modules.androidjni": "1.0.0"
+      },
+      "hash": "4597a0376eafedee647bc3a02c6b574c309f3fa7"
     },
     "com.unity.modules.adaptiveperformance": {
       "version": "1.0.0",

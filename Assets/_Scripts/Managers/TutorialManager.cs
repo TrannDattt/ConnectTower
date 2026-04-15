@@ -109,7 +109,7 @@ namespace Assets._Scripts.Managers
             _ => null
         };
 
-        [RuntimeInitializeOnLoadMethod]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Init()
         {
             var datas = Resources.LoadAll<TutorialSO>(_path);

@@ -27,6 +27,7 @@ namespace Assets._Scripts.Managers
         [SerializeField] private RevivePopupVisual _revivePopup;
         [SerializeField] private SettingPopupVisual _settingPopup;
         [SerializeField] private TutorialPopupVisual _tutorialPopup;
+        [SerializeField] private ConfirmationPopup _confirmPopup;
 
         [Header("Text Popup")]
         [SerializeField] private TextPopupVisual _textPopupPrefab;
@@ -71,6 +72,15 @@ namespace Assets._Scripts.Managers
             popup.Pop(content, screenPos, () => _textPopupPool.ReturnItem(popup));
         }
 
+        public IEnumerator ShowConfirmPopup(string content, string confirmContent = "", UnityAction onConfirmed = null, string declineContent = "", UnityAction onDeclined = null)
+        {
+            if (_confirmPopup == null) yield break;
+            _confirmPopup.SetContent(content, confirmContent, declineContent);
+            _confirmPopup.SetActions(onConfirmed, onDeclined);
+            _ovelayPanel.SetActive(true);
+            yield return _confirmPopup.Show();
+        }
+
         public IEnumerator HidePopup(EPopup key)
         {
             var popup = GetPopup(key);
@@ -91,13 +101,17 @@ namespace Assets._Scripts.Managers
             _popupDict[EPopup.Loading] = _loadingPopup;
             _popupDict[EPopup.Booster] = _boosterPopup;
             _popupDict[EPopup.Tutorial] = _tutorialPopup;
+            _popupDict[EPopup.Confirmation] = _confirmPopup;
 
             _textPopupPool = new(_textPopupPrefab, _initAmount, transform);
             
             OnPopupHidden.AddListener(() =>
             {
                 if (_popupDict.Values.All(p => !p.IsActive))
+                {
                     _ovelayPanel.SetActive(false);
+                    if (GameManager.Instance.CurState == EGameState.Pause) GameManager.Instance.ResumeGame();
+                }
             });
         }
 

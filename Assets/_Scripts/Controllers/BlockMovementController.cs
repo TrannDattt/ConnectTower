@@ -94,6 +94,14 @@ namespace Assets._Scripts.Controllers
 #endregion
 
 #region PUT BACK
+        public void PutBackSelectedBlocks()
+        {
+            if (_selectedBlocks.Count == 0) return;
+            var toPutBack = _selectedBlocks.GetRange(0, _selectedBlocks.Count);
+            _selectedBlocks.Clear();
+            PutBackBlocks(toPutBack, toPutBack[0].GetPillarParent());
+        }
+
         private void PutBackBlocks(List<BlockController> blocks, PillarController pillar)
         {
             if (blocks.Count == 0) return;
@@ -195,6 +203,7 @@ namespace Assets._Scripts.Controllers
                 if (isLockedThisMove)
                     feedbackSequence.OnComplete(() =>
                     {
+                        HapticManager.DoLightFeedback();
                         CompleteCoroutine = StartCoroutine(toPillar.gameObject.GetComponent<PillarEffectVisual>().DoLockAnim(blocks[0].Tag));
                     });
             });
@@ -262,6 +271,7 @@ namespace Assets._Scripts.Controllers
 
             masterSequence.JoinCallback(() =>
             {
+                HapticManager.DoLightFeedback();
                 StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Sparkle, blocks[^1].transform.position));
             });
 

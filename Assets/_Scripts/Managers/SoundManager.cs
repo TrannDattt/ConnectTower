@@ -16,7 +16,8 @@ namespace Assets._Scripts.Managers
             public List<AudioClip> Clips;
         }
 
-        public AudioSource _audioSource;
+        [SerializeField] private AudioSource _bgmSource;
+        [SerializeField] private AudioSource _sfxSource;
         
         [Header("BGM")]
         [SerializeField] private AudioClip _menuBGM;
@@ -26,6 +27,10 @@ namespace Assets._Scripts.Managers
         [SerializeField] private List<GameSFX> _gameSFX;
 
         private Dictionary<ESfx, List<AudioClip>> _sfxDict = new();
+
+        public bool IsEnable {get; private set;} = true;
+
+        public void SetEnable(bool state) => IsEnable = state;
 
         private AudioClip GetBGM(EBgm key) => key switch
         {
@@ -38,6 +43,8 @@ namespace Assets._Scripts.Managers
 
         public void PlayBGM(EBgm key)
         {
+            _bgmSource.Stop();
+            if (!IsEnable) return;
             var toPlay = GetBGM(key);
             if (toPlay == null)
             {
@@ -45,12 +52,13 @@ namespace Assets._Scripts.Managers
                 return;
             }
 
-            _audioSource.clip = toPlay;
-            _audioSource.Play();
+            _bgmSource.clip = toPlay;
+            _bgmSource.Play();
         }
 
         public void PlayRandomSFX(ESfx key)
         {
+            if (!IsEnable) return;
             var sounds = GetSFXs(key);
             if (sounds == null || sounds.Count == 0)
             {
@@ -59,14 +67,15 @@ namespace Assets._Scripts.Managers
             }
 
             var toPlay = sounds[UnityEngine.Random.Range(0, sounds.Count)];
-            _audioSource.PlayOneShot(toPlay);
+            _sfxSource.PlayOneShot(toPlay);
         }
 
         public void PlayChainedSFXs(ESfx key, int chainCount)
         // public void PlayChainedSFXs(ESfx key, int chainCount, float timeOffset)
         {
+            if (!IsEnable) return;
             var sounds = GetSFXs(key);
-            _audioSource.PlayOneShot(sounds[chainCount - 1]);
+            _sfxSource.PlayOneShot(sounds[chainCount - 1]);
             // if (sounds == null)
             // {
             //     Debug.Log($"Play chain {chainCount} SFXs of type {key}");
@@ -82,7 +91,7 @@ namespace Assets._Scripts.Managers
 
             for (int i = 0; i < chainCount; i++)
             {
-                _audioSource.PlayOneShot(clips[i]);
+                _sfxSource.PlayOneShot(clips[i]);
                 yield return delay;
             }
         }

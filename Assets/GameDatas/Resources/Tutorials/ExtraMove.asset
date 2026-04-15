@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.TutorialSO
   Type: 1
   Image: {fileID: 21300000, guid: 52f1d5bbb111eff409978aee2b1fd129, type: 2}
-  Detail: 
+  Detail: Add 5 extra moves

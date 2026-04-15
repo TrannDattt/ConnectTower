@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.TutorialSO
   Type: 2
   Image: {fileID: 21300000, guid: 74a3b63ff636e294888d255f27cc7a8b, type: 2}
-  Detail: 
+  Detail: Shuffle all blocks

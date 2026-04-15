@@ -26,6 +26,7 @@ namespace Assets._Scripts.Datas
 
         public void Do()
         {
+            BlockMovementController.Instance.PutBackSelectedBlocks();
             OnUsed();
         }
 

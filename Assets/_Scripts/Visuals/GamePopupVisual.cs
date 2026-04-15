@@ -43,7 +43,6 @@ namespace Assets._Scripts.Visuals
             {
                 gameObject.SetActive(false);
                 PopupManager.Instance.OnPopupHidden?.Invoke();
-                if (GameManager.Instance.CurState == EGameState.Pause) GameManager.Instance.ResumeGame();
             }
             yield return DoHideAnim(OnHide);
         }

@@ -32,7 +32,6 @@ namespace Assets._Scripts.Controllers
             _coinDisplay.UpdateVisual();
             _levelIndex.SetLevelIndex(data.Index);
 
-            //TODO: Check if booster is unlocked
             _extraMoveButton.ChangeLockStatus(BoosterController.Instance.GetLockStatus(EBooster.ExtraMove));
             _shuffleButton.ChangeLockStatus(BoosterController.Instance.GetLockStatus(EBooster.Shuffle));
             _hintButton.ChangeLockStatus(BoosterController.Instance.GetLockStatus(EBooster.Hint));

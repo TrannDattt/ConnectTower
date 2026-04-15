@@ -69,7 +69,7 @@ namespace Assets._Scripts.Controllers
             }
         }
 
-        public void RemoveVisual(EMechanic type)
+        public void RemoveVisual(EMechanic type, bool doEffect = true)
         {
             if (type == EMechanic.None) return;
             switch (type)
@@ -77,13 +77,14 @@ namespace Assets._Scripts.Controllers
                 case EMechanic.HiddenBlock:
                     _blockVisual?.ChangeIconDisplay(true);
                     _blockVisual?.ChangeTexture(null);
+                    if (!doEffect) break;
                     StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Smoke, transform.position));
                     break;
                 case EMechanic.FrozenBlock:
                     if (_frozenIcon != null) _frozenIcon.gameObject.SetActive(false);
                     break;
                 case EMechanic.CoveredPillar:
-                    if (_clothImage != null) 
+                    if (_clothImage != null && doEffect) 
                     {
                         var animDuration = .5f;
                         var seqence = DOTween.Sequence().SetLink(_clothRectTransform.gameObject, LinkBehaviour.KillOnDisable);

@@ -34,7 +34,7 @@ namespace Assets._Scripts.Visuals
 
         public void UpdateVisual(int amount)
         {
-            // Debug.Log($"Update coin visual");
+            Debug.Log($"Update coin visual {amount}");
             int to = UserManager.CurUser.CoinCount;
             int from = to - amount;
             bool doAnim = (amount != 0) && _isFirstAnim && gameObject.activeInHierarchy;
@@ -55,6 +55,7 @@ namespace Assets._Scripts.Visuals
 
         private IEnumerator DoGainCoinAnim(int from, int to, float duration)
         {
+            Debug.Log("Do coin anim");
             float textDelayTime = 0;
             SoundManager.Instance.PlayRandomSFX(ESfx.CoinGained);
 

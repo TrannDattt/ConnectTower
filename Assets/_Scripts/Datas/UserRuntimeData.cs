@@ -34,7 +34,7 @@ namespace Assets._Scripts.Datas
             Name = "Admin";
             AvatarURL = "*";
 
-            CoinCount = 100000;
+            CoinCount = 1000;
 
             CurrentLevelIndex = 1;
             HeartCount = 5;

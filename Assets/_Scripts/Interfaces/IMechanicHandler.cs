@@ -19,9 +19,9 @@ namespace Assets._Scripts.Interfaces
             MechanicVisual.ApplyVisual(mechanicData);
         }
 
-        public void ClearMechanic()
+        public void ClearMechanic(bool doEffect = true)
         {
-            MechanicVisual.RemoveVisual(ActiveMechanic);
+            MechanicVisual.RemoveVisual(ActiveMechanic, doEffect);
             ActiveMechanic = EMechanic.None;
         }
     }

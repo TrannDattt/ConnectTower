@@ -1,11 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
-using Assets._Scripts.Datas;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Assets._Scripts.Visuals
 {
@@ -223,11 +220,13 @@ namespace Assets._Scripts.Visuals
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                Debug.Log($"Check top sensor: {_activeButtons[^1].LevelIndex} distance: {Mathf.Abs(_activeButtons[^1].transform.position.y - _view.rect.height / 2)}");
-                Debug.Log($"Check bottom sensor: {_activeButtons[0].LevelIndex} distance: {Mathf.Abs(_activeButtons[0].transform.position.y - _view.rect.height / 2)}");
-            }
+#if UNITY_EDITOR
+            // if (Input.GetKeyDown(KeyCode.P))
+            // {
+            //     Debug.Log($"Check top sensor: {_activeButtons[^1].LevelIndex} distance: {Mathf.Abs(_activeButtons[^1].transform.position.y - _view.rect.height / 2)}");
+            //     Debug.Log($"Check bottom sensor: {_activeButtons[0].LevelIndex} distance: {Mathf.Abs(_activeButtons[0].transform.position.y - _view.rect.height / 2)}");
+            // }
+#endif
 
             CheckAndUpdateVisual();
         }
