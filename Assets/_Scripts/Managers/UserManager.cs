@@ -69,13 +69,13 @@ namespace Assets._Scripts.Managers
         public static void LostHeart()
         {
             ChangeHeartCount(-1);
-            UserLifeHelper.OnLostLife();
+            UserLifeHelper.UpdateCounterOnLostLife();
         }
 
         public static void RecoverHeart()
         {
             ChangeHeartCount(1);
-            UserLifeHelper.OnRecovered();
+            UserLifeHelper.UpdateCounterOnRecovered();
         }
 #endregion
 
@@ -125,6 +125,7 @@ namespace Assets._Scripts.Managers
             var reward = bundle.Reward;
             GainCoin(reward.CoinAmount);
             //TODO: Add logic with heart and Ads
+            ChangeHeartCount(reward.HeartAmount);
             GainBooster(EBooster.ExtraMove, reward.ExtraMoveAmount);
             GainBooster(EBooster.Shuffle, reward.ShuffleAmount);
             GainBooster(EBooster.Hint, reward.HintAmount);

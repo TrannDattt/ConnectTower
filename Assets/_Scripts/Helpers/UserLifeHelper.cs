@@ -23,13 +23,13 @@ namespace Assets._Scripts.Helpers
             }
         }
 
-        public static void OnLostLife()
+        public static void UpdateCounterOnLostLife()
         {
             if (UserManager.CurUser.HeartCount == MAX_LIFE - 1) 
                 _lostLifeTime = DateTime.UtcNow.ToBinary().ToString();
         }
 
-        public static void OnRecovered()
+        public static void UpdateCounterOnRecovered()
         {
             if (UserManager.CurUser.HeartCount < MAX_LIFE)
             {

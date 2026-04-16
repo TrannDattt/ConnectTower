@@ -20,6 +20,7 @@ namespace Assets._Scripts.Managers
         [SerializeField] private GameObject _ovelayPanel;
         [SerializeField] private ShopVisualControl _shopPopup;
         [SerializeField] private NoAdsPopupVisual _noAdsPopup;
+        [SerializeField] private BundlePurchasePopupVisual _getLifeBundle;
         [SerializeField] private BoosterPurchasePopupVisual _boosterPopup;
         [SerializeField] private LevelFailedVisual _losePopup;
         [SerializeField] private LevelFinishedVisual _winPopup;
@@ -51,7 +52,11 @@ namespace Assets._Scripts.Managers
         public void ShowBundlePopup(EPopup key, BundleSO bundle)
         {
             var popup = GetPopup(key);
-            if (popup == null || popup is not BundlePurchasePopupVisual bundlePopup) return;
+            if (popup == null || popup is not BundlePurchasePopupVisual bundlePopup) 
+            {
+                Debug.Log("Wrong type of popup");
+                return;
+            }
             _ovelayPanel.SetActive(true);
             StartCoroutine(bundlePopup.ShowBundle(bundle));
         }
@@ -96,6 +101,7 @@ namespace Assets._Scripts.Managers
             _popupDict[EPopup.Setting] = _settingPopup;
             _popupDict[EPopup.Revive] = _revivePopup;
             _popupDict[EPopup.NoAds] = _noAdsPopup;
+            _popupDict[EPopup.GetLife] = _getLifeBundle;
             _popupDict[EPopup.Win] = _winPopup;
             _popupDict[EPopup.Lose] = _losePopup;
             _popupDict[EPopup.Loading] = _loadingPopup;

@@ -85,7 +85,7 @@ namespace Assets._Scripts.Controllers
 
             void UseBoosterButton(BoosterButtonVisual button, EBooster type)
             {
-                if (BoosterController.Instance.IsInMechanic) return;
+                if (!GameManager.Instance.IsPlaying || BoosterController.Instance.IsInMechanic) return;
 
                 var boosterData = BoosterController.Instance.GetBoosterData(type);
                 if (boosterData == null) return;

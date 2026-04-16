@@ -13,5 +13,6 @@ namespace Assets._Scripts.Enums
         NoAds,
         Tutorial,
         Confirmation,
+        GetLife,
     }
 }

@@ -86,11 +86,19 @@ namespace Assets._Scripts.Visuals
                 playable = playable || GameManager.Instance.AllowPlayLockedLevel;
 #endif
                 if (playable)
+                {
+                    if (UserManager.CurUser.HeartCount == 0)
+                    {
+                        PopupManager.Instance.ShowBundlePopup(EPopup.GetLife, BundleManager.Instance.GetLifeBundle());
+                        return;
+                    }
+
                     GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
                     {
                         Debug.Log($"Start level {_levelData.Index} with clear state: {_levelData.IsCleared}");
                         GameManager.Instance.StartLevel(_levelData);
                     });
+                }
                 else
                     PopupManager.Instance.ShowPopupText("Locked", GetCenterPosition());
             });

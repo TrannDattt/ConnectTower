@@ -9,7 +9,7 @@ namespace Assets._Scripts.Managers
     public class BundleManager : Singleton<BundleManager>
     {
         [SerializeField] private BundleSO _noAdsBundle;
-        // [SerializeField] private
+        [SerializeField] private BundleSO _getLifeBundle;
         [SerializeField] private BundleSO _ingameExtraMoveBundle;
         [SerializeField] private BundleSO _ingameShuffleBundle;
         [SerializeField] private BundleSO _ingameHintBundle;
@@ -28,5 +28,6 @@ namespace Assets._Scripts.Managers
 
         public BundleSO GetReviveBundle() => _reviveBundle;
         public BundleSO GetNoAdsBundle() => _noAdsBundle;
+        public BundleSO GetLifeBundle() => _getLifeBundle;
     }
 }

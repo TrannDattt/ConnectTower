@@ -39,6 +39,12 @@ namespace Assets._Scripts.Controllers
 
             _playButton.OnClicked.AddListener(() => 
             {
+                if (UserManager.CurUser.HeartCount == 0)
+                {
+                    PopupManager.Instance.ShowBundlePopup(EPopup.GetLife, BundleManager.Instance.GetLifeBundle());
+                    return;
+                }
+
                 GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
                 {
                     var curLevel = LevelManager.Instance.GetLatestNotClearedLevel();

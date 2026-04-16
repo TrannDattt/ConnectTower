@@ -7,9 +7,9 @@ namespace Assets._Scripts.Helpers
     public static class PlayerProgressHelper
     {
         public const int ExtraMoveMilestone = 5;
-        public const int HiddenBlockMilestone = 10;
+        public const int HiddenBlockMilestone = 7;
         public const int ShuffleMilestone = 15;
-        public const int CoveredPillarMilestone = 20;
+        public const int CoveredPillarMilestone = 19;
         public const int HintMilestone = 25;
         public const int FrozenBlockMilestone = 100;
 

@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.TutorialSO
   Type: 4
   Image: {fileID: 21300000, guid: 3582499803e87da4596b9c438219b888, type: 3}
-  Detail: 
+  Detail: Hide block type

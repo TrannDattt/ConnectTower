@@ -30,8 +30,6 @@ namespace Assets._Scripts.Managers
 
         public bool IsEnable {get; private set;} = true;
 
-        public void SetEnable(bool state) => IsEnable = state;
-
         private AudioClip GetBGM(EBgm key) => key switch
         {
             EBgm.MenuMusic => _menuBGM,
@@ -44,7 +42,6 @@ namespace Assets._Scripts.Managers
         public void PlayBGM(EBgm key)
         {
             _bgmSource.Stop();
-            if (!IsEnable) return;
             var toPlay = GetBGM(key);
             if (toPlay == null)
             {
@@ -58,7 +55,6 @@ namespace Assets._Scripts.Managers
 
         public void PlayRandomSFX(ESfx key)
         {
-            if (!IsEnable) return;
             var sounds = GetSFXs(key);
             if (sounds == null || sounds.Count == 0)
             {
@@ -73,7 +69,6 @@ namespace Assets._Scripts.Managers
         public void PlayChainedSFXs(ESfx key, int chainCount)
         // public void PlayChainedSFXs(ESfx key, int chainCount, float timeOffset)
         {
-            if (!IsEnable) return;
             var sounds = GetSFXs(key);
             _sfxSource.PlayOneShot(sounds[chainCount - 1]);
             // if (sounds == null)
@@ -94,6 +89,20 @@ namespace Assets._Scripts.Managers
                 _sfxSource.PlayOneShot(clips[i]);
                 yield return delay;
             }
+        }
+
+        private void ChangeVolume(AudioSource source, float amount)
+        {
+            source.volume = Mathf.Clamp01(amount);
+        }
+
+        public void ChangeBgmVolume(float amount) => ChangeVolume(_bgmSource, amount);
+        public void ChangeSfxVolume(float amount) => ChangeVolume(_sfxSource, amount);
+
+        public void ChangeSoundVolume(float amount)
+        {
+            ChangeBgmVolume(amount);
+            ChangeSfxVolume(amount);
         }
 
         protected override void Awake()

@@ -37,9 +37,6 @@ namespace Assets._Scripts.Controllers
                     var newBlock = _blockPool.GetItem();
                     newBlock.Init(d, blockGroup.Tag);
                     _blocks.Add(newBlock);
-                    //-------------------
-                    newBlock.gameObject.SetActive(false);
-                    //-------------------
                 });
             }
 
@@ -75,6 +72,7 @@ namespace Assets._Scripts.Controllers
             // Init Mechanics
             if (levelData.HiddenBlockDatas?.BlockIds != null)
             {
+                Debug.Log($"Init {levelData.HiddenBlockDatas.BlockIds.Count} hidden blocks");
                 foreach (var id in levelData.HiddenBlockDatas.BlockIds)
                 {
                     var toApply = _blocks.FirstOrDefault(b => b.Id == id);
@@ -87,6 +85,7 @@ namespace Assets._Scripts.Controllers
 
             levelData.CoveredPillarDatas?.ForEach(data =>
             {
+                Debug.Log($"Init {data.PillarIds} covered pillars");
                 foreach (var id in data.PillarIds)
                 {
                     var toApply = _pillars.FirstOrDefault(p => p.Id == id);
@@ -99,6 +98,7 @@ namespace Assets._Scripts.Controllers
 
             levelData.FrozenBlockDatas?.ForEach(data =>
             {
+                Debug.Log($"Init {data.BlockIds} frozen blocks");
                 foreach (var id in data.BlockIds)
                 {
                     var toApply = _blocks.FirstOrDefault(b => b.Id == id);
@@ -134,10 +134,18 @@ namespace Assets._Scripts.Controllers
 
             return (null, -1);
         }
+        
         public IEnumerator DoSpawnBlockAnim()
         {
             var delaySpawn = new WaitForSeconds(.1f);
-            foreach (var pillar in _pillars.Where(p => (p as IMechanicHandler).IsInteractable()))
+            var nonMechanicPillars = _pillars.Where(p => (p as IMechanicHandler).IsInteractable()).ToArray();
+
+            foreach(var pillar in nonMechanicPillars)
+            {
+                foreach(var block in pillar.GetAllBlocks()) block.gameObject.SetActive(false);
+            }
+
+            foreach (var pillar in nonMechanicPillars)
             {
                 pillar.StartCoroutine(pillar.DoSpawnBlockAnim());
                 yield return delaySpawn;

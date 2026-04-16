@@ -25,7 +25,7 @@ namespace Assets._Scripts.Visuals
             _audioButton.UpdateToggle(SoundManager.Instance.IsEnable, false);
             _vibrateButton.UpdateToggle(HapticManager.IsEnable, false);
 
-            _audioButton.OnToggled.AddListener((isActive) => SoundManager.Instance.SetEnable(isActive));
+            _audioButton.OnToggled.AddListener((isActive) => SoundManager.Instance.ChangeSoundVolume(isActive ? 1f : 0f));
             _vibrateButton.OnToggled.AddListener((isActive) => HapticManager.SetEnable(isActive));
             _supportButton.OnClicked.AddListener(() => Debug.Log("Support button clicked"));
             _policyButton.OnClicked.AddListener(() => Debug.Log("Policy button clicked"));
@@ -46,6 +46,7 @@ namespace Assets._Scripts.Visuals
                                                                       () =>
                                                                       {
                                                                           StartCoroutine(Hide());
+                                                                          UserManager.LostHeart();
                                                                           GameManager.Instance.GoToMenu();
                                                                       },
                                                                       "Cancel",

@@ -7,6 +7,7 @@ using Assets._Scripts.Patterns;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Playables;
 
 namespace Assets._Scripts.Managers
 {
@@ -23,6 +24,9 @@ namespace Assets._Scripts.Managers
         private EGameState _lastState;
 
         public EGameState CurState => _gameSM.CurrentState.Key;
+        public bool IsPlaying => CurState == EGameState.Playing
+                                 && _gameSM.TryGetState(EGameState.Playing, out var playState)
+                                 && (playState as PlayingState).CurState == PlayingState.EPlayingSubState.WhilePlaying;
         private List<PillarController> _pillars = new();
         private UnityEvent<int> _onStartNewLevel = new();
         private UnityAction _onGoToMenuCallback;
@@ -85,11 +89,6 @@ namespace Assets._Scripts.Managers
 
         public void StartLevel(LevelRuntimeData levelData, bool isPlayTest = false)
         {
-            if (UserManager.CurUser.HeartCount == 0)
-            {
-                //TODO: Show buy heart popup
-            }
-
 #if UNITY_EDITOR
             IsPlayTest = isPlayTest;
 #endif
@@ -176,7 +175,7 @@ namespace Assets._Scripts.Managers
         #region Playing State
         public class PlayingState : GameState
         {
-            private enum EPlayingSubState
+            public enum EPlayingSubState
             {
                 Opening,
                 Tutorial,
@@ -184,7 +183,7 @@ namespace Assets._Scripts.Managers
                 Closing,
             }
 
-            private LevelRuntimeData CurLevel => LevelManager.PlayingLevel;
+            public EPlayingSubState CurState => _playingSM.CurrentState.Key;
             private StateMachine<EPlayingSubState> _playingSM = new();
 
             public PlayingState(EGameState key) : base(key)
@@ -247,16 +246,20 @@ namespace Assets._Scripts.Managers
                         _playOpening = true;
                         _coroutine = Instance.StartCoroutine(DoOpeningAnim());
                     }
-                    else
+                    else if (_coroutine == null)
                     {
                         FinishState();
                     }
+                    // If _coroutine is not null, it's still running, so we just continue waiting for it
                 }
 
                 public override void Exit()
                 {
                     base.Exit();
-                    if (_coroutine != null) Instance.StopCoroutine(_coroutine);
+                    if (_coroutine != null) 
+                    {
+                        // Instance.StopCoroutine(_coroutine);
+                    }
                 }
 
                 private IEnumerator DoOpeningAnim()
@@ -265,6 +268,8 @@ namespace Assets._Scripts.Managers
 
                     yield return BoardController.Instance.DoSpawnBlockAnim();
                     yield return IngameVisualController.Instance.DoLevelIntroducingAnim();
+                    
+                    _coroutine = null;
                     FinishState();
                     Debug.Log($"Finished state {Key}");
                 }
@@ -291,6 +296,7 @@ namespace Assets._Scripts.Managers
                 public override void Enter()
                 {
                     base.Enter();
+                    // Debug.Log($"Play tutorial state: Progress => {Instance.CurrentLevelData.Index == UserManager.CurUser.CurrentLevelIndex} - Played before => {TutorialManager.CheckCanPlayTutorial(out var toPlay1)}");
 
                     if(Instance.CurrentLevelData.Index == UserManager.CurUser.CurrentLevelIndex && TutorialManager.CheckCanPlayTutorial(out var toPlay))
                     {

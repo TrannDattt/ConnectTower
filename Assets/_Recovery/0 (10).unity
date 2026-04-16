@@ -6557,31 +6557,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1761242762563922458, guid: 2ab6743e9094ed04eb1c0be410f98232, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1761242762563922458, guid: 2ab6743e9094ed04eb1c0be410f98232, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1761242762563922458, guid: 2ab6743e9094ed04eb1c0be410f98232, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 540
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3467020087825946942, guid: 2ab6743e9094ed04eb1c0be410f98232, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3467020087825946942, guid: 2ab6743e9094ed04eb1c0be410f98232, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3467020087825946942, guid: 2ab6743e9094ed04eb1c0be410f98232, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 540
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3467020087825946942, guid: 2ab6743e9094ed04eb1c0be410f98232, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -165
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3999517297026384624, guid: 2ab6743e9094ed04eb1c0be410f98232, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -8900,7 +8900,6 @@ GameObject:
   - component: {fileID: 1998506660}
   - component: {fileID: 1998506661}
   - component: {fileID: 1998506662}
-  - component: {fileID: 1998506663}
   m_Layer: 9
   m_Name: Moves
   m_TagString: Untagged
@@ -8981,25 +8980,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
-  m_EffectColor: {r: 0.2905661, g: 0.14165197, b: 0.0038376502, a: 1}
-  m_EffectDistance: {x: 2.32, y: -1}
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
---- !u!114 &1998506663
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1998506656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60e432a6dfb0aa94d9cc39b8978b229a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.CustomTextGradient
-  m_color1: {r: 0.8039216, g: 0.45102257, b: 0.22745095, a: 1}
-  m_angle: -180
-  m_blend: 0.688
-  m_isGlobal: 1
 --- !u!114 &2026963523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9962,7 +9945,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4952360904691660318, guid: 61018b9ecd835f44b977cdbd4b0d4937, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -153.2998
+      value: -153.29984
       objectReference: {fileID: 0}
     - target: {fileID: 5404899649788488913, guid: 61018b9ecd835f44b977cdbd4b0d4937, type: 3}
       propertyPath: m_AnchorMax.y
@@ -11123,10 +11106,6 @@ PrefabInstance:
     - target: {fileID: 5142568726252774347, guid: fffdd043a68016249a8aef81762e878c, type: 3}
       propertyPath: m_Name
       value: LoadingPopup
-      objectReference: {fileID: 0}
-    - target: {fileID: 5142568726252774347, guid: fffdd043a68016249a8aef81762e878c, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6596879749462510874, guid: fffdd043a68016249a8aef81762e878c, type: 3}
       propertyPath: m_Pivot.x
