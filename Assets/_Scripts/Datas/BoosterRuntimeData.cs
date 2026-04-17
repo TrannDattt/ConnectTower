@@ -76,7 +76,7 @@ namespace Assets._Scripts.Datas
                 if (particle != null && attractor != null)
                     attractor.AddParticleSystem(particle);
             })
-            .AppendInterval(ParticleManager.Instance.GetParticleDuration(EParticle.Firefly) + .3f)
+            .AppendInterval(ParticleManager.Instance.GetParticleDuration(EParticle.Firefly) + .4f)
             .OnComplete(() =>
             {
                 if (particle != null && attractor != null)

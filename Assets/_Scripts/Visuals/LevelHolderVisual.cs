@@ -12,6 +12,7 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private LevelButtonVisual _levelButtonPrefabs;
         [SerializeField] private float _spacing = 20f;
         [SerializeField] private RectTransform _view;
+        [SerializeField] private ParticleSystem _mysteryZone;
 #if UNITY_EDITOR
         [SerializeField] private bool _showAllLevel = true;
 #endif
@@ -20,6 +21,7 @@ namespace Assets._Scripts.Visuals
 
         private List<LevelButtonVisual> _activeButtons = new();
         private Pooling<LevelButtonVisual> _buttonPool = new();
+        private int _totalLevels;
 
         private int _poolAmount = 10;
         private int _maxActiveAmount = 10;
@@ -55,6 +57,7 @@ namespace Assets._Scripts.Visuals
             {
                 totalLevels = allLevels.Count + 2; // thêm 2 placeholders nếu là level cuối
             }
+            _totalLevels = totalLevels;
 
             if (targetIndex <= 0)
             {
@@ -216,19 +219,46 @@ namespace Assets._Scripts.Visuals
             _buttonPool = new(_levelButtonPrefabs, _poolAmount, _levelContainer);
             _buttonHeight = _levelButtonPrefabs.GetComponent<RectTransform>().sizeDelta.y;
             _detectRange = new(_buttonHeight * 3, _buttonHeight * 3.5f);
+
+            if (_mysteryZone != null)
+                _mysteryZone.gameObject.SetActive(false);
+        }
+
+        private void UpdateMysteryZone()
+        {
+            if (_mysteryZone == null || _activeButtons.Count == 0) return;
+
+            int absoluteMax = LevelManager.Instance.GetTotalLevelCount();
+            bool shouldEnable = false;
+
+            // Only consider showing if the user's available levels reach the absolute maximum
+            // if (_totalLevels >= absoluteMax)
+            // {
+                var topButton = _activeButtons.FirstOrDefault(b => b.LevelIndex == _totalLevels);
+                if (topButton != null)
+                {
+                    Vector3 localPos = _view.InverseTransformPoint(topButton.transform.position);
+                    float viewTopY = _view.rect.yMax;
+                    
+                    // Enable Mystery Zone only when the absolute top level is visibly near the top edge.
+                    // It shouldn't be way above the screen (e.g. user scrolled to bottom levels).
+                    // It shouldn't be pulled way down (e.g. user elastic-scrolled it to the middle).
+                    if (localPos.y <= viewTopY - _buttonHeight * .8f && 
+                        localPos.y >= viewTopY - _buttonHeight * 1.7f)
+                    {
+                        shouldEnable = true;
+                    }
+                }
+            // }
+
+            if (_mysteryZone.gameObject.activeSelf != shouldEnable)
+                _mysteryZone.gameObject.SetActive(shouldEnable);
         }
 
         void Update()
         {
-#if UNITY_EDITOR
-            // if (Input.GetKeyDown(KeyCode.P))
-            // {
-            //     Debug.Log($"Check top sensor: {_activeButtons[^1].LevelIndex} distance: {Mathf.Abs(_activeButtons[^1].transform.position.y - _view.rect.height / 2)}");
-            //     Debug.Log($"Check bottom sensor: {_activeButtons[0].LevelIndex} distance: {Mathf.Abs(_activeButtons[0].transform.position.y - _view.rect.height / 2)}");
-            // }
-#endif
-
             CheckAndUpdateVisual();
+            UpdateMysteryZone();
         }
     }
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MoreHeart
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BundleSO
   Id: 3
-  Name: Remove Ads
+  Name: Out of  Life?
   Icon: {fileID: 21300000, guid: f8d49f7d5ac2d3e4086d2fc3fffdc1e7, type: 3}
   Reward:
     CoinAmount: 0

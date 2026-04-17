@@ -21,11 +21,13 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Sprite _superHardTag;
 
         [SerializeField] private Text _difficultyText;
+        [SerializeField] private Outline _textOutline;
 
         [SerializeField] private float _animDuration = 0.5f;
 
         private Vector3 _textInitialPos;
-        private Vector3 _textInitialScale;
+        private int _initialFontSize;
+        private Vector2 _initialOutline;
 
         public void SetDifficulty(EDifficulty difficulty)
         {
@@ -56,32 +58,49 @@ namespace Assets._Scripts.Visuals
         {
             _difficultyText.gameObject.SetActive(false);
             _textInitialPos = _difficultyText.transform.position;
-            _textInitialScale = _difficultyText.transform.localScale;
+            _initialFontSize = _difficultyText.fontSize;
+            if (_textOutline != null) _initialOutline = _textOutline.effectDistance;
         }
 
         public IEnumerator DoDifficultyAnim(Vector3 pos)
         {
-            Vector3 startScale = new(5, 5, 5);
+            int scaleFactor = 5;
+            int startSize = _initialFontSize * scaleFactor;
+            int overshootSize = startSize + _initialFontSize;
             float scaleDuration = .7f;
             float stayDuration = .5f;
 
             _difficultyText.transform.position = pos;
-            _difficultyText.transform.localScale = startScale;
+            _difficultyText.fontSize = startSize;
+            if (_textOutline != null)
+            {
+                _textOutline.effectDistance = _initialOutline * ((float)startSize /_initialFontSize);
+            }
             _difficultyText.gameObject.SetActive(true);
             var sequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable);
 
 
             // Scale and move text
-            sequence.Append(_difficultyText.transform.DOScale(startScale * 1.15f, scaleDuration * 0.5f).SetEase(Ease.OutQuad))
-                    .Append(_difficultyText.transform.DOScale(startScale, scaleDuration * 0.5f).SetEase(Ease.InQuad))
+            sequence.Append(DOTween.To(() => _difficultyText.fontSize, x => ScaleText(x), overshootSize, scaleDuration * 0.5f).SetEase(Ease.InQuad))
+                    .Append(DOTween.To(() => _difficultyText.fontSize, x => ScaleText(x), startSize, scaleDuration * 0.5f).SetEase(Ease.OutQuad))
                     .AppendInterval(stayDuration)
-                    .Append(_difficultyText.transform.DOMove(_textInitialPos, _animDuration).SetEase(Ease.OutQuad))
-                    .Join(_difficultyText.transform.DOScale(_textInitialScale, _animDuration).SetEase(Ease.OutQuad));
+                    .Append(_difficultyText.transform.DOMove(_textInitialPos, _animDuration).SetEase(Ease.OutCubic))
+                    .Join(DOTween.To(() => _difficultyText.fontSize, x => ScaleText(x), _initialFontSize, scaleDuration).SetEase(Ease.OutCubic));
                     
             // Show background
             sequence.Append(DOTween.To(() => _transitionMask.fillAmount, x => _transitionMask.fillAmount = x, 1, 1f));
                     
             yield return sequence.WaitForCompletion();
+        }
+
+        private void ScaleText(int newSize)
+        {
+            float factor = (float)newSize /_initialFontSize;
+            _difficultyText.fontSize = newSize;
+            if (_textOutline != null)
+            {
+                _textOutline.effectDistance = _initialOutline * factor;
+            }
         }
     }
 }

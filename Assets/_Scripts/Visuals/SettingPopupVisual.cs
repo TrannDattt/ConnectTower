@@ -41,16 +41,20 @@ namespace Assets._Scripts.Visuals
 
 #endif
                 Debug.Log("Home button clicked");
-                StartCoroutine(PopupManager.Instance.ShowConfirmPopup("Are you sure to go to Main menu?\n You will lose a heart.",
+                PopupManager.Instance.StartCoroutine(Hide());
+                PopupManager.Instance.StartCoroutine(PopupManager.Instance.ShowConfirmPopup("Are you sure to go to Main menu?\n You will lose a heart.",
                                                                       "Home",
                                                                       () =>
                                                                       {
-                                                                          StartCoroutine(Hide());
+                                                                          PopupManager.Instance.StartCoroutine(Hide());
                                                                           UserManager.LostHeart();
                                                                           GameManager.Instance.GoToMenu();
                                                                       },
                                                                       "Cancel",
-                                                                      null));
+                                                                      () =>
+                                                                      {
+                                                                          PopupManager.Instance.StartCoroutine(Show());
+                                                                      }));
                 
             });
 

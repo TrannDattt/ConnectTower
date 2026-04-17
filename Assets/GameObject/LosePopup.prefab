@@ -682,7 +682,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2564355887619376076, guid: 097a698331673d549abb69f385c6c097, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 285.11
+      value: 340.1
       objectReference: {fileID: 0}
     - target: {fileID: 2564355887619376076, guid: 097a698331673d549abb69f385c6c097, type: 3}
       propertyPath: m_SizeDelta.y
@@ -906,6 +906,10 @@ PrefabInstance:
       propertyPath: m_FontData.m_Font
       value: 
       objectReference: {fileID: 12800000, guid: f5bcf7d02045fc04b8aba8f7fcbf598d, type: 3}
+    - target: {fileID: 1256540395066448100, guid: e411a785d14a15547939d55f8742ec1a, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6100503092785345520, guid: e411a785d14a15547939d55f8742ec1a, type: 3}
       propertyPath: m_Name
       value: RetryButton
@@ -936,7 +940,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9123598671384322690, guid: e411a785d14a15547939d55f8742ec1a, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 338.5
+      value: 340.1
       objectReference: {fileID: 0}
     - target: {fileID: 9123598671384322690, guid: e411a785d14a15547939d55f8742ec1a, type: 3}
       propertyPath: m_SizeDelta.y

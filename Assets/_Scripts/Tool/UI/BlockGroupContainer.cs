@@ -21,7 +21,7 @@ namespace Assets._Scripts.Tools.UI
             if (_blockGroupPrefab != null && _blockGroupParent != null)
             {
                 var newGroup = Instantiate(_blockGroupPrefab, _blockGroupParent);
-                newGroup.InitGroup(_lastBlockId, name, icons.Select(i => i.name).ToArray());
+                if (icons != null) newGroup.InitGroup(_lastBlockId, name, icons.Select(i => i.name).ToArray());
                 _lastBlockId += 4; 
                 LevelEditor.AddBlockGroup(newGroup);
             }
@@ -41,7 +41,7 @@ namespace Assets._Scripts.Tools.UI
             _lastBlockId = -1;
         }
 
-        public void AddBlockGroups(LevelJSON levelJSON)
+        public void AddBlockGroupsFromJson(LevelJSON levelJSON)
         {
             foreach (var blockGroup in levelJSON.BlockGroups)
             {
@@ -53,11 +53,12 @@ namespace Assets._Scripts.Tools.UI
 
         void Start()
         {
-            _groupDropdownSelector.OnGroupSelected.AddListener(OnAddedGroup);
-            _addBlockGroupButton.onClick.AddListener(() => _groupDropdownSelector.Show());
+            // _groupDropdownSelector.OnGroupSelected.AddListener(OnAddedGroup);
+            // _addBlockGroupButton.onClick.AddListener(() => _groupDropdownSelector.Show());
+            _addBlockGroupButton.onClick.AddListener(() => OnAddedGroup(""));
 
             LevelEditor.OnLevelCleared.AddListener(RemoveAllGroups);
-            LevelEditor.OnLevelLoaded.AddListener(AddBlockGroups);
+            LevelEditor.OnLevelLoaded.AddListener(AddBlockGroupsFromJson);
         }
     }
 }

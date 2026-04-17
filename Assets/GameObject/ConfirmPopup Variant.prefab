@@ -379,7 +379,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 182752519426296238, guid: 5ed47c98038541b4cb96821854c7a0ac, type: 3}
       propertyPath: m_Spacing
-      value: 124.6
+      value: 105
       objectReference: {fileID: 0}
     - target: {fileID: 234080483251973911, guid: 5ed47c98038541b4cb96821854c7a0ac, type: 3}
       propertyPath: m_Name

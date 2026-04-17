@@ -27,7 +27,7 @@ namespace Assets._Scripts.Visuals
             transform.position = worldPos;
             _canvasGroup.alpha = 1;
 
-            var sequence = DOTween.Sequence().SetTarget(this).SetLink(gameObject, LinkBehaviour.CompleteOnDisable);
+            var sequence = DOTween.Sequence().SetTarget(this).SetLink(gameObject, LinkBehaviour.CompleteOnDisable).SetUpdate(true);
             sequence.Append(transform.DOMoveY(worldPos.y + _offsetY, _duration).SetEase(Ease.OutQuad))
                     .Insert(inserOffset, DOTween.To(() => _canvasGroup.alpha, x => _canvasGroup.alpha = x, 0, _duration * (1 - inserOffset)).SetEase(Ease.OutQuad))
                     .OnComplete(() =>

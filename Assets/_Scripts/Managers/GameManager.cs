@@ -424,13 +424,13 @@ namespace Assets._Scripts.Managers
                 {
                     base.Enter();
 
-                    _coroutine = Instance.StartCoroutine(WaitAnimFinish());
+                    _coroutine ??= Instance.StartCoroutine(WaitAnimFinish());
                 }
 
                 public override void Exit()
                 {
                     base.Exit();
-                    if (_coroutine != null) Instance.StopCoroutine(_coroutine);
+                    // if (_coroutine != null) Instance.StopCoroutine(_coroutine);
                 }
 
                 private bool CheckLevelCleared()
@@ -454,6 +454,7 @@ namespace Assets._Scripts.Managers
 
                 private void FinishLevel(bool clearState)
                 {
+                    _coroutine = null;
                     BoardController.Instance.ClearBoard();
 
                     if (clearState)

@@ -213,6 +213,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.GameButtonVisual
   _button: {fileID: 2799620091884916516}
   _buttonRt: {fileID: 2870872409826276703}
+  _content: {fileID: 0}
   _pressedScale: 0.8
   _duration: 0.1
   OnClicked:

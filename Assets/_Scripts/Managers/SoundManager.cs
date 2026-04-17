@@ -27,6 +27,8 @@ namespace Assets._Scripts.Managers
         [SerializeField] private List<GameSFX> _gameSFX;
 
         private Dictionary<ESfx, List<AudioClip>> _sfxDict = new();
+        private Dictionary<EBgm, float> _bgmProgress = new();
+        private EBgm _currentBgm = EBgm.None;
 
         public bool IsEnable {get; private set;} = true;
 
@@ -41,15 +43,35 @@ namespace Assets._Scripts.Managers
 
         public void PlayBGM(EBgm key)
         {
+            if (_currentBgm == key) return;
+
+            // Save progress of current BGM
+            if (_currentBgm != EBgm.None && _bgmSource.clip != null)
+            {
+                _bgmProgress[_currentBgm] = _bgmSource.time;
+            }
+
             _bgmSource.Stop();
+            _currentBgm = key;
+
             var toPlay = GetBGM(key);
             if (toPlay == null)
             {
-                Debug.Log($"Play BGM {key}");
+                _bgmSource.clip = null;
                 return;
             }
 
             _bgmSource.clip = toPlay;
+
+            if (_bgmProgress.TryGetValue(_currentBgm, out var savedTime))
+            {
+                _bgmSource.time = savedTime % toPlay.length;
+            }
+            else
+            {
+                _bgmSource.time = 0;
+            }
+
             _bgmSource.Play();
         }
 

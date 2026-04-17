@@ -69,12 +69,15 @@ namespace Assets._Scripts.Tools
 
             var firstBlockId = blockGroup.Blocks[0].Id;
             var toUpdate = _levelData.BlockGroups.FirstOrDefault(bg => bg.BlockDatas.Any(b => b.Id == firstBlockId));
+            var toUpdateIndex = _levelData.BlockGroups.IndexOf(toUpdate);
                 
             if (toUpdate != null)
             {
                 toUpdate.Tag = newData.Tag;
                 toUpdate.BlockDatas = newData.BlockDatas;
             }
+
+            // _levelData.BlockGroups[]
         }
 
         public static void UpdateBlockData(int blockId, BlockData newData)
