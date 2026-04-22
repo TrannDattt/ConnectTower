@@ -1,3 +1,4 @@
+using Assets._Scripts.Patterns.EventBus;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,5 +41,10 @@ namespace Assets._Scripts.Controllers
 
             lastSafeArea = safeArea;
         }
+    }
+
+    public class ScreenRatioChangeEvent : IEvent
+    {
+        
     }
 }

@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Enums;
+using Assets._Scripts.Patterns.EventBus;
 
 namespace Assets._Scripts.Controllers
 {
@@ -327,9 +328,15 @@ namespace Assets._Scripts.Controllers
                     }
                     
                     OnBlocksMoved?.Invoke(true);
+                    EventBus<BlocksMovedEvent>.Publish(new BlocksMovedEvent { MovedByPlayer = true });
                 }
             }
         }
-    }
 #endregion
+    }
+
+    public struct BlocksMovedEvent : IEvent
+    {
+        public bool MovedByPlayer;
+    }
 }

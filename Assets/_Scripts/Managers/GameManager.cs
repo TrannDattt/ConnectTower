@@ -4,6 +4,7 @@ using Assets._Scripts.Controllers;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Patterns;
+using Assets._Scripts.Patterns.EventBus;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
@@ -338,10 +339,12 @@ namespace Assets._Scripts.Managers
             private class WhilePlayingState : PlayingSubState
             {
                 private bool _doRevive = false;
+                private EventBinding<BlocksMovedEvent> _blocksMovedBinding;
 
                 public WhilePlayingState(EPlayingSubState key) : base(key)
                 {
                     Instance._onStartNewLevel.AddListener((_) => _doRevive = false);
+                    _blocksMovedBinding = new(OnBlocksMoved);
                 }
 
                 public override void Enter()
@@ -354,14 +357,16 @@ namespace Assets._Scripts.Managers
                         pillar.OnFullMatched.AddListener(Instance.OnPillarFullMatched);
                         // BlockMovementController.Instance.OnBlocksMoved.AddListener((_) => pillar.CheckFullMatch());
                     }
-                    BlockMovementController.Instance.OnBlocksMoved.AddListener(OnBlocksMoved);
+                    // BlockMovementController.Instance.OnBlocksMoved.AddListener(OnBlocksMoved);
+                    EventBus<BlocksMovedEvent>.Subscribe(_blocksMovedBinding);
                 }
 
                 public override void Exit()
                 {
                     base.Exit();
 
-                    BlockMovementController.Instance.OnBlocksMoved.RemoveListener(OnBlocksMoved);
+                    // BlockMovementController.Instance.OnBlocksMoved.RemoveListener(OnBlocksMoved);
+                    EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
                     foreach (var pillar in Instance._pillars)
                     {
                         pillar.OnPillarClicked.RemoveListener(BlockMovementController.Instance.OnPillarClicked);
@@ -378,6 +383,13 @@ namespace Assets._Scripts.Managers
                 private void OnBlocksMoved(bool byPlayer)
                 {
                     if (byPlayer) Instance.ChangeMoveCount(-1);
+                    foreach (var pillar in Instance._pillars) pillar.CheckFullMatch();
+                    CheckFinsihLevel();
+                }
+
+                private void OnBlocksMoved(BlocksMovedEvent @event)
+                {
+                    if (@event.MovedByPlayer) Instance.ChangeMoveCount(-1);
                     foreach (var pillar in Instance._pillars) pillar.CheckFullMatch();
                     CheckFinsihLevel();
                 }

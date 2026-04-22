@@ -265,11 +265,11 @@ namespace Assets._Scripts.Datas
 
         public override void OnUsed()
         {
-            var availablePillars = BoardController.Instance.GetAllPillars().Where(p => !p.IsLocked() && (p as IMechanicHandler).IsInteractable());
+            var availablePillars = BoardController.Instance.GetAllPillars().Where(p => !p.IsLocked() && (p as IMechanicHandler).IsInteractable()).ToArray();
             List<BlockController> avilableBlocks = new();
             foreach(var pillar in availablePillars)
             {
-                avilableBlocks.AddRange(pillar.GetAllBlocks().Where(b => (b as IMechanicHandler).IsInteractable()));
+                avilableBlocks.AddRange(pillar.GetAllBlocks().Where(b => (b as IMechanicHandler).IsInteractable() && b.GetComponent<BlockEffectVisual>().GetCurrentColor() == EColor.None));
             }
             
             _randomBlock = avilableBlocks[Random.Range(0, avilableBlocks.Count)];

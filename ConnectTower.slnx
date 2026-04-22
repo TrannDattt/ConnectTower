@@ -1,7 +1,6 @@
 ﻿<Solution>
   <Project Path="Unity.InputSystem.csproj" />
   <Project Path="Unity.2D.Aseprite.Editor.csproj" />
-  <Project Path="spine-unity-examples.csproj" />
   <Project Path="Unity.Mathematics.csproj" />
   <Project Path="Unity.2D.Common.Path.Editor.csproj" />
   <Project Path="Unity.2D.Psdimporter.Editor.csproj" />
@@ -15,14 +14,11 @@
   <Project Path="Unity.Burst.csproj" />
   <Project Path="PsdPlugin.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
-  <Project Path="spine-unity.csproj" />
   <Project Path="Unity.2D.Animation.Editor.csproj" />
   <Project Path="Unity.2D.SpriteShape.Editor.csproj" />
   <Project Path="Unity.VisualStudio.Editor.csproj" />
   <Project Path="Unity.TextMeshPro.Editor.csproj" />
   <Project Path="Unity.InternalAPIEditorBridge.001.csproj" />
-  <Project Path="spine-unity-editor.csproj" />
-  <Project Path="spine-csharp.csproj" />
   <Project Path="Unity.2D.SpriteShape.Runtime.csproj" />
   <Project Path="Unity.InternalAPIEngineBridge.004.csproj" />
   <Project Path="ScriptablePacker.csproj" />
@@ -52,7 +48,6 @@
   <Project Path="UIGradient.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Unity.InputSystem.TestFramework.csproj" />
-  <Project Path="spine-unity-examples-editor.csproj" />
   <Project Path="Unity.2D.Aseprite.Common.csproj" />
   <Project Path="Unity.Collections.Editor.csproj" />
 </Solution>
