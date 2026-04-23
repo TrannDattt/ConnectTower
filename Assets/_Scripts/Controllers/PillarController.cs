@@ -4,6 +4,7 @@ using System.Linq;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Interfaces;
+using Assets._Scripts.Patterns.EventBus;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
@@ -19,8 +20,6 @@ namespace Assets._Scripts.Controllers
 
         public const int MAX_BLOCKS = 4;
 
-        public UnityEvent<PillarController> OnPillarClicked = new();
-        public UnityEvent<string> OnFullMatched = new();
         public EMechanic ActiveMechanic { get; set; } = EMechanic.None;
         public MechanicVisualControl MechanicVisual { get; set; }
 
@@ -193,7 +192,7 @@ namespace Assets._Scripts.Controllers
             {
                 Debug.Log("Locked");
                 _isFull = true;
-                OnFullMatched?.Invoke(_blocks[0].Tag);
+                EventBus<PillarFullMatchedEvent>.Publish(new PillarFullMatchedEvent { Pillar = this , Tag = _blocks[0].Tag});
             }
         }
 #endregion
@@ -254,14 +253,19 @@ namespace Assets._Scripts.Controllers
             // Debug.Log($"Pillar {name} clicked");
             if ((this as IMechanicHandler).IsInteractable())
             {
-                OnPillarClicked?.Invoke(this);
+                EventBus<PillarClickedEvent>.Publish(new PillarClickedEvent { Pillar = this });
             }
         }
+    }
 
-        void OnDisable()
-        {
-            OnPillarClicked.RemoveAllListeners();
-            OnFullMatched.RemoveAllListeners();
-        }
+    public struct PillarClickedEvent : IEvent
+    {
+        public PillarController Pillar;
+    }
+
+    public struct PillarFullMatchedEvent : IEvent
+    {
+        public PillarController Pillar;
+        public string Tag;
     }
 }

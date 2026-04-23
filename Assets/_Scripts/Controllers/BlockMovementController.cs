@@ -18,7 +18,6 @@ namespace Assets._Scripts.Controllers
 
         [SerializeField] private float _pickupHeight;
         public Coroutine CompleteCoroutine {get; private set;}
-        public UnityEvent<bool> OnBlocksMoved = new();
 
         private float _blockHeight => GameObjectDataHelper.BlockHeight;
 
@@ -30,11 +29,6 @@ namespace Assets._Scripts.Controllers
         public Vector3 GetBlockPosition(PillarController pillar, int index)
         {
             return pillar.BlockContainer.transform.position + index * _blockHeight * Vector3.up;
-        }
-
-        void OnDestroy()
-        {
-            OnBlocksMoved.RemoveAllListeners();
         }
 
 #region PICK UP
@@ -281,8 +275,9 @@ namespace Assets._Scripts.Controllers
 #endregion
 
 #region ON PILLAR CLICK
-        public void OnPillarClicked(PillarController pillar)
+        public void OnPillarClicked(PillarClickedEvent evt)
         {
+            var pillar = evt.Pillar;
             if(pillar.IsLocked())
             {
                 Debug.Log("Pillar is locked!");
@@ -327,7 +322,6 @@ namespace Assets._Scripts.Controllers
                         PutBackBlocks(toReturn, parentPillar);
                     }
                     
-                    OnBlocksMoved?.Invoke(true);
                     EventBus<BlocksMovedEvent>.Publish(new BlocksMovedEvent { MovedByPlayer = true });
                 }
             }

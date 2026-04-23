@@ -1,5 +1,6 @@
 using Assets._Scripts.Helpers;
 using Assets._Scripts.Managers;
+using Assets._Scripts.Patterns.EventBus;
 using Assets._Scripts.Visuals;
 using TMPro;
 using UnityEngine;
@@ -14,10 +15,11 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Text _heartCountText;
 
         private int _lastCount = UserLifeHelper.MAX_LIFE;
+        private EventBinding<CurrencyChangedEvent> _currencyChangedBinding;
 
-        public void UpdateVisual() => UpdateVisual(UserManager.CurUser.HeartCount - _lastCount);
+        public void UpdateVisual() => UpdateAmount(UserManager.CurUser.HeartCount - _lastCount);
 
-        public void UpdateVisual(int amount)
+        public void UpdateAmount(int amount)
         {
             _lastCount = UserManager.CurUser.HeartCount;
             _heartCountText.text = _lastCount.ToString();
@@ -52,12 +54,13 @@ namespace Assets._Scripts.Visuals
         void Start()
         {
             UpdateVisual();
-            UserManager.OnHeartChanged.AddListener(UpdateVisual);
+            _currencyChangedBinding = new(UpdateVisual);
+            EventBus<CurrencyChangedEvent>.Subscribe(_currencyChangedBinding);
         }
 
         void OnDestroy()
         {
-            UserManager.OnHeartChanged.RemoveListener(UpdateVisual);
+            EventBus<CurrencyChangedEvent>.Unsubscribe(_currencyChangedBinding);
         }
     }
 }

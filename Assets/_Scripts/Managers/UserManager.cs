@@ -3,14 +3,14 @@ using UnityEngine.Events;
 using UnityEngine;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
+using System;
+using Assets._Scripts.Patterns.EventBus;
 
 namespace Assets._Scripts.Managers
 {
     public static class UserManager
     {
         public static UserRuntimeData CurUser {get; private set;}
-        public static UnityEvent<int> OnCoinChanged = new();
-        public static UnityEvent<EBooster, int> OnBoosterChanged = new();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
@@ -34,7 +34,12 @@ namespace Assets._Scripts.Managers
         {
             if (amount == 0) return;
             CurUser.CoinCount += amount;
-            OnCoinChanged?.Invoke(amount);
+            EventBus<CurrencyChangedEvent>.Publish(new CurrencyChangedEvent
+            {
+                CoinChanged = amount,
+                HeartChanged = 0,
+                BoostersChanged = Array.Empty<Tuple<EBooster, int>>()
+            });
             SaveData();
         }
 
@@ -57,12 +62,16 @@ namespace Assets._Scripts.Managers
 #endregion
 
 #region Heart
-        public static UnityEvent<int> OnHeartChanged = new();
         private static void ChangeHeartCount(int amount)
         {
             Debug.Log($"Player heart changed by {amount}");
             CurUser.HeartCount = Mathf.Clamp(CurUser.HeartCount + amount, 0, UserLifeHelper.MAX_LIFE);
-            OnHeartChanged?.Invoke(amount);
+            EventBus<CurrencyChangedEvent>.Publish(new CurrencyChangedEvent
+            {
+                CoinChanged = 0,
+                HeartChanged = amount,
+                BoostersChanged = Array.Empty<Tuple<EBooster, int>>()
+            });
             SaveData();
         }
 
@@ -95,7 +104,12 @@ namespace Assets._Scripts.Managers
                     CurUser.HintCount += amount;
                     break;
             }
-            OnBoosterChanged?.Invoke(type, amount);
+            EventBus<CurrencyChangedEvent>.Publish(new CurrencyChangedEvent
+            {
+                CoinChanged = amount,
+                HeartChanged = 0,
+                BoostersChanged = new[] { Tuple.Create(type, amount) }
+            });
             SaveData();
         }
 
@@ -145,5 +159,12 @@ namespace Assets._Scripts.Managers
 
         public static void MarkTutorialPlayed(ETutorial tutorial) => CurUser.MarkTutorialPlayed(tutorial);
 #endregion
+    }
+
+    public struct CurrencyChangedEvent : IEvent
+    {
+        public int CoinChanged;
+        public int HeartChanged;
+        public Tuple<EBooster, int>[] BoostersChanged;
     }
 }

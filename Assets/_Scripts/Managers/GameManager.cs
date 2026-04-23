@@ -12,6 +12,11 @@ using UnityEngine.Playables;
 
 namespace Assets._Scripts.Managers
 {
+    public struct StartLevelEvent : IEvent
+    {
+        public LevelRuntimeData LevelData;
+    }
+
     public class GameManager : Singleton<GameManager>
     {
 #if UNITY_EDITOR
@@ -29,7 +34,6 @@ namespace Assets._Scripts.Managers
                                  && _gameSM.TryGetState(EGameState.Playing, out var playState)
                                  && (playState as PlayingState).CurState == PlayingState.EPlayingSubState.WhilePlaying;
         private List<PillarController> _pillars = new();
-        private UnityEvent<int> _onStartNewLevel = new();
         private UnityAction _onGoToMenuCallback;
 
         public void GoToMenu(UnityAction onLoaded = null)
@@ -82,7 +86,7 @@ namespace Assets._Scripts.Managers
                 IngameVisualController.Instance.UpdateMoveCount(CurrentLevelData.MoveCount);
         }
 
-        private void OnPillarFullMatched(string tag)
+        private void OnPillarFullMatched(PillarFullMatchedEvent evt)
         {
             CurrentLevelData.IncreaseMatchedPillars();
             IngameVisualController.Instance.UpdateProgressBar(CurrentLevelData.MatchedGroups, CurrentLevelData.TotalGroups);
@@ -106,7 +110,8 @@ namespace Assets._Scripts.Managers
             _pillars = BoardController.Instance.GetAllPillars();
             BoosterController.Instance.InitData();
             IngameVisualController.Instance.InitVisual(CurrentLevelData);
-            _onStartNewLevel?.Invoke(CurrentLevelData.Index);
+            
+            EventBus<StartLevelEvent>.Publish(new StartLevelEvent { LevelData = new(levelData) });
             
             _gameSM.ChangeState(EGameState.Playing);
         }
@@ -221,6 +226,7 @@ namespace Assets._Scripts.Managers
 
             private class PlayingSubState : AState<EPlayingSubState>
             {
+                
                 public PlayingSubState(EPlayingSubState key) : base(key)
                 {
                 }
@@ -231,11 +237,13 @@ namespace Assets._Scripts.Managers
             {
                 private Coroutine _coroutine;
                 private bool _playOpening;
+                private EventBinding<StartLevelEvent> _startLevelBinding;
 
                 public OpeningState(EPlayingSubState key) : base(key)
                 {
                     _playOpening = false;
-                    Instance._onStartNewLevel.AddListener((_) => _playOpening = false);
+                    _startLevelBinding = new(() => _playOpening = false);
+                    EventBus<StartLevelEvent>.Subscribe(_startLevelBinding);
                 }
 
                 public override void Enter()
@@ -288,6 +296,7 @@ namespace Assets._Scripts.Managers
             private class TutorialState : PlayingSubState
             {
                 private ETutorial _toPlay;
+                private EventBinding<PopupHiddenEvent> _popupHiddenBinding;
 
                 public TutorialState(EPlayingSubState key) : base(key)
                 {
@@ -303,7 +312,8 @@ namespace Assets._Scripts.Managers
                     {
                         _toPlay = toPlay;
                         Instance.StartCoroutine(PopupManager.Instance.ShowTutorial(toPlay));
-                        PopupManager.Instance.OnPopupHidden.AddListener(FinishState);
+                        _popupHiddenBinding = new(() => FinishState());
+                        EventBus<PopupHiddenEvent>.Subscribe(_popupHiddenBinding);
                     }
                     else
                     {
@@ -322,7 +332,7 @@ namespace Assets._Scripts.Managers
                 public override void Exit()
                 {
                     if (_toPlay != ETutorial.None) UserManager.MarkTutorialPlayed(_toPlay);
-                    PopupManager.Instance.OnPopupHidden.RemoveListener(FinishState);
+                    EventBus<PopupHiddenEvent>.Unsubscribe(_popupHiddenBinding);
                     base.Exit();
                 }
 
@@ -340,51 +350,41 @@ namespace Assets._Scripts.Managers
             {
                 private bool _doRevive = false;
                 private EventBinding<BlocksMovedEvent> _blocksMovedBinding;
+                private EventBinding<PillarFullMatchedEvent> _pillarFullMatchedBinding;
+                private EventBinding<PillarClickedEvent> _pillarClickedBinding;
+                private EventBinding<StartLevelEvent> _startLevelBinding;
 
                 public WhilePlayingState(EPlayingSubState key) : base(key)
                 {
-                    Instance._onStartNewLevel.AddListener((_) => _doRevive = false);
+                    _startLevelBinding = new(() => _doRevive = false);
+                    EventBus<StartLevelEvent>.Subscribe(_startLevelBinding);
                     _blocksMovedBinding = new(OnBlocksMoved);
+                    _pillarFullMatchedBinding = new(Instance.OnPillarFullMatched);
+                    _pillarClickedBinding = new(BlockMovementController.Instance.OnPillarClicked);
                 }
 
                 public override void Enter()
                 {
                     base.Enter();
-
-                    foreach (var pillar in Instance._pillars)
-                    {
-                        pillar.OnPillarClicked.AddListener(BlockMovementController.Instance.OnPillarClicked);
-                        pillar.OnFullMatched.AddListener(Instance.OnPillarFullMatched);
-                        // BlockMovementController.Instance.OnBlocksMoved.AddListener((_) => pillar.CheckFullMatch());
-                    }
-                    // BlockMovementController.Instance.OnBlocksMoved.AddListener(OnBlocksMoved);
+                    
                     EventBus<BlocksMovedEvent>.Subscribe(_blocksMovedBinding);
+                    EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchedBinding);
+                    EventBus<PillarClickedEvent>.Subscribe(_pillarClickedBinding);
                 }
 
                 public override void Exit()
                 {
                     base.Exit();
 
-                    // BlockMovementController.Instance.OnBlocksMoved.RemoveListener(OnBlocksMoved);
                     EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
-                    foreach (var pillar in Instance._pillars)
-                    {
-                        pillar.OnPillarClicked.RemoveListener(BlockMovementController.Instance.OnPillarClicked);
-                        pillar.OnFullMatched.RemoveListener(Instance.OnPillarFullMatched);
-                    }
+                    EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchedBinding);
+                    EventBus<PillarClickedEvent>.Unsubscribe(_pillarClickedBinding);
                 }
 
                 public override EPlayingSubState GetNextState()
                 {
                     if (CheckFinsihLevel()) return EPlayingSubState.Closing;
                     return base.GetNextState();
-                }
-
-                private void OnBlocksMoved(bool byPlayer)
-                {
-                    if (byPlayer) Instance.ChangeMoveCount(-1);
-                    foreach (var pillar in Instance._pillars) pillar.CheckFullMatch();
-                    CheckFinsihLevel();
                 }
 
                 private void OnBlocksMoved(BlocksMovedEvent @event)

@@ -6,6 +6,7 @@ using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
 using Assets._Scripts.Interfaces;
 using Assets._Scripts.Managers;
+using Assets._Scripts.Patterns.EventBus;
 using Assets._Scripts.Visuals;
 using Coffee.UIExtensions;
 using DG.Tweening;
@@ -232,7 +233,7 @@ namespace Assets._Scripts.Datas
 
             sequence.AppendCallback(() => 
             {
-                BlockMovementController.Instance.OnBlocksMoved?.Invoke(false);
+                EventBus<BlocksMovedEvent>.Publish(new BlocksMovedEvent {MovedByPlayer = false});
             });
 
             return sequence.Play();

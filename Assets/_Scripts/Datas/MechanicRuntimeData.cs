@@ -2,6 +2,7 @@ using Assets._Scripts.Controllers;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Interfaces;
 using Assets._Scripts.Managers;
+using Assets._Scripts.Patterns.EventBus;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -11,7 +12,9 @@ namespace Assets._Scripts.Datas
     {
         public EMechanic Key {get; protected set;}
         protected IMechanicHandler _target;
-        private UnityAction<bool> OnCheckCondicion;
+        private UnityAction<BlocksMovedEvent> OnCheckCondicion;
+
+        protected EventBinding<BlocksMovedEvent> _blocksMovedBinding;
 
         public MechanicRuntimeData()
         {
@@ -22,6 +25,8 @@ namespace Assets._Scripts.Datas
                     Remove();
                 }
             };
+
+            _blocksMovedBinding = new(OnCheckCondicion);
         }
 
         protected abstract bool CheckRemoveCondition();
@@ -32,9 +37,9 @@ namespace Assets._Scripts.Datas
             if (_target.ActiveMechanic == Key) return;
             _target.UpdateMechanic(this);
             
-            BlockMovementController.Instance.OnBlocksMoved.AddListener(OnCheckCondicion);
+            EventBus<BlocksMovedEvent>.Subscribe(_blocksMovedBinding);
             
-            OnCheckCondicion?.Invoke(true);
+            OnCheckCondicion?.Invoke(new BlocksMovedEvent { MovedByPlayer = false });
         }
 
         public virtual void Remove(bool doEffect = true)
@@ -44,7 +49,7 @@ namespace Assets._Scripts.Datas
             _target.ClearMechanic(doEffect);
             _target = null;
             
-            BlockMovementController.Instance.OnBlocksMoved.RemoveListener(OnCheckCondicion);
+            EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
 
             if (!doEffect) return;
 
@@ -80,20 +85,23 @@ namespace Assets._Scripts.Datas
     {
         public string TagToOpen {get; private set;}
 
-        private UnityAction<string> OnCheckCondicion;
+        private UnityAction<PillarFullMatchedEvent> OnCheckCondicion;
+        private EventBinding<PillarFullMatchedEvent> _pillarFullMatchedBinding;
 
         public CoveredPillarMechanic(string tagToOpen) : base()
         {
             Key = EMechanic.CoveredPillar;
             TagToOpen = tagToOpen;
 
-            OnCheckCondicion = (tag) =>
+            OnCheckCondicion = (evt) =>
             {
-                if (CheckRemoveCondition(tag))
+                if (CheckRemoveCondition(evt.Tag))
                 {
                     Remove();
                 }
             };
+
+            _pillarFullMatchedBinding = new(OnCheckCondicion);
         }
 
         public override void Apply(IMechanicHandler target)
@@ -102,8 +110,7 @@ namespace Assets._Scripts.Datas
             if (_target.ActiveMechanic == Key) return;
             _target.UpdateMechanic(this);
             
-            var pillars = BoardController.Instance.GetAllPillars();
-            pillars.ForEach(p => p.OnFullMatched.AddListener(OnCheckCondicion));
+            EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchedBinding);
         }
 
         public override void Remove(bool doEffect = true)
@@ -111,8 +118,7 @@ namespace Assets._Scripts.Datas
             if (_target == null) return;
             _target.ClearMechanic();
             
-            var pillars = BoardController.Instance.GetAllPillars();
-            pillars.ForEach(p => p.OnFullMatched.RemoveListener(OnCheckCondicion));
+            EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchedBinding);
             
             _target = null;
         }

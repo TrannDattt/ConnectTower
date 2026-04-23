@@ -58,9 +58,9 @@ namespace Assets._Scripts.Patterns
             return true;
         }
 
-        public void ChangeState(T key)
+        public void ChangeState(T key, bool reset = false)
         {
-            if(!TryGetState(key, out var next) || next == null || next == CurrentState) return;
+            if(!TryGetState(key, out var next) || next == null || (next == CurrentState && !reset)) return;
 
             CurrentState?.Exit();
             CurrentState = next;
@@ -72,7 +72,7 @@ namespace Assets._Scripts.Patterns
         {
             if (_defaultState != null)
             {
-                ChangeState(_defaultState.Key);
+                ChangeState(_defaultState.Key, true);
                 return;
             }
 
@@ -83,7 +83,7 @@ namespace Assets._Scripts.Patterns
                 return;
             }
 
-            ChangeState(_stateDict.First().Key);
+            ChangeState(_stateDict.First().Key, true);
             // Debug.Log($"No default state, fallback to {CurrentState.Key} state");
         }
 

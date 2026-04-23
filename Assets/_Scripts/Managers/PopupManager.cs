@@ -5,6 +5,7 @@ using Assets._Scripts.Controllers;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Patterns;
+using Assets._Scripts.Patterns.EventBus;
 using Assets._Scripts.Visuals;
 using UnityEngine;
 using UnityEngine.Events;
@@ -36,10 +37,9 @@ namespace Assets._Scripts.Managers
 
         private Pooling<TextPopupVisual> _textPopupPool = new();
         private Dictionary<EPopup, GamePopupVisual> _popupDict = new();
+        private EventBinding<PopupHiddenEvent> _popupHiddenBinding;
 
         private GamePopupVisual GetPopup(EPopup key) => _popupDict.TryGetValue(key, out var popup) ? popup : null;
-
-        public UnityEvent OnPopupHidden;
 
         public IEnumerator ShowPopup(EPopup key)
         {
@@ -110,8 +110,8 @@ namespace Assets._Scripts.Managers
             _popupDict[EPopup.Confirmation] = _confirmPopup;
 
             _textPopupPool = new(_textPopupPrefab, _initAmount, transform);
-            
-            OnPopupHidden.AddListener(() =>
+
+            _popupHiddenBinding = new(() =>
             {
                 if (_popupDict.Values.All(p => !p.IsActive))
                 {
@@ -119,11 +119,16 @@ namespace Assets._Scripts.Managers
                     if (GameManager.Instance.CurState == EGameState.Pause) GameManager.Instance.ResumeGame();
                 }
             });
+            EventBus<PopupHiddenEvent>.Subscribe(_popupHiddenBinding);
         }
 
         void OnDestroy()
         {
-            OnPopupHidden.RemoveAllListeners();
+            EventBus<PopupHiddenEvent>.Unsubscribe(_popupHiddenBinding);
         }
+    }
+
+    public struct PopupHiddenEvent : IEvent
+    {
     }
 }

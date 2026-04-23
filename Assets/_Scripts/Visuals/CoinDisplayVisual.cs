@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
+using Assets._Scripts.Patterns.EventBus;
 using Assets._Scripts.Visuals;
 using Coffee.UIExtensions;
 using DG.Tweening;
@@ -26,6 +27,7 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private UIParticleAttractor _coinAttractor;
 
         private List<Image> _coinImages = new();
+        private EventBinding<CurrencyChangedEvent> _currencyChangedBinding;
 
         private static int _lastCount;
         private static bool _isFirstAnim = false;
@@ -118,10 +120,10 @@ namespace Assets._Scripts.Visuals
 
             InitPool();
 
-            UserManager.OnCoinChanged.AddListener((amount) =>
+            _currencyChangedBinding = new((evt) =>
             {
                 _isFirstAnim = true;
-                UpdateVisual(amount);
+                UpdateVisual(evt.CoinChanged);
             });
         }
 

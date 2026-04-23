@@ -3,6 +3,7 @@ using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns;
+using Assets._Scripts.Patterns.EventBus;
 using Assets._Scripts.Visuals;
 using DG.Tweening;
 using UnityEngine;
@@ -23,6 +24,8 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private BoosterButtonVisual _hintButton;
         // [SerializeField] private Transform _centerPoint;
         private Vector3 _centerPoint => _canvasRt.TransformPoint(_canvasRt.rect.center);
+
+        private EventBinding<CurrencyChangedEvent> _currencyChangedBinding;
 
         public void InitVisual(LevelRuntimeData data)
         {
@@ -71,16 +74,20 @@ namespace Assets._Scripts.Controllers
                 StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Setting));
             });
 
-            UserManager.OnBoosterChanged.AddListener((t, a) =>
+            _currencyChangedBinding = new((evt) =>
             {
-                var (toUpdate, curAmount) = t switch
+                for (int i = 0; i < evt.BoostersChanged.Length; i++)
                 {
-                    EBooster.ExtraMove => (_extraMoveButton, UserManager.CurUser.ExtraMoveCount),
-                    EBooster.Shuffle => (_shuffleButton, UserManager.CurUser.ShuffleCount),
-                    EBooster.Hint => (_hintButton, UserManager.CurUser.HintCount),
-                    _ => (null, 0)
-                };
-                if (toUpdate) toUpdate.SetCount(curAmount);
+                    var type = evt.BoostersChanged[i].Item1;
+                    var (toUpdate, curAmount) = type switch
+                    {
+                        EBooster.ExtraMove => (_extraMoveButton, UserManager.CurUser.ExtraMoveCount),
+                        EBooster.Shuffle => (_shuffleButton, UserManager.CurUser.ShuffleCount),
+                        EBooster.Hint => (_hintButton, UserManager.CurUser.HintCount),
+                        _ => (null, 0)
+                    };
+                    if (toUpdate) toUpdate.SetCount(curAmount);
+                }
             });
 
             void UseBoosterButton(BoosterButtonVisual button, EBooster type)

@@ -49,13 +49,13 @@ namespace Assets._Scripts.Controllers
             ShopState shop = new(EMenuTab.Shop, _shopTab, _shopControl, _shopControl.InitVisual);
             RankingState ranking = new(EMenuTab.Ranking, _rankTab, null, null);
 
-            _tabSM.AddStates(home, shop, ranking);
-            _tabSM.SetDefaultState(EMenuTab.Home);
-            _tabSM.ChangeToDefault();
-
             _homeTab.OnClicked.AddListener(() => ChangeTab(EMenuTab.Home));
             _shopTab.OnClicked.AddListener(() => ChangeTab(EMenuTab.Shop));
             _rankTab.OnClicked.AddListener(() => ChangeTab(EMenuTab.Ranking));
+
+            _tabSM.AddStates(home, shop, ranking);
+            _tabSM.SetDefaultState(EMenuTab.Home);
+            _tabSM.ChangeToDefault();
         }
 
         public abstract class NavTabState : AState<EMenuTab>

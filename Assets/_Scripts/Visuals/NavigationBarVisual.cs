@@ -25,9 +25,6 @@ namespace Assets._Scripts.Visuals
                 return;
             }
 
-            // Ép Layout Group tính toán ngay lập tức vị trí các con
-            LayoutRebuilder.ForceRebuildLayoutImmediate(_tabContainer);
-
             bool isFirstTime = _selectedTab == null;
             _selectedTab?.DoOnDeselectedAnim();
             _selectedTab = tab;
@@ -47,6 +44,12 @@ namespace Assets._Scripts.Visuals
                                .SetLink(_selectedBackground.gameObject, LinkBehaviour.CompleteAndKillOnDisable);
             
             _selectedTab.DoOnSelectedAnim();
+        }
+
+        void Start()
+        {
+            // Ép Layout Group tính toán ngay lập tức vị trí các con
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_tabContainer);            
         }
     }
 }

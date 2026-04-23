@@ -1,6 +1,7 @@
 using System.Collections;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
+using Assets._Scripts.Patterns.EventBus;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
@@ -42,7 +43,7 @@ namespace Assets._Scripts.Visuals
             void OnHide()
             {
                 gameObject.SetActive(false);
-                PopupManager.Instance.OnPopupHidden?.Invoke();
+                EventBus<PopupHiddenEvent>.Publish(new PopupHiddenEvent());
             }
             yield return DoHideAnim(OnHide);
         }

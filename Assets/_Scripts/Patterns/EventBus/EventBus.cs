@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Assets._Scripts.Patterns.EventBus
 {
@@ -18,8 +19,9 @@ namespace Assets._Scripts.Patterns.EventBus
 
         public static void Publish(T @event)
         {
-            foreach (var binding in _eventBindings)
+            for(int i = 0; i < _eventBindings.Count; i++)
             {
+                var binding = _eventBindings.ElementAt(i);
                 binding.OnEvent.Invoke();
                 binding.OnArgEvent.Invoke(@event);
             }
