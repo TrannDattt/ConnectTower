@@ -16,9 +16,11 @@ namespace Assets._Scripts.Visuals
     public class PillarEffectVisual : MonoBehaviour
     {
         [SerializeField] private Canvas _canvas;
-        [SerializeField] private GameObject _lockHolder;
         [SerializeField] private Image _border;
         [SerializeField] private Text _tag;
+        [SerializeField] private AnimationCurve _borderScaleXCurve;
+        [SerializeField] private AnimationCurve _borderScaleYCurve;
+        [SerializeField] private GameObject _lockHolder;
 
         private PillarController _pillar;
         private static HashSet<EColor> _unusedColor = new();
@@ -51,12 +53,14 @@ namespace Assets._Scripts.Visuals
 
             var sequence = DOTween.Sequence().SetLink(gameObject, LinkBehaviour.KillOnDisable);
             sequence.AppendInterval(ParticleManager.Instance.GetParticleDuration(EParticle.Confetti))
-            .JoinCallback(() =>
+            // .Join(_border.transform.DOScale(initialScale, animDuration).SetEase(Ease.OutBack, overshoot: 2f))
+            .Join(_border.transform.DOScaleX(initialScale.x, animDuration).SetEase(_borderScaleXCurve))
+            .Join(_border.transform.DOScaleY(initialScale.y, animDuration).SetEase(_borderScaleYCurve))
+            .InsertCallback(animDuration * .95f, () =>
             {
                 ParticleManager.Instance.StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Confetti, transform.position, _canvas.transform));
                 ChangeLockColor(color);
             })
-            .Join(_border.transform.DOScale(initialScale, animDuration).SetEase(Ease.OutBack, overshoot: 2f))
             .OnComplete(() =>
             {
                 _tag.gameObject.SetActive(true);
@@ -122,6 +126,14 @@ namespace Assets._Scripts.Visuals
         {
             _pillar = GetComponent<PillarController>();
             InitializePool();
+        }
+
+        void OnEnable()
+        {
+            if (_canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+            {
+                _canvas.worldCamera = Camera.main;
+            }
         }
 
         void OnDisable()

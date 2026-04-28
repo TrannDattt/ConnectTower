@@ -130,6 +130,8 @@ namespace Assets._Scripts.Controllers
 #endregion
 
 #region MOVE
+        [SerializeField] private Ease _moveEase = Ease.OutQuad;
+
         private void MoveBlocks(List<BlockController> blocks, PillarController fromPillar, PillarController toPillar)
         {
             if (blocks.Count == 0) return;
@@ -175,7 +177,7 @@ namespace Assets._Scripts.Controllers
                 
                 sequence.Insert(i * staggeredDelay, 
                     blocks[i].transform.DOPath(path, duration, PathType.CatmullRom)
-                    .SetEase(Ease.OutQuad));
+                    .SetEase(_moveEase));
             }
             
             sequence.OnComplete(() =>

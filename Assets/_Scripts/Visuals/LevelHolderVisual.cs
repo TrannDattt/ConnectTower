@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns;
+using DG.Tweening;
 using UnityEngine;
 
 namespace Assets._Scripts.Visuals
@@ -13,6 +14,7 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private float _spacing = 20f;
         [SerializeField] private RectTransform _view;
         [SerializeField] private ParticleSystem _mysteryZone;
+        [SerializeField] private AnimationCurve _scrollCurve;
 #if UNITY_EDITOR
         [SerializeField] private bool _showAllLevel = true;
 #endif
@@ -22,13 +24,14 @@ namespace Assets._Scripts.Visuals
         private List<LevelButtonVisual> _activeButtons = new();
         private Pooling<LevelButtonVisual> _buttonPool = new();
         private int _totalLevels;
+        private float TotalHeight => _totalLevels * _buttonHeight + Mathf.Max(0, _totalLevels - 1) * _spacing;
 
         private int _poolAmount = 10;
         private int _maxActiveAmount = 10;
         
         //TODO: Add behaviors to button: Auto focus, scale when scroll, button change color,...
 
-        public void InitVisual(int targetIndex = -1)
+        public void InitVisual(int targetIndex = -1, bool instant = false)
         {
             if (_activeButtons.Count > 0)
             {
@@ -59,38 +62,14 @@ namespace Assets._Scripts.Visuals
             }
             _totalLevels = totalLevels;
 
-            if (targetIndex <= 0)
-            {
-                var currentLevel = LevelManager.Instance.GetLatestNotClearedLevel();
-                targetIndex = currentLevel != null ? currentLevel.Index : totalLevels;
-            }
-
-            float totalHeight = totalLevels * _buttonHeight + Mathf.Max(0, totalLevels - 1) * _spacing;
-            var containerRt = _levelContainer.GetComponent<RectTransform>();
-            containerRt.sizeDelta = new Vector2(containerRt.sizeDelta.x, totalHeight);
-
-            // Starting viewport position target (Bottom anchored container Y maps down to 0)
-            float targetY = -(targetIndex - 1) * (_buttonHeight + _spacing);
+            // Đảm bảo container được scroll tới đúng vị trí trước khi spawn buttons
+            ScrollToCurrentLevel(targetIndex, instant);
             
-            // Adjust to rough center using viewport bounds
-            targetY += _view.rect.height * 0.5f; 
+            var containerRt = _levelContainer as RectTransform;
+            float currentY = containerRt.anchoredPosition.y;
             
-            // Dịch màn hình cuộn xuống 1 lượng bằng _buttonHeight để level không nằm quá cao
-            targetY -= _buttonHeight;
-            
-            // Prevent scrolling out of boundary
-            if (targetY > 0) targetY = 0; 
-            float minTargetY = -Mathf.Max(0, totalHeight - _view.rect.height);
-            if (targetY < minTargetY) targetY = minTargetY;
-            
-            containerRt.anchoredPosition = new Vector2(
-                containerRt.anchoredPosition.x, 
-                targetY
-            );
-
-            // Tính index đầu tiên hiển thị dựa trên vị trí container sau khi đã scroll
-            // containerY âm nghĩa là cuộn lên -> level có index thấp hơn nằm phía dưới viewport
-            float visibleBottom = -targetY; 
+            // Tính index đầu tiên hiển thị dựa trên vị trí container thực tế
+            float visibleBottom = -currentY; 
             int firstVisibleIndex = Mathf.Max(1, Mathf.FloorToInt(visibleBottom / (_buttonHeight + _spacing)) + 1);
 
             // Spawn nhiều hơn để bao phủ toàn bộ vùng nhìn thấy + buffer 2 bên
@@ -100,7 +79,8 @@ namespace Assets._Scripts.Visuals
             for(int i = 0; i < _maxActiveAmount; i++)
             {
                 int currIndex = startIndex + i;
-                if (currIndex > totalLevels) break;
+                if (currIndex > _totalLevels) break;
+                if (currIndex < 1) continue;
 
                 var levelData = LevelManager.Instance.GetLevel(currIndex);
 
@@ -228,31 +208,78 @@ namespace Assets._Scripts.Visuals
         {
             if (_mysteryZone == null || _activeButtons.Count == 0) return;
 
-            int absoluteMax = LevelManager.Instance.GetTotalLevelCount();
             bool shouldEnable = false;
-
-            // Only consider showing if the user's available levels reach the absolute maximum
-            // if (_totalLevels >= absoluteMax)
-            // {
-                var topButton = _activeButtons.FirstOrDefault(b => b.LevelIndex == _totalLevels);
-                if (topButton != null)
+            var topButton = _activeButtons.FirstOrDefault(b => b.LevelIndex == _totalLevels);
+            if (topButton != null)
+            {
+                Vector3 localPos = _view.InverseTransformPoint(topButton.transform.position);
+                float viewTopY = _view.rect.yMax;
+                
+                // Enable Mystery Zone only when the absolute top level is visibly near the top edge.
+                // It shouldn't be way above the screen (e.g. user scrolled to bottom levels).
+                // It shouldn't be pulled way down (e.g. user elastic-scrolled it to the middle).
+                if (localPos.y <= viewTopY - _buttonHeight * .8f && 
+                    localPos.y >= viewTopY - _buttonHeight * 1.7f)
                 {
-                    Vector3 localPos = _view.InverseTransformPoint(topButton.transform.position);
-                    float viewTopY = _view.rect.yMax;
-                    
-                    // Enable Mystery Zone only when the absolute top level is visibly near the top edge.
-                    // It shouldn't be way above the screen (e.g. user scrolled to bottom levels).
-                    // It shouldn't be pulled way down (e.g. user elastic-scrolled it to the middle).
-                    if (localPos.y <= viewTopY - _buttonHeight * .8f && 
-                        localPos.y >= viewTopY - _buttonHeight * 1.7f)
-                    {
-                        shouldEnable = true;
-                    }
+                    shouldEnable = true;
                 }
-            // }
+            }
 
             if (_mysteryZone.gameObject.activeSelf != shouldEnable)
                 _mysteryZone.gameObject.SetActive(shouldEnable);
+        }
+
+        private void ScrollToCurrentLevel(int specificIndex = -1, bool instant = false)
+        {
+            var containerRt = _levelContainer as RectTransform;
+            if (containerRt == null) return;
+
+            // Đảm bảo sizeDelta của container đã được cập nhật trước khi tính toán scroll
+            containerRt.sizeDelta = new Vector2(containerRt.sizeDelta.x, TotalHeight);
+
+            int targetIndex = specificIndex;
+            if (targetIndex <= 0)
+            {
+                var currentLevel = LevelManager.Instance.GetLatestNotClearedLevel();
+                targetIndex = currentLevel != null ? currentLevel.Index : _totalLevels;
+            }
+
+            float targetY;
+            if (targetIndex <= 1)
+            {
+                targetY = 0;
+            }
+            else if (targetIndex >= _totalLevels)
+            {
+                targetY = -(TotalHeight - _view.rect.height);
+                if (targetY > 0) targetY = 0;
+            }
+            else
+            {
+                targetY = -(targetIndex - 1) * (_buttonHeight + _spacing);
+                targetY += _view.rect.height * 0.5f;
+                targetY -= _buttonHeight;
+
+                if (targetY > 0) targetY = 0;
+                float minTargetY = -Mathf.Max(0, TotalHeight - _view.rect.height);
+                if (targetY < minTargetY) targetY = minTargetY;
+            }
+
+            containerRt.DOKill();
+            if (instant)
+            {
+                containerRt.anchoredPosition = new Vector2(containerRt.anchoredPosition.x, targetY);
+            }
+            else
+            {
+                containerRt.DOAnchorPosY(targetY, 0.75f).SetEase(_scrollCurve).SetUpdate(true).SetLink(gameObject);
+                // containerRt.DOAnchorPosY(targetY, 0.75f).SetEase(Ease.OutSine).SetUpdate(true).SetLink(gameObject);
+            }
+        }
+
+        void OnEnable()
+        {
+            ScrollToCurrentLevel();
         }
 
         void Update()

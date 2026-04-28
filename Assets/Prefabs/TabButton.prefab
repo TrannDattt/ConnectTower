@@ -182,7 +182,7 @@ MonoBehaviour:
   _button: {fileID: 8339694098271436521}
   _buttonRt: {fileID: 6030815168212151817}
   _content: {fileID: 0}
-  _pressedScale: 0.9
+  _pressedScale: 1
   _duration: 0.1
   OnClicked:
     m_PersistentCalls:
@@ -226,7 +226,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: -38.32}
-  m_SizeDelta: {x: -100, y: 41.322}
+  m_SizeDelta: {x: -60.51, y: 41.32}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &3944539973152743055
 CanvasRenderer:
@@ -263,7 +263,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 4
     m_MaxSize: 60
-    m_Alignment: 1
+    m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0

@@ -18,6 +18,7 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Sprite _normalIcon;
         [SerializeField] private Sprite _hardIcon;
         [SerializeField] private Sprite _superHardIcon;
+        [SerializeField] private Sprite _nextIcon;
 
         [SerializeField] private GameObject _hardDecorate;
         [SerializeField] private GameObject _superHardDecorate;
@@ -53,7 +54,11 @@ namespace Assets._Scripts.Visuals
                 EDifficulty.SuperHard => _superHardIcon,
                 _ => null
             };
-            if (IsCleared()) _icon.sprite = _clearedIcon;
+            
+            if (IsCleared()) 
+                _icon.sprite = _clearedIcon;
+            else if (_levelData.Index == UserManager.CurUser.CurrentLevelIndex && _levelData.Difficulty == EDifficulty.Normal) 
+                _icon.sprite = _nextIcon;
 
             _decorateHolder.SetActive(_levelData.Difficulty != EDifficulty.Normal && !IsCleared());
             _hardDecorate.SetActive(_levelData.Difficulty == EDifficulty.Hard);

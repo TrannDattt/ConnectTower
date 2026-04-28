@@ -82,29 +82,16 @@ namespace Assets._Scripts.Visuals
                                 .WaitForCompletion();
         }
 
-        // void OnEnable()
-        // {
-        //     UpdateVisual(UserManager.CurUser.CoinCount - _lastCount);
-        // }
-
-        private void InitPool()
+        private void OnEnable()
         {
-            if (_coinImages.Count > 0) return;
-
-            if (_coinImagePrefab != null)
+            _currencyChangedBinding ??= new((evt) =>
             {
-                for (int i = 0; i < _coinAppearAmount; i++)
-                {
-                    var newImage = Instantiate(_coinImagePrefab, _coinImageHolder);
-                    _coinImages.Add(newImage);
-                    newImage.gameObject.SetActive(false);
-                }
-            }
-        }
+                _isFirstAnim = true;
+                UpdateVisual(evt.CoinChanged);
+            });
+            EventBus<CurrencyChangedEvent>.Subscribe(_currencyChangedBinding);
 
-        private void Awake()
-        {
-            InitPool();
+            UpdateVisual(UserManager.CurUser.CoinCount - _lastCount);
         }
 
         void Start()
@@ -117,18 +104,11 @@ namespace Assets._Scripts.Visuals
                 else if (activeScene == EGameScene.Ingame)
                     StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Shop));
             });
-
-            InitPool();
-
-            _currencyChangedBinding = new((evt) =>
-            {
-                _isFirstAnim = true;
-                UpdateVisual(evt.CoinChanged);
-            });
         }
 
         void OnDisable()
         {
+            EventBus<CurrencyChangedEvent>.Unsubscribe(_currencyChangedBinding);
             DOTween.Kill(_coinCountText, true);
             _lastCount = UserManager.CurUser.CoinCount;
             _coinCountText.text = _lastCount.ToString();

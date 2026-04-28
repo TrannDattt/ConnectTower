@@ -106,7 +106,7 @@ namespace Assets._Scripts.Managers
             }
             EventBus<CurrencyChangedEvent>.Publish(new CurrencyChangedEvent
             {
-                CoinChanged = amount,
+                CoinChanged = 0,
                 HeartChanged = 0,
                 BoostersChanged = new[] { Tuple.Create(type, amount) }
             });
@@ -145,9 +145,9 @@ namespace Assets._Scripts.Managers
             GainBooster(EBooster.Hint, reward.HintAmount);
         }
 
-        public static void UpdateProgress(int levelIndex)
+        public static void UpdateProgress(int levelIndex, bool forceUpdate = false)
         {
-            if (levelIndex > CurUser.CurrentLevelIndex)
+            if (levelIndex > CurUser.CurrentLevelIndex || forceUpdate)
             {
                 CurUser.CurrentLevelIndex = levelIndex;
                 Debug.Log($"Update progress to {CurUser.CurrentLevelIndex}");

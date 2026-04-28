@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization.Formatters;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Interfaces;
@@ -8,6 +9,7 @@ using Assets._Scripts.Patterns.EventBus;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace Assets._Scripts.Controllers
 {
@@ -217,24 +219,33 @@ namespace Assets._Scripts.Controllers
             }
         }
 
+        [SerializeField] private AnimationCurve _blockScaleXCurve;
+        [SerializeField] private AnimationCurve _blockScaleYCurve;
+        [SerializeField] private AnimationCurve _blockFallCurve;
+        [SerializeField] private float _fallDuration = .4f;
+        [SerializeField] private float _offsetY = 4.2f;
+
         public IEnumerator DoSpawnBlockAnim()
         {
-
-            float fallDuration = .4f;
-            float offsetY = 4.2f;
-
             var activeBlocks = GetAllBlocks();
             if (activeBlocks.Count == 0) yield break;
 
+            var initialScale = new Vector3(.75f, .75f, .75f); //TODO: Hard code BRUHH
             var sequence = DOTween.Sequence().SetTarget(this).SetLink(gameObject, LinkBehaviour.KillOnDisable);
             for (int i = 0; i < activeBlocks.Count; i++)
             {
                 var block = activeBlocks.ElementAt(i);
                 var targetPos = block.transform.position;
                 block.gameObject.SetActive(true);
-                block.transform.position = targetPos + Vector3.up * offsetY;
-                sequence.Insert(i * .1f, block.transform.DOMove(targetPos, fallDuration).SetEase(Ease.InQuad));
+                block.transform.position = targetPos + Vector3.up * _offsetY;
+                sequence.Insert(i * .1f, block.transform.DOMove(targetPos, _fallDuration).SetEase(_blockFallCurve));
+                sequence.Insert(i * .1f, block.Base.transform.DOScaleX(initialScale.x * 2, _fallDuration).SetEase(_blockScaleXCurve));
+                sequence.Insert(i * .1f, block.Base.transform.DOScaleY(initialScale.y * 2, _fallDuration).SetEase(_blockScaleYCurve));
             }
+            sequence.OnKill(() =>
+            {
+                foreach(var block in activeBlocks) block.Base.transform.localScale = initialScale;
+            });
 
             yield return sequence.WaitForCompletion();
         }
@@ -246,6 +257,19 @@ namespace Assets._Scripts.Controllers
 
         void Start()
         {
+#if UNITY_EDITOR
+#endif
+        }
+
+        void Update()
+        {
+#if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                DOTween.Kill(this, true);
+                StartCoroutine(DoSpawnBlockAnim());
+            }
+#endif
         }
 
         void OnMouseDown()

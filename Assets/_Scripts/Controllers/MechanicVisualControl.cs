@@ -97,6 +97,8 @@ namespace Assets._Scripts.Controllers
                             color.a = 1f;
                             _clothImage.color = color;
                         });
+
+                        //TODO: Make pillar rotate around
                         seqence.Play();
                     }
                     break;

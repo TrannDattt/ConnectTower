@@ -1,36 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1051948973984690
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4241822806860407}
-  m_Layer: 6
-  m_Name: VFX
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4241822806860407
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1051948973984690}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.7071064, y: -0, z: -0, w: 0.7071072}
-  m_LocalPosition: {x: 0, y: 0, z: -0.503}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4569679295437858}
-  m_LocalEulerAnglesHint: {x: -89.99994, y: 0, z: 0}
 --- !u!1 &1135774788909363
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,8 +177,6 @@ Transform:
   m_Children:
   - {fileID: 4038116573606076}
   - {fileID: 4913113080803294}
-  - {fileID: 4241822806860407}
-  - {fileID: 4951300938020129}
   m_Father: {fileID: 4734611783545203}
   m_LocalEulerAnglesHint: {x: 0, y: -0, z: -0}
 --- !u!1 &1397195795832592
@@ -518,6 +485,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3b31d1a7a81131459dbde9a97563d0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Base>k__BackingField: {fileID: 1350262358390747}
   _icon: {fileID: 3024288134097522251}
   _tag: 
 --- !u!114 &8404380825018531360
@@ -533,6 +501,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.BlockEffectVisual
   _blockRenderer: {fileID: 23110116275020850}
+  _trailRenderer: {fileID: 96953895472498050}
   _blockIcon: {fileID: 3024288134097522251}
 --- !u!114 &-5823554385853721213
 MonoBehaviour:
@@ -810,34 +779,3 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &1968843712936534
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4951300938020129}
-  m_Layer: 6
-  m_Name: VFX (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4951300938020129
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1968843712936534}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.7071064, y: -0, z: -0, w: 0.7071072}
-  m_LocalPosition: {x: 0, y: -0.497, z: -0.503}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4569679295437858}
-  m_LocalEulerAnglesHint: {x: -89.99994, y: 0, z: 0}

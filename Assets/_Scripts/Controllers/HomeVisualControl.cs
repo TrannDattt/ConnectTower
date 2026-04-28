@@ -2,6 +2,7 @@ using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Visuals;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets._Scripts.Controllers
 {
@@ -14,11 +15,14 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private LevelPlayButton _playButton;
         [SerializeField] private LevelHolderVisual _levelHolder;
 
+#if UNITY_EDITOR
+        [SerializeField] private InputField _indexInput;
+        [SerializeField] private Button _setLevelBtn;
+#endif
+
         public void InitVisual()
         {
-            var allLevels = LevelManager.Instance.GetAllLevels();
             _levelHolder.InitVisual(-1);
-            // _levelHolder.InitVisual(allLevels);
             _coinDisplay.UpdateVisual();
             _heartDisplay.UpdateVisual();
             _playButton.UpdateVisual();
@@ -26,6 +30,13 @@ namespace Assets._Scripts.Controllers
 
         void Start()
         {
+#if UNITY_EDITOR
+            _setLevelBtn.onClick.AddListener(() =>
+            {
+                if (!int.TryParse(_indexInput.text, out var index)) return;
+                UserManager.UpdateProgress(index, true);
+            });
+#endif
             _settingButton.OnClicked.AddListener(() =>
             {
                 StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Setting));

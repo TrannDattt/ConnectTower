@@ -5,6 +5,7 @@ using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Patterns;
 using Assets._Scripts.Patterns.EventBus;
+using Assets._Scripts.Visuals;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,6 +16,12 @@ namespace Assets._Scripts.Managers
     public struct StartLevelEvent : IEvent
     {
         public LevelRuntimeData LevelData;
+    }
+
+    public struct FinishLevelEvent : IEvent
+    {
+        public bool IsWin;
+        public bool SaveLevel;
     }
 
     public class GameManager : Singleton<GameManager>
@@ -61,21 +68,23 @@ namespace Assets._Scripts.Managers
             _gameSM.ChangeState(EGameState.Playing);
         }
 
-        public void FailedLevel()
+        public void FailedLevel(bool saveResult = true)
         {
 #if UNITY_EDITOR
             if (IsPlayTest) return;
 #endif
             Debug.Log("Level Failed");
+            EventBus<FinishLevelEvent>.Publish(new FinishLevelEvent {IsWin = false, SaveLevel = saveResult});
             _gameSM.ChangeState(EGameState.Lose);
         }
 
-        public void ClearedLevel()
+        public void ClearedLevel(bool saveResult = true)
         {
 #if UNITY_EDITOR
             if (IsPlayTest) return;
 #endif
             Debug.Log("Level Finished");
+            EventBus<FinishLevelEvent>.Publish(new FinishLevelEvent {IsWin = true, SaveLevel = saveResult});
             _gameSM.ChangeState(EGameState.Win);
         }
 
@@ -113,7 +122,7 @@ namespace Assets._Scripts.Managers
             
             EventBus<StartLevelEvent>.Publish(new StartLevelEvent { LevelData = new(levelData) });
             
-            _gameSM.ChangeState(EGameState.Playing);
+            _gameSM.ChangeState(EGameState.Playing, true);
         }
 
         protected override void Awake()
@@ -353,6 +362,7 @@ namespace Assets._Scripts.Managers
                 private EventBinding<PillarFullMatchedEvent> _pillarFullMatchedBinding;
                 private EventBinding<PillarClickedEvent> _pillarClickedBinding;
                 private EventBinding<StartLevelEvent> _startLevelBinding;
+                private EventBinding<UseBoosterEvent> _useBoosterBinding;
 
                 public WhilePlayingState(EPlayingSubState key) : base(key)
                 {
@@ -361,30 +371,50 @@ namespace Assets._Scripts.Managers
                     _blocksMovedBinding = new(OnBlocksMoved);
                     _pillarFullMatchedBinding = new(Instance.OnPillarFullMatched);
                     _pillarClickedBinding = new(BlockMovementController.Instance.OnPillarClicked);
+                    _useBoosterBinding = new(OnUseBooster);
+                    EventBus<UseBoosterEvent>.Subscribe(_useBoosterBinding);
                 }
 
                 public override void Enter()
                 {
                     base.Enter();
                     
-                    EventBus<BlocksMovedEvent>.Subscribe(_blocksMovedBinding);
-                    EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchedBinding);
-                    EventBus<PillarClickedEvent>.Subscribe(_pillarClickedBinding);
+                    SubcribeEvent();
                 }
 
                 public override void Exit()
                 {
                     base.Exit();
 
-                    EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
-                    EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchedBinding);
-                    EventBus<PillarClickedEvent>.Unsubscribe(_pillarClickedBinding);
+                    UnsubcribeEvent();
                 }
 
                 public override EPlayingSubState GetNextState()
                 {
                     if (CheckFinsihLevel()) return EPlayingSubState.Closing;
                     return base.GetNextState();
+                }
+
+                private void OnUseBooster(UseBoosterEvent @event) 
+                {
+                    if (@event.IsFinish) 
+                        SubcribeEvent(); 
+                    else 
+                        UnsubcribeEvent();
+                }
+
+                private void SubcribeEvent()
+                {
+                    EventBus<BlocksMovedEvent>.Subscribe(_blocksMovedBinding);
+                    EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchedBinding);
+                    EventBus<PillarClickedEvent>.Subscribe(_pillarClickedBinding);
+                }
+
+                private void UnsubcribeEvent()
+                {
+                    EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
+                    EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchedBinding);
+                    EventBus<PillarClickedEvent>.Unsubscribe(_pillarClickedBinding);
                 }
 
                 private void OnBlocksMoved(BlocksMovedEvent @event)
@@ -538,8 +568,13 @@ namespace Assets._Scripts.Managers
         #region Win State
         public class WinState : GameState
         {
+            private bool _saveLevel = true;
+            private EventBinding<FinishLevelEvent> _finishLevelBinding;
+
             public WinState(EGameState key) : base(key)
             {
+                _finishLevelBinding = new(OnFinishLevel);
+                EventBus<FinishLevelEvent>.Subscribe(_finishLevelBinding);
             }
 
             public override void Enter()
@@ -547,7 +582,13 @@ namespace Assets._Scripts.Managers
                 base.Enter();
 
                 Instance.StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Win));
-                Instance.CurrentLevelData.FinishLevel();
+                if (_saveLevel)
+                    Instance.CurrentLevelData.FinishLevel();
+            }
+
+            private void OnFinishLevel(FinishLevelEvent @event)
+            {
+                _saveLevel = @event.SaveLevel;
             }
         }
         #endregion
@@ -555,16 +596,27 @@ namespace Assets._Scripts.Managers
         #region Lose State
         public class LoseState : GameState
         {
+            private bool _saveLevel = true;
+            private EventBinding<FinishLevelEvent> _finishLevelBinding;
+
             public LoseState(EGameState key) : base(key)
             {
+                _finishLevelBinding = new(OnFinishLevel);
+                EventBus<FinishLevelEvent>.Subscribe(_finishLevelBinding);
             }
 
             public override void Enter()
             {
                 base.Enter();
 
-                UserManager.LostHeart();
+                if (_saveLevel)
+                    UserManager.LostHeart();
                 Instance.StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Lose));
+            }
+
+            private void OnFinishLevel(FinishLevelEvent @event)
+            {
+                _saveLevel = @event.SaveLevel;
             }
         }
         #endregion

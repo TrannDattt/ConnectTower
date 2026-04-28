@@ -8,7 +8,7 @@ namespace Assets._Scripts.Visuals
     {
         protected override void Start()
         {
-            _closeButton.OnClicked.AddListener(GameManager.Instance.FailedLevel);
+            _closeButton.OnClicked.AddListener(() => GameManager.Instance.FailedLevel());
             //TODO: Check if purchase succcessful
             _buyButton.OnClicked.AddListener(() => 
             {

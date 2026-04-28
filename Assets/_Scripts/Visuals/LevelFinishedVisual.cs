@@ -32,6 +32,10 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private ParticleSystem _bottomConfetti1;
         [SerializeField] private ParticleSystem _bottomConfetti2;
 
+#if UNITY_EDITOR
+        [SerializeField] private Button _restartBtn;
+#endif
+
         private LevelRuntimeData _curLevelData => LevelManager.PlayingLevel;
 
         public override IEnumerator Show()
@@ -199,6 +203,13 @@ namespace Assets._Scripts.Visuals
 
         protected override void Start()
         {
+#if UNITY_EDITOR
+            _restartBtn.onClick.AddListener(() => 
+            {
+                StartCoroutine(Hide());
+                GameManager.Instance.StartLevel(_curLevelData);
+            });
+#endif
             _continueButton.OnClicked.AddListener(() => 
             {
                 Debug.Log("Continue next level");

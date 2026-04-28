@@ -39,7 +39,7 @@ namespace Assets._Scripts.Visuals
             int startVal = 0;
             int.TryParse(_moveCountText.text, out startVal);
 
-            Sequence sequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable);
+            Sequence sequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable).SetUpdate(true);
             
             // 1. Phóng to lên
             sequence.Append(_moveCountText.transform.DOScale(_originalScale * 1.4f, duration * 0.3f).SetEase(Ease.OutBack));

@@ -323,12 +323,125 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <TopPillar>k__BackingField: {fileID: 5715652512435313638}
   <BlockContainer>k__BackingField: {fileID: 1148393687574252151}
-  OnPillarClicked:
-    m_PersistentCalls:
-      m_Calls: []
-  OnFullMatched:
-    m_PersistentCalls:
-      m_Calls: []
+  _blockScaleXCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.18
+    - serializedVersion: 3
+      time: 0.8333333
+      value: -0.07
+      inSlope: -0.18
+      outSlope: 0.48944888
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.18
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.84
+      value: 0.25
+      inSlope: 0.36
+      outSlope: 0.36
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.14
+      outWeight: 0.14
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.85
+      outSlope: -0.85
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.2
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _blockScaleYCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.16
+    - serializedVersion: 3
+      time: 0.8333333
+      value: 0.22
+      inSlope: 0.4
+      outSlope: -0.64860785
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.16
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.84
+      value: -0.25
+      inSlope: -0.4
+      outSlope: -0.4
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.14
+      outWeight: 0.14
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0.75
+      outSlope: 0.75
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.2
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _blockFallCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.053684354
+      outSlope: 0.053684354
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.1479093
+    - serializedVersion: 3
+      time: 0.8333333
+      value: 1
+      inSlope: 3.0301518
+      outSlope: 0.006453335
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.05022633
+      outWeight: 0.41130883
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _fallDuration: 0.48
+  _offsetY: 4
 --- !u!114 &3828607479479400598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -342,9 +455,84 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.PillarEffectVisual
   _canvas: {fileID: 5531613964682742260}
-  _lockHolder: {fileID: 4729314200881906781}
   _border: {fileID: 5957321412666768934}
   _tag: {fileID: 1750828512808515190}
+  _borderScaleXCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.9
+      value: 1.2
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: -4.677409
+      outSlope: -4.677409
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.28112525
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _borderScaleYCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 1.2
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.9
+      value: 0.9
+      inSlope: -1.7086296
+      outSlope: 2.066935
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.15160637
+      outWeight: 0.61178017
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _lockHolder: {fileID: 4729314200881906781}
 --- !u!114 &-4181390421866993807
 MonoBehaviour:
   m_ObjectHideFlags: 0

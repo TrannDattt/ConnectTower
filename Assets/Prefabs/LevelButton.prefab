@@ -106,6 +106,7 @@ MonoBehaviour:
   _normalIcon: {fileID: 21300000, guid: 0d286f1ea363f2248a665253a2eb38b8, type: 2}
   _hardIcon: {fileID: 21300000, guid: b2a2f71ace99b324b8214a4ccb8a8a84, type: 2}
   _superHardIcon: {fileID: 21300000, guid: f08e43acbf697124bb3ad3f80a58912c, type: 2}
+  _nextIcon: {fileID: 21300000, guid: 1359b603581cfb643a00a41fdca4b3d0, type: 2}
   _hardDecorate: {fileID: 8126688696493323128}
   _superHardDecorate: {fileID: 2248028796251691265}
   _icon: {fileID: 8711308594106222681}

@@ -22,5 +22,5 @@ MonoBehaviour:
     ShuffleAmount: 0
     HintAmount: 0
   Detail: Use it to get extra moves
-  Price: 900
+  Price: 1
   UseOnBought: 0

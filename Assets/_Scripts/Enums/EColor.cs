@@ -11,7 +11,6 @@ namespace Assets._Scripts.Enums
         Red,
         Purple,
         Brown,
-        Gray,
         Ocean,
     }
 }

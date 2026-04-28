@@ -10,9 +10,8 @@ using UnityEngine.UI;
 
 namespace Assets._Scripts.Visuals
 {
-    public class BoosterButtonVisual : GameButtonVisual
+    public partial class BoosterButtonVisual : GameButtonVisual
     {
-        [SerializeField] private EBooster Key;
         [SerializeField] private Image _lockImage;
         [SerializeField] private Image _lockBackground;
         [SerializeField] private GameObject _baseContent;
@@ -61,84 +60,11 @@ namespace Assets._Scripts.Visuals
             }
         }
 
-        private Vector3 _originalIconLocalPos, _originalIconScale;
-        private Quaternion _originalIconRotation;
-        public IEnumerator DoOnUseBoosterAnim(BoosterRuntimeData data, Vector3 gatherPoint)
-        {
-            _button.interactable = false;
-            float buttonMoveDuration = .5f;
-            float effectDuration = _effectVisual != null ? _effectVisual.GetTotalDuration() : 0;
-            float scaleTime = 2.5f;
-
-            void reset()
-            {
-                _iconImage.transform.localPosition = _originalIconLocalPos;
-                _iconImage.transform.localScale = _originalIconScale;
-                _iconImage.transform.localRotation = _originalIconRotation;
-                _button.interactable = true;
-                BoosterController.Instance.FinishBooster();
-            }
-
-            Sequence beginSequence = DOTween.Sequence()
-                                            .Append(_iconImage.transform.DOMove(gatherPoint, buttonMoveDuration).SetEase(Ease.OutSine))
-                                            .Join(_iconImage.transform.DOScale(_originalIconScale * scaleTime, buttonMoveDuration).SetEase(Ease.OutSine));
-
-            Sequence endSequence = DOTween.Sequence()
-                                          .Append(_iconImage.transform.DOLocalMove(_originalIconLocalPos, buttonMoveDuration).SetEase(Ease.OutSine))
-                                          .Join(_iconImage.transform.DOScale(_originalIconScale, buttonMoveDuration).SetEase(Ease.OutSine));
-
-            Sequence mainSequence = DoBoosterAnim(data);
-
-            Sequence masterSequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.KillOnDisable);
-            masterSequence.Append(beginSequence).Append(mainSequence)
-            .SetDelay(.5f).Append(endSequence)
-            .OnKill(() =>
-            {
-                reset();
-            })
-            .OnComplete(() => 
-            {
-                reset();
-            });
-            
-            yield return masterSequence.WaitForCompletion();
-        }
-
-        private Sequence DoBoosterAnim(BoosterRuntimeData data)
-        {
-            var boosterSFX = data.Key switch
-            {
-                EBooster.ExtraMove => ESfx.ExtraMove,
-                EBooster.Shuffle => ESfx.Shuffle,
-                EBooster.Hint => ESfx.Hint,
-                _ => ESfx.None
-            };
-
-            return DOTween.Sequence()
-                          .Append(data.DoBoosterButtonAnim(_iconImage))
-                          .Insert(.5f, data.DoBoosterAnim())
-                          .JoinCallback(() => SoundManager.Instance.PlayRandomSFX(boosterSFX));
-        }
+        public IEnumerator DoOnUseBoosterAnim(BoosterRuntimeData data, Vector3 gatherPoint) => _effectVisual?.DoOnUseBoosterAnim(data, gatherPoint);
 
         public void ShowPopupText()
         {
-            PopupManager.Instance.ShowPopupText("Locked", _originalIconLocalPos);
+            PopupManager.Instance.ShowPopupText("Locked", GetCenterPosition());
         }
-
-        protected override void Start()
-        {
-            base.Start();
-
-            _originalIconLocalPos = _iconImage.transform.localPosition;
-            _originalIconScale = _iconImage.transform.localScale;
-            _originalIconRotation = _iconImage.transform.localRotation;
-        }
-    }
-
-    [RequireComponent(typeof(BoosterButtonVisual))]
-    public abstract class BoosterButtonEffectVisual : MonoBehaviour
-    {
-        public abstract Sequence DoEffectAnim(Image target);
-        public abstract float GetTotalDuration();
     }
 }

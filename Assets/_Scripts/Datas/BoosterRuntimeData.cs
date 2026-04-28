@@ -32,8 +32,6 @@ namespace Assets._Scripts.Datas
         }
 
         public abstract void OnUsed();
-        public abstract Tween DoBoosterAnim();
-        public abstract Tween DoBoosterButtonAnim(Image target);
         public abstract string GetDetail();
     }
 
@@ -54,40 +52,9 @@ namespace Assets._Scripts.Datas
             Debug.Log("Used Extra Move");
         }
 
-        public override Tween DoBoosterAnim()
-        {
-            return IngameVisualController.Instance.UpdateMoveCount(LevelManager.PlayingLevel.MoveCount, true).SetTarget(this);
-        }
-
         public override string GetDetail()
         {
             return $"Use it to get {_bonusAmount} extra moves";
-        }
-
-        public override Tween DoBoosterButtonAnim(Image target)
-        {
-            ParticleSystem particle = null;
-            var attractor = Object.FindFirstObjectByType<MoveCountVisual>().GetComponentInChildren<UIParticleAttractor>();
-            return DOTween.Sequence().AppendCallback(() => 
-            {
-                var it = ParticleManager.Instance.PlayParticle(EParticle.Firefly, target.transform.position, target.transform.parent);
-                BoosterController.Instance.StartCoroutine(it);
-                particle = it.Current;
-                
-                if (particle != null && attractor != null)
-                    attractor.AddParticleSystem(particle);
-            })
-            .AppendInterval(ParticleManager.Instance.GetParticleDuration(EParticle.Firefly) + .4f)
-            .OnComplete(() =>
-            {
-                if (particle != null && attractor != null)
-                    attractor.RemoveParticleSystem(particle);
-            })
-            .OnKill(() =>
-            {
-                if (particle != null && attractor != null)
-                    attractor.RemoveParticleSystem(particle);
-            });
         }
     }
 #endregion
@@ -95,19 +62,19 @@ namespace Assets._Scripts.Datas
 #region ShuffleBooster
     public class ShuffleBoosterRuntimeData : BoosterRuntimeData
     {
-        private List<BlockController> _availableBlocks;
+        public List<BlockController> AvailableBlocks {get; private set;}
         private Vector3 _gatherPoint;
 
         public ShuffleBoosterRuntimeData(bool lockStatus, Vector3 gatherPoint) : base(lockStatus)
         {
-            _availableBlocks = new();
+            AvailableBlocks = new();
             _gatherPoint = gatherPoint;
             Key = EBooster.Shuffle;
         }
 
         public override void OnUsed()
         {
-            _availableBlocks.Clear();
+            AvailableBlocks.Clear();
             var pillars = BoardController.Instance.GetAllPillars().Where(p => !p.IsLocked()).ToList();
 
             // Get all available blocks and group them
@@ -117,7 +84,7 @@ namespace Assets._Scripts.Datas
                 while (pillar.TryRemoveTopBlocks(out var toAdd))
                 {
                     matchedBlocks.Add(toAdd);
-                    _availableBlocks.AddRange(toAdd);
+                    AvailableBlocks.AddRange(toAdd);
                 }
                 // Debug.Log($"Pillar {pillar.name} has {pillar.GetBlockCount()} blocks");
             }
@@ -193,63 +160,9 @@ namespace Assets._Scripts.Datas
             Debug.Log("Used Shuffle");
         }
 
-        public override Tween DoBoosterAnim()
-        {
-            Debug.Log("Do shuffle anim");
-            var moveTime = .5f;
-            var totalDelayMove = 1.5f;
-            var defaultDelayMove = .05f;
-            var delayMoveTime = Mathf.Min(totalDelayMove / (_availableBlocks.Count - 1), defaultDelayMove);
-            var stayTime = .5f;
-
-            var sequence = DOTween.Sequence().SetTarget(this);
-            
-            float currentTime = 0f;
-            foreach (var block in _availableBlocks)
-            {
-                sequence.Insert(currentTime, block.transform.DOMove(_gatherPoint, moveTime).SetEase(Ease.InSine));
-                currentTime += delayMoveTime;
-            }
-
-            if (_availableBlocks.Count > 0)
-            {
-                // Thời điểm nhóm đầu tiên hoàn thành = (số block - 1) * delay + thời gian di chuyển
-                currentTime = (_availableBlocks.Count - 1) * delayMoveTime + moveTime + stayTime;
-            }
-            else
-            {
-                currentTime = stayTime;
-            }
-
-            foreach (var block in _availableBlocks)
-            {
-                var blockPos = BoardController.Instance.GetBlockPosition(block);
-                if (blockPos.Item1 == null || blockPos.Item2 == -1) continue;
-
-                var worldPos = BlockMovementController.Instance.GetBlockPosition(blockPos.Item1, blockPos.Item2);
-                sequence.Insert(currentTime, block.transform.DOMove(worldPos, moveTime).SetEase(Ease.InSine));
-                currentTime += delayMoveTime;
-            }
-
-            sequence.AppendCallback(() => 
-            {
-                EventBus<BlocksMovedEvent>.Publish(new BlocksMovedEvent {MovedByPlayer = false});
-            });
-
-            return sequence.Play();
-        }
-
         public override string GetDetail()
         {
             return $"Use it to get shuffle all available blocks";
-        }
-
-        public override Tween DoBoosterButtonAnim(Image target)
-        {
-            float duration = 4f;
-            float cycles = 10;
-            return target.transform.DORotate(new Vector3(0, 0, -360 * cycles), duration, RotateMode.FastBeyond360)
-                .SetEase(Ease.InOutCubic);
         }
     }
 #endregion
@@ -257,7 +170,8 @@ namespace Assets._Scripts.Datas
 #region HintBooster
     public class HintBoosterRuntimeData : BoosterRuntimeData
     {
-        private BlockController _randomBlock, _sameBlock;
+        public BlockController RandomBlock {get; private set;}
+        public BlockController SameBlock {get; private set;}
 
         public HintBoosterRuntimeData(bool lockStatus) : base(lockStatus)
         {
@@ -266,96 +180,51 @@ namespace Assets._Scripts.Datas
 
         public override void OnUsed()
         {
-            var availablePillars = BoardController.Instance.GetAllPillars().Where(p => !p.IsLocked() && (p as IMechanicHandler).IsInteractable()).ToArray();
-            List<BlockController> avilableBlocks = new();
-            foreach(var pillar in availablePillars)
+            RandomBlock = null;
+            SameBlock = null;
+
+            // 1. Lấy tất cả blocks hợp lệ từ các pillars hợp lệ (Flattening)
+            var allValidBlocks = BoardController.Instance.GetAllPillars()
+                .Where(p => !p.IsLocked() && ((IMechanicHandler)p).IsInteractable())
+                .SelectMany(p => p.GetAllBlocks())
+                .Where(b => ((IMechanicHandler)b).IsInteractable())
+                .ToArray();
+
+            // 2. Nhóm các block theo Tag và lọc ra các nhóm có từ 2 block trở lên (để đảm bảo có cặp)
+            // Giả sử b.GetTag() hoặc một thuộc tính tương đương trả về giá trị để so sánh tag
+            var validPairs = allValidBlocks
+                .GroupBy(b => b.Tag)
+                .Where(g => g.Count() >= 2)
+                .ToArray();
+
+            if (validPairs.Length > 0)
             {
-                avilableBlocks.AddRange(pillar.GetAllBlocks().Where(b => (b as IMechanicHandler).IsInteractable() && b.GetComponent<BlockEffectVisual>().GetCurrentColor() == EColor.None));
+                // 3. Chọn ngẫu nhiên một nhóm (tag), sau đó chọn 2 block ngẫu nhiên trong nhóm đó
+                var randomGroup = validPairs[Random.Range(0, validPairs.Length)].ToArray();
+                var nonColorBlocks = randomGroup.Where(b => b.GetComponent<BlockEffectVisual>().GetCurrentColor() != EColor.None).ToArray();
+
+                var preferredPool = nonColorBlocks.Length >= 2 ? nonColorBlocks : randomGroup;
+                RandomBlock = preferredPool[Random.Range(0, preferredPool.Length)];
+
+                var remainingPreferred = preferredPool.Where(b => b != RandomBlock).ToArray();
+                var fallbackPool = randomGroup.Where(b => b != RandomBlock).ToArray();
+                var secondaryPool = remainingPreferred.Length > 0 ? remainingPreferred : fallbackPool;
+
+                if (secondaryPool.Length == 0)
+                {
+                    Debug.LogWarning("Hint booster could not find a distinct matching block.");
+                    return;
+                }
+
+                SameBlock = secondaryPool[Random.Range(0, secondaryPool.Length)];
+
+                Debug.Log("Used Hint");
             }
-            
-            _randomBlock = avilableBlocks[Random.Range(0, avilableBlocks.Count)];
-            avilableBlocks.Remove(_randomBlock);
-
-            var sameTag = avilableBlocks.Where(b => b.IsSameTag(_randomBlock)).ToArray();
-            _sameBlock = sameTag[Random.Range(0, sameTag.Length)];
-
-            Debug.Log("Used Hint");
-        }
-
-        public override Tween DoBoosterAnim()
-        {
-            if (!_sameBlock || !_randomBlock) return null;
-
-            var animDuration = .3f;
-            var animDelayTime = .5f;
-            var sequence = DOTween.Sequence().SetTarget(this);
-
-            sequence.AppendInterval(animDelayTime)
-                    .Append(_randomBlock.transform.DOScale(1.3f, animDuration).SetEase(Ease.InSine))
-                    .Join(_sameBlock.transform.DOScale(1.3f, animDuration).SetEase(Ease.InSine))
-                    .Append(_randomBlock.transform.DOScale(1f, animDuration).SetEase(Ease.InSine))
-                    .Join(_sameBlock.transform.DOScale(1f, animDuration).SetEase(Ease.InSine))
-                    .AppendCallback(() =>
-                    {
-                        var randomBlockVisual = _randomBlock.GetComponent<BlockEffectVisual>();
-                        var sameBlockVisual = _sameBlock.GetComponent<BlockEffectVisual>();
-                        var toChange = randomBlockVisual.GetCurrentColor() != EColor.None ?
-                                        randomBlockVisual.GetCurrentColor() : sameBlockVisual.GetCurrentColor() != EColor.None ?
-                                        sameBlockVisual.GetCurrentColor() : GetRandomUnusedColor();
-
-                        randomBlockVisual.ChangeColor(toChange);
-                        sameBlockVisual.ChangeColor(toChange);
-                    });
-
-            return sequence.Play();
-        }
-
-        private EColor GetRandomUnusedColor()
-        {
-            var blockVisuals = BoardController.Instance.GetAllBlocks().Select(b => b.GetComponent<BlockEffectVisual>());
-            HashSet<EColor> usedColors = new();
-            foreach(var visual in blockVisuals)
-            {
-                usedColors.Add(visual.GetCurrentColor());
-            }
-
-            var availableColors = ColorMapper.GetAllColors().Where(c => !usedColors.Contains(c)).ToArray();
-            if (availableColors.Length == 0) return usedColors.First();
-            return availableColors[Random.Range(0, availableColors.Length)];
         }
 
         public override string GetDetail()
         {
             return $"Use it to see {2} blocks with same tag";
-        }
-
-        public override Tween DoBoosterButtonAnim(Image target)
-        {
-            return DOTween.Sequence().AppendCallback(() =>
-            {
-                for (int i = 0; i < 2; i++)
-                {
-                    var it = ParticleManager.Instance.PlayParticle(EParticle.Hint, target.transform.position, target.transform.parent);
-                    BoosterController.Instance.StartCoroutine(it);
-                    var hintImg = it.Current;
-                    var hintTarget = i == 0 ? _randomBlock : _sameBlock;
-                    var attractor = hintTarget.gameObject.AddComponent<UIParticleAttractor>();
-                    attractor.AddParticleSystem(hintImg);
-                    attractor.movement = UIParticleAttractor.Movement.Sphere;
-                    attractor.maxSpeed = .3f;
-                }
-            })
-            .AppendInterval(ParticleManager.Instance.GetParticleDuration(EParticle.Hint) + .3f)
-            .OnComplete(() =>
-            {
-                if (_randomBlock != null && _randomBlock.TryGetComponent<UIParticleAttractor>(out var a1)) Object.Destroy(a1);
-                if (_sameBlock != null && _sameBlock.TryGetComponent<UIParticleAttractor>(out var a2)) Object.Destroy(a2);
-            })
-            .OnKill(() =>
-            {
-                if (_randomBlock != null && _randomBlock.TryGetComponent<UIParticleAttractor>(out var a1)) Object.Destroy(a1);
-                if (_sameBlock != null && _sameBlock.TryGetComponent<UIParticleAttractor>(out var a2)) Object.Destroy(a2);
-            });
         }
     }
 

@@ -11,6 +11,7 @@ namespace Assets._Scripts.Controllers
     public class BlockController : MonoBehaviour, IMechanicHandler
     {
         public int Id {get; private set;} = -1;
+        [field: SerializeField] public GameObject Base {get; private set;}
         [SerializeField] private Image _icon;
         [SerializeField] private string _tag;
         public string Tag => _tag;

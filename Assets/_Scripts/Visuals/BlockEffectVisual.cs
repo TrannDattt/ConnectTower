@@ -10,6 +10,7 @@ namespace Assets._Scripts.Visuals
     public class BlockEffectVisual : MonoBehaviour
     {
         [SerializeField] private MeshRenderer _blockRenderer;
+        [SerializeField] private TrailRenderer _trailRenderer;
         [SerializeField] private Image _blockIcon;
 
         private BlockController _block;
@@ -26,6 +27,8 @@ namespace Assets._Scripts.Visuals
                 return _propertyBlock;
             }
         }
+
+        public void SetTrailEnable(bool state) => _trailRenderer.enabled = state;
 
         public void ChangeIconDisplay(bool isVisible) => _blockIcon.gameObject.SetActive(isVisible);
 

@@ -7,6 +7,7 @@ using Assets._Scripts.Patterns.EventBus;
 using Assets._Scripts.Visuals;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets._Scripts.Controllers
 {
@@ -22,6 +23,13 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private BoosterButtonVisual _extraMoveButton;
         [SerializeField] private BoosterButtonVisual _shuffleButton;
         [SerializeField] private BoosterButtonVisual _hintButton;
+
+#if UNITY_EDITOR
+        [Header("Editor")]
+        [SerializeField] private Button _clearLevel;
+        [SerializeField] private Button _failLevel;
+        [SerializeField] private Button _restartButton;
+#endif
         // [SerializeField] private Transform _centerPoint;
         private Vector3 _centerPoint => _canvasRt.TransformPoint(_canvasRt.rect.center);
 
@@ -57,9 +65,9 @@ namespace Assets._Scripts.Controllers
                 yield return _difficultyTag.DoDifficultyAnim(_centerPoint);
         }
 
-        public Tween UpdateMoveCount(int count, bool doAnim = false)
+        public Tween UpdateMoveCount(int count, float duration = 0f)
         {
-            return _moveCount.UpdateMoveCount(count, doAnim ? 1f : 0f);
+            return _moveCount.UpdateMoveCount(count, duration);
         }
 
         public void UpdateProgressBar(int current, int target)
@@ -67,14 +75,9 @@ namespace Assets._Scripts.Controllers
             _progressBar.UpdateProgress(current, target);
         }
 
-        void Start()
+        private void OnEnable()
         {
-            _settingButton.OnClicked.AddListener(() =>
-            {
-                StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Setting));
-            });
-
-            _currencyChangedBinding = new((evt) =>
+            _currencyChangedBinding ??= new((evt) =>
             {
                 for (int i = 0; i < evt.BoostersChanged.Length; i++)
                 {
@@ -88,6 +91,15 @@ namespace Assets._Scripts.Controllers
                     };
                     if (toUpdate) toUpdate.SetCount(curAmount);
                 }
+            });
+            EventBus<CurrencyChangedEvent>.Subscribe(_currencyChangedBinding);
+        }
+
+        void Start()
+        {
+            _settingButton.OnClicked.AddListener(() =>
+            {
+                StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Setting));
             });
 
             void UseBoosterButton(BoosterButtonVisual button, EBooster type)
@@ -115,6 +127,19 @@ namespace Assets._Scripts.Controllers
             _extraMoveButton.OnClicked.AddListener(() => UseBoosterButton(_extraMoveButton, EBooster.ExtraMove));
             _shuffleButton.OnClicked.AddListener(() => UseBoosterButton(_shuffleButton, EBooster.Shuffle));
             _hintButton.OnClicked.AddListener(() => UseBoosterButton(_hintButton, EBooster.Hint));
+#if UNITY_EDITOR
+            _clearLevel.onClick.AddListener(() => GameManager.Instance.ClearedLevel(false));
+            _failLevel.onClick.AddListener(() => GameManager.Instance.FailedLevel(false));
+            _restartButton.onClick.AddListener(() =>
+            {
+                GameManager.Instance.StartLevel(LevelManager.PlayingLevel);
+            });
+#endif
+        }
+
+        private void OnDisable()
+        {
+            EventBus<CurrencyChangedEvent>.Unsubscribe(_currencyChangedBinding);
         }
     }
 }

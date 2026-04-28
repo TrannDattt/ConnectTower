@@ -22,5 +22,5 @@ MonoBehaviour:
     ShuffleAmount: 3
     HintAmount: 0
   Detail: Use it to shuffle blocks
-  Price: 910
+  Price: 1
   UseOnBought: 0

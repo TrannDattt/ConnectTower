@@ -22,5 +22,5 @@ MonoBehaviour:
     ShuffleAmount: 0
     HintAmount: 3
   Detail: Use it to see matched blocks
-  Price: 920
+  Price: 1
   UseOnBought: 0

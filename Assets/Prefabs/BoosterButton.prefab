@@ -428,7 +428,6 @@ MonoBehaviour:
   OnClicked:
     m_PersistentCalls:
       m_Calls: []
-  Key: 0
   _lockImage: {fileID: 5710567732942528456}
   _lockBackground: {fileID: 8116590658157978211}
   _baseContent: {fileID: 892167132670545408}

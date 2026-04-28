@@ -9,7 +9,10 @@ namespace Assets._Scripts.Visuals
     {
         [SerializeField] private Text _levelIndexText;
         [SerializeField] private Outline _textOutline;
-        [SerializeField] private float _animDuration = 0.5f;
+        [SerializeField] private float _moveDuration = 0.5f;
+        [SerializeField] private int _scaleFactor = 5;
+        [SerializeField] private float _scaleDuration = .5f;
+        [SerializeField] private float _stayDuration = .7f;
 
         private Vector3 _initialPos;
         private int _initialFontSize;
@@ -26,19 +29,13 @@ namespace Assets._Scripts.Visuals
         public void PrepareAnim()
         {
             gameObject.SetActive(false);
-            _initialPos = transform.position;
-            _initialFontSize = _levelIndexText.fontSize;
-            if (_textOutline != null) _initialOutline = _textOutline.effectDistance;
             Debug.Log($"Initial pos: {_initialPos}");
         }
 
         public IEnumerator DoLevelIndexAnim(Vector3 pos)
         {
-            int scaleFactor = 5;
-            int startSize = _initialFontSize * scaleFactor;
+            int startSize = _initialFontSize * _scaleFactor;
             int overshootSize = startSize + _initialFontSize;
-            float scaleDuration = .7f;
-            float stayDuration = .5f;
 
             transform.position = pos;
             _levelIndexText.fontSize = startSize;
@@ -49,12 +46,13 @@ namespace Assets._Scripts.Visuals
             gameObject.SetActive(true);
 
             yield return DOTween.Sequence()
-                                .Append(DOTween.To(() => _levelIndexText.fontSize, x => ScaleText(x), overshootSize, scaleDuration * 0.5f).SetEase(Ease.InQuad))
-                                .Append(DOTween.To(() => _levelIndexText.fontSize, x => ScaleText(x), startSize, scaleDuration * 0.5f).SetEase(Ease.OutQuad))
-                                .AppendInterval(stayDuration)
-                                .Append(transform.DOMove(_initialPos, _animDuration).SetEase(Ease.OutCubic))
-                                .Join(DOTween.To(() => _levelIndexText.fontSize, x => ScaleText(x), _initialFontSize, scaleDuration).SetEase(Ease.OutCubic))
+                                .Append(DOTween.To(() => _levelIndexText.fontSize, x => ScaleText(x), overshootSize, _scaleDuration * 0.5f).SetEase(Ease.InQuad))
+                                .Append(DOTween.To(() => _levelIndexText.fontSize, x => ScaleText(x), startSize, _scaleDuration * 0.5f).SetEase(Ease.OutQuad))
+                                .AppendInterval(_stayDuration)
+                                .Append(transform.DOMove(_initialPos, _moveDuration).SetEase(Ease.OutCubic))
+                                .Join(DOTween.To(() => _levelIndexText.fontSize, x => ScaleText(x), _initialFontSize, _scaleDuration).SetEase(Ease.OutCubic))
                                 .SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable)
+                                .OnKill(() => ScaleText(_initialFontSize))
                                 .WaitForCompletion();
         }
 
@@ -66,6 +64,13 @@ namespace Assets._Scripts.Visuals
             {
                 _textOutline.effectDistance = _initialOutline * factor;
             }
+        }
+
+        void Awake()
+        {
+            _initialFontSize = _levelIndexText.fontSize;
+            if (_textOutline != null) _initialOutline = _textOutline.effectDistance;
+            _initialPos = transform.position;
         }
     }
 }
