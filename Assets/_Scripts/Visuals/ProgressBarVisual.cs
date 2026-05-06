@@ -12,6 +12,7 @@ namespace Assets._Scripts.Visuals
 
         public void UpdateProgress(int current, int target)
         {
+            Debug.Log($"Update progress: {current}/{target}");
             if (_slider != null)
             {
                 DOTween.To(() => _slider.value, x => _slider.value = x, (float)current / target, 0.5f)

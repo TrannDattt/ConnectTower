@@ -24,7 +24,7 @@ namespace Assets._Scripts.Controllers
         public void InitData()
         {
             _extraMoveBoosterData = new(!PlayerProgressHelper.CheckUnlockBooster(EBooster.ExtraMove), 5);
-            _shuffleBoosterData = new(!PlayerProgressHelper.CheckUnlockBooster(EBooster.Shuffle), new(0, 2, 0));
+            _shuffleBoosterData = new(!PlayerProgressHelper.CheckUnlockBooster(EBooster.Shuffle));
             _hintBoosterData = new(!PlayerProgressHelper.CheckUnlockBooster(EBooster.Hint));
         }
 

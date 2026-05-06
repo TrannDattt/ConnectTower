@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
   m_Name: Donuts
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
-  Name: Donuts
   Icons:
   - {fileID: 21300000, guid: 8a28f7bfbe2027e43aed1310af358369, type: 2}
+  - {fileID: 21300000, guid: 34f8185b41881b14ba47c9c9752f2c7a, type: 2}
   - {fileID: 21300000, guid: d3c0143a2a4aca142bca6c6ed82fd90f, type: 2}
   - {fileID: 21300000, guid: a08c75dcb95b9fe40a4b227f42780f96, type: 2}
+  - {fileID: 21300000, guid: 2d03aab0ef7cdd345b45920f94a8380a, type: 2}
   - {fileID: 21300000, guid: d093f16373d2c474dad6e24d24cc8a8e, type: 2}
+  - {fileID: 21300000, guid: 5eb249fd91f497041869a48b8d9f9cde, type: 2}
+  - {fileID: 21300000, guid: 7e24b9bbb04f0624c878599a3e18421e, type: 2}

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
+  m_Name: Viking Animals
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
+  Icons:
+  - {fileID: 21300000, guid: fa618de699d42f141975df2707b1006b, type: 2}
+  - {fileID: 21300000, guid: 90168cefd7203c5459e95296573e041f, type: 2}
+  - {fileID: 21300000, guid: ccac0514d795a6244a6ab16a36688e8d, type: 2}
+  - {fileID: 21300000, guid: 316dedb6ce64e914889e1fe23eaf49f6, type: 2}
+  - {fileID: 21300000, guid: 15a00bfc1030c714f8b9049cfb1ec7ba, type: 2}
+  - {fileID: 21300000, guid: f59c678baaf72f4408bfbd7f3e79985f, type: 2}
+  - {fileID: 21300000, guid: 66c234c36a1522e439d60fc4c26e1d3c, type: 2}
+  - {fileID: 21300000, guid: f8fd50b7a762f7a4ebfb608eb7e4feed, type: 2}

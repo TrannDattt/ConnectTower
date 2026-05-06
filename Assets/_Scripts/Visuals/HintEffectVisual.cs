@@ -59,9 +59,9 @@ namespace Assets._Scripts.Visuals
                     .AppendCallback(() =>
                     {
                         var preBlockColor = BoardController.Instance.GetAllPillars()
-                                                                     .Where(p => !p.IsLocked() && ((IMechanicHandler)p).IsInteractable())
+                                                                     .Where(p => !p.IsLocked() && ((IMechanicHandler)p).IsInMechanic())
                                                                      .SelectMany(p => p.GetAllBlocks())
-                                                                     .Where(b => ((IMechanicHandler)b).IsInteractable() && b.IsSameTag(block1))
+                                                                     .Where(b => ((IMechanicHandler)b).IsInMechanic() && b.IsSameTag(block1))
                                                                      .Select(b => b.GetComponent<BlockEffectVisual>().GetCurrentColor())
                                                                      .FirstOrDefault(c => c != EColor.None);
 

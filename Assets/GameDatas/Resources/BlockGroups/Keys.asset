@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
   m_Name: Keys
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
-  Name: Keys
   Icons:
   - {fileID: 21300000, guid: a22dd7ad667dd5a40b0fce1a581136ab, type: 2}
   - {fileID: 21300000, guid: 19a16c1601c23f54eb7af5e6faf31505, type: 2}

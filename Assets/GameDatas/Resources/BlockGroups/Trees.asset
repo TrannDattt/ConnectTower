@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
+  m_Name: Trees
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
+  Icons:
+  - {fileID: 21300000, guid: 8aca70d3a0b8d2e468b0250921536b28, type: 2}
+  - {fileID: 21300000, guid: 6ff45c4905fd28442881aa7e1b23d7f1, type: 2}
+  - {fileID: 21300000, guid: 8d811c3dc923a0446bd54c459caad348, type: 2}
+  - {fileID: 21300000, guid: 78f34689dc19b8443a9239917478b47f, type: 2}
+  - {fileID: 21300000, guid: 861895a00dd4eab49a94deafc20c56fe, type: 2}
+  - {fileID: 21300000, guid: 28a46d0a2d34f39449a9db1dd7f36fba, type: 2}
+  - {fileID: 21300000, guid: baeb48b798a16df4b8b44423f1690b7f, type: 2}
+  - {fileID: 21300000, guid: 234dbf37c6f9621469cfd39cc93ac148, type: 2}
+  - {fileID: 21300000, guid: fa2fe3ad769f4a843a099ba97c4eee0a, type: 2}

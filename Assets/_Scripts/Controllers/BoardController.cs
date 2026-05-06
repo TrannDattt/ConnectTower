@@ -103,8 +103,10 @@ namespace Assets._Scripts.Controllers
                 {
                     var toApply = _blocks.FirstOrDefault(b => b.Id == id);
                     if (toApply == null) continue;
+                    var pillar = toApply.GetPillarParent();
                     var mechanic = new FrozenBlockMechanic(data.MoveCountToRemove);
                     mechanic.Apply(toApply);
+                    mechanic.Apply(pillar);
                     _mechanics.Add(mechanic);
                 };
             });
@@ -138,14 +140,16 @@ namespace Assets._Scripts.Controllers
         public IEnumerator DoSpawnBlockAnim()
         {
             var delaySpawn = new WaitForSeconds(.1f);
-            var nonMechanicPillars = _pillars.Where(p => (p as IMechanicHandler).IsInteractable()).ToArray();
+            var toDoAnimPillar = _pillars.Where(p => !(p as IMechanicHandler).IsHidden()).ToArray();
 
-            foreach(var pillar in nonMechanicPillars)
+            foreach(var pillar in toDoAnimPillar)
             {
-                foreach(var block in pillar.GetAllBlocks()) block.gameObject.SetActive(false);
+                foreach(var block in pillar.GetAllBlocks()) 
+                    if ((block as IMechanicHandler).IsMovable())
+                        block.gameObject.SetActive(false);
             }
 
-            foreach (var pillar in nonMechanicPillars)
+            foreach (var pillar in toDoAnimPillar)
             {
                 pillar.StartCoroutine(pillar.DoSpawnBlockAnim());
                 yield return delaySpawn;

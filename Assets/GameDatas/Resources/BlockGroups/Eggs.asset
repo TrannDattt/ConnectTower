@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
+  m_Name: Eggs
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
+  Icons:
+  - {fileID: 21300000, guid: 202412c742c5f0b4c88f0a347ed9be58, type: 2}
+  - {fileID: 21300000, guid: f206abd486e10e542a8132f282b284d0, type: 2}
+  - {fileID: 21300000, guid: 77cd1dabf97059f4f9c2c5a6472e3cf2, type: 2}
+  - {fileID: 21300000, guid: e69e3471976972d4698dcbf36e401524, type: 2}
+  - {fileID: 21300000, guid: 2d1de682d34f04d42a856fb205f5f0f5, type: 2}
+  - {fileID: 21300000, guid: 9af999c256bb674448dcf722310f6ece, type: 2}
+  - {fileID: 21300000, guid: 317b51fe790763c418e9abcb0683ee35, type: 2}

@@ -62,13 +62,11 @@ namespace Assets._Scripts.Datas
 #region ShuffleBooster
     public class ShuffleBoosterRuntimeData : BoosterRuntimeData
     {
-        public List<BlockController> AvailableBlocks {get; private set;}
-        private Vector3 _gatherPoint;
+        public Dictionary<BlockController, (PillarController, PillarController)> AvailableBlocks {get; private set;}
 
-        public ShuffleBoosterRuntimeData(bool lockStatus, Vector3 gatherPoint) : base(lockStatus)
+        public ShuffleBoosterRuntimeData(bool lockStatus) : base(lockStatus)
         {
             AvailableBlocks = new();
-            _gatherPoint = gatherPoint;
             Key = EBooster.Shuffle;
         }
 
@@ -84,7 +82,10 @@ namespace Assets._Scripts.Datas
                 while (pillar.TryRemoveTopBlocks(out var toAdd))
                 {
                     matchedBlocks.Add(toAdd);
-                    AvailableBlocks.AddRange(toAdd);
+                    foreach(var block in toAdd)
+                    {
+                        AvailableBlocks[block] = (pillar, null);
+                    }
                 }
                 // Debug.Log($"Pillar {pillar.name} has {pillar.GetBlockCount()} blocks");
             }
@@ -144,6 +145,7 @@ namespace Assets._Scripts.Datas
                     var slot = toSlot + i;
                     pillar.AddBlockToSlot(slot, matched[i]);
                     randomSlots.Item2.Remove(slot);
+                    AvailableBlocks[matched[i]] = (AvailableBlocks[matched[i]].Item1, pillar);
                 }
 
                 if (randomSlots.Item2.Count == 0) continue;
@@ -185,9 +187,9 @@ namespace Assets._Scripts.Datas
 
             // 1. Lấy tất cả blocks hợp lệ từ các pillars hợp lệ (Flattening)
             var allValidBlocks = BoardController.Instance.GetAllPillars()
-                .Where(p => !p.IsLocked() && ((IMechanicHandler)p).IsInteractable())
+                .Where(p => !p.IsLocked() && ((IMechanicHandler)p).IsInMechanic())
                 .SelectMany(p => p.GetAllBlocks())
-                .Where(b => ((IMechanicHandler)b).IsInteractable())
+                .Where(b => ((IMechanicHandler)b).IsInMechanic())
                 .ToArray();
 
             // 2. Nhóm các block theo Tag và lọc ra các nhóm có từ 2 block trở lên (để đảm bảo có cặp)

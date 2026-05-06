@@ -68,7 +68,7 @@ namespace Assets._Scripts.Visuals
 
         void Awake()
         {
-            _initialFontSize = _levelIndexText.fontSize;
+            if (_levelIndexText != null) _initialFontSize = _levelIndexText.fontSize;
             if (_textOutline != null) _initialOutline = _textOutline.effectDistance;
             _initialPos = transform.position;
         }

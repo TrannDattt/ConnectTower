@@ -13,15 +13,29 @@ namespace Assets._Scripts.Helpers
 
         public static List<string> GetAllGroups() => _groupDict.Select(kvp => kvp.Value.Name).ToList();
 
-        public static List<Sprite> GetGroupIcons(string name)
+        public static BlockGroupSO GetGroupData(string tag)
         {
-            int hash = name.GetHashCode();
+            int hash = tag.GetHashCode();
             if (_groupDict.TryGetValue(hash, out BlockGroupSO group))
             {
-                return group.Icons;
+                return group;
             }
-            Debug.LogWarning($"[BlockGroupMapper] Group with name '{name}' not found.");
+            Debug.LogWarning($"[BlockGroupMapper] Group with name '{tag}' not found.");
             return null;
+        }
+
+        public static List<Sprite> GetGroupIcons(string tag)
+        {
+            var data = GetGroupData(tag);
+            if (data == null) return null;
+            return data.Icons;
+        }
+
+        public static Sprite GetIcon(string tag, string iconId)
+        {
+            var icons = GetGroupIcons(tag);
+            if (icons == null) return null;
+            return icons.FirstOrDefault(i => string.Equals(i.name, iconId));
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -31,8 +45,9 @@ namespace Assets._Scripts.Helpers
             BlockGroupSO[] loadedGroups = Resources.LoadAll<BlockGroupSO>(_blockGroupPath);
             foreach (var group in loadedGroups)
             {
-                _groupDict.Add(group.Name.GetHashCode(), group);
+                _groupDict[group.Name.GetHashCode()] = group;
             }
+
             Debug.Log($"[BlockGroupMapper] Loaded {_groupDict.Count} block groups from: Resources/{_blockGroupPath}");
         }
     }

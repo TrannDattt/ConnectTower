@@ -17,16 +17,16 @@ namespace Assets._Scripts.Visuals
         private RectTransform _iconRt;
 
         private bool _isSelected = false;
+        public int Index {get; private set;}
 
         public void DoOnSelectedAnim()
         {
-            Debug.Log($"0.Tab {name} selected");
+            Debug.Log($"Tab {name} selected");
             if (_isSelected) return;
 
             _isSelected = true;
             _iconRt.DOKill();
             
-            Debug.Log($"1.Tab {name} selected");
             _offsetPos = _originPos + new Vector2(0, _offsetY);
             _iconRt.DOAnchorPos(_offsetPos, _animDuration)
                 .SetEase(Ease.InOutQuad)
@@ -34,9 +34,7 @@ namespace Assets._Scripts.Visuals
                 .OnComplete(() =>
                 {
                     _name.gameObject.SetActive(true);
-                    Debug.Log($"1.5.Tab {name} selected");
                 });
-            Debug.Log($"5.Tab {name} selected");
         }
 
         public void DoOnDeselectedAnim()

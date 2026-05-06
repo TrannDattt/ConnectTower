@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Patterns.EventBus;
@@ -36,23 +37,23 @@ namespace Assets._Scripts.Visuals
 
         public override Sequence DoBoosterAnim(BoosterRuntimeData data, Image target)
         {
-            var toShuffle = (data as ShuffleBoosterRuntimeData).AvailableBlocks;
             var sequence = DOTween.Sequence();
 
             sequence.Append(target.transform.DORotate(new Vector3(0, 0, 360 * _cycles), _duration, RotateMode.FastBeyond360).SetEase(Ease.InOutCubic))
-                    .Insert(_blockMoveDelayToMain, DoShuffleBlockAnim(toShuffle));
+                    .Insert(_blockMoveDelayToMain, DoShuffleBlockAnim(data as ShuffleBoosterRuntimeData));
 
             return sequence;
         }
 
-        private Sequence DoShuffleBlockAnim(List<BlockController> blocks)
+        private Sequence DoShuffleBlockAnim(ShuffleBoosterRuntimeData data)
         {
+            var blocks = data.AvailableBlocks.Keys.ToArray();
             var sequence = DOTween.Sequence();
-            if (blocks == null || blocks.Count == 0) return sequence;
+            if (blocks == null || blocks.Length == 0) return sequence;
 
             // Calculate delay between blocks to fit within _duration
             float remainingTime = Mathf.Max(0, _duration - _blockMoveCircleDur - 2 * _blockMoveDur);
-            float calculatedDelay = blocks.Count > 1 ? remainingTime / (blocks.Count - 1) : 0;
+            float calculatedDelay = blocks.Length > 1 ? remainingTime / (blocks.Length - 1) : 0;
             var delayMoveTime = Mathf.Min(calculatedDelay, _blockMoveDelayToBlock);
             
             var baseRotation = blocks[0].transform.localRotation;
@@ -64,8 +65,8 @@ namespace Assets._Scripts.Visuals
                 
                 var bTransform = block.transform;
                 var baseTransform = block.Base.transform;
-                // var blockVisual = block.GetComponent<BlockEffectVisual>();
-                // blockVisual.SetTrailEnable(false);
+                var fromPillar = data.AvailableBlocks[block].Item1;
+                var toPillar = data.AvailableBlocks[block].Item2;
 
                 var curPos = bTransform.position;
                 curPos.Set(curPos.x, curPos.y, _gatherPoint.z);
@@ -79,8 +80,9 @@ namespace Assets._Scripts.Visuals
                 var blockPos = BoardController.Instance.GetBlockPosition(block);
                 var worldPos = BlockMovementController.Instance.GetBlockPosition(blockPos.Item1, blockPos.Item2);
 
-                // 1. Move to orbital point
-                sequence.Insert(currentTime, bTransform.DOMove(stopPoint, _blockMoveDur).SetEase(_blockMoveToCenterCurve));
+                // 1. Move to orbital point via pillar top
+                var pathToOrbit = new[] { fromPillar.TopPillar.position, stopPoint };
+                sequence.Insert(currentTime, bTransform.DOPath(pathToOrbit, _blockMoveDur, PathType.CatmullRom).SetEase(_blockMoveToCenterCurve));
                 
                 // 2. Rotate + Base Oscillation
                 sequence.InsertCallback(currentTime + _blockMoveDur, () => 
@@ -117,10 +119,22 @@ namespace Assets._Scripts.Visuals
                 });
 
                 // 3. Move to final board position
-                sequence.Insert(currentTime + _blockMoveDur + _blockMoveCircleDur, bTransform.DOMove(worldPos, _blockMoveDur).SetEase(_blockMoveToPositionCurve));
+                var pathToTarget = new[] { toPillar.TopPillar.position, worldPos };
+                sequence.Insert(currentTime + _blockMoveDur + _blockMoveCircleDur, bTransform.DOPath(pathToTarget, _blockMoveDur, PathType.CatmullRom).SetEase(_blockMoveToPositionCurve));
                 // sequence.AppendCallback(() => blockVisual.SetTrailEnable(true));
                 
                 currentTime += delayMoveTime;
+            }
+
+            float duration = 0.3f;
+            float strength = 0.05f;
+            int vibrato = 10;
+            for (int i = 0; i < blocks.Length; i++)
+            {
+                if (i == 0) 
+                    sequence.Append(blocks[i].transform.DOShakePosition(duration, new Vector3(strength, 0, 0), vibrato));
+                else
+                    sequence.Join(blocks[i].transform.DOShakePosition(duration, new Vector3(strength, 0, 0), vibrato));
             }
 
             sequence.AppendCallback(() => 

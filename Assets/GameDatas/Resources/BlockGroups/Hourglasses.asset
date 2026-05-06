@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
   m_Name: Hourglasses
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
-  Name: Hourglasses
   Icons:
   - {fileID: 21300000, guid: 44acc1678e75eaa47897b7216a627084, type: 2}
   - {fileID: 21300000, guid: fb72aacf43a29eb4aa1bf682c4cf67d1, type: 2}

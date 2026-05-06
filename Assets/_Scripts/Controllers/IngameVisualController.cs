@@ -29,6 +29,7 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private Button _clearLevel;
         [SerializeField] private Button _failLevel;
         [SerializeField] private Button _restartButton;
+        [SerializeField] private Button _editButton;
 #endif
         // [SerializeField] private Transform _centerPoint;
         private Vector3 _centerPoint => _canvasRt.TransformPoint(_canvasRt.rect.center);
@@ -128,12 +129,21 @@ namespace Assets._Scripts.Controllers
             _shuffleButton.OnClicked.AddListener(() => UseBoosterButton(_shuffleButton, EBooster.Shuffle));
             _hintButton.OnClicked.AddListener(() => UseBoosterButton(_hintButton, EBooster.Hint));
 #if UNITY_EDITOR
-            _clearLevel.onClick.AddListener(() => GameManager.Instance.ClearedLevel(false));
-            _failLevel.onClick.AddListener(() => GameManager.Instance.FailedLevel(false));
-            _restartButton.onClick.AddListener(() =>
-            {
-                GameManager.Instance.StartLevel(LevelManager.PlayingLevel);
-            });
+            if (_clearLevel != null)
+                _clearLevel.onClick.AddListener(() => GameManager.Instance.ClearedLevel(false));
+            if (_failLevel != null)
+                _failLevel.onClick.AddListener(() => GameManager.Instance.FailedLevel(false));
+            if (_restartButton != null)
+                _restartButton.onClick.AddListener(() =>
+                {
+                    GameManager.Instance.StartLevel(LevelManager.PlayingLevel);
+                });
+            if (_editButton != null)
+                _editButton.onClick.AddListener(() =>
+                {
+                    BoardController.Instance.ClearBoard();
+                    GameSceneManager.Instance.ChangeScene(EGameScene.Editor);
+                });
 #endif
         }
 

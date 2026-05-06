@@ -61,23 +61,14 @@ namespace Assets._Scripts.Visuals
                 }
 
                 EventBus<UseBoosterEvent>.Publish(new UseBoosterEvent { IsFinish = false });
-                Sequence beginSequence = DOTween.Sequence()
-                                                .Append(_iconImage.transform.DOMove(_gatherPoint, _beginMoveDur).SetEase(_beginMoveCurve))
-                                                .Insert(0f, _iconImage.transform.DOScale(_originalIconScale * _beginScaleFactor, _beginScaleDur).SetEase(_beginScaleCurve));
-
-                Sequence endSequence = DOTween.Sequence()
-                                            .Append(_iconImage.transform.DOScale(_originalIconScale, _endScaleDur).SetEase(_endScaleCurve))
-                                            .Insert(0f, _iconImage.transform.DOLocalMoveX(_originalIconLocalPos.x, _endMoveDur).SetEase(_endMoveXCurve))
-                                            .Insert(0f, _iconImage.transform.DOLocalMoveY(_originalIconLocalPos.y, _endMoveDur).SetEase(_endMoveYCurve));
-
                 Sequence mainSequence = DOTween.Sequence()
                                                .Append(DoBoosterAnim(data, _iconImage))
                                                .JoinCallback(() => SoundManager.Instance.PlayRandomSFX(boosterSFX));
 
                 Sequence masterSequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.KillOnDisable).SetUpdate(true);
                 masterSequence.AppendCallback(() => Debug.Log($"Start Booster Anim: {data.Key}"))
-                .Append(beginSequence).Append(mainSequence)
-                .Append(endSequence).AppendCallback(() => Debug.Log($"Finish Booster Anim: {data.Key}"))
+                .Append(DoBeginAnim()).Append(mainSequence)
+                .Append(DoEndAnim()).AppendCallback(() => Debug.Log($"Finish Booster Anim: {data.Key}"))
                 .OnKill(() =>
                 {
                     reset();
@@ -88,6 +79,23 @@ namespace Assets._Scripts.Visuals
                 });
                 
                 yield return masterSequence.WaitForCompletion();
+            }
+
+            public virtual Sequence DoBeginAnim()
+            {
+                return DOTween.Sequence()
+                              .Append(_iconImage.transform.DOMove(_gatherPoint, _beginMoveDur).SetEase(_beginMoveCurve))
+                              .Insert(0f, _iconImage.transform.DOScale(_originalIconScale * _beginScaleFactor, _beginScaleDur).SetEase(_beginScaleCurve));
+
+            }
+
+            public virtual Sequence DoEndAnim()
+            {
+                return DOTween.Sequence()
+                              .Append(_iconImage.transform.DOScale(_originalIconScale, _endScaleDur).SetEase(_endScaleCurve))
+                              .Insert(0f, _iconImage.transform.DOLocalMoveX(_originalIconLocalPos.x, _endMoveDur).SetEase(_endMoveXCurve))
+                              .Insert(0f, _iconImage.transform.DOLocalMoveY(_originalIconLocalPos.y, _endMoveDur).SetEase(_endMoveYCurve));
+
             }
 
             public abstract Sequence DoBoosterAnim(BoosterRuntimeData data, Image target);

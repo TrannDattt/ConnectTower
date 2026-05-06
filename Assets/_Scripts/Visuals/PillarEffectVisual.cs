@@ -53,13 +53,13 @@ namespace Assets._Scripts.Visuals
 
             var sequence = DOTween.Sequence().SetLink(gameObject, LinkBehaviour.KillOnDisable);
             sequence.AppendInterval(ParticleManager.Instance.GetParticleDuration(EParticle.Confetti))
+            .AppendCallback(() => ChangeLockColor(color))
             // .Join(_border.transform.DOScale(initialScale, animDuration).SetEase(Ease.OutBack, overshoot: 2f))
             .Join(_border.transform.DOScaleX(initialScale.x, animDuration).SetEase(_borderScaleXCurve))
             .Join(_border.transform.DOScaleY(initialScale.y, animDuration).SetEase(_borderScaleYCurve))
             .InsertCallback(animDuration * .95f, () =>
             {
                 ParticleManager.Instance.StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Confetti, transform.position, _canvas.transform));
-                ChangeLockColor(color);
             })
             .OnComplete(() =>
             {

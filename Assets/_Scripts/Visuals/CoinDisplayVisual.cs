@@ -17,13 +17,7 @@ namespace Assets._Scripts.Visuals
     {
         [SerializeField] private GameButtonVisual _buyCoinButton;
         [SerializeField] private Text _coinCountText;
-
-        [SerializeField] private Image _coinImagePrefab;
-        [SerializeField] private Transform _coinImageHolder;
         [SerializeField] private Transform _startPoint;
-        [SerializeField] private Transform _endPoint;
-        [SerializeField] private int _coinAppearAmount = 10;
-        [SerializeField] private float _jumpPower = 100f;
         [SerializeField] private UIParticleAttractor _coinAttractor;
 
         private List<Image> _coinImages = new();

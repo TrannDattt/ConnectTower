@@ -1,3 +1,4 @@
+using System.Linq;
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
@@ -8,8 +9,21 @@ namespace Assets._Scripts.Interfaces
     public interface IMechanicHandler
     {
         public EMechanic ActiveMechanic {get; set;}
-        public bool IsHidden() => ActiveMechanic == EMechanic.HiddenBlock;
-        public bool IsInteractable() => ActiveMechanic ==  EMechanic.None;
+        private static readonly EMechanic[] HiddenMechanics = new EMechanic[]
+        {
+            EMechanic.HiddenBlock,
+            EMechanic.CoveredPillar
+        };
+
+        private static readonly EMechanic[] UnmovableMechanics = new EMechanic[]
+        {
+            EMechanic.FrozenBlock,
+            EMechanic.CoveredPillar
+        };
+
+        public bool IsHidden() => HiddenMechanics.Contains(ActiveMechanic);
+        public bool IsMovable() => !UnmovableMechanics.Contains(ActiveMechanic);
+        public bool IsInMechanic() => ActiveMechanic ==  EMechanic.None;
         public MechanicVisualControl MechanicVisual {get; set;}
 
         public void UpdateMechanic(MechanicRuntimeData mechanicData)

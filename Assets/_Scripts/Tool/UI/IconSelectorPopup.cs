@@ -54,7 +54,8 @@ namespace Assets._Scripts.Tools.UI
                 }
             }
 
-            var allIcons = await BlockIconMapper.GetAllIconsAsync();
+            var allIcons = new List<Sprite>();
+            // var allIcons = await BlockIconMapper.GetAllIconsAsync();
             var unassignedIcons = allIcons;
             // var unassignedIcons = new List<Sprite>();
 

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
+  m_Name: Thrones
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
+  Icons:
+  - {fileID: 21300000, guid: 3347427cb193c674d8e8558d3148cb15, type: 2}
+  - {fileID: 21300000, guid: 0e24ab92b1563774a8b0904db4382df6, type: 2}
+  - {fileID: 21300000, guid: 785af52722f47c24db1c921294ecd357, type: 2}
+  - {fileID: 21300000, guid: 87a6ddff4a21aa343b88f7a9e153fd91, type: 2}
+  - {fileID: 21300000, guid: e0be6817cc751d0449f88ce814850c4c, type: 2}
+  - {fileID: 21300000, guid: b3ff519d1ed36c2429d8d96e151487e7, type: 2}

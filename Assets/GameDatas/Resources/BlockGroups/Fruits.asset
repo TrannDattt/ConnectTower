@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
+  m_Name: Fruits
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
+  Icons:
+  - {fileID: 21300000, guid: 611ce107ff8de3343981302e21ffb4c8, type: 2}
+  - {fileID: 21300000, guid: 51ebd31fa25bacb4f94078af11d7760b, type: 2}
+  - {fileID: 21300000, guid: 9c82269042791874ca5dd94894b0789a, type: 2}
+  - {fileID: 21300000, guid: 25916d84ac51db546b939011b371e9cb, type: 2}
+  - {fileID: 21300000, guid: 1a2f0dee0f1e9134c8979a2928e16aa1, type: 2}
+  - {fileID: 21300000, guid: 0b2d4268e1712aa45a4334d40f90025d, type: 2}
+  - {fileID: 21300000, guid: 99c9006e8a0171243a87887b005ea098, type: 2}
+  - {fileID: 21300000, guid: d09ffa871ceeaaf41b5c7573c0441d9a, type: 2}
+  - {fileID: 21300000, guid: fa85962574e7f9b4c8608b58d096b550, type: 2}
+  - {fileID: 21300000, guid: b7adb071d1d53524891f394d8ee88b56, type: 2}
+  - {fileID: 21300000, guid: 668e3298034041f468af5a8d8c1ab44f, type: 2}
+  - {fileID: 21300000, guid: 9ec96f8bd2350d446aaaf2896cbee1a5, type: 2}
+  - {fileID: 21300000, guid: 899d519ae429b754f9f9e27bcf65d84d, type: 2}
+  - {fileID: 21300000, guid: 1c13ef9f6ea371a4db1287b128a37f9f, type: 2}
+  - {fileID: 21300000, guid: 4b5b6b48db356bf40b54967b192e46a4, type: 2}
+  - {fileID: 21300000, guid: e266d5649e598f3448678d4762e27edb, type: 2}
+  - {fileID: 21300000, guid: edf00b96508dbf34886a8af810f90fcc, type: 2}
+  - {fileID: 21300000, guid: f377c4520bd966e409cb4d4e03299910, type: 2}
+  - {fileID: 21300000, guid: 9b53002cd80a5e441812391e497df743, type: 2}
+  - {fileID: 21300000, guid: 9d96ecc4f20ae2a499a7f255e5f582b6, type: 2}
+  - {fileID: 21300000, guid: dbc7d67cb39b7384aa7df531fd4fe6b1, type: 2}
+  - {fileID: 21300000, guid: 349261de5166a3d42af4b0936cd1b246, type: 2}
+  - {fileID: 21300000, guid: a6e27ca2c904e1845a60c0f9243eb377, type: 2}
+  - {fileID: 21300000, guid: 79c01d2550cd11b4f8913917ff51bac2, type: 2}
+  - {fileID: 21300000, guid: e52d850e59faa4d45b09c9af9ae685f4, type: 2}
+  - {fileID: 21300000, guid: c83dc8301d562c54b8a1e18b18a2e875, type: 2}
+  - {fileID: 21300000, guid: 0d437b796f612db4dad1a72509706d94, type: 2}

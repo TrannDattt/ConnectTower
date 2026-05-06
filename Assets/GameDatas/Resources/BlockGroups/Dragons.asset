@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
+  m_Name: Dragons
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
+  Icons:
+  - {fileID: 21300000, guid: b6cf2b11361d5cd4891df354356f2cd7, type: 2}
+  - {fileID: 21300000, guid: 206e593e1d740754891638368f0de82a, type: 2}
+  - {fileID: 21300000, guid: daaa119110ec39c4c96982eaa151c534, type: 2}
+  - {fileID: 21300000, guid: c69494c9f14d80346b67c811eff58b15, type: 2}
+  - {fileID: 21300000, guid: 72133a2377cece54c9f86bd93afd184a, type: 2}
+  - {fileID: 21300000, guid: e96d62bdc9bae884dad694749fd8059f, type: 2}
+  - {fileID: 21300000, guid: 8c6ad3ac0dd0ee541b8e1378197a8b99, type: 2}
+  - {fileID: 21300000, guid: cf4f906dfddd3a44587f85d8f57b117e, type: 2}
+  - {fileID: 21300000, guid: 62b862629e809514dbe7b7676740036f, type: 2}
+  - {fileID: 21300000, guid: aac8d49f5053c8348a625e27da1be8ea, type: 2}
+  - {fileID: 21300000, guid: a8cf30b62a4195f4c811e5ad0d1429dd, type: 2}
+  - {fileID: 21300000, guid: 67ce9059f21b44b43bd8161b4370f66f, type: 2}
+  - {fileID: 21300000, guid: 37ec0bdbe628ed643b7a6522bf02ddd1, type: 2}

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
+  m_Name: Mailboxes
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
+  Icons:
+  - {fileID: 21300000, guid: 2a2b55d5c95d69a419f749bc19e20944, type: 2}
+  - {fileID: 21300000, guid: ecda802f5ab81fb46bc494dec53a7850, type: 2}
+  - {fileID: 21300000, guid: dda181dc59f132243a1ab0a8dc56106f, type: 2}
+  - {fileID: 21300000, guid: 682ef84417b6f2145b4c86fd59be2392, type: 2}

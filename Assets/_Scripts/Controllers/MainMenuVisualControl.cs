@@ -3,6 +3,7 @@ using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns;
 using Assets._Scripts.Visuals;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -16,6 +17,9 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private NavigationTabVisual _homeTab;
         [SerializeField] private NavigationTabVisual _shopTab;
         [SerializeField] private NavigationTabVisual _rankTab;
+
+        [SerializeField] private float _changeTabDur;
+        [SerializeField] private float _tabControlOffsetX;
 
         private StateMachine<EMenuTab> _tabSM = new();
 
@@ -31,14 +35,42 @@ namespace Assets._Scripts.Controllers
             _tabSM.TryGetState(tab, out var toChange);
             if (toChange == null) return;
 
-            var navState = toChange as NavTabState;
-            if (navState.TabControl == null)
+            var nextTab = toChange as NavTabState;
+            if (nextTab.TabControl == null)
             {
-                PopupManager.Instance.ShowPopupText("Coming soon", navState.TabVisual.GetCenterPosition());
+                PopupManager.Instance.ShowPopupText("Coming soon", nextTab.TabVisual.GetCenterPosition());
                 return;
             }
             
+            var preTab = _tabSM.CurrentState as NavTabState;
             _tabSM.ChangeState(tab);
+
+            DoChangeTabAnim(preTab, nextTab);
+        }
+
+        private void DoChangeTabAnim(NavTabState from, NavTabState to)
+        {
+            if (to == null) return;
+            Debug.Log("Pass 1");
+
+            _navBar.DoChangeTabAnim(to.TabVisual);
+            to.TabControl.gameObject.SetActive(true);
+
+            if (from == null || from == to) return;
+            Debug.Log("Pass 2");
+
+            DOTween.Kill(this);
+
+            bool slideToRight = (_tabSM.GetStateIndex(from.Key) - _tabSM.GetStateIndex(to.Key)) > 0;
+            to.TabControl.GetComponent<RectTransform>().anchoredPosition = new Vector3(_tabControlOffsetX * (slideToRight ? -1 : 1), 0, 0);
+            from.TabControl.transform.SetAsFirstSibling();
+
+            var sequence = DOTween.Sequence().SetTarget(this);
+            sequence.Append(from.TabControl.GetComponent<RectTransform>().DOAnchorPosX(_tabControlOffsetX * (slideToRight ? 1 : -1), _changeTabDur).SetEase(Ease.OutQuad));
+            sequence.Join(to.TabControl.GetComponent<RectTransform>().DOAnchorPosX(0, _changeTabDur).SetEase(Ease.OutQuad));
+            sequence.AppendCallback(() => from.TabControl.gameObject.SetActive(false));
+
+            sequence.Play();
         }
 
         public void OpenShop() => ChangeTab(EMenuTab.Shop);
@@ -53,7 +85,7 @@ namespace Assets._Scripts.Controllers
             _shopTab.OnClicked.AddListener(() => ChangeTab(EMenuTab.Shop));
             _rankTab.OnClicked.AddListener(() => ChangeTab(EMenuTab.Ranking));
 
-            _tabSM.AddStates(home, shop, ranking);
+            _tabSM.AddStates(shop, home, ranking);
             _tabSM.SetDefaultState(EMenuTab.Home);
             _tabSM.ChangeToDefault();
         }
@@ -71,22 +103,19 @@ namespace Assets._Scripts.Controllers
                 _onChanged = onChanged;
 
                 TabVisual.SetEnable(TabControl != null);
+                TabControl?.gameObject.SetActive(false);
             }
 
             public override void Enter()
             {
                 base.Enter();
 
-                TabControl.gameObject.SetActive(true);
-                Instance._navBar.DoChangeTabAnim(TabVisual);
                 _onChanged?.Invoke();
             }
 
             public override void Exit()
             {
                 base.Exit();
-
-                TabControl.gameObject.SetActive(false);
             }
         }
 

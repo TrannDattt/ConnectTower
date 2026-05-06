@@ -21,16 +21,18 @@ namespace Assets._Scripts.Controllers
         //FrozenBlock
         [Header("Frozen Block")]
 
-        [SerializeField] private Image _frozenIcon;
-        [SerializeField] private Text _frozenMoveCountText;
+        [SerializeField] private Image _frozenBlockIcon;
+        [SerializeField] private GameObject _frozenPillarRod;
+        [SerializeField] private GameObject _frozenPillarBase;
+        // [SerializeField] private Text _frozenMoveCountText;
 
         //CoveredPillar
         [Header("Covered Pillar")]
-        [SerializeField] private float _offsetY = 3f;
-        [SerializeField] private Image _clothImage;
+        [SerializeField] private SpriteRenderer _clothImage;
+        [SerializeField] private Animator _clothAnimator;
         [SerializeField] private Image _clothIcon;
-        private Vector2 _clothInitialAnchoredPos;
-        private RectTransform _clothRectTransform;
+        [SerializeField] private float _fadeDelayFactor = .7f;
+        private string _clothTriggerParam = "Flip";
 
         public void ApplyVisual(MechanicRuntimeData mechanicData)
         {
@@ -40,11 +42,17 @@ namespace Assets._Scripts.Controllers
             switch (type)
             {
                 case EMechanic.HiddenBlock:
-                    _blockVisual?.ChangeIconDisplay(false);
-                    _blockVisual?.ChangeTexture(_hiddenTexture);
+                    if (_blockVisual != null)
+                    {
+                        _blockVisual.ChangeIconDisplay(false);
+                        _blockVisual.ChangeTexture(_hiddenTexture);    
+                    } 
                     break;
                 case EMechanic.FrozenBlock:
-                    if (_frozenIcon != null) _frozenIcon.gameObject.SetActive(true);
+                    if (_frozenBlockIcon != null) _frozenBlockIcon.gameObject.SetActive(true);
+                    if (_frozenPillarRod != null) _frozenPillarRod.SetActive(true);
+                    if (_frozenPillarBase != null) _frozenPillarBase.SetActive(true);
+                    //TODO: Move rod up base on block count
                     break;
                 case EMechanic.CoveredPillar:
                     var coveredPillarData = mechanicData as CoveredPillarMechanic;
@@ -55,14 +63,10 @@ namespace Assets._Scripts.Controllers
                         Debug.Log($"{curLevel.BlockGroups.Count}");
                         var blockGroup = curLevel.BlockGroups.FirstOrDefault(g => g.Tag == coveredPillarData.TagToOpen);
                         Debug.Log($"{blockGroup.BlockDatas[0].IconId}");
-                            _clothIcon.sprite = BlockIconMapper.GetIcon(blockGroup.BlockDatas[0].IconId);
+                        _clothIcon.sprite = BlockGroupMapper.GetGroupIcons(coveredPillarData.TagToOpen)[0];
                     }
 
-                    if (_clothImage != null) 
-                    {
-                        _clothRectTransform.anchoredPosition = _clothInitialAnchoredPos;
-                        _clothImage.gameObject.SetActive(true);
-                    }
+                    _clothImage.gameObject.SetActive(true);
                     break;
                 default:
                     break;
@@ -75,27 +79,34 @@ namespace Assets._Scripts.Controllers
             switch (type)
             {
                 case EMechanic.HiddenBlock:
-                    _blockVisual?.ChangeIconDisplay(true);
-                    _blockVisual?.ChangeTexture(null);
+                    if (_blockVisual != null)
+                    {
+                        _blockVisual.ChangeIconDisplay(true);
+                        _blockVisual.ChangeTexture(null);
+                    }
                     if (!doEffect) break;
                     StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Smoke, transform.position));
                     break;
                 case EMechanic.FrozenBlock:
-                    if (_frozenIcon != null) _frozenIcon.gameObject.SetActive(false);
+                    if (_frozenBlockIcon != null) _frozenBlockIcon.gameObject.SetActive(false);
+                    if (_frozenPillarRod != null) _frozenPillarRod.SetActive(false);
+                    if (_frozenPillarBase != null) _frozenPillarBase.SetActive(false);
                     break;
                 case EMechanic.CoveredPillar:
                     if (_clothImage != null && doEffect) 
                     {
-                        var animDuration = .5f;
-                        var seqence = DOTween.Sequence().SetLink(_clothRectTransform.gameObject, LinkBehaviour.KillOnDisable);
-                        seqence.Append(_clothRectTransform.DOAnchorPosY(_clothInitialAnchoredPos.y + _offsetY, animDuration).SetEase(Ease.InSine));
-                        seqence.Insert(.5f, _clothImage.DOFade(0, animDuration * (1 - 0.5f)).SetEase(Ease.InSine));
+                        _clothAnimator.SetTrigger(_clothTriggerParam);
+                        var animDur = .98f;
+
+                        var seqence = DOTween.Sequence().SetLink(_clothAnimator.gameObject, LinkBehaviour.KillOnDisable);
+                        seqence.AppendInterval(animDur);
+                        seqence.Insert(animDur * _fadeDelayFactor, _clothImage.DOFade(0, animDur * (1 - _fadeDelayFactor)).SetEase(Ease.OutQuad));
                         seqence.OnComplete(() => 
                         {
-                            _clothImage.gameObject.SetActive(false);
                             var color = _clothImage.color;
                             color.a = 1f;
                             _clothImage.color = color;
+                            _clothImage.gameObject.SetActive(false);
                         });
 
                         //TODO: Make pillar rotate around
@@ -104,15 +115,6 @@ namespace Assets._Scripts.Controllers
                     break;
                 default:
                     break;
-            }
-        }
-
-        void Awake()
-        {
-            if (_clothImage != null)
-            {
-                _clothRectTransform = _clothImage.rectTransform;
-                _clothInitialAnchoredPos = _clothRectTransform.anchoredPosition;
             }
         }
     }

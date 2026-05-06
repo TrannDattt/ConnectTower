@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
+  m_Name: Soaps
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
+  Icons:
+  - {fileID: 21300000, guid: 112fc4d002603924e88e1f049035ebcc, type: 2}
+  - {fileID: 21300000, guid: d5f5a21cfc5c21a4abcd9db2fdb6b7ea, type: 2}
+  - {fileID: 21300000, guid: 65e5932eed6498547b2d347ff85e72d0, type: 2}
+  - {fileID: 21300000, guid: 8383d753ca6bd8c44ad98e796ea475d0, type: 2}
+  - {fileID: 21300000, guid: 8e32252856f6f7346acd7c89a73b178b, type: 2}

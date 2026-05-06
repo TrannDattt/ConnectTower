@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
   m_Name: Letters
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
-  Name: Letters
   Icons:
   - {fileID: 21300000, guid: bd1236736a6ddb744bd356eef048ff2c, type: 2}
   - {fileID: 21300000, guid: 63726f9e9186e67488a827da7d1bea8b, type: 2}

@@ -17,11 +17,12 @@ namespace Assets._Scripts.Tools.UI
 
         public void OnAddedGroup(string name)
         {
-            var icons = BlockGroupMapper.GetGroupIcons(name);
+            var groupData = BlockGroupMapper.GetGroupData(name);
             if (_blockGroupPrefab != null && _blockGroupParent != null)
             {
+                // Debug.Log($"Get 4 {name} icons from pool with {icons.Count}");
                 var newGroup = Instantiate(_blockGroupPrefab, _blockGroupParent);
-                if (icons != null) newGroup.InitGroup(_lastBlockId, name, icons.Select(i => i.name).ToArray());
+                newGroup.InitGroup(_lastBlockId, groupData);
                 _lastBlockId += 4; 
                 LevelEditor.AddBlockGroup(newGroup);
             }
@@ -46,7 +47,7 @@ namespace Assets._Scripts.Tools.UI
             foreach (var blockGroup in levelJSON.BlockGroups)
             {
                 var newGroup = Instantiate(_blockGroupPrefab, _blockGroupParent);
-                newGroup.InitGroup(blockGroup.BlockDatas[0].Id - 1, blockGroup.Tag, blockGroup.BlockDatas.Select(b => b.IconId).ToArray());
+                newGroup.InitGroup(blockGroup.BlockDatas[0].Id - 1, BlockGroupMapper.GetGroupData(blockGroup.Tag));
             }
             _lastBlockId = levelJSON.BlockGroups.SelectMany(g => g.BlockDatas).Count() > 0 ? levelJSON.BlockGroups.SelectMany(g => g.BlockDatas).Max(b => b.Id) : -1;
         }

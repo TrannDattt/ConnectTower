@@ -12,9 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
   m_Name: Houses
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
-  Name: Houses
   Icons:
   - {fileID: 21300000, guid: 5ea683199cac75241b4443433a3a1264, type: 2}
   - {fileID: 21300000, guid: 3f4c5407f1d2cc249b794be3c69cd822, type: 2}
+  - {fileID: 21300000, guid: be23df6109dee0d4e880b9275e5b8f82, type: 2}
   - {fileID: 21300000, guid: 368ceaccb26d80545ad791117dfd2387, type: 2}
   - {fileID: 21300000, guid: dcb7f7f85dca0434bbd702126209e6a4, type: 2}
+  - {fileID: 21300000, guid: de9fda72d9a1dac4483d856ff82d1473, type: 2}
+  - {fileID: 21300000, guid: ac5b7913592a6854289f369414d245b8, type: 2}
+  - {fileID: 21300000, guid: 321bb36d971edb84780b5699584e53d2, type: 2}
+  - {fileID: 21300000, guid: f9991e1c292fd8248a964ccc81c566f2, type: 2}
+  - {fileID: 21300000, guid: 40819e564805c3f46848bca9945b2b47, type: 2}
+  - {fileID: 21300000, guid: 5a6c71ac0f9c02d4d98c2bbd55761770, type: 2}
+  - {fileID: 21300000, guid: f31f89ee136e634438e807f837b70fd2, type: 2}
+  - {fileID: 21300000, guid: de3ec6040f0a105479bdd9f2543e4e4c, type: 2}
+  - {fileID: 21300000, guid: de4965acbcbd06c4dbd263a55b635083, type: 2}
+  - {fileID: 21300000, guid: 7b7942d69c1cae140923920353c15c6d, type: 2}
+  - {fileID: 21300000, guid: 39919c000c8b39f4899e862faccf35e4, type: 2}
+  - {fileID: 21300000, guid: c20bb9d050f3ef842933d16f7561a3ca, type: 2}
+  - {fileID: 21300000, guid: ea10d047b1595a74995c6e28ac2f1d28, type: 2}
+  - {fileID: 21300000, guid: 4a18e16bba67ff647ade5305d98ef944, type: 2}
+  - {fileID: 21300000, guid: 3622ae9f6554e5b47a09ca8c5f5e0ea6, type: 2}

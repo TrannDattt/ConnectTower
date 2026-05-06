@@ -25,6 +25,16 @@ namespace Assets._Scripts.Patterns
 
         // public abstract void Init(); // Setup dict and change to default state
 
+        public int GetStateIndex(T key)
+        {
+            if (_stateDict.TryGetValue(key, out _))
+            {
+                return _stateDict.Keys.ToList().IndexOf(key);
+            }
+
+            return -1;
+        }
+
         public bool TryGetState(T key, out AState<T> state)
         {
             return _stateDict.TryGetValue(key, out state);

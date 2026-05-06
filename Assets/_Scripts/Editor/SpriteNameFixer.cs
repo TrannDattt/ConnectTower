@@ -3,32 +3,35 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
-public class SpriteNameFixer : EditorWindow
+namespace Assets._Scripts.Editor
 {
-    [MenuItem("Tools/Fix Sprite Names")]
-    public static void FixNames()
+    public class SpriteNameFixer : EditorWindow
     {
-        string path = "Assets/Sprite/Resources/Icons";
-        string[] assetGuids = AssetDatabase.FindAssets("t:Sprite", new[] { path });
-        int count = 0;
-
-        foreach (string guid in assetGuids)
+        [MenuItem("Tools/Fix Sprite Names")]
+        public static void FixNames()
         {
-            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-            Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
-            string fileName = Path.GetFileNameWithoutExtension(assetPath);
+            string path = "Assets/Sprite/Resources/Icons";
+            string[] assetGuids = AssetDatabase.FindAssets("t:Sprite", new[] { path });
+            int count = 0;
 
-            if (sprite != null && sprite.name != fileName)
+            foreach (string guid in assetGuids)
             {
-                sprite.name = fileName;
-                EditorUtility.SetDirty(sprite);
-                count++;
-            }
-        }
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+                string fileName = Path.GetFileNameWithoutExtension(assetPath);
 
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"Đã sửa tên cho {count} Sprites!");
+                if (sprite != null && sprite.name != fileName)
+                {
+                    sprite.name = fileName;
+                    EditorUtility.SetDirty(sprite);
+                    count++;
+                }
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"Đã sửa tên cho {count} Sprites!");
+        }
     }
 }
 #endif

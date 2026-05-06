@@ -12,9 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
   m_Name: Boats
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
-  Name: Boats
   Icons:
   - {fileID: 21300000, guid: 416e0624574c68d44b05498758b311de, type: 2}
   - {fileID: 21300000, guid: fc42a34414252ad47b8a91a494a93d54, type: 2}
   - {fileID: 21300000, guid: 48b46ad99d527544bb58d243ce9e430b, type: 2}
+  - {fileID: 21300000, guid: 5d5e298961bcf4e45b449033c3f707fd, type: 2}
+  - {fileID: 21300000, guid: 3c6041d5d45eaa04ab46909405306394, type: 2}
   - {fileID: 21300000, guid: 236c4a02353fa414a87d1c2d7130fa15, type: 2}
+  - {fileID: 21300000, guid: adadae5108ad7054d97d71a821506ed9, type: 2}
+  - {fileID: 21300000, guid: 53a323a690c661543b5c7a54d568c88d, type: 2}
+  - {fileID: 21300000, guid: d3896d1c698cd2c4fb0aeec3addf8d3f, type: 2}
+  - {fileID: 21300000, guid: 3ff11d0e52d47264394cf5508acf7fee, type: 2}
+  - {fileID: 21300000, guid: f47b19907c124ab4a9d4e680ee3150ae, type: 2}
+  - {fileID: 21300000, guid: 3f95cca6e8e67e849902308a3395a45c, type: 2}
+  - {fileID: 21300000, guid: 7e927739d89f4334c88aff1cf896783a, type: 2}
+  - {fileID: 21300000, guid: 32234c425d2e2e8438d74ba30ed601fe, type: 2}

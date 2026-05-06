@@ -9,6 +9,7 @@ using UnityEngine.Events;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Patterns.EventBus;
+using System.Linq;
 
 namespace Assets._Scripts.Controllers
 {
@@ -155,7 +156,17 @@ namespace Assets._Scripts.Controllers
             
             int groupStartIndex = toPillar.GetBlockCount() - blocks.Count;
             bool isLockedThisMove = toPillar.IsLocked();
-            toPillar.TryGetTopBlocks(out var matched, ignoreLock: true);
+            
+            var newBlocks = toPillar.GetAllBlocks().ToList();
+            List<BlockController> matched = new();
+            for (int i = newBlocks.Count - 1; i >= 0; i--)
+            {
+                var block = newBlocks.ElementAt(i);
+                if (block == null) continue;
+                if (block.IsSameTag(blocks[0]))
+                    matched.Add(block);
+                else break;
+            }
 
             SoundManager.Instance.PlayRandomSFX(ESfx.BlockMoved);
 
@@ -188,11 +199,13 @@ namespace Assets._Scripts.Controllers
                 Sequence feedbackSequence = DOTween.Sequence();
                 if (matched.Count > blocks.Count)
                 {
+                    Debug.Log($"Match count: {matched.Count} => Matched");
                     SoundManager.Instance.PlayChainedSFXs(ESfx.BlockMatched, matched.Count);
                     feedbackSequence.Append(DoMatchAnim(matched));
                 }
                 else if (groupStartIndex > 0)
                 {
+                    Debug.Log($"Match count: {matched.Count} => Not Matched");
                     SoundManager.Instance.PlayRandomSFX(ESfx.BlockNotMatched);
                     feedbackSequence.Append(DoNotMatchAnim(matched));
                 }
@@ -223,6 +236,7 @@ namespace Assets._Scripts.Controllers
             for (int i = 0; i < blocks.Count; i++)
             {
                 var block = blocks[i];
+                StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Compatible, block.transform.position));
                 block.transform.DOKill();
                 var sequence = DOTween.Sequence();
                 float initialY = block.transform.position.y;

@@ -12,9 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
   m_Name: Drums
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
-  Name: Drums
   Icons:
   - {fileID: 21300000, guid: 3a9fa1f245c674c40bfccda671454411, type: 2}
   - {fileID: 21300000, guid: fcfd78f0455461f4cbaf98d67daea288, type: 2}
+  - {fileID: 21300000, guid: 80db9dbebeb1aaf4abb51b9c65ede911, type: 2}
   - {fileID: 21300000, guid: 219a40b892bc8f3488b4ce70919be414, type: 2}
   - {fileID: 21300000, guid: c7168771d285cfb43be51ae6a05c9586, type: 2}
+  - {fileID: 21300000, guid: d31ea6ddb73a71646bfde18c81655d45, type: 2}
+  - {fileID: 21300000, guid: e6c23c65993498d48ba4b74a61de24b7, type: 2}
+  - {fileID: 21300000, guid: 74c484a6efea0284a81358e8f4c2294e, type: 2}
+  - {fileID: 21300000, guid: f4fe059b87090eb438b7d32ad7d83e92, type: 2}
+  - {fileID: 21300000, guid: 54b5f87b1285b6d478efbd6639c43458, type: 2}

@@ -109,6 +109,19 @@
     "BlockIds": []
   },
   "CoveredPillarDatas": [],
-  "FrozenBlockDatas": [],
+  "FrozenBlockDatas": [
+    {
+      "MoveCountToRemove": 3,
+      "BlockIds": [
+        3
+      ]
+    },
+    {
+      "MoveCountToRemove": 11,
+      "BlockIds": [
+        11
+      ]
+    }
+  ],
   "CoinReward": 40
 }

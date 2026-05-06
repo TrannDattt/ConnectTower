@@ -23,7 +23,7 @@ namespace Assets._Scripts.Controllers
         {
             Id = data.Id;
             _tag = tag;
-            _icon.sprite = BlockIconMapper.GetIcon(data.IconId);
+            _icon.sprite = BlockGroupMapper.GetIcon(tag, data.IconId);
             ActiveMechanic = EMechanic.None;
         }
 

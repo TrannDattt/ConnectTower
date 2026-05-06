@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
+  m_Name: Jewels
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
+  Icons:
+  - {fileID: 21300000, guid: 49388bd844e985643bf7941c3434c860, type: 2}
+  - {fileID: 21300000, guid: 6ef64d52ae94f134ba8915c36b1ca72d, type: 2}
+  - {fileID: 21300000, guid: 749db8abd10a0e040b7499e740bb8987, type: 2}
+  - {fileID: 21300000, guid: c5eb2ff7250b83d44a66c351e5892d8c, type: 2}
+  - {fileID: 21300000, guid: e42d89feb11e423469b0ef907b3fa8cb, type: 2}
+  - {fileID: 21300000, guid: 089f72915efb0b04a8d8b2d5d4631ffe, type: 2}
+  - {fileID: 21300000, guid: e8d2b9c2be6f8554c8d1037ad20e42b4, type: 2}
+  - {fileID: 21300000, guid: 6cc385c82699f064ebc55a37ef982b48, type: 2}
+  - {fileID: 21300000, guid: cec9845db60a41f4d91d8ee6091a8b95, type: 2}
+  - {fileID: 21300000, guid: f021bf57ec014b64296915907722032f, type: 2}
+  - {fileID: 21300000, guid: e45ac249da68a8a42afe1131f886c9b5, type: 2}

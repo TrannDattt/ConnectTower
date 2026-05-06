@@ -6,10 +6,12 @@ using Assets._Scripts.Enums;
 using Assets._Scripts.Patterns;
 using Assets._Scripts.Patterns.EventBus;
 using Assets._Scripts.Visuals;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Playables;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Assets._Scripts.Managers
 {
@@ -153,6 +155,12 @@ namespace Assets._Scripts.Managers
 
         void Update()
         {
+#if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                EditorApplication.isPaused = !EditorApplication.isPaused;
+            }
+#endif
             _gameSM.DoState();
         }
 

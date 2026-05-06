@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
+  m_Name: Leaves
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
+  Icons:
+  - {fileID: 21300000, guid: ed9a70376f12f5242998a26cab616e8f, type: 2}
+  - {fileID: 21300000, guid: 4851086d0d399df41b5e79208da03d40, type: 2}
+  - {fileID: 21300000, guid: e334f6800995b1b4da6f42759c0e55eb, type: 2}
+  - {fileID: 21300000, guid: 1026ac3e46f736843802f0b557bc8187, type: 2}
+  - {fileID: 21300000, guid: 86ee4f68e0c06634c9a7e2b4cbf80c9b, type: 2}
+  - {fileID: 21300000, guid: fc6fc2838fbb9e242a46f79dd4fdd24e, type: 2}

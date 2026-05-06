@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7b457e51cee0c4aab3725c8a1c4c4c, type: 3}
+  m_Name: Ginger Breads
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BlockGroupSO
+  Icons:
+  - {fileID: 21300000, guid: ddba02a0f91017c4fbe45e47a076f2ae, type: 2}
+  - {fileID: 21300000, guid: 78433a53e22d8dd439e9aa0954779ff9, type: 2}
+  - {fileID: 21300000, guid: 17c4af8bc7cb9a34282d7f5f4dd75f58, type: 2}
+  - {fileID: 21300000, guid: 9ca48c13b7595b44389d7a49ed0f4fe5, type: 2}
+  - {fileID: 21300000, guid: bb34bcdd653a2b54eb4b55cab53744d9, type: 2}
+  - {fileID: 21300000, guid: 00552da29d183f147979c924526df133, type: 2}
+  - {fileID: 21300000, guid: 7301198e5aedad3429b663e7d5f603e3, type: 2}
+  - {fileID: 21300000, guid: 7c6d95d1a635c3641953bc95413e72e6, type: 2}

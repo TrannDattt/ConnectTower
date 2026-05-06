@@ -151,12 +151,12 @@ namespace Assets._Scripts.Controllers
         public bool TryGetTopBlocks(out List<BlockController> result, bool skipMechanic = false, bool ignoreLock = false)
         {
             result = new List<BlockController>();
-            if (!HasBlock() || (IsLocked() && !ignoreLock) || !(this as IMechanicHandler).IsInteractable()) return false;
+            if (!HasBlock() || (IsLocked() && !ignoreLock) || (this as IMechanicHandler).IsHidden()) return false;
 
             int i = MAX_BLOCKS - 1;
             while (i >= 0 && _blocks[i] == null) i--;
 
-            bool IsInteractable(int idx) => (_blocks[idx] as IMechanicHandler).IsInteractable();
+            bool IsInteractable(int idx) => (_blocks[idx] as IMechanicHandler).IsInMechanic();
 
             if (i >= 0 && !IsInteractable(i))
             {
@@ -179,7 +179,7 @@ namespace Assets._Scripts.Controllers
 #region Checker
         public bool IsLocked()
         {
-            return _blocks.All(b => b != null && b.IsSameTag(_blocks[0]) && (b as IMechanicHandler).IsInteractable());
+            return _blocks.All(b => b != null && b.IsSameTag(_blocks[0]) && !(b as IMechanicHandler).IsHidden());
         }
 
         public bool HasBlock()
@@ -227,14 +227,14 @@ namespace Assets._Scripts.Controllers
 
         public IEnumerator DoSpawnBlockAnim()
         {
-            var activeBlocks = GetAllBlocks();
-            if (activeBlocks.Count == 0) yield break;
+            var toDoAnim = GetAllBlocks().Where(b => (b as IMechanicHandler).IsMovable()).ToArray();
+            if (toDoAnim.Length == 0) yield break;
 
             var initialScale = new Vector3(.75f, .75f, .75f); //TODO: Hard code BRUHH
             var sequence = DOTween.Sequence().SetTarget(this).SetLink(gameObject, LinkBehaviour.KillOnDisable);
-            for (int i = 0; i < activeBlocks.Count; i++)
+            for (int i = 0; i < toDoAnim.Length; i++)
             {
-                var block = activeBlocks.ElementAt(i);
+                var block = toDoAnim.ElementAt(i);
                 var targetPos = block.transform.position;
                 block.gameObject.SetActive(true);
                 block.transform.position = targetPos + Vector3.up * _offsetY;
@@ -244,7 +244,7 @@ namespace Assets._Scripts.Controllers
             }
             sequence.OnKill(() =>
             {
-                foreach(var block in activeBlocks) block.Base.transform.localScale = initialScale;
+                foreach(var block in toDoAnim) block.Base.transform.localScale = initialScale;
             });
 
             yield return sequence.WaitForCompletion();
@@ -275,7 +275,7 @@ namespace Assets._Scripts.Controllers
         void OnMouseDown()
         {
             // Debug.Log($"Pillar {name} clicked");
-            if ((this as IMechanicHandler).IsInteractable())
+            if (!(this as IMechanicHandler).IsHidden())
             {
                 EventBus<PillarClickedEvent>.Publish(new PillarClickedEvent { Pillar = this });
             }
