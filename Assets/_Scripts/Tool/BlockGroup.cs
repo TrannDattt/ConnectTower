@@ -36,6 +36,30 @@ namespace Assets._Scripts.Tools
 
         [field: SerializeField] public UnityEvent OnGroupRemoved { get; private set; } = new();
 
+        public void InitGroup(int lastBlockId, string tag, Sprite[] icons)
+        {
+            GroupTag = tag;
+            var option = _groupNameDD.options.FirstOrDefault(o => string.Equals(o.text, tag));
+            if (option == null)
+            {
+                option = new (tag);
+                Debug.Log($"Add new option: {tag}");
+                _groupNameDD.options.Add(option);
+            }
+
+            Debug.Log($"Set tag to {tag}");
+            Debug.Log($"Index of {tag} is: {_groupNameDD.options.IndexOf(option)}");
+            _groupNameDD.SetValueWithoutNotify(_groupNameDD.options.IndexOf(option));
+            _groupNameDD.RefreshShownValue();
+
+            for (int i = 0; i < _blocks.Length; i++)
+            {
+                _blocks[i].InitBlock(lastBlockId + 1, icons[i]);
+                lastBlockId++;
+                // Debug.Log($"Init block with id: {_blocks[i].BlockId}");
+            }
+        }
+
         public void InitGroup(int lastBlockId, BlockGroupSO data)
         {
             data = data != null ? data : BlockGroupMapper.GetGroupData(_groupNameDD.options[0].text);

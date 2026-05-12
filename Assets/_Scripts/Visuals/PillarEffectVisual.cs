@@ -38,7 +38,7 @@ namespace Assets._Scripts.Visuals
             }
         }
 
-        public IEnumerator DoLockAnim(string tag)
+        public Sequence DoLockAnim(string tag)
         {
             SoundManager.Instance.PlayRandomSFX(ESfx.FullMatched);
 
@@ -52,8 +52,7 @@ namespace Assets._Scripts.Visuals
             _border.transform.localScale = Vector3.zero;
 
             var sequence = DOTween.Sequence().SetLink(gameObject, LinkBehaviour.KillOnDisable);
-            sequence.AppendInterval(ParticleManager.Instance.GetParticleDuration(EParticle.Confetti))
-            .AppendCallback(() => ChangeLockColor(color))
+            sequence.AppendCallback(() => ChangeLockColor(color))
             // .Join(_border.transform.DOScale(initialScale, animDuration).SetEase(Ease.OutBack, overshoot: 2f))
             .Join(_border.transform.DOScaleX(initialScale.x, animDuration).SetEase(_borderScaleXCurve))
             .Join(_border.transform.DOScaleY(initialScale.y, animDuration).SetEase(_borderScaleYCurve))
@@ -66,7 +65,7 @@ namespace Assets._Scripts.Visuals
                 _tag.gameObject.SetActive(true);
             });
 
-            yield return sequence.WaitForCompletion();
+            return sequence;
         }
 
         private EColor GetRandomColor()

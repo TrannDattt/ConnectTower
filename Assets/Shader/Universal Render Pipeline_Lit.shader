@@ -75,17 +75,14 @@ Shader "Universal Render Pipeline/Lit" {
 // 	}
 
 	SubShader{
-		// 1. Đổi RenderType sang Transparent và cho vào hàng đợi Transparent
-		Tags { "RenderType"="Transparent" "Queue"="Transparent" }
+		Tags { "RenderType"="Opaque" "Queue"="Geometry" }
 		LOD 200
 
-		// 2. Tắt ghi vào Depth Buffer (ZWrite) để không che lấp các object phía sau
-		ZWrite Off
-		// 3. Thiết lập chế độ hòa trộn Alpha (Blend)
-		Blend SrcAlpha OneMinusSrcAlpha
+		ZWrite [_ZWrite]
+		Blend [_SrcBlend] [_DstBlend]
 
 		CGPROGRAM
-		#pragma surface surf Standard alpha:fade // 4. Thêm alpha:fade vào đây
+		#pragma surface surf Standard 
 		#pragma target 3.0
 
 		// Sử dụng các biến khớp với Properties

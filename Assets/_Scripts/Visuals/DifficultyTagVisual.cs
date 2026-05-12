@@ -24,6 +24,9 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Outline _textOutline;
 
         [SerializeField] private float _animDuration = 0.5f;
+        [SerializeField] private int _scaleFactor = 5;
+        [SerializeField] private float _scaleDuration = .5f;
+        [SerializeField] private float _stayDuration = .7f;
 
         private Vector3 _textInitialPos;
         private int _initialFontSize;
@@ -67,8 +70,6 @@ namespace Assets._Scripts.Visuals
             int scaleFactor = 5;
             int startSize = _initialFontSize * scaleFactor;
             int overshootSize = startSize + _initialFontSize;
-            float scaleDuration = .7f;
-            float stayDuration = .5f;
 
             _difficultyText.transform.position = pos;
             _difficultyText.fontSize = startSize;
@@ -81,14 +82,14 @@ namespace Assets._Scripts.Visuals
 
 
             // Scale and move text
-            sequence.Append(DOTween.To(() => _difficultyText.fontSize, x => ScaleText(x), overshootSize, scaleDuration * 0.5f).SetEase(Ease.InQuad))
-                    .Append(DOTween.To(() => _difficultyText.fontSize, x => ScaleText(x), startSize, scaleDuration * 0.5f).SetEase(Ease.OutQuad))
-                    .AppendInterval(stayDuration)
-                    .Append(_difficultyText.transform.DOMove(_textInitialPos, _animDuration).SetEase(Ease.OutCubic))
-                    .Join(DOTween.To(() => _difficultyText.fontSize, x => ScaleText(x), _initialFontSize, scaleDuration).SetEase(Ease.OutCubic));
-                    
-            // Show background
-            sequence.Append(DOTween.To(() => _transitionMask.fillAmount, x => _transitionMask.fillAmount = x, 1, 1f));
+            sequence.Append(DOTween.To(() => _difficultyText.fontSize, x => ScaleText(x), overshootSize, _scaleDuration * 0.5f).SetEase(Ease.InQuad))
+                                .Append(DOTween.To(() => _difficultyText.fontSize, x => ScaleText(x), startSize, _scaleDuration * 0.5f).SetEase(Ease.OutQuad))
+                                .AppendInterval(_stayDuration)
+                                .Append(_difficultyText.transform.DOMove(_textInitialPos, _animDuration).SetEase(Ease.OutCubic))
+                                .Join(DOTween.To(() => _difficultyText.fontSize, x => ScaleText(x), _initialFontSize, _scaleDuration).SetEase(Ease.OutCubic))
+                                .Append(DOTween.To(() => _transitionMask.fillAmount, x => _transitionMask.fillAmount = x, 1, 1f)) // Show background
+                                .SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable)
+                                .OnKill(() => ScaleText(_initialFontSize));
                     
             yield return sequence.WaitForCompletion();
         }

@@ -92,18 +92,7 @@ namespace Assets._Scripts.Managers
         private static void ChangeBoosterAmount(EBooster type, int amount)
         {
             if (amount == 0) return;
-            switch (type)
-            {
-                case EBooster.ExtraMove:
-                    CurUser.ExtraMoveCount += amount;
-                    break;
-                case EBooster.Shuffle:
-                    CurUser.ShuffleCount += amount;
-                    break;
-                case EBooster.Hint:
-                    CurUser.HintCount += amount;
-                    break;
-            }
+            CurUser.BoosterCount[type] += amount;
             EventBus<CurrencyChangedEvent>.Publish(new CurrencyChangedEvent
             {
                 CoinChanged = 0,
@@ -122,9 +111,7 @@ namespace Assets._Scripts.Managers
         public static bool TryLoseBooster(EBooster type, int amount)
         {
             int toDecrease = Mathf.Abs(amount);
-            if ((type == EBooster.ExtraMove && CurUser.ExtraMoveCount < toDecrease)
-                || (type == EBooster.Shuffle && CurUser.ShuffleCount < toDecrease)
-                || (type == EBooster.Hint && CurUser.HintCount < toDecrease))
+            if (CurUser.BoosterCount[type] < toDecrease)
             {
                 return false;
             }
@@ -140,9 +127,11 @@ namespace Assets._Scripts.Managers
             GainCoin(reward.CoinAmount);
             //TODO: Add logic with heart and Ads
             ChangeHeartCount(reward.HeartAmount);
-            GainBooster(EBooster.ExtraMove, reward.ExtraMoveAmount);
-            GainBooster(EBooster.Shuffle, reward.ShuffleAmount);
-            GainBooster(EBooster.Hint, reward.HintAmount);
+            foreach (var boosterReward in reward.BoosterRewards) 
+                GainBooster(boosterReward.Type, boosterReward.Amount);
+            // GainBooster(EBooster.ExtraMove, reward.ExtraMoveAmount);
+            // GainBooster(EBooster.Shuffle, reward.ShuffleAmount);
+            // GainBooster(EBooster.Hint, reward.HintAmount);
         }
 
         public static void UpdateProgress(int levelIndex, bool forceUpdate = false)

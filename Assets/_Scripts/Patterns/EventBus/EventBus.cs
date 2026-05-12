@@ -19,9 +19,10 @@ namespace Assets._Scripts.Patterns.EventBus
 
         public static void Publish(T @event)
         {
-            for(int i = 0; i < _eventBindings.Count; i++)
+            var bindingsSnapshot = _eventBindings.ToArray();
+            for(int i = 0; i < bindingsSnapshot.Length; i++)
             {
-                var binding = _eventBindings.ElementAt(i);
+                var binding = bindingsSnapshot[i];
                 binding.OnEvent.Invoke();
                 binding.OnArgEvent.Invoke(@event);
             }

@@ -21,10 +21,13 @@ namespace Assets._Scripts.Managers
 
             if (CheckCanPlayMechanicTutorial(EMechanic.FrozenBlock)) toPlay = ETutorial.FrozenBlock;
             if (CheckCanPlayBoosterTutorial(EBooster.Hint)) toPlay = ETutorial.Hint;
+            if (CheckCanPlayBoosterTutorial(EBooster.AddPillar)) toPlay = ETutorial.AddPillar;
             if (CheckCanPlayMechanicTutorial(EMechanic.CoveredPillar)) toPlay = ETutorial.CoveredPillar;
             if (CheckCanPlayBoosterTutorial(EBooster.Shuffle)) toPlay = ETutorial.Shuffle;
             if (CheckCanPlayMechanicTutorial(EMechanic.HiddenBlock)) toPlay = ETutorial.HiddenBlock;
             if (CheckCanPlayBoosterTutorial(EBooster.ExtraMove)) toPlay = ETutorial.ExtraMove;
+            if (LevelManager.PlayingLevel.Index == 2) toPlay = ETutorial.BaseGameplay2;
+            if (LevelManager.PlayingLevel.Index == 1) toPlay = ETutorial.BaseGameplay1;
 
             return toPlay != ETutorial.None;
         }
@@ -82,6 +85,7 @@ namespace Assets._Scripts.Managers
             EBooster.ExtraMove => ETutorial.ExtraMove,
             EBooster.Shuffle   => ETutorial.Shuffle,
             EBooster.Hint      => ETutorial.Hint,
+            EBooster.AddPillar => ETutorial.AddPillar,
             _                  => null
         };
 
@@ -98,6 +102,7 @@ namespace Assets._Scripts.Managers
             ETutorial.ExtraMove => EBooster.ExtraMove,
             ETutorial.Shuffle   => EBooster.Shuffle,
             ETutorial.Hint      => EBooster.Hint,
+            ETutorial.AddPillar => EBooster.AddPillar,
             _                   => null
         };
 

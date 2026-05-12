@@ -17,94 +17,90 @@ namespace Assets._Scripts.Visuals
     public class HintEffectVisual : BoosterButtonEffectVisual
     {
         [Header("Hint Curves")]
-        [SerializeField] private float _moveDur = 1f;
-        [SerializeField] private float _offsetX;
-        [SerializeField] private AnimationCurve _iconMoveXCurve;
-        [SerializeField] private float _offsetY;
-        [SerializeField] private AnimationCurve _iconMoveYCurve;
-
-        [SerializeField] private ParticleSystem _questionParticle;
-        [SerializeField] private float _scaleDur = .5f;
-        [SerializeField] private float _scaleFactor = 1.3f;
+        [SerializeField] private float _blockScaleDur = .5f;
+        [SerializeField] private float _blockScaleFactor = 1.3f;
         [SerializeField] private AnimationCurve _blockScaleCurve;
+
+        [SerializeField] private Canvas _canvas;
+        [SerializeField] private RectTransform _lensImageHolder;
+        [SerializeField] private Image[] _smallLensImages;
+        [SerializeField] private EParticle _smokeParticle;
+        [SerializeField] private float _lensMoveDur;
+        [SerializeField] private Vector2 _moveOffset;
+        [SerializeField] private AnimationCurve _moveXCurve;
+        [SerializeField] private AnimationCurve _moveYCurve;
+        [SerializeField] private float _lensScaleDur;
+        [SerializeField] private AnimationCurve _lensScaleCurve;
+        [SerializeField] private EParticle _hintParticle;
 
         public override Sequence DoBoosterAnim(BoosterRuntimeData data, Image target)
         {
             var hintData = data as HintBoosterRuntimeData;
-            var block1 = hintData?.RandomBlock;
-            var block2 = hintData?.SameBlock;
+            var groupBlock = hintData.GroupBlock;
+            var camera = _canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _canvas.worldCamera != null ? _canvas.worldCamera : Camera.main;
 
+            // TODO: Spawn lens with smoke effect, make lens move around block, then scale to 0 and do hint effect
             var sequence = DOTween.Sequence().SetTarget(this);
 
-            sequence.Append(DoMoveImageAnim(target));
-
             sequence.AppendCallback(() =>
             {
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < groupBlock.Length; i++)
                 {
-                    var it = ParticleManager.Instance.PlayParticle(EParticle.Hint, target.transform.position, target.transform.parent);
+                    RectTransformUtility.ScreenPointToLocalPointInRectangle(_lensImageHolder,
+                                                                            Camera.main.WorldToScreenPoint(groupBlock[i].transform.position),
+                                                                            camera,
+                                                                            out Vector2 localPos);
+                    _smallLensImages[i].rectTransform.anchoredPosition = localPos;
+                    var it = ParticleManager.Instance.PlayParticle(_smokeParticle, _smallLensImages[i].transform.position, _lensImageHolder);
                     BoosterController.Instance.StartCoroutine(it);
-                    var hintImg = it.Current;
-                    var hintTarget = i == 0 ? block1 : block2;
-                    var attractor = hintTarget.gameObject.AddComponent<UIParticleAttractor>();
-                    attractor.AddParticleSystem(hintImg);
-                    attractor.movement = UIParticleAttractor.Movement.Sphere;
-                    attractor.maxSpeed = .3f;
                 }
             })
-            .AppendInterval(ParticleManager.Instance.GetParticleDuration(EParticle.Hint) + .3f);
+            .AppendInterval(ParticleManager.Instance.GetParticleDuration(_smokeParticle) *.7f);
 
-            sequence.Append(block1.transform.DOScale(block1.transform.localScale * _scaleFactor, _scaleDur).SetEase(_blockScaleCurve))
-                    .Join(block2.transform.DOScale(block2.transform.localScale * _scaleFactor, _scaleDur).SetEase(_blockScaleCurve))
-                    .AppendCallback(() =>
-                    {
-                        var preBlockColor = BoardController.Instance.GetAllPillars()
-                                                                     .Where(p => !p.IsLocked() && ((IMechanicHandler)p).IsInMechanic())
-                                                                     .SelectMany(p => p.GetAllBlocks())
-                                                                     .Where(b => ((IMechanicHandler)b).IsInMechanic() && b.IsSameTag(block1))
-                                                                     .Select(b => b.GetComponent<BlockEffectVisual>().GetCurrentColor())
-                                                                     .FirstOrDefault(c => c != EColor.None);
+            var baseLenScale = _smallLensImages[0].transform.localScale;
+            var baseBlockScale = groupBlock[0].transform.localScale;
 
-                        var block1Visual = block1.GetComponent<BlockEffectVisual>();
-                        var block2Visual = block2.GetComponent<BlockEffectVisual>();
-                        var toChange = preBlockColor != EColor.None ? preBlockColor : block1Visual.GetCurrentColor() != EColor.None ?
-                                        block1Visual.GetCurrentColor() : block2Visual.GetCurrentColor() != EColor.None ?
-                                        block2Visual.GetCurrentColor() : GetRandomUnusedColor();
-
-                        block1Visual.ChangeColor(toChange);
-                        block2Visual.ChangeColor(toChange);
-                    });
-
-            sequence.OnComplete(() =>
+            void reset(Image lensImage, BlockController block)
             {
-                if (block1 != null && block1.TryGetComponent<UIParticleAttractor>(out var a1)) Destroy(a1);
-                if (block2 != null && block2.TryGetComponent<UIParticleAttractor>(out var a2)) Destroy(a2);
-            })
-            .OnKill(() =>
+                lensImage.transform.localScale = baseLenScale;
+                block.transform.localScale = baseBlockScale;
+            }
+
+            for (int i = 0; i < groupBlock.Length; i++)
             {
-                if (block1 != null && block1.TryGetComponent<UIParticleAttractor>(out var a1)) Destroy(a1);
-                if (block2 != null && block2.TryGetComponent<UIParticleAttractor>(out var a2)) Destroy(a2);
-            });
+                var image = _smallLensImages[i];
+                var block = groupBlock[i];
+                var hintSequence = DOTween.Sequence();
+                hintSequence.AppendCallback(() => image.gameObject.SetActive(true))
+                            .Append(image.rectTransform.DOAnchorPosX(_moveOffset.x, _lensMoveDur).SetEase(_moveXCurve).SetRelative())
+                            .Join(image.rectTransform.DOAnchorPosY(_moveOffset.y, _lensMoveDur).SetEase(_moveYCurve).SetRelative())
+                            .Append(image.transform.DOScale(Vector3.zero, _lensScaleDur).SetEase(_lensScaleCurve))
+                            .AppendCallback(() =>
+                            {
+                                Debug.Log("DO hint effect");
+                                BoosterController.Instance.StartCoroutine(ParticleManager.Instance.PlayParticle(_hintParticle, image.transform.position, _lensImageHolder));
+                            })
+                            .Append(block.transform.DOScale(_blockScaleFactor, _blockScaleDur).SetEase(_blockScaleCurve).SetRelative())
+                            .AppendCallback(() => image.gameObject.SetActive(false))
+                            .OnKill(() => reset(image, block))
+                            .OnComplete(() => reset(image, block));
 
-            return sequence;
-        }
-
-        private Sequence DoMoveImageAnim(Image target)
-        {
-            var sequence = DOTween.Sequence();
+                if (i == 0)
+                    sequence.Append(hintSequence);
+                else
+                    sequence.Join(hintSequence);
+            }
 
             sequence.AppendCallback(() =>
             {
-                _questionParticle.gameObject.SetActive(true);
-                _questionParticle.transform.position = target.transform.position;
-                _questionParticle.Play();
-            })
-            .Append(target.rectTransform.DOAnchorPosX(_offsetX, _moveDur).SetRelative().SetEase(_iconMoveXCurve))
-            .Join(target.rectTransform.DOAnchorPosY(_offsetY, _moveDur).SetRelative().SetEase(_iconMoveYCurve))
-            .AppendCallback(() =>
-            {
-                _questionParticle.Stop();
-                _questionParticle.gameObject.SetActive(false);
+                var preColor = groupBlock[0].GetComponent<BlockEffectVisual>().GetCurrentColor();
+                var toChange = preColor != EColor.None ? preColor : GetRandomUnusedColor();
+                for (int i = 0; i < groupBlock.Length; i++)
+                {
+                    var mechanicHandler = groupBlock[i] as IMechanicHandler;
+                    if (mechanicHandler.IsHidden()) mechanicHandler.ClearMechanic();
+                    groupBlock[i].GetComponent<BlockEffectVisual>().ChangeColor(toChange);
+                }
             });
 
             return sequence;

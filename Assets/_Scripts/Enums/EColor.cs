@@ -3,14 +3,15 @@ namespace Assets._Scripts.Enums
     public enum EColor
     {
         None,
-        Blue,
-        Cyan,
+        DarkBlue,
+        Orange,
         Green,
         Pink,
         Yellow,
         Red,
         Purple,
         Brown,
-        Ocean,
+        LightBlack,
+        Cyan
     }
 }

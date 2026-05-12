@@ -6,6 +6,8 @@ using UnityEngine;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Helpers;
 using System.Collections;
+using System.Collections.Generic;
+using System;
 
 namespace Assets._Scripts.Controllers
 {
@@ -15,50 +17,38 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private bool _ignoreMilestone;
 #endif
 
-        private ExtraMoveBoosterRuntimeData _extraMoveBoosterData;
-        private ShuffleBoosterRuntimeData _shuffleBoosterData;
-        private HintBoosterRuntimeData _hintBoosterData;
-
+        private Dictionary<EBooster, BoosterRuntimeData> _boosterDict = new();
         public bool IsInMechanic {get; private set;}
 
         public void InitData()
         {
-            _extraMoveBoosterData = new(!PlayerProgressHelper.CheckUnlockBooster(EBooster.ExtraMove), 5);
-            _shuffleBoosterData = new(!PlayerProgressHelper.CheckUnlockBooster(EBooster.Shuffle));
-            _hintBoosterData = new(!PlayerProgressHelper.CheckUnlockBooster(EBooster.Hint));
+            foreach(EBooster type in Enum.GetValues(typeof(EBooster)))
+            {
+                _boosterDict[type] = type switch
+                {
+                    EBooster.ExtraMove => new ExtraMoveBoosterRuntimeData(!PlayerProgressHelper.CheckUnlockBooster(EBooster.ExtraMove), 5),
+                    EBooster.Shuffle => new ShuffleBoosterRuntimeData(!PlayerProgressHelper.CheckUnlockBooster(EBooster.Shuffle)),
+                    EBooster.Hint => new HintBoosterRuntimeData(!PlayerProgressHelper.CheckUnlockBooster(EBooster.Hint)),
+                    EBooster.AddPillar => new AddPillarRuntimeData(!PlayerProgressHelper.CheckUnlockBooster(EBooster.AddPillar), 1),
+                    _ => null
+                };
+            }
         }
 
         public BoosterRuntimeData GetBoosterData(EBooster type)
         {
-            return type switch
-            {
-                EBooster.ExtraMove => _extraMoveBoosterData,
-                EBooster.Shuffle => _shuffleBoosterData,
-                EBooster.Hint => _hintBoosterData,
-                _ => null
-            };
+            return _boosterDict.ContainsKey(type) ? _boosterDict[type] : null;
         }
 
         public string GetBoosterDetail(EBooster type)
         {
-            return type switch
-            {
-                EBooster.ExtraMove => _extraMoveBoosterData.GetDetail(),
-                EBooster.Shuffle => _shuffleBoosterData.GetDetail(),
-                EBooster.Hint => _hintBoosterData.GetDetail(),
-                _ => null
-            };
+            var booster = GetBoosterData(type);
+            return booster != null ? booster.GetDetail() : "";
         }
 
         public int GetUseCount(EBooster type)
         {
-            return type switch
-            {
-                EBooster.ExtraMove => UserManager.CurUser.ExtraMoveCount,
-                EBooster.Shuffle => UserManager.CurUser.ShuffleCount,
-                EBooster.Hint => UserManager.CurUser.HintCount,
-                _ => -1
-            };
+            return UserManager.CurUser.BoosterCount[type];
         }
 
         public bool GetLockStatus(EBooster type)
@@ -66,27 +56,16 @@ namespace Assets._Scripts.Controllers
 #if UNITY_EDITOR
             if (_ignoreMilestone) return false;
 #endif
+            var booster = GetBoosterData(type);
+            if (booster == null) return false;
 
-            return type switch
-            {
-                EBooster.ExtraMove => _extraMoveBoosterData.LockStatus,
-                EBooster.Shuffle => _shuffleBoosterData.LockStatus,
-                EBooster.Hint => _hintBoosterData.LockStatus,
-                _ => true
-            };
+            return booster.LockStatus;
         }
 
         public void UseBooster(EBooster type)
         {
             UserManager.TryLoseBooster(type, 1);
-            BoosterRuntimeData data = type switch
-            {
-                EBooster.ExtraMove => _extraMoveBoosterData,
-                EBooster.Shuffle => _shuffleBoosterData,
-                EBooster.Hint => _hintBoosterData,
-                _ => null
-            };
-
+            var data = GetBoosterData(type);
             if (data == null) return;
             IsInMechanic = true;
             data.Do();

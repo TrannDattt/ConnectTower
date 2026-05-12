@@ -19,7 +19,7 @@ namespace Assets._Scripts.Tools
         public void InitBlock(int blockId, Sprite icon)
         {
             BlockId = blockId;
-            IconId = icon.name;
+            IconId = icon != null ? icon.name : "";
             if (_blockIdText != null)
             {
                 _blockIdText.text = $"{BlockId}";

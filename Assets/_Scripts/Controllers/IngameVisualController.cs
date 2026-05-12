@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
@@ -20,9 +21,7 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private LevelIndexVisual _levelIndex;
         [SerializeField] private CoinDisplayVisual _coinDisplay;
         [SerializeField] private GameButtonVisual _settingButton;
-        [SerializeField] private BoosterButtonVisual _extraMoveButton;
-        [SerializeField] private BoosterButtonVisual _shuffleButton;
-        [SerializeField] private BoosterButtonVisual _hintButton;
+        [SerializeField] private BoosterButtonVisual[] _boosterButtons;
 
 #if UNITY_EDITOR
         [Header("Editor")]
@@ -44,13 +43,11 @@ namespace Assets._Scripts.Controllers
             _coinDisplay.UpdateVisual();
             _levelIndex.SetLevelIndex(data.Index);
 
-            _extraMoveButton.ChangeLockStatus(BoosterController.Instance.GetLockStatus(EBooster.ExtraMove));
-            _shuffleButton.ChangeLockStatus(BoosterController.Instance.GetLockStatus(EBooster.Shuffle));
-            _hintButton.ChangeLockStatus(BoosterController.Instance.GetLockStatus(EBooster.Hint));
-
-            _extraMoveButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.ExtraMove));
-            _shuffleButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Shuffle));
-            _hintButton.SetCount(BoosterController.Instance.GetUseCount(EBooster.Hint));
+            foreach(var button in _boosterButtons)
+            {
+                button.ChangeLockStatus(BoosterController.Instance.GetLockStatus(button.BoosterKey));
+                button.SetCount(BoosterController.Instance.GetUseCount(button.BoosterKey));
+            }
         }
 
         public void PrepareIntroducingAnim()
@@ -83,14 +80,9 @@ namespace Assets._Scripts.Controllers
                 for (int i = 0; i < evt.BoostersChanged.Length; i++)
                 {
                     var type = evt.BoostersChanged[i].Item1;
-                    var (toUpdate, curAmount) = type switch
-                    {
-                        EBooster.ExtraMove => (_extraMoveButton, UserManager.CurUser.ExtraMoveCount),
-                        EBooster.Shuffle => (_shuffleButton, UserManager.CurUser.ShuffleCount),
-                        EBooster.Hint => (_hintButton, UserManager.CurUser.HintCount),
-                        _ => (null, 0)
-                    };
-                    if (toUpdate) toUpdate.SetCount(curAmount);
+                    var toUpdate = _boosterButtons.FirstOrDefault(b =>b.BoosterKey == type);
+                    if (toUpdate != null && toUpdate.gameObject.activeInHierarchy) 
+                        toUpdate.SetCount(UserManager.CurUser.BoosterCount[type]);
                 }
             });
             EventBus<CurrencyChangedEvent>.Subscribe(_currencyChangedBinding);
@@ -103,15 +95,21 @@ namespace Assets._Scripts.Controllers
                 StartCoroutine(PopupManager.Instance.ShowPopup(EPopup.Setting));
             });
 
-            void UseBoosterButton(BoosterButtonVisual button, EBooster type)
+            void UseBoosterButton(BoosterButtonVisual button)
             {
                 if (!GameManager.Instance.IsPlaying || BoosterController.Instance.IsInMechanic) return;
+                if (button.BoosterKey == EBooster.AddPillar && BoardController.Instance.GetPillarCount() == BoardController.MAX_PILLAR)
+                {
+                    button.ShowPopupText("Maximum pillar reached!");
+                    return;
+                }
 
+                var type = button.BoosterKey;
                 var boosterData = BoosterController.Instance.GetBoosterData(type);
                 if (boosterData == null) return;
                 
                 var useCount = BoosterController.Instance.GetUseCount(type);
-                if (button.IsLocked) button.ShowPopupText();
+                if (button.IsLocked) button.ShowPopupText("Locked!");
                 else if (useCount > 0)
                 {
                     BoosterController.Instance.UseBooster(type);
@@ -125,9 +123,12 @@ namespace Assets._Scripts.Controllers
                 }
             }
 
-            _extraMoveButton.OnClicked.AddListener(() => UseBoosterButton(_extraMoveButton, EBooster.ExtraMove));
-            _shuffleButton.OnClicked.AddListener(() => UseBoosterButton(_shuffleButton, EBooster.Shuffle));
-            _hintButton.OnClicked.AddListener(() => UseBoosterButton(_hintButton, EBooster.Hint));
+            foreach (var button in _boosterButtons)
+            {
+                button.OnClicked.AddListener(() => UseBoosterButton(button));
+            }
+            Debug.Log($"Init with {_boosterButtons.Length} boosters");
+
 #if UNITY_EDITOR
             if (_clearLevel != null)
                 _clearLevel.onClick.AddListener(() => GameManager.Instance.ClearedLevel(false));

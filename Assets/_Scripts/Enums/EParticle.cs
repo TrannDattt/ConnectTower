@@ -9,6 +9,7 @@ namespace Assets._Scripts.Enums
         Firefly,
         StarShower,
         Hint,
-        Compatible
+        Compatible,
+        Smoke2,
     }
 }

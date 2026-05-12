@@ -21,9 +21,7 @@ namespace Assets._Scripts.Datas
     {
         public int CoinAmount; 
         public int HeartAmount; 
-        public int ExtraMoveAmount;
-        public int ShuffleAmount;
-        public int HintAmount;
+        public BoosterReward[] BoosterRewards;
     }
 
     [Serializable]

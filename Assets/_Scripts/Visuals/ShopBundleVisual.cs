@@ -41,13 +41,14 @@ namespace Assets._Scripts.Visuals
             _coin?.SetVisual(coinIcon, bundleSO.Reward.CoinAmount);
 
             var extraMoveIcon = (Sprite)null;
-            _extraMove?.SetVisual(extraMoveIcon, bundleSO.Reward.ExtraMoveAmount);
+            _extraMove?.SetVisual(extraMoveIcon, bundleSO.Reward.BoosterRewards.FirstOrDefault(br => br.Type == EBooster.ExtraMove).Amount);
 
             var shuffleIcon = (Sprite)null;
-            _shuffle?.SetVisual(shuffleIcon, bundleSO.Reward.ShuffleAmount);
+            _shuffle?.SetVisual(shuffleIcon, bundleSO.Reward.BoosterRewards.FirstOrDefault(br => br.Type == EBooster.Shuffle).Amount);
 
             var hintIcon = (Sprite)null;
-            _hint?.SetVisual(hintIcon, bundleSO.Reward.HintAmount);
+            _hint?.SetVisual(hintIcon, bundleSO.Reward.BoosterRewards.FirstOrDefault(br => br.Type == EBooster.Hint).Amount);
+            // _hint?.SetVisual(hintIcon, bundleSO.Reward.BoosterRewards.FirstOrDefault(br => br.Type == EBooster.AddPillar).Amount);
 
             var heartIcon = (Sprite)null;
             _heart?.SetVisual(heartIcon, bundleSO.Reward.HeartAmount);

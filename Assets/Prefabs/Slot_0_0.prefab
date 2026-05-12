@@ -156,7 +156,7 @@ Transform:
   - {fileID: 7127242269635846485}
   - {fileID: 275244258675611639}
   m_Father: {fileID: 7240031575079354949}
-  m_LocalEulerAnglesHint: {x: 0, y: -0, z: -0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0}
 --- !u!1 &1968702346412116859
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,6 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52af13d98f6b9df4c899e1bd00e619b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Base>k__BackingField: {fileID: 2829487370996710752}
   <TopPillar>k__BackingField: {fileID: 5715652512435313638}
   <BlockContainer>k__BackingField: {fileID: 1148393687574252151}
   _blockScaleXCurve:
@@ -372,12 +373,12 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
+      inSlope: 2.1274428
+      outSlope: 2.1274428
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0.07208302
     - serializedVersion: 3
       time: 0.9
       value: 1.2
@@ -405,12 +406,12 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
+      inSlope: 3.4309366
+      outSlope: 3.4309366
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0.21221454
     - serializedVersion: 3
       time: 0.5
       value: 1.2

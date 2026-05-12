@@ -46,23 +46,23 @@
       ]
     },
     {
-      "Tag": "Mail Boxes",
+      "Tag": "Mailboxes",
       "BlockDatas": [
         {
           "Id": 8,
-          "IconId": "A_1_81"
+          "IconId": "A_4_125"
         },
         {
           "Id": 9,
-          "IconId": "A_2_115"
-        },
-        {
-          "Id": 10,
           "IconId": "A_3_33"
         },
         {
+          "Id": 10,
+          "IconId": "A_1_81"
+        },
+        {
           "Id": 11,
-          "IconId": "A_4_125"
+          "IconId": "A_2_115"
         }
       ]
     },

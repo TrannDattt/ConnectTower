@@ -18,9 +18,9 @@ MonoBehaviour:
   Reward:
     CoinAmount: 0
     HeartAmount: 0
-    ExtraMoveAmount: 0
-    ShuffleAmount: 3
-    HintAmount: 0
+    BoosterRewards:
+    - Type: 1
+      Amount: 3
   Detail: Use it to shuffle blocks
   Price: 1
   UseOnBought: 0

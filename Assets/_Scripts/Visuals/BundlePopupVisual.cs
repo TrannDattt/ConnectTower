@@ -44,7 +44,7 @@ namespace Assets._Scripts.Visuals
             {
                 if (!PurchaseService.TryPurchaseBundle(_thisBundle))
                 {
-                    PopupManager.Instance.ShowPopupText("Purchase failed", _buyButton.transform.position);
+                    _buyButton.ShowPopupText("Purchase failed");
                     return;
                 }
                 StartCoroutine(Hide());

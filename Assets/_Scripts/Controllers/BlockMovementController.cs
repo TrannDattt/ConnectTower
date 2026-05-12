@@ -199,23 +199,28 @@ namespace Assets._Scripts.Controllers
                 Sequence feedbackSequence = DOTween.Sequence();
                 if (matched.Count > blocks.Count)
                 {
-                    Debug.Log($"Match count: {matched.Count} => Matched");
+                    // Debug.Log($"Match count: {matched.Count} => Matched");
                     SoundManager.Instance.PlayChainedSFXs(ESfx.BlockMatched, matched.Count);
                     feedbackSequence.Append(DoMatchAnim(matched));
                 }
                 else if (groupStartIndex > 0)
                 {
-                    Debug.Log($"Match count: {matched.Count} => Not Matched");
+                    // Debug.Log($"Match count: {matched.Count} => Not Matched");
                     SoundManager.Instance.PlayRandomSFX(ESfx.BlockNotMatched);
                     feedbackSequence.Append(DoNotMatchAnim(matched));
                 }
                 
                 if (isLockedThisMove)
-                    feedbackSequence.OnComplete(() =>
+                {
+                    feedbackSequence.AppendCallback(() => Debug.Log($"Start lock at: {Time.time}"));
+                    feedbackSequence.Append(toPillar.gameObject.GetComponent<PillarEffectVisual>().DoLockAnim(blocks[0].Tag));
+                    feedbackSequence.JoinCallback(() =>
                     {
                         HapticManager.DoLightFeedback();
-                        CompleteCoroutine = StartCoroutine(toPillar.gameObject.GetComponent<PillarEffectVisual>().DoLockAnim(blocks[0].Tag));
                     });
+                }
+
+                feedbackSequence.Play();
             });
             return sequence.Play();
         }
@@ -257,6 +262,7 @@ namespace Assets._Scripts.Controllers
 
                 masterSequence.Insert(i * staggeredDelay, sequence);
             }
+            masterSequence.AppendCallback(() => Debug.Log($"Done match at: {Time.time}"));
 
             return masterSequence;
         }

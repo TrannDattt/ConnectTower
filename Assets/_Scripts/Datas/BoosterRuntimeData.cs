@@ -35,7 +35,7 @@ namespace Assets._Scripts.Datas
         public abstract string GetDetail();
     }
 
-#region ExtraMoveBooster
+#region EXTRA MOVE
     public class ExtraMoveBoosterRuntimeData : BoosterRuntimeData
     {
         private int _bonusAmount; 
@@ -59,7 +59,7 @@ namespace Assets._Scripts.Datas
     }
 #endregion
 
-#region ShuffleBooster
+#region SHUFFLE
     public class ShuffleBoosterRuntimeData : BoosterRuntimeData
     {
         public Dictionary<BlockController, (PillarController, PillarController)> AvailableBlocks {get; private set;}
@@ -169,11 +169,10 @@ namespace Assets._Scripts.Datas
     }
 #endregion
 
-#region HintBooster
+#region HINT
     public class HintBoosterRuntimeData : BoosterRuntimeData
     {
-        public BlockController RandomBlock {get; private set;}
-        public BlockController SameBlock {get; private set;}
+        public BlockController[] GroupBlock {get; private set;}
 
         public HintBoosterRuntimeData(bool lockStatus) : base(lockStatus)
         {
@@ -182,46 +181,33 @@ namespace Assets._Scripts.Datas
 
         public override void OnUsed()
         {
-            RandomBlock = null;
-            SameBlock = null;
+            GroupBlock = null;
 
             // 1. Lấy tất cả blocks hợp lệ từ các pillars hợp lệ (Flattening)
             var allValidBlocks = BoardController.Instance.GetAllPillars()
                 .Where(p => !p.IsLocked() && ((IMechanicHandler)p).IsInMechanic())
                 .SelectMany(p => p.GetAllBlocks())
-                .Where(b => ((IMechanicHandler)b).IsInMechanic())
                 .ToArray();
 
             // 2. Nhóm các block theo Tag và lọc ra các nhóm có từ 2 block trở lên (để đảm bảo có cặp)
             // Giả sử b.GetTag() hoặc một thuộc tính tương đương trả về giá trị để so sánh tag
-            var validPairs = allValidBlocks
+            var validGroups = allValidBlocks
                 .GroupBy(b => b.Tag)
                 .Where(g => g.Count() >= 2)
                 .ToArray();
 
-            if (validPairs.Length > 0)
+            var noneColorGroups = validGroups.Where(g => g.ToArray()[0].gameObject.GetComponent<BlockEffectVisual>().GetCurrentColor() == EColor.None).ToArray();
+
+            // 3. Chọn ngẫu nhiên một nhóm (tag) ngẫu nhiên trong nhóm đó
+            if (noneColorGroups.Length > 0)
             {
-                // 3. Chọn ngẫu nhiên một nhóm (tag), sau đó chọn 2 block ngẫu nhiên trong nhóm đó
-                var randomGroup = validPairs[Random.Range(0, validPairs.Length)].ToArray();
-                var nonColorBlocks = randomGroup.Where(b => b.GetComponent<BlockEffectVisual>().GetCurrentColor() != EColor.None).ToArray();
-
-                var preferredPool = nonColorBlocks.Length >= 2 ? nonColorBlocks : randomGroup;
-                RandomBlock = preferredPool[Random.Range(0, preferredPool.Length)];
-
-                var remainingPreferred = preferredPool.Where(b => b != RandomBlock).ToArray();
-                var fallbackPool = randomGroup.Where(b => b != RandomBlock).ToArray();
-                var secondaryPool = remainingPreferred.Length > 0 ? remainingPreferred : fallbackPool;
-
-                if (secondaryPool.Length == 0)
-                {
-                    Debug.LogWarning("Hint booster could not find a distinct matching block.");
-                    return;
-                }
-
-                SameBlock = secondaryPool[Random.Range(0, secondaryPool.Length)];
-
-                Debug.Log("Used Hint");
+                GroupBlock = noneColorGroups[Random.Range(0, noneColorGroups.Length)].ToArray();
             }
+            else if (validGroups.Length > 0)
+            {
+                GroupBlock = validGroups[Random.Range(0, validGroups.Length)].ToArray();
+            }
+            Debug.Log("Used Hint");
         }
 
         public override string GetDetail()
@@ -229,6 +215,30 @@ namespace Assets._Scripts.Datas
             return $"Use it to see {2} blocks with same tag";
         }
     }
+    #endregion
 
+    #region ADD PILLAR
+    public class AddPillarRuntimeData : BoosterRuntimeData
+    {
+        public PillarController NewPillar {get;private set;}
+        private int _bonusAmount;
+
+        public AddPillarRuntimeData(bool lockStatus, int bonusAmount) : base(lockStatus)
+        {
+            _bonusAmount = bonusAmount;
+            Key = EBooster.AddPillar;
+        }
+
+        public override void OnUsed()
+        {
+            BoardController.Instance.AddNewPillar(out var newPillar);
+            NewPillar = newPillar;
+        }
+
+        public override string GetDetail()
+        {
+            return $"Use it to get {_bonusAmount} extra moves";
+        }
+    }
     #endregion
 }

@@ -16,6 +16,7 @@ namespace Assets._Scripts.Controllers
     public class PillarController : MonoBehaviour, IMechanicHandler
     {
         public int Id {get; private set;} = -1;
+        [field: SerializeField] public Transform Base {get; private set;}
         [field: SerializeField] public Transform TopPillar {get; private set;}
         [field: SerializeField] public Transform BlockContainer {get; private set;}
         private List<BlockController> _blocks = new() {null, null, null, null}; // Block with index 0 is at the bottom, index 3 is at the top.

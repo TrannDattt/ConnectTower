@@ -8,15 +8,16 @@ namespace Assets._Scripts.Helpers
     {
         private static Dictionary<EColor, Color> _colorDict = new()
         {
-            {EColor.Blue, new Color(.33f, .46f, .79f)},
-            {EColor.Green, new Color(.39f, .76f, .34f)},
+            {EColor.DarkBlue, new Color(.33f, .46f, .79f)},
+            {EColor.Green, new Color(.29f, 1f, .21f)},
             {EColor.Red, new Color(.71f, .21f, .29f)},
             {EColor.Yellow, new Color(.77f, .77f, .22f)},
             {EColor.Pink, new Color(.8f, .33f, .7f)},
-            {EColor.Cyan, new Color(.3f, .7f, .67f)},
+            {EColor.Cyan, new Color(0f, 1f, .68f)},
             {EColor.Purple, new Color(.46f, .44f, .8f)},
             {EColor.Brown, new Color(.33f, .46f, .79f)},
-            {EColor.Ocean, new Color(.33f, .62f, .8f)},
+            {EColor.Orange, new Color(1f, .5f, 0f)},
+            {EColor.LightBlack, new Color(.36f, .36f, .36f)},
         };
 
         public static IEnumerable<EColor> GetAllColors() => _colorDict.Keys;

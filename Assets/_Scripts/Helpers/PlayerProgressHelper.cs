@@ -11,6 +11,7 @@ namespace Assets._Scripts.Helpers
         public const int ShuffleMilestone = 15;
         public const int CoveredPillarMilestone = 19;
         public const int HintMilestone = 25;
+        public const int AddPillarMilestone = 25;
         public const int FrozenBlockMilestone = 100;
 
         public static bool CheckUnlockBooster(EBooster type, bool exactLevel = false)
@@ -21,6 +22,7 @@ namespace Assets._Scripts.Helpers
                 EBooster.ExtraMove => ExtraMoveMilestone,
                 EBooster.Shuffle => ShuffleMilestone,
                 EBooster.Hint => HintMilestone,
+                EBooster.AddPillar => AddPillarMilestone,
                 _ => Mathf.Infinity
             };
             return exactLevel ? curIndex == toCompare : curIndex >= toCompare;

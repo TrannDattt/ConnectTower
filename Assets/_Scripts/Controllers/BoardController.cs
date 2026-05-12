@@ -16,6 +16,7 @@ namespace Assets._Scripts.Controllers
     public class BoardController : Singleton<BoardController>
     {
         [SerializeField] private Transform _boardTransform;
+        public Transform BoardTransform => _boardTransform;
         [SerializeField] private PillarController _pillarPrefab;
         [SerializeField] private BlockController _blockPrefab;
 
@@ -25,6 +26,8 @@ namespace Assets._Scripts.Controllers
 
         private Pooling<PillarController> _pillarPool = new();
         private Pooling<BlockController> _blockPool = new();
+
+        public static int MAX_PILLAR = 10;
 
         public void InitBoard(LevelRuntimeData levelData)
         {
@@ -106,15 +109,27 @@ namespace Assets._Scripts.Controllers
                     var pillar = toApply.GetPillarParent();
                     var mechanic = new FrozenBlockMechanic(data.MoveCountToRemove);
                     mechanic.Apply(toApply);
-                    mechanic.Apply(pillar);
+                    var cloneMechanic = new FrozenBlockMechanic(data.MoveCountToRemove);
+                    cloneMechanic.Apply(pillar);
                     _mechanics.Add(mechanic);
+                    _mechanics.Add(cloneMechanic);
                 };
             });
         }
 
+        public int GetPillarCount() => _pillars.Count;
+
         public List<PillarController> GetAllPillars()
         {
             return _pillars;
+        }
+
+        public void AddNewPillar(out PillarController toAdd)
+        {
+            toAdd = _pillarPool.GetItem();
+            toAdd.Init(new PillarData {Id = _pillars[^1].Id + 1, BlockIds = new()});
+            Debug.Log($"Add new pillar with id {toAdd.Id}");
+            _pillars.Add(toAdd);
         }
 
         public List<BlockController> GetAllBlocks()

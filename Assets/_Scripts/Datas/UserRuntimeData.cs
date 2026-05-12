@@ -15,10 +15,8 @@ namespace Assets._Scripts.Datas
         // PROGRESS
         public int CurrentLevelIndex;
         // BOOSTER
-        public int ExtraMoveCount;
-        public int ShuffleCount;
-        public int HintCount;
-        
+        [JsonProperty]
+        public Dictionary<EBooster, int> BoosterCount = new();
         // TUTORIAL
         [JsonProperty]
         private HashSet<ETutorial> _playedTutorials = new();
@@ -39,9 +37,10 @@ namespace Assets._Scripts.Datas
             CurrentLevelIndex = 1;
             HeartCount = 5;
 
-            ExtraMoveCount = 3;
-            ShuffleCount = 4;
-            HintCount = 5;
+            BoosterCount[EBooster.ExtraMove] = 3;
+            BoosterCount[EBooster.Shuffle] = 4;
+            BoosterCount[EBooster.Hint] = 5;
+            BoosterCount[EBooster.AddPillar] = 6;
         }
 
         // JsonConstructor for deserialization if needed, 

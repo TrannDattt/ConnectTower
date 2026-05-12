@@ -65,7 +65,7 @@ namespace Assets._Scripts.Visuals
                                                .Append(DoBoosterAnim(data, _iconImage))
                                                .JoinCallback(() => SoundManager.Instance.PlayRandomSFX(boosterSFX));
 
-                Sequence masterSequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.KillOnDisable).SetUpdate(true);
+                Sequence masterSequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.KillOnDisable);
                 masterSequence.AppendCallback(() => Debug.Log($"Start Booster Anim: {data.Key}"))
                 .Append(DoBeginAnim()).Append(mainSequence)
                 .Append(DoEndAnim()).AppendCallback(() => Debug.Log($"Finish Booster Anim: {data.Key}"))

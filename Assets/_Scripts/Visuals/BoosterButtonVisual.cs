@@ -12,6 +12,7 @@ namespace Assets._Scripts.Visuals
 {
     public partial class BoosterButtonVisual : GameButtonVisual
     {
+        [field: SerializeField] public EBooster BoosterKey {get; private set;}
         [SerializeField] private Image _lockImage;
         [SerializeField] private Image _lockBackground;
         [SerializeField] private GameObject _baseContent;
@@ -61,10 +62,5 @@ namespace Assets._Scripts.Visuals
         }
 
         public IEnumerator DoOnUseBoosterAnim(BoosterRuntimeData data, Vector3 gatherPoint) => _effectVisual?.DoOnUseBoosterAnim(data, gatherPoint);
-
-        public void ShowPopupText()
-        {
-            PopupManager.Instance.ShowPopupText("Locked", GetCenterPosition());
-        }
     }
 }

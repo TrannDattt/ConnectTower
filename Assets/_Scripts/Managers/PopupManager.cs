@@ -7,18 +7,22 @@ using Assets._Scripts.Enums;
 using Assets._Scripts.Patterns;
 using Assets._Scripts.Patterns.EventBus;
 using Assets._Scripts.Visuals;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Pool;
+using UnityEngine.UI;
 
 namespace Assets._Scripts.Managers
 {
     public class PopupManager : Singleton<PopupManager>
     {
         [SerializeField] private Canvas _canvas;
+        [SerializeField] private RectTransform _holder;
+        [SerializeField] private Image _ovelayPanel;
+        [SerializeField] private float _overlayFadeDur = .1f;
 
         [Header("Game Popup")]
-        [SerializeField] private GameObject _ovelayPanel;
         [SerializeField] private ShopVisualControl _shopPopup;
         [SerializeField] private NoAdsPopupVisual _noAdsPopup;
         [SerializeField] private BundlePurchasePopupVisual _getLifeBundle;
@@ -41,11 +45,29 @@ namespace Assets._Scripts.Managers
 
         private GamePopupVisual GetPopup(EPopup key) => _popupDict.TryGetValue(key, out var popup) ? popup : null;
 
+        private Tween ShowOverlay()
+        {
+            _ovelayPanel.gameObject.SetActive(true);
+            return _ovelayPanel.DOFade(.8f, _overlayFadeDur)
+                               .SetEase(Ease.OutQuad)
+                               .SetTarget(_ovelayPanel)
+                               .SetUpdate(true);
+        }
+
+        private Tween HideOverlay()
+        {
+            return _ovelayPanel.DOFade(0f, _overlayFadeDur)
+                               .SetEase(Ease.InQuad)
+                               .SetTarget(_ovelayPanel)
+                               .SetUpdate(true)
+                               .OnComplete(() => _ovelayPanel.gameObject.SetActive(false));
+        }
+
         public IEnumerator ShowPopup(EPopup key)
         {
             var popup = GetPopup(key);
             if (popup == null) yield break;
-            _ovelayPanel.SetActive(true);
+            ShowOverlay().Play();
             yield return popup.Show();
         }
 
@@ -57,22 +79,37 @@ namespace Assets._Scripts.Managers
                 Debug.Log("Wrong type of popup");
                 return;
             }
-            _ovelayPanel.SetActive(true);
+            ShowOverlay().Play();
             StartCoroutine(bundlePopup.ShowBundle(bundle));
         }
 
         public IEnumerator ShowTutorial(ETutorial type)
         {
             if (_tutorialPopup == null) yield break;
-            _ovelayPanel.SetActive(true);
+            ShowOverlay().Play();
             yield return _tutorialPopup.ShowTutorial(type);
         }
 
-        public void ShowPopupText(string content, Vector3 worldPos)
+        public bool IsFinishedTutorial() => _tutorialPopup == null || _tutorialPopup.IsFinished;
+
+        private Vector2 MapUIPosition(RectTransform sourceUI, RectTransform targetParent, Canvas canvasA, Canvas canvasB)
         {
-            // Chuyển worldPos từ Canvas nguồn sang toạ độ màn hình (screen space) 
-            // để popup có thể tự định vị đúng trong Canvas của chính nó
-            Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(_canvas.worldCamera, worldPos);
+            // 1. Lấy camera tương ứng với từng Canvas (Nếu là Overlay thì camera sẽ là null)
+            Camera camA = canvasA.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvasA.worldCamera;
+            Camera camB = canvasB.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvasB.worldCamera;
+
+            // 2. Chuyển vị trí của sourceUI sang tọa độ màn hình (Screen Point)
+            Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(camA, sourceUI.position);
+
+            // 3. Chuyển tọa độ màn hình đó về tọa độ Local của targetParent (Object cha ở Canvas B)
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(targetParent, screenPos, camB, out Vector2 localPos);
+
+            return localPos;
+        }
+
+        public void ShowPopupText(string content, RectTransform target, Canvas fromCanvas)
+        {
+            Vector2 screenPos = MapUIPosition(target, _holder, fromCanvas, _canvas);
             var popup = _textPopupPool.GetItem();
             popup.Pop(content, screenPos, () => _textPopupPool.ReturnItem(popup));
         }
@@ -82,7 +119,7 @@ namespace Assets._Scripts.Managers
             if (_confirmPopup == null) yield break;
             _confirmPopup.SetContent(content, confirmContent, declineContent);
             _confirmPopup.SetActions(onConfirmed, onDeclined);
-            _ovelayPanel.SetActive(true);
+            ShowOverlay().Play();
             yield return _confirmPopup.Show();
         }
 
@@ -115,7 +152,7 @@ namespace Assets._Scripts.Managers
             {
                 if (_popupDict.Values.All(p => !p.IsActive))
                 {
-                    _ovelayPanel.SetActive(false);
+                    HideOverlay().Play();
                     if (GameManager.Instance.CurState == EGameState.Pause) GameManager.Instance.ResumeGame();
                 }
             });

@@ -9,6 +9,8 @@ using Assets._Scripts.Visuals;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Playables;
+using Assets._Scripts.Services.APIs;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -147,7 +149,6 @@ namespace Assets._Scripts.Managers
 
         void Start()
         {
-
             // START GAME
             // StartLevel(LevelManager.Instance.GetCurrentLevel());
             //-----------
@@ -158,7 +159,13 @@ namespace Assets._Scripts.Managers
 #if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.P))
             {
-                EditorApplication.isPaused = !EditorApplication.isPaused;
+                Time.timeScale = Time.timeScale == .1f ? 1f : .1f;
+            }
+
+            if (Input.GetKeyDown(KeyCode.U))
+            {
+                Debug.Log("Try get data");
+                UserAPI.GetUser("CgqFZoKy6BV1BU0Ny7XN", out _);
             }
 #endif
             _gameSM.DoState();
@@ -320,6 +327,13 @@ namespace Assets._Scripts.Managers
                     _toPlay = ETutorial.None;
                 }
 
+                private IEnumerator PlayTutorial(ETutorial key)
+                {
+                    yield return PopupManager.Instance.ShowTutorial(key);
+                    yield return new WaitUntil(PopupManager.Instance.IsFinishedTutorial);
+                    FinishState();
+                }
+
                 public override void Enter()
                 {
                     base.Enter();
@@ -328,9 +342,9 @@ namespace Assets._Scripts.Managers
                     if(Instance.CurrentLevelData.Index == UserManager.CurUser.CurrentLevelIndex && TutorialManager.CheckCanPlayTutorial(out var toPlay))
                     {
                         _toPlay = toPlay;
-                        Instance.StartCoroutine(PopupManager.Instance.ShowTutorial(toPlay));
-                        _popupHiddenBinding = new(() => FinishState());
-                        EventBus<PopupHiddenEvent>.Subscribe(_popupHiddenBinding);
+                        Instance.StartCoroutine(PlayTutorial(toPlay));
+                        // _popupHiddenBinding = new(() => FinishState());
+                        // EventBus<PopupHiddenEvent>.Subscribe(_popupHiddenBinding);
                     }
                     else
                     {

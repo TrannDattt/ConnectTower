@@ -24,6 +24,7 @@ namespace Assets._Scripts.Visuals
         public UnityEvent OnClicked = new();
 
         private Vector3 _originalScale;
+        protected Canvas _parentCanvas;
 
         public void SetEnable(bool isEnabled) => _isEnabled = isEnabled;
 
@@ -34,6 +35,7 @@ namespace Assets._Scripts.Visuals
 
         protected virtual void Start()
         {
+            _parentCanvas = GetComponentInParent<Canvas>();
             if (_button != null)
             {
                 _button.onClick.AddListener(() => 
@@ -91,6 +93,11 @@ namespace Assets._Scripts.Visuals
         {
             if (_content == null) return;
             _content.text = content;
+        }
+
+        public void ShowPopupText(string message)
+        {
+            PopupManager.Instance.ShowPopupText(message, _buttonRt, _parentCanvas);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace Assets._Scripts.Managers
         [SerializeField] private BundleSO _ingameExtraMoveBundle;
         [SerializeField] private BundleSO _ingameShuffleBundle;
         [SerializeField] private BundleSO _ingameHintBundle;
+        [SerializeField] private BundleSO _ingameAddPillarBundle;
         [SerializeField] private BundleSO _reviveBundle;
 
         public BundleSO GetIngameBoosterBundle(EBooster type)
@@ -22,6 +23,7 @@ namespace Assets._Scripts.Managers
                 EBooster.ExtraMove => _ingameExtraMoveBundle,
                 EBooster.Shuffle => _ingameShuffleBundle,
                 EBooster.Hint => _ingameHintBundle,
+                EBooster.AddPillar => _ingameAddPillarBundle,
                 _ => null
             };
         }

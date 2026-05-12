@@ -47,7 +47,11 @@ namespace Assets._Scripts.Tools.UI
             foreach (var blockGroup in levelJSON.BlockGroups)
             {
                 var newGroup = Instantiate(_blockGroupPrefab, _blockGroupParent);
-                newGroup.InitGroup(blockGroup.BlockDatas[0].Id - 1, BlockGroupMapper.GetGroupData(blockGroup.Tag));
+                var groupData = BlockGroupMapper.GetGroupData(blockGroup.Tag);
+                if (groupData != null)
+                    newGroup.InitGroup(blockGroup.BlockDatas[0].Id - 1, groupData);
+                else
+                    newGroup.InitGroup(blockGroup.BlockDatas[0].Id - 1, blockGroup.Tag, new Sprite[] {null, null, null, null});
             }
             _lastBlockId = levelJSON.BlockGroups.SelectMany(g => g.BlockDatas).Count() > 0 ? levelJSON.BlockGroups.SelectMany(g => g.BlockDatas).Max(b => b.Id) : -1;
         }

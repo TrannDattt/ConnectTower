@@ -79,7 +79,7 @@ namespace Assets._Scripts.Visuals
             {
                 if (_levelData == null) 
                 {
-                    PopupManager.Instance.ShowPopupText("Coming soon", GetCenterPosition());
+                    ShowPopupText("Coming soon");
                     return;
                 }
                 
@@ -105,7 +105,7 @@ namespace Assets._Scripts.Visuals
                     });
                 }
                 else
-                    PopupManager.Instance.ShowPopupText("Locked", GetCenterPosition());
+                    ShowPopupText("Locked!");
             });
 
             base.Awake();
