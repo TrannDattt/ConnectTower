@@ -19,7 +19,7 @@ TagManager:
   - FrontUI
   - Block
   - Popup
-  - 
+  - TutorialObject
   - 
   - 
   - 
@@ -53,6 +53,9 @@ TagManager:
     locked: 0
   - name: Popup
     uniqueID: 210510021
+    locked: 0
+  - name: TutorialObject
+    uniqueID: 637013117
     locked: 0
   m_RenderingLayers:
   - Default

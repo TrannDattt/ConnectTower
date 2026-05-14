@@ -34,6 +34,7 @@ namespace Assets._Scripts.Managers
         [SerializeField] private SettingPopupVisual _settingPopup;
         [SerializeField] private TutorialPopupVisual _tutorialPopup;
         [SerializeField] private ConfirmationPopup _confirmPopup;
+        [SerializeField] private BoosterSelectPopupVisual _boosterSelectPopup;
 
         [Header("Text Popup")]
         [SerializeField] private TextPopupVisual _textPopupPrefab;
@@ -123,11 +124,23 @@ namespace Assets._Scripts.Managers
             yield return _confirmPopup.Show();
         }
 
+        public IEnumerator ShowBoosterSelectPopup(LevelRuntimeData levelData)
+        {
+            if (_boosterSelectPopup == null) yield break;
+            ShowOverlay().Play();
+            yield return _boosterSelectPopup.ShowSelector(levelData);
+        }
+
         public IEnumerator HidePopup(EPopup key)
         {
             var popup = GetPopup(key);
             if (popup == null) yield break;
             yield return popup.Hide();
+        }
+
+        public Tween ChangeOverlayOpacity(float value, float duration, Ease ease)
+        {
+            return _ovelayPanel.DOFade(value, duration).SetEase(ease);
         }
 
         protected override void Awake()
@@ -145,6 +158,7 @@ namespace Assets._Scripts.Managers
             _popupDict[EPopup.Booster] = _boosterPopup;
             _popupDict[EPopup.Tutorial] = _tutorialPopup;
             _popupDict[EPopup.Confirmation] = _confirmPopup;
+            _popupDict[EPopup.BoosterSelect] = _boosterSelectPopup;
 
             _textPopupPool = new(_textPopupPrefab, _initAmount, transform);
 

@@ -21,17 +21,25 @@ namespace TMPro.Examples
         void OnEnable()
         {
             if (m_TextComponent == null) m_TextComponent = GetComponent<TMP_Text>();
+
+            _curCurveScale = CurveScale;
+
+            if (Application.isPlaying && m_TextComponent != null)
+                DoWarpText();
         }
 
         void OnValidate()
         {
-            // Buộc cập nhật khi có thay đổi trong Inspector
-            if (m_TextComponent != null) DoWarpText();
+            _curCurveScale = CurveScale;
         }
 
         void Start()
         {
             _curCurveScale = CurveScale;
+
+            if (Application.isPlaying && m_TextComponent != null)
+                DoWarpText();
+
             // StartCoroutine(WarpTextCoroutine());
         }
 
@@ -56,15 +64,21 @@ namespace TMPro.Examples
 
         public void DoWarpText()
         {
+            if (m_TextComponent == null) return;
+
             m_TextComponent.ForceMeshUpdate();
 
             TMP_TextInfo textInfo = m_TextComponent.textInfo;
-            int characterCount = textInfo.characterCount;
+            if (textInfo == null || textInfo.meshInfo == null) return;
 
+            int characterCount = textInfo.characterCount;
             if (characterCount == 0) return;
 
             float boundsMinX = m_TextComponent.bounds.min.x;
             float boundsMaxX = m_TextComponent.bounds.max.x;
+            float boundsWidth = boundsMaxX - boundsMinX;
+
+            if (Mathf.Approximately(boundsWidth, 0f)) return;
 
             for (int i = 0; i < characterCount; i++)
             {
@@ -72,24 +86,27 @@ namespace TMPro.Examples
 
                 int vertexIndex = textInfo.characterInfo[i].vertexIndex;
                 int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
+
+                if (materialIndex < 0 || materialIndex >= textInfo.meshInfo.Length) continue;
+
                 Vector3[] vertices = textInfo.meshInfo[materialIndex].vertices;
+                if (vertices == null || vertexIndex + 3 >= vertices.Length) continue;
 
-                // Tâm điểm của ký tự
-                Vector2 charMidBaseline = new Vector2((vertices[vertexIndex + 0].x + vertices[vertexIndex + 2].x) / 2, textInfo.characterInfo[i].baseLine);
+                Vector2 charMidBaseline = new Vector2(
+                    (vertices[vertexIndex + 0].x + vertices[vertexIndex + 2].x) / 2,
+                    textInfo.characterInfo[i].baseLine);
 
-                // Dịch chuyển về tâm (0,0) để xoay
                 vertices[vertexIndex + 0] -= (Vector3)charMidBaseline;
                 vertices[vertexIndex + 1] -= (Vector3)charMidBaseline;
                 vertices[vertexIndex + 2] -= (Vector3)charMidBaseline;
                 vertices[vertexIndex + 3] -= (Vector3)charMidBaseline;
 
-                // Tính toán độ cong và góc xoay
-                float x0 = (charMidBaseline.x - boundsMinX) / (boundsMaxX - boundsMinX);
+                float x0 = (charMidBaseline.x - boundsMinX) / boundsWidth;
                 float x1 = x0 + 0.0001f;
                 float y0 = VertexCurve.Evaluate(x0) * _curCurveScale;
                 float y1 = VertexCurve.Evaluate(x1) * _curCurveScale;
 
-                float angle = Mathf.Atan2(y1 - y0, (x1 - x0) * (boundsMaxX - boundsMinX)) * Mathf.Rad2Deg;
+                float angle = Mathf.Atan2(y1 - y0, (x1 - x0) * boundsWidth) * Mathf.Rad2Deg;
                 Matrix4x4 matrix = Matrix4x4.TRS(new Vector3(0, y0, 0), Quaternion.Euler(0, 0, angle), Vector3.one);
 
                 vertices[vertexIndex + 0] = matrix.MultiplyPoint3x4(vertices[vertexIndex + 0]);
@@ -97,14 +114,13 @@ namespace TMPro.Examples
                 vertices[vertexIndex + 2] = matrix.MultiplyPoint3x4(vertices[vertexIndex + 2]);
                 vertices[vertexIndex + 3] = matrix.MultiplyPoint3x4(vertices[vertexIndex + 3]);
 
-                // Dịch ngược lại vị trí cũ cộng thêm độ lệch Y
                 vertices[vertexIndex + 0] += (Vector3)charMidBaseline;
                 vertices[vertexIndex + 1] += (Vector3)charMidBaseline;
                 vertices[vertexIndex + 2] += (Vector3)charMidBaseline;
                 vertices[vertexIndex + 3] += (Vector3)charMidBaseline;
             }
 
-            m_TextComponent.UpdateVertexData();
+            m_TextComponent.UpdateVertexData(TMP_VertexDataUpdateFlags.Vertices);
         }
     }
 }

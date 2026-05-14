@@ -23,27 +23,6 @@
           "IconId": "E_1_116"
         }
       ]
-    },
-    {
-      "Tag": "Houses",
-      "BlockDatas": [
-        {
-          "Id": 4,
-          "IconId": "B_3_44"
-        },
-        {
-          "Id": 5,
-          "IconId": "C_4_60"
-        },
-        {
-          "Id": 6,
-          "IconId": "D_3_22"
-        },
-        {
-          "Id": 7,
-          "IconId": "E_4_106"
-        }
-      ]
     }
   ],
   "PillarDatas": [
@@ -57,18 +36,9 @@
       ]
     },
     {
-      "Id": 1,
-      "BlockIds": [
-        7,
-        5,
-        4,
-        3
-      ]
-    },
-    {
       "Id": 2,
       "BlockIds": [
-        6,
+        3,
         -2,
         -3,
         -4

@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using Assets._Scripts.Controllers;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns;
+using Assets._Scripts.Visuals;
 using UnityEngine;
 
 namespace Assets._Scripts.Managers
@@ -12,6 +14,7 @@ namespace Assets._Scripts.Managers
     {
         private static Dictionary<ETutorial, TutorialSO> _tutorialDict = new();
         private static string _path = "Tutorials";
+        private static Dictionary<ETutorial, BaseTutorialControl> _tutorialBehaviorDict = new();
 
         // ─── PUBLIC API ───────────────────────────────────────────────
 
@@ -62,6 +65,11 @@ namespace Assets._Scripts.Managers
         {
             var key = MechanicToTutorial(type);
             if (key.HasValue) UserManager.MarkTutorialPlayed(key.Value);
+        }
+
+        public static bool GetBehavior(ETutorial key, out BaseTutorialControl behavior)
+        {
+            return _tutorialBehaviorDict.TryGetValue(key, out behavior);
         }
 
         // ─── PRIVATE CHECKS ───────────────────────────────────────────
@@ -124,6 +132,13 @@ namespace Assets._Scripts.Managers
             {
                 _tutorialDict[data.Type] = data;
             }
+            
+            var behaviors = Object.FindFirstObjectByType<TutorialPopupVisual>(FindObjectsInactive.Include).GetComponents<BaseTutorialControl>();
+            foreach(var behavior in behaviors)
+            {
+                _tutorialBehaviorDict[behavior.Type] = behavior;
+            }
+            Debug.Log($"Found {_tutorialBehaviorDict.Count} tutorials");
         }
     }
 }

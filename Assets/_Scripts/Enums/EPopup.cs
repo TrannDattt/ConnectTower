@@ -14,5 +14,6 @@ namespace Assets._Scripts.Enums
         Tutorial,
         Confirmation,
         GetLife,
+        BoosterSelect,
     }
 }

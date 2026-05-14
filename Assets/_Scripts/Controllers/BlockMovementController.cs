@@ -52,8 +52,9 @@ namespace Assets._Scripts.Controllers
 
             var sequence = DOTween.Sequence().SetTarget(pillar).SetId(tweenId);
             float tweenDuration = 0.3f;
-            float blockOffset = _blockHeight + .1f;
-            float firstOffset = _pickupHeight + pillar.GetBlockCount() * _blockHeight + blocks.Count * blockOffset - blockOffset / 2;
+            var scaleFactor = pillar.transform.localScale.x;
+            float blockOffset = (_blockHeight + .1f) * scaleFactor;
+            float firstOffset = (_pickupHeight + pillar.GetBlockCount() * _blockHeight) * scaleFactor + blocks.Count * blockOffset - blockOffset * .5f;
 
             Vector3[] targetPos = new Vector3[blocks.Count];
 
@@ -72,7 +73,8 @@ namespace Assets._Scripts.Controllers
 
         private void DoFloatAnim(BlockController target)
         {
-            var moveOffset = .12f;
+            var blockScaleFactor = target.GetPillarParent().transform.localScale.x;
+            var moveOffset = .12f * blockScaleFactor;
             var rotateOffset = 5f;
 
             string tweenId = "Float";
@@ -118,7 +120,8 @@ namespace Assets._Scripts.Controllers
             var tweenId = "Put back";
             var sequence = DOTween.Sequence().SetTarget(pillar).SetId(tweenId);
             float tweenDuration = 0.3f;
-            var firstPos = pillar.BlockContainer.transform.position + _blockHeight * (pillar.GetBlockCount() - blocks.Count) * Vector3.up;
+            var blockScaleFactor = pillar.transform.localScale.x;
+            var firstPos = pillar.BlockContainer.transform.position + _blockHeight * blockScaleFactor * (pillar.GetBlockCount() - blocks.Count) * Vector3.up;
 
             Vector3[] targetPos = new Vector3[blocks.Count];
             for (int i = 0; i < blocks.Count; i++)
@@ -153,6 +156,7 @@ namespace Assets._Scripts.Controllers
             float duration = 0.7f; 
             float staggeredDelay = 0.05f;
             float jumpPower = 1.5f;
+            var blockScaleFactor = toPillar.transform.localScale.x;
             
             int groupStartIndex = toPillar.GetBlockCount() - blocks.Count;
             bool isLockedThisMove = toPillar.IsLocked();
@@ -175,13 +179,13 @@ namespace Assets._Scripts.Controllers
             for (int i = 0; i < blocks.Count; i++)
             {
                 var targetSlot = groupStartIndex + i;
-                targetPos[i] = toPillar.BlockContainer.transform.position + Vector3.up * (targetSlot * _blockHeight);
+                targetPos[i] = toPillar.BlockContainer.transform.position + targetSlot * _blockHeight * blockScaleFactor * Vector3.up;
                 
                 Vector3 fromTop = fromPillar.TopPillar.position;
                 Vector3 toTop = toPillar.TopPillar.position;
 
                 // Xac dinh diem cao nhat giua 2 cọc de di chuyen cung
-                Vector3 midJump = (fromTop + toTop) / 2f + Vector3.up * jumpPower;
+                Vector3 midJump = (fromTop + toTop) / 2f + blockScaleFactor * jumpPower * Vector3.up;
                 
                 // Quy dao: Tu vi tri hien tai (dang hover) -> Qua dinh coc cu -> Qua diem giua -> Qua dinh coc moi -> Roi xuong
                 Vector3[] path = new Vector3[] { fromTop, midJump, toTop, targetPos[i] };
@@ -237,10 +241,12 @@ namespace Assets._Scripts.Controllers
             float jumpDuration = 0.25f;
             float rotateAngle = 7f;
             float staggeredDelay = 0.03f;
+            var blockScaleFactor = blocks[0].GetPillarParent().transform.localScale.x;
 
             for (int i = 0; i < blocks.Count; i++)
             {
                 var block = blocks[i];
+                block.transform.localScale = Vector3.one;
                 StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Compatible, block.transform.position));
                 block.transform.DOKill();
                 var sequence = DOTween.Sequence();
@@ -248,7 +254,7 @@ namespace Assets._Scripts.Controllers
                 Vector3 baseRotation = block.transform.localEulerAngles;
 
                 // Move Sequence (0.5s total)
-                sequence.Append(block.transform.DOMoveY(initialY + jumpHeight, jumpDuration).SetEase(Ease.OutQuad));
+                sequence.Append(block.transform.DOMoveY(initialY + jumpHeight * blockScaleFactor, jumpDuration).SetEase(Ease.OutQuad));
                 sequence.Append(block.transform.DOMoveY(initialY, jumpDuration).SetEase(Ease.InQuad));
 
                 // Connect 3 rotation movements to span the entire jump duration

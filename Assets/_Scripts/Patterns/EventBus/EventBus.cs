@@ -23,8 +23,9 @@ namespace Assets._Scripts.Patterns.EventBus
             for(int i = 0; i < bindingsSnapshot.Length; i++)
             {
                 var binding = bindingsSnapshot[i];
-                binding.OnEvent.Invoke();
-                binding.OnArgEvent.Invoke(@event);
+                if (binding == null) continue;
+                binding.OnEvent?.Invoke();
+                binding.OnArgEvent?.Invoke(@event);
             }
         }
 

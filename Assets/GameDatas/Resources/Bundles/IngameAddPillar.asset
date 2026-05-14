@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Datas.BundleSO
   Id: 6
   Name: Add Pillar
-  Icon: {fileID: 21300000, guid: a619f4fd3fd2cd24ab0693c478ea983c, type: 3}
+  Icon: {fileID: 21300000, guid: ddbb2781d9752cb43bdf99a170fb47e3, type: 3}
   Reward:
     CoinAmount: 0
     HeartAmount: 0

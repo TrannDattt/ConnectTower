@@ -10,6 +10,10 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Playables;
 using Assets._Scripts.Services.APIs;
+using System.Linq;
+using Assets._Scripts.Editor;
+
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -31,7 +35,6 @@ namespace Assets._Scripts.Managers
     public class GameManager : Singleton<GameManager>
     {
 #if UNITY_EDITOR
-        [field: SerializeField] public bool AllowPlayLockedLevel {get; private set;}
         public bool IsPlayTest {get; private set;} = false;
 #endif
 
@@ -45,6 +48,9 @@ namespace Assets._Scripts.Managers
                                  && _gameSM.TryGetState(EGameState.Playing, out var playState)
                                  && (playState as PlayingState).CurState == PlayingState.EPlayingSubState.WhilePlaying;
         private List<PillarController> _pillars = new();
+        public UnityAction SubcribeIngameEvent;
+        public UnityAction UnsubcribeIngameEvent;
+        public UnityAction<PillarController[]> SetInteractablePillarsEvent;
         private UnityAction _onGoToMenuCallback;
 
         public void GoToMenu(UnityAction onLoaded = null)
@@ -105,7 +111,7 @@ namespace Assets._Scripts.Managers
             IngameVisualController.Instance.UpdateProgressBar(CurrentLevelData.MatchedGroups, CurrentLevelData.TotalGroups);
         }
 
-        public void StartLevel(LevelRuntimeData levelData, bool isPlayTest = false)
+        public void StartLevel(LevelRuntimeData levelData, bool isPlayTest = false, params EBooster[] boosters)
         {
 #if UNITY_EDITOR
             IsPlayTest = isPlayTest;
@@ -122,7 +128,7 @@ namespace Assets._Scripts.Managers
             BoardController.Instance.InitBoard(CurrentLevelData);
             _pillars = BoardController.Instance.GetAllPillars();
             BoosterController.Instance.InitData();
-            IngameVisualController.Instance.InitVisual(CurrentLevelData);
+            IngameVisualController.Instance.InitVisual(CurrentLevelData, boosters);
             
             EventBus<StartLevelEvent>.Publish(new StartLevelEvent { LevelData = new(levelData) });
             
@@ -149,9 +155,17 @@ namespace Assets._Scripts.Managers
 
         void Start()
         {
-            // START GAME
-            // StartLevel(LevelManager.Instance.GetCurrentLevel());
-            //-----------
+            var curIndex = UserManager.CurUser.CurrentLevelIndex;
+#if UNITY_EDITOR
+            if (DebugFlagToggle.Instance.SkipFirstLevel)
+#endif
+                if (curIndex <= 5)
+                {
+                    GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
+                    {
+                        StartLevel(LevelManager.Instance.GetLevel(curIndex), false, EBooster.ExtraMove, EBooster.Shuffle, EBooster.Hint);
+                    });
+                }
         }
 
         void Update()
@@ -219,11 +233,12 @@ namespace Assets._Scripts.Managers
             public PlayingState(EGameState key) : base(key)
             {
                 var openingState = new OpeningState(EPlayingSubState.Opening);
-                var tutorialState = new TutorialState(EPlayingSubState.Tutorial);
+                // var tutorialState = new TutorialState(EPlayingSubState.Tutorial);
                 var whilePlayingState = new WhilePlayingState(EPlayingSubState.WhilePlaying);
                 var closingState = new ClosingState(EPlayingSubState.Closing);
 
-                _playingSM.AddStates(openingState, tutorialState, whilePlayingState, closingState);
+                _playingSM.AddStates(openingState, whilePlayingState, closingState);
+                // _playingSM.AddStates(openingState, tutorialState, whilePlayingState, closingState);
                 _playingSM.SetDefaultState(EPlayingSubState.WhilePlaying);
             }
 
@@ -309,7 +324,7 @@ namespace Assets._Scripts.Managers
 
                 public override EPlayingSubState GetNextState()
                 {
-                    if (IsFinished) return EPlayingSubState.Tutorial;
+                    if (IsFinished) return EPlayingSubState.WhilePlaying;
 
                     return base.GetNextState();
                 }
@@ -317,63 +332,65 @@ namespace Assets._Scripts.Managers
             #endregion
 
             #region Tutorial State
-            private class TutorialState : PlayingSubState
-            {
-                private ETutorial _toPlay;
-                private EventBinding<PopupHiddenEvent> _popupHiddenBinding;
+            // private class TutorialState : PlayingSubState
+            // {
+            //     private ETutorial _toPlay;
+            //     private EventBinding<PopupHiddenEvent> _popupHiddenBinding;
 
-                public TutorialState(EPlayingSubState key) : base(key)
-                {
-                    _toPlay = ETutorial.None;
-                }
+            //     public TutorialState(EPlayingSubState key) : base(key)
+            //     {
+            //         _toPlay = ETutorial.None;
+            //     }
 
-                private IEnumerator PlayTutorial(ETutorial key)
-                {
-                    yield return PopupManager.Instance.ShowTutorial(key);
-                    yield return new WaitUntil(PopupManager.Instance.IsFinishedTutorial);
-                    FinishState();
-                }
+            //     private IEnumerator PlayTutorial(ETutorial key)
+            //     {
+            //         yield return PopupManager.Instance.ShowTutorial(key);
+            //         yield return new WaitUntil(PopupManager.Instance.IsFinishedTutorial);
+            //         Instance.StartCoroutine(PopupManager.Instance.HidePopup(EPopup.Tutorial));
+            //         FinishState();
+            //     }
 
-                public override void Enter()
-                {
-                    base.Enter();
-                    // Debug.Log($"Play tutorial state: Progress => {Instance.CurrentLevelData.Index == UserManager.CurUser.CurrentLevelIndex} - Played before => {TutorialManager.CheckCanPlayTutorial(out var toPlay1)}");
+            //     public override void Enter()
+            //     {
+            //         base.Enter();
+            //         // Debug.Log($"Play tutorial state: Progress => {Instance.CurrentLevelData.Index == UserManager.CurUser.CurrentLevelIndex} - Played before => {TutorialManager.CheckCanPlayTutorial(out var toPlay1)}");
 
-                    if(Instance.CurrentLevelData.Index == UserManager.CurUser.CurrentLevelIndex && TutorialManager.CheckCanPlayTutorial(out var toPlay))
-                    {
-                        _toPlay = toPlay;
-                        Instance.StartCoroutine(PlayTutorial(toPlay));
-                        // _popupHiddenBinding = new(() => FinishState());
-                        // EventBus<PopupHiddenEvent>.Subscribe(_popupHiddenBinding);
-                    }
-                    else
-                    {
-                        FinishState();
-                    }
-                }
+            //         if(Instance.CurrentLevelData.Index == UserManager.CurUser.CurrentLevelIndex && TutorialManager.CheckCanPlayTutorial(out var toPlay))
+            //         {
+            //             _toPlay = toPlay;
+            //             Instance.StartCoroutine(PlayTutorial(toPlay));
+            //             Debug.Log($"Play tutorial {toPlay}");
+            //             // _popupHiddenBinding = new(() => FinishState());
+            //             // EventBus<PopupHiddenEvent>.Subscribe(_popupHiddenBinding);
+            //         }
+            //         else
+            //         {
+            //             FinishState();
+            //         }
+            //     }
 
-                public override void Do()
-                {
-                    base.Do();
+            //     public override void Do()
+            //     {
+            //         base.Do();
 
-                    // if (Input.GetKeyDown(KeyCode.F)) FinishState();
-                    //TODO: Finish after complete tutorial
-                }
+            //         // if (Input.GetKeyDown(KeyCode.F)) FinishState();
+            //         //TODO: Finish after complete tutorial
+            //     }
 
-                public override void Exit()
-                {
-                    if (_toPlay != ETutorial.None) UserManager.MarkTutorialPlayed(_toPlay);
-                    EventBus<PopupHiddenEvent>.Unsubscribe(_popupHiddenBinding);
-                    base.Exit();
-                }
+            //     public override void Exit()
+            //     {
+            //         if (_toPlay != ETutorial.None) UserManager.MarkTutorialPlayed(_toPlay);
+            //         EventBus<PopupHiddenEvent>.Unsubscribe(_popupHiddenBinding);
+            //         base.Exit();
+            //     }
 
-                public override EPlayingSubState GetNextState()
-                {
-                    if (IsFinished) return EPlayingSubState.WhilePlaying;
+            //     public override EPlayingSubState GetNextState()
+            //     {
+            //         if (IsFinished) return EPlayingSubState.WhilePlaying;
 
-                    return base.GetNextState();
-                }
-            }
+            //         return base.GetNextState();
+            //     }
+            // }
             #endregion
 
             #region While Playing State
@@ -386,13 +403,22 @@ namespace Assets._Scripts.Managers
                 private EventBinding<StartLevelEvent> _startLevelBinding;
                 private EventBinding<UseBoosterEvent> _useBoosterBinding;
 
+                private List<PillarController> _interactablePillars = new();
+
                 public WhilePlayingState(EPlayingSubState key) : base(key)
                 {
                     _startLevelBinding = new(() => _doRevive = false);
+                    Instance.SubcribeIngameEvent = SubcribeEvent;
+                    Instance.UnsubcribeIngameEvent = UnsubcribeEvent;
+                    Instance.SetInteractablePillarsEvent = SetInteractablePillars;
                     EventBus<StartLevelEvent>.Subscribe(_startLevelBinding);
                     _blocksMovedBinding = new(OnBlocksMoved);
                     _pillarFullMatchedBinding = new(Instance.OnPillarFullMatched);
-                    _pillarClickedBinding = new(BlockMovementController.Instance.OnPillarClicked);
+                    _pillarClickedBinding = new((e) =>
+                    {
+                        if (_interactablePillars.Contains(e.Pillar))
+                            BlockMovementController.Instance.OnPillarClicked(e);
+                    });
                     _useBoosterBinding = new(OnUseBooster);
                     EventBus<UseBoosterEvent>.Subscribe(_useBoosterBinding);
                 }
@@ -401,7 +427,13 @@ namespace Assets._Scripts.Managers
                 {
                     base.Enter();
                     
+                    SetInteractablePillars();
                     SubcribeEvent();
+
+                    if (LevelManager.PlayingLevel.Index == 1)
+                    {
+                        // Instance.StartCoroutine(PlayTutorial(ETutorial.BaseGameplay1));
+                    }
                 }
 
                 public override void Exit()
@@ -417,12 +449,32 @@ namespace Assets._Scripts.Managers
                     return base.GetNextState();
                 }
 
+                private IEnumerator PlayTutorial(ETutorial key)
+                {
+                    yield return PopupManager.Instance.ShowTutorial(key);
+                    yield return new WaitUntil(PopupManager.Instance.IsFinishedTutorial);
+                    Instance.StartCoroutine(PopupManager.Instance.HidePopup(EPopup.Tutorial));
+                    FinishState();
+                }
+
                 private void OnUseBooster(UseBoosterEvent @event) 
                 {
                     if (@event.IsFinish) 
                         SubcribeEvent(); 
                     else 
                         UnsubcribeEvent();
+                }
+
+                private void SetInteractablePillars(params PillarController[] pillars)
+                {
+                    if (pillars.Length == 0)
+                    {
+                        _interactablePillars = BoardController.Instance.GetAllPillars();
+                        return;
+                    }
+
+                    _interactablePillars.Clear();
+                    _interactablePillars.AddRange(pillars);
                 }
 
                 private void SubcribeEvent()

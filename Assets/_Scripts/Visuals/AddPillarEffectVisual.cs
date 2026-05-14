@@ -11,6 +11,7 @@ namespace Assets._Scripts.Visuals
     public class AddPillarEffectVisual : BoosterButtonEffectVisual
     {
         [Header("Add Pillar")]
+        [SerializeField] private float _pillarMoveDelay = .05f;
         [SerializeField] private float _repositionDur = .5f;
         [SerializeField] private float _pillarFallDelay = .2f;
         [SerializeField] private float _offsetY;
@@ -38,7 +39,7 @@ namespace Assets._Scripts.Visuals
             for (int i = 0; i < allPillars.Count; i++)
             {
                 if (allPillars[i] == pillar) continue;
-                sequence.Join(allPillars[i].transform.DOMove(allPositions[i], _repositionDur).SetEase(Ease.OutQuad));
+                sequence.Insert(_pillarMoveDelay * i, allPillars[i].transform.DOMove(allPositions[i], _repositionDur).SetEase(Ease.OutQuad));
             }
 
             // Prepare the new pillar

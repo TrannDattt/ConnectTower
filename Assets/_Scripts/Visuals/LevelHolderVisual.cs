@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Assets._Scripts.Editor;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns;
 using DG.Tweening;
@@ -15,9 +16,7 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private RectTransform _view;
         [SerializeField] private ParticleSystem _mysteryZone;
         [SerializeField] private AnimationCurve _scrollCurve;
-#if UNITY_EDITOR
-        [SerializeField] private bool _showAllLevel = true;
-#endif
+
         private float _buttonHeight;
         private Vector2 _detectRange;
 
@@ -46,7 +45,7 @@ namespace Assets._Scripts.Visuals
             var clearedLevel = allLevels.Where(l => l.Index < UserManager.CurUser.CurrentLevelIndex);
             int totalLevels;
 #if UNITY_EDITOR
-            if (_showAllLevel)
+            if (DebugFlagToggle.Instance.ShowAllLevel)
                 totalLevels = allLevels.Count;
             else
 #endif
@@ -138,7 +137,7 @@ namespace Assets._Scripts.Visuals
                 
                 int maxLevels;
 #if UNITY_EDITOR
-                if (_showAllLevel)
+                if (DebugFlagToggle.Instance.ShowAllLevel)
                     maxLevels = totalCount;
                 else
 #endif

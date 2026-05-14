@@ -144,5 +144,42 @@ namespace Assets._Scripts.Visuals
         {
             // _pillar.OnFullMatched.RemoveListener(DoLockAnim);
         }
+
+        public void ChangeLayer(LayerMask layerMask) => ChangeLayer(LayerMaskToLayerIndex(layerMask));
+
+        public void ChangeLayer(int layer)
+        {
+            if (layer < 0 || layer > 31)
+            {
+                Debug.LogWarning($"Invalid layer index: {layer}. Expected value in range [0..31].", this);
+                return;
+            }
+
+            SetLayerRecursively(transform, layer);
+        }
+
+        private static void SetLayerRecursively(Transform target, int layer)
+        {
+            target.gameObject.layer = layer;
+            foreach (Transform child in target)
+            {
+                SetLayerRecursively(child, layer);
+            }
+        }
+
+        private static int LayerMaskToLayerIndex(LayerMask mask)
+        {
+            var value = mask.value;
+            if (value <= 0 || (value & (value - 1)) != 0) return -1;
+
+            var index = 0;
+            while (value > 1)
+            {
+                value >>= 1;
+                index++;
+            }
+
+            return index;
+        }
     }
 }

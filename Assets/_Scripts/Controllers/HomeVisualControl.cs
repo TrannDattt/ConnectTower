@@ -1,4 +1,6 @@
+using Assets._Scripts.Editor;
 using Assets._Scripts.Enums;
+using Assets._Scripts.Helpers;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Visuals;
 using UnityEngine;
@@ -56,11 +58,19 @@ namespace Assets._Scripts.Controllers
                     return;
                 }
 
-                GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
-                {
-                    var curLevel = LevelManager.Instance.GetLatestNotClearedLevel();
-                    GameManager.Instance.StartLevel(curLevel);
-                });
+                bool showBoosterSelector = PlayerProgressHelper.CheckUnlockBooster(EBooster.Hint, passMilestone: true);
+#if UNITY_EDITOR
+                showBoosterSelector |= !DebugFlagToggle.Instance.SkipSelectBoosters;
+#endif
+
+                var toPlay = LevelManager.Instance.GetLatestNotClearedLevel();
+                if (showBoosterSelector)
+                    StartCoroutine(PopupManager.Instance.ShowBoosterSelectPopup(toPlay));
+                else
+                    GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
+                    {
+                        GameManager.Instance.StartLevel(toPlay, boosters: new EBooster[] {EBooster.ExtraMove, EBooster.Shuffle, EBooster.Hint});
+                    });
             });
         }
     }

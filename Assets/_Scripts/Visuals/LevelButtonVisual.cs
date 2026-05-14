@@ -1,5 +1,7 @@
 using Assets._Scripts.Datas;
+using Assets._Scripts.Editor;
 using Assets._Scripts.Enums;
+using Assets._Scripts.Helpers;
 using Assets._Scripts.Managers;
 using TMPro;
 using UnityEngine;
@@ -88,7 +90,7 @@ namespace Assets._Scripts.Visuals
 
                 var playable = !_levelData.IsLocked;
 #if UNITY_EDITOR
-                playable = playable || GameManager.Instance.AllowPlayLockedLevel;
+                playable = playable || DebugFlagToggle.Instance.AllowPlayLockedLevel;
 #endif
                 if (playable)
                 {
@@ -98,11 +100,17 @@ namespace Assets._Scripts.Visuals
                         return;
                     }
 
-                    GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
-                    {
-                        Debug.Log($"Start level {_levelData.Index} with clear state: {_levelData.IsCleared}");
-                        GameManager.Instance.StartLevel(_levelData);
-                    });
+                    bool showBoosterSelector = PlayerProgressHelper.CheckUnlockBooster(EBooster.Hint, passMilestone: true);
+#if UNITY_EDITOR
+                    showBoosterSelector |= !DebugFlagToggle.Instance.SkipSelectBoosters;
+#endif
+                    if (showBoosterSelector)
+                        StartCoroutine(PopupManager.Instance.ShowBoosterSelectPopup(_levelData));
+                    else
+                        GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
+                        {
+                            GameManager.Instance.StartLevel(_levelData, boosters: new EBooster[] { EBooster.ExtraMove, EBooster.Shuffle, EBooster.Hint });
+                        });
                 }
                 else
                     ShowPopupText("Locked!");

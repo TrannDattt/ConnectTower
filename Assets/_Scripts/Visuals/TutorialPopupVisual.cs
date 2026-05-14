@@ -4,7 +4,9 @@ using Assets._Scripts.Controllers;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
+using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Assets._Scripts.Visuals
@@ -20,20 +22,29 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private TutorialHandVisual _hand;
 
         public bool IsFinished => _activeTutorial == null || _activeTutorial.IsFinished;
-
-        private Dictionary<ETutorial, BaseTutorialControl> _tutorialBehaviorDict = new();
+        public bool IsDisplayingText => _tutorialCharacter != null && _tutorialCharacter.IsTalking;
         private BaseTutorialControl _activeTutorial = null;
 
         public IEnumerator ShowTutorial(ETutorial type)
         {
+            Debug.Log($"Show tutorial {type}");
             if (_activeTutorial != null) _activeTutorial.enabled = false;
-            _tutorialBehaviorDict.TryGetValue(type, out _activeTutorial);
-            if (_activeTutorial == null) yield break;
+            TutorialManager.GetBehavior(type, out _activeTutorial);
+            if (_activeTutorial == null)
+            {
+                Debug.LogError($"Cant find tutorial of type {type}");
+                yield break;
+            } 
             _activeTutorial.enabled = true;
 
             yield return Show();
 
             _activeTutorial.Begin();
+        }
+
+        public Tween MoveNarrator(Vector2 pos)
+        {
+            return _tutorialCharacter.Move(pos);
         }
 
         public override IEnumerator Show()
@@ -43,23 +54,19 @@ namespace Assets._Scripts.Visuals
             yield return DoShowAnim();
         }
 
-        public void DisplayText(string message)
+        public Sequence DisplayText(string message, UnityAction onFinishTalking = null)
         {
-            _tutorialCharacter.Talk(message);
+            return _tutorialCharacter.Talk(message, () => onFinishTalking?.Invoke());
+        }
+
+        public void CompleteDisplayedText()
+        {
+            _tutorialCharacter?.CompleteTalk();
         }
 
         public void FocusTo(GameObject target)
         {
             _tutorialCharacter.PointAt(target.transform.position);
-        }
-
-        void Awake()
-        {
-            var behaviors = GetComponents<BaseTutorialControl>();
-            foreach(var behavior in behaviors)
-            {
-                _tutorialBehaviorDict[behavior.Type] = behavior;
-            }
         }
     }
 }

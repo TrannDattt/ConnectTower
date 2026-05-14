@@ -14,7 +14,7 @@ namespace Assets._Scripts.Visuals
         public void UpdateToggle(bool isOn, bool isNotify = true)
         {
             _curState = isOn;
-            _disableIcon.gameObject.SetActive(!isOn);
+            if (_disableIcon != null) _disableIcon.gameObject.SetActive(!isOn);
             if (isNotify) OnToggled?.Invoke(_curState);
         }
 
@@ -23,6 +23,13 @@ namespace Assets._Scripts.Visuals
             base.Awake();
 
             OnClicked.AddListener(() => UpdateToggle(!_curState));
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            OnToggled.RemoveAllListeners();
         }
     }
 }

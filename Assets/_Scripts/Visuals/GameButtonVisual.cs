@@ -19,14 +19,14 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private float _pressedScale = 0.8f;
         [SerializeField] private float _duration = 0.1f;
 
-        private bool _isEnabled = true;
+        public bool IsEnabled {get; protected set;} = true;
         
         public UnityEvent OnClicked = new();
 
         private Vector3 _originalScale;
         protected Canvas _parentCanvas;
 
-        public void SetEnable(bool isEnabled) => _isEnabled = isEnabled;
+        public void SetEnable(bool isEnabled) => IsEnabled = isEnabled;
 
         protected virtual void Awake()
         {
@@ -42,7 +42,7 @@ namespace Assets._Scripts.Visuals
                 {
                     OnClicked.Invoke();
                     HapticManager.DoLightFeedback();
-                    SoundManager.Instance.PlayRandomSFX(_isEnabled ? ESfx.ButtonClicked : ESfx.DisabledButtonClicked);
+                    SoundManager.Instance.PlayRandomSFX(IsEnabled ? ESfx.ButtonClicked : ESfx.DisabledButtonClicked);
                 });
             }
         }
@@ -67,9 +67,11 @@ namespace Assets._Scripts.Visuals
 
         private void Scale(Vector3 targetScale)
         {
-            _buttonRt.DOKill();
+            DOTween.Kill(this, "Click");
             _buttonRt.DOScale(targetScale, _duration)
                      .SetEase(Ease.OutSine)
+                     .SetTarget(this)
+                     .SetId("Click")
                      .SetUpdate(true);
         }
 

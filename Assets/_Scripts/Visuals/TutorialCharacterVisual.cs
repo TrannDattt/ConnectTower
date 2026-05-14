@@ -7,7 +7,7 @@ namespace Assets._Scripts.Visuals
 {
     public class TutorialCharacterVisual : MonoBehaviour
     {
-        [SerializeField] private string TEST_dialogMessage = "Hello World!";
+        [SerializeField] private RectTransform _rt;
 
         // IDLING
         [SerializeField] private float _idleMoveDur;
@@ -20,8 +20,6 @@ namespace Assets._Scripts.Visuals
         // TALKING
         [SerializeField] private Text _dialogText;
         [SerializeField] private Image _dialogBox;
-        [SerializeField] private float _dialogBoxMinRatio = 1.5f;
-        [SerializeField] private float _dialogBoxMaxRatio = 4f;
         [SerializeField] private float _dialogDisplayDur = 1f;
         [SerializeField] private Vector3 _baseRotateOffset;
         [SerializeField] private AnimationCurve _baseRotateCurve;
@@ -33,6 +31,14 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private float _fadeDur;
         [SerializeField] private Image _characterBase;
         [SerializeField] private GameObject _characterHand;
+
+        // MOVING
+        [SerializeField] private float _moveDur;
+
+        public bool IsTalking { get; private set; }
+
+        private Tween _activeTalkTween;
+        private string _currentMessage;
 
         public Tween Show()
         {
@@ -47,7 +53,7 @@ namespace Assets._Scripts.Visuals
                                  });
         }
 
-        private Tween Hide()
+        public Tween Hide()
         {
             return _characterGroup.DOFade(0f, _fadeDur)
                                   .SetEase(Ease.InQuad)
@@ -67,10 +73,10 @@ namespace Assets._Scripts.Visuals
         private void Idle()
         {
             // Floating
-            DOTween.Kill(this);
-            var sequence = DOTween.Sequence().SetTarget(this).SetUpdate(true).SetRelative();
-            sequence.Append(_characterBase.rectTransform.DOAnchorPos(_idleMoveOffset, _idleMoveDur).SetEase(_idleMoveCurve).SetLoops(-1, LoopType.Yoyo));
-            sequence.Join(_characterBase.transform.DORotate(_idleRotateAngle, _idleRotateDur).SetEase(_idleRotateCurve).SetLoops(-1, LoopType.Restart));
+            // DOTween.Kill(this);
+            var sequence = DOTween.Sequence().SetTarget(this).SetUpdate(true).SetRelative().SetId("Idle");
+            sequence.Append(_characterBase.rectTransform.DOAnchorPos(_idleMoveOffset, _idleMoveDur).SetEase(_idleMoveCurve).SetLoops(int.MaxValue, LoopType.Yoyo));
+            sequence.Join(_characterBase.transform.DORotate(_idleRotateAngle, _idleRotateDur).SetEase(_idleRotateCurve).SetLoops(int.MaxValue, LoopType.Restart));
             sequence.OnKill(resetBase);
             void resetBase()
             {
@@ -80,9 +86,14 @@ namespace Assets._Scripts.Visuals
             sequence.Play();
         }
 
-        public void Talk(string message)
+        public Sequence Talk(string message, TweenCallback onFinishTalking = null)
         {
+            DOTween.Kill(this, "Talk");
+            DOTween.Kill(this, "Idle");
+
             // Setup
+            _currentMessage = message;
+            IsTalking = true;
             _dialogText.text = "";
             _dialogText.horizontalOverflow = HorizontalWrapMode.Wrap;
             _dialogText.verticalOverflow = VerticalWrapMode.Overflow;
@@ -91,8 +102,7 @@ namespace Assets._Scripts.Visuals
             LayoutRebuilder.ForceRebuildLayoutImmediate(_dialogBox.rectTransform);
             LayoutRebuilder.ForceRebuildLayoutImmediate(_dialogText.rectTransform);
 
-            DOTween.Kill(this);
-            var masterSequence = DOTween.Sequence().SetTarget(this).SetUpdate(true);
+            var masterSequence = DOTween.Sequence().SetTarget(this).SetUpdate(true).SetId("Talk");
 
             //TODO: Resize box and show text
             var dialogSequence = DOTween.Sequence();
@@ -111,7 +121,23 @@ namespace Assets._Scripts.Visuals
             baseSequence.Join(_characterBase.transform.DOLocalRotate(_baseRotateOffset, _dialogDisplayDur).SetEase(_baseRotateCurve).SetRelative());
             baseSequence.OnComplete(resetBase).OnKill(resetBase);
 
-            masterSequence.Append(dialogSequence).Join(baseSequence).Play();
+            _activeTalkTween = masterSequence.Append(dialogSequence)
+                                           .Join(baseSequence)
+                                           .OnComplete(() =>
+                                           {
+                                               IsTalking = false;
+                                               _activeTalkTween = null;
+                                               onFinishTalking?.Invoke();
+                                           })
+                                           .OnKill(() =>
+                                           {
+                                               _dialogText.text = _currentMessage;
+                                               IsTalking = false;
+                                               _activeTalkTween = null;
+                                               onFinishTalking?.Invoke();
+                                           });
+
+            return (Sequence)_activeTalkTween;
         }
 
         private void ResizeDialogBoxForMessage(string message)
@@ -129,55 +155,23 @@ namespace Assets._Scripts.Visuals
             var textInsetY = Mathf.Max(0f, -textRect.sizeDelta.y);
             var horizontalPadding = Mathf.Max(textInsetX, fontSize * 0.8f);
             var verticalPadding = Mathf.Max(textInsetY, fontSize * 0.4f);
-
             var baseSettings = _dialogText.GetGenerationSettings(Vector2.zero);
-            var effectiveLength = safeMessage.Length * (fontSize / 14f);
-            var ratioByLength = Mathf.Lerp(_dialogBoxMaxRatio, _dialogBoxMinRatio, Mathf.InverseLerp(18f, 120f, effectiveLength));
+            var canvas = _dialogBox.canvas != null ? _dialogBox.canvas.rootCanvas : null;
+            var canvasRect = canvas != null ? canvas.GetComponent<RectTransform>() : null;
+            var maxWidth = canvasRect != null ? canvasRect.rect.width * 0.6f : Screen.width * 0.6f;
+            maxWidth = Mathf.Max(maxWidth, fontSize * 8f);
 
-            var estimatedTextArea = Mathf.Max(fontSize * fontSize * effectiveLength * 0.45f, fontSize * fontSize * 8f);
-            var estimatedContentWidth = Mathf.Sqrt(estimatedTextArea * ratioByLength);
-            var width = Mathf.Max((horizontalPadding * 2f) + estimatedContentWidth, fontSize * 6f);
-            var height = Mathf.Max(width / ratioByLength, fontSize + (verticalPadding * 2f));
+            // Grow width first; when width reaches 60% screen/canvas, extra content grows height via wrapping.
+            var singleLineWidth = _dialogText.cachedTextGeneratorForLayout.GetPreferredWidth(safeMessage, baseSettings) / _dialogText.pixelsPerUnit;
+            var width = Mathf.Clamp(singleLineWidth + (horizontalPadding * 2f), fontSize * 6f, maxWidth);
 
             var wrappedSettings = baseSettings;
             wrappedSettings.horizontalOverflow = HorizontalWrapMode.Wrap;
             wrappedSettings.verticalOverflow = VerticalWrapMode.Overflow;
-
-            for (var i = 0; i < 3; i++)
-            {
-                var innerWidth = Mathf.Max(1f, width - (horizontalPadding * 2f));
-                wrappedSettings.generationExtents = new Vector2(innerWidth, 0f);
-
-                var preferredWrappedHeight = _dialogText.cachedTextGeneratorForLayout.GetPreferredHeight(safeMessage, wrappedSettings) / _dialogText.pixelsPerUnit;
-                var contentHeight = preferredWrappedHeight + (verticalPadding * 2f);
-                height = Mathf.Max(contentHeight, fontSize + (verticalPadding * 2f));
-
-                var currentRatio = width / Mathf.Max(1f, height);
-                if (currentRatio < _dialogBoxMinRatio)
-                {
-                    width = _dialogBoxMinRatio * height;
-                }
-                else if (currentRatio > _dialogBoxMaxRatio)
-                {
-                    width = _dialogBoxMaxRatio * height;
-                }
-            }
-
-            // Final shrink pass so the box does not keep unnecessary vertical space.
-            var finalInnerWidth = Mathf.Max(1f, width - (horizontalPadding * 2f));
-            wrappedSettings.generationExtents = new Vector2(finalInnerWidth, 0f);
-            var finalPreferredHeight = _dialogText.cachedTextGeneratorForLayout.GetPreferredHeight(safeMessage, wrappedSettings) / _dialogText.pixelsPerUnit;
-            height = Mathf.Max(finalPreferredHeight + (verticalPadding * 2f), fontSize + (verticalPadding * 2f));
-
-            var finalRatio = width / Mathf.Max(1f, height);
-            if (finalRatio < _dialogBoxMinRatio)
-            {
-                width = _dialogBoxMinRatio * height;
-            }
-            else if (finalRatio > _dialogBoxMaxRatio)
-            {
-                width = _dialogBoxMaxRatio * height;
-            }
+            var innerWidth = Mathf.Max(1f, width - (horizontalPadding * 2f));
+            wrappedSettings.generationExtents = new Vector2(innerWidth, 0f);
+            var preferredWrappedHeight = _dialogText.cachedTextGeneratorForLayout.GetPreferredHeight(safeMessage, wrappedSettings) / _dialogText.pixelsPerUnit;
+            var height = Mathf.Max(preferredWrappedHeight + (verticalPadding * 2f), fontSize + (verticalPadding * 2f));
 
             rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
             rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
@@ -186,8 +180,17 @@ namespace Assets._Scripts.Visuals
         public void StopTalk(bool disableDialog)
         {
             _dialogBox.gameObject.SetActive(!disableDialog);
-            DOTween.Kill(this);
+            DOTween.Kill(this, "Talk");
+            IsTalking = false;
+            _activeTalkTween = null;
             Idle();
+        }
+
+        public void CompleteTalk()
+        {
+            if (_activeTalkTween == null || !_activeTalkTween.IsActive() || !IsTalking) return;
+
+            _activeTalkTween.Kill();
         }
 
         public void PointAt(Vector3 worldPos)
@@ -208,6 +211,12 @@ namespace Assets._Scripts.Visuals
             //TODO: Retreat hand back to base
         }
 
+        public Tween Move(Vector2 anchorPos)
+        {
+            StopTalk(true);
+            return _rt.DOAnchorPos(anchorPos, _moveDur).SetEase(Ease.OutQuad).SetUpdate(true).SetTarget(this).SetId("Move");
+        }
+
         void Awake()
         {
             _baseOriginScale = _characterBase.transform.localScale;
@@ -226,11 +235,12 @@ namespace Assets._Scripts.Visuals
 
         void Update()
         {
+#if UNITY_EDITOR
             if (gameObject.activeInHierarchy)
             {
                 if (Input.GetKeyDown(KeyCode.T))
                 {
-                    Talk(TEST_dialogMessage);
+                    // Talk(TEST_dialogMessage).Play();
                 }
                 
                 if (Input.GetKeyDown(KeyCode.S))
@@ -238,6 +248,7 @@ namespace Assets._Scripts.Visuals
                     StopTalk(false);
                 }
             }
+#endif
         }
     }
 }

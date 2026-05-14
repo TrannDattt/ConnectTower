@@ -8,15 +8,12 @@ using Assets._Scripts.Helpers;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using Assets._Scripts.Editor;
 
 namespace Assets._Scripts.Controllers
 {
     public class BoosterController : Singleton<BoosterController>
     {
-#if UNITY_EDITOR
-        [SerializeField] private bool _ignoreMilestone;
-#endif
-
         private Dictionary<EBooster, BoosterRuntimeData> _boosterDict = new();
         public bool IsInMechanic {get; private set;}
 
@@ -54,7 +51,7 @@ namespace Assets._Scripts.Controllers
         public bool GetLockStatus(EBooster type)
         {
 #if UNITY_EDITOR
-            if (_ignoreMilestone) return false;
+            if (DebugFlagToggle.Instance.IgnoreMilestone) return false;
 #endif
             var booster = GetBoosterData(type);
             if (booster == null) return false;

@@ -35,7 +35,7 @@ namespace Assets._Scripts.Controllers
 
         private EventBinding<CurrencyChangedEvent> _currencyChangedBinding;
 
-        public void InitVisual(LevelRuntimeData data)
+        public void InitVisual(LevelRuntimeData data, params EBooster[] keys)
         {
             _moveCount.UpdateMoveCount(data.MoveCount);
             _progressBar.UpdateProgress(0, data.TotalGroups);
@@ -45,6 +45,7 @@ namespace Assets._Scripts.Controllers
 
             foreach(var button in _boosterButtons)
             {
+                button.gameObject.SetActive(keys.Contains(button.BoosterKey));
                 button.ChangeLockStatus(BoosterController.Instance.GetLockStatus(button.BoosterKey));
                 button.SetCount(BoosterController.Instance.GetUseCount(button.BoosterKey));
             }
@@ -125,6 +126,7 @@ namespace Assets._Scripts.Controllers
 
             foreach (var button in _boosterButtons)
             {
+                if (!button.gameObject.activeInHierarchy) continue;
                 button.OnClicked.AddListener(() => UseBoosterButton(button));
             }
             Debug.Log($"Init with {_boosterButtons.Length} boosters");
@@ -151,6 +153,7 @@ namespace Assets._Scripts.Controllers
         private void OnDisable()
         {
             EventBus<CurrencyChangedEvent>.Unsubscribe(_currencyChangedBinding);
+            for(int i = 0; i < _boosterButtons.Length; i++) _boosterButtons[i].gameObject.SetActive(false);
         }
     }
 }

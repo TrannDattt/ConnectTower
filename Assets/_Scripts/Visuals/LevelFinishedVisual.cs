@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Datas;
+using Assets._Scripts.Editor;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
 using DG.Tweening;
@@ -413,14 +414,48 @@ namespace Assets._Scripts.Visuals
             {
                 Debug.Log("Gained level reward");
                 StartCoroutine(Hide());
-                GameManager.Instance.GoToMenu(() => UserManager.GainCoin(_curLevelData.CoinReward));
+
+#if UNITY_EDITOR
+                if (DebugFlagToggle.Instance.SkipFirstLevel)
+                {
+#endif
+                    if (UserManager.CurUser.CurrentLevelIndex <= 5)
+                    {
+                        GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
+                        {
+                            UserManager.GainCoin(_curLevelData.CoinReward);
+                            GameManager.Instance.StartLevel(LevelManager.Instance.GetLevel(_curLevelData.Index + 1), false, EBooster.ExtraMove, EBooster.Shuffle, EBooster.Hint);
+                        });
+                    }
+                    else
+                        GameManager.Instance.GoToMenu(() => UserManager.GainCoin(_curLevelData.CoinReward));
+#if UNITY_EDITOR
+                }
+#endif
             });
             _adsRewardButton.OnClicked.AddListener(() => 
             {
                 //TODO: Ads Service
                 Debug.Log("Gained double reward via ads");
                 StartCoroutine(Hide());
-                GameManager.Instance.GoToMenu(() => UserManager.GainCoin(_curLevelData.CoinReward * 2));
+
+#if UNITY_EDITOR
+                if (DebugFlagToggle.Instance.SkipFirstLevel)
+                {
+#endif
+                    if (_curLevelData.Index + 1 <= 5)
+                    {
+                        GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
+                        {
+                            UserManager.GainCoin(_curLevelData.CoinReward * 2);
+                            GameManager.Instance.StartLevel(LevelManager.Instance.GetLevel(_curLevelData.Index + 1), false, EBooster.ExtraMove, EBooster.Shuffle, EBooster.Hint);
+                        });
+                    }
+                    else
+                        GameManager.Instance.GoToMenu(() => UserManager.GainCoin(_curLevelData.CoinReward * 2));
+#if UNITY_EDITOR
+                }
+#endif
             });
 
             base.Start();
