@@ -67,23 +67,23 @@
       ]
     },
     {
-      "Tag": "Donuts",
+      "Tag": "Gnomes",
       "BlockDatas": [
         {
           "Id": 12,
-          "IconId": "B_3_147"
+          "IconId": "A_3_3"
         },
         {
           "Id": 13,
-          "IconId": "A_1_110"
+          "IconId": "A_4_37"
         },
         {
           "Id": 14,
-          "IconId": "A_2_63"
+          "IconId": "A_2_148"
         },
         {
           "Id": 15,
-          "IconId": "A_3_126"
+          "IconId": "A_3_17"
         }
       ]
     },
@@ -188,5 +188,8 @@
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
   "CoinReward": 40
 }

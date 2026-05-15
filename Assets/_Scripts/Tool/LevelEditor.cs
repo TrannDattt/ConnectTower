@@ -33,7 +33,18 @@ namespace Assets._Scripts.Tools
             _levelData.Difficulty = difficulty;
         }
 
-        public static void AddBlockGroup(BlockGroup blockGroup)
+        public static int GetLastBlockId()
+        {
+            if (_levelData.BlockGroups.Count == 0) return -1;
+            return _levelData.BlockGroups.SelectMany(bg => bg.BlockDatas).Max(b => b.Id);
+        }
+
+        // public static void AddBlock(Block block)
+        // {
+        //     if (_levelData == null || block == null || BlockDatas.Select(bd => bd.Id).Contains(block.BlockId)) return;
+        // }
+
+        public static void AddBlockGroup(BlockGroup blockGroup, bool trackable)
         {
             if (_levelData == null) return;
             
@@ -46,15 +57,34 @@ namespace Assets._Scripts.Tools
             _levelData.BlockGroups.Add(new Datas.BlockGroup
             {
                 Tag = blockGroup.GroupTag,
-                BlockDatas = blockGroup.Blocks
+                BlockDatas = blockGroup.Blocks,
+                Trackable = trackable
             });
             // Debug.Log($"Added block group with tag: {blockGroup.GroupTag} with blocks: {string.Join(", ", blockGroup.Blocks.Select(b => b.Id))}");
+        }
+
+        public static void AddBlockGroup(Datas.BlockGroup blockGroup)
+        {
+            if (_levelData == null) return;
+            
+            var firstBlockId = blockGroup.BlockDatas[0].Id;
+            if (_levelData.BlockGroups.Any(bg => bg.BlockDatas.Any(b => b.Id == firstBlockId)))
+            {
+                return;
+            }
+
+            _levelData.BlockGroups.Add(blockGroup);
         }
 
         public static void RemoveBlockGroup(BlockGroup blockGroup)
         {
             var firstBlockId = blockGroup.Blocks[0].Id;
-            var toRemove = _levelData.BlockGroups.FirstOrDefault(bg => bg.BlockDatas.Any(b => b.Id == firstBlockId));
+            RemoveBlockGroup(firstBlockId);
+        }
+
+        public static void RemoveBlockGroup(int blockId)
+        {
+            var toRemove = _levelData.BlockGroups.FirstOrDefault(bg => bg.BlockDatas.Any(b => b.Id == blockId));
             if (toRemove != null) _levelData.BlockGroups.Remove(toRemove);
         }
 
@@ -163,6 +193,24 @@ namespace Assets._Scripts.Tools
                         });
                     }
                     return true;
+                case EMechanic.ScratchBlock:
+                    _levelData.ScratchedBlockDatas.BlockIds.Add(id);
+                    return true;
+                case EMechanic.StickyBlock:
+                    _levelData.StickyBlockDatas.BlockIds.Add(id);
+                    return true;
+                case EMechanic.TrapPillar:
+                    var trapPillarData = mechanicData as TrapPillarMechanic;
+                    var existingTP = _levelData.TrapPillarDatas.FirstOrDefault(tpd => tpd.PillarId == id);
+                    if (existingTP != null)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        _levelData.TrapPillarDatas.Add(new TrapPillarData {PillarId = id, IsTrap = trapPillarData.IsTrap});
+                    }
+                    return true;
             }
             return false;
         }
@@ -187,6 +235,17 @@ namespace Assets._Scripts.Tools
                     {
                         _levelData.FrozenBlockDatas.Remove(frozenToRemove);
                     }
+                    break;
+                case EMechanic.ScratchBlock:
+                    _levelData.ScratchedBlockDatas.BlockIds.Remove(id);
+                    break;
+                case EMechanic.StickyBlock:
+                    _levelData.StickyBlockDatas.BlockIds.Remove(id);
+                    break;
+                case EMechanic.TrapPillar:
+                    var trapToRemove = _levelData.TrapPillarDatas.FirstOrDefault(tpd => tpd.PillarId == id);
+                    if (trapToRemove != null)
+                        _levelData.TrapPillarDatas.Remove(trapToRemove);
                     break;
             }
         }

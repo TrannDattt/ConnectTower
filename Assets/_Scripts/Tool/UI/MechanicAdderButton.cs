@@ -33,7 +33,7 @@ namespace Assets._Scripts.Tools.UI
 
         protected virtual void ResetInputs()
         {
-            _idInput.text = "";
+            if (_idInput != null) _idInput.text = "";
         }
 
         protected int GetInputId()
@@ -46,7 +46,7 @@ namespace Assets._Scripts.Tools.UI
                 return -1;
             }
 
-            if (_mechanicType == EMechanic.CoveredPillar)
+            if (_mechanicType == EMechanic.CoveredPillar || _mechanicType == EMechanic.TrapPillar)
             {
                 if (!LevelEditor.PillarDatas.Any(pillar => pillar.Id == id))
                 {
@@ -101,7 +101,7 @@ namespace Assets._Scripts.Tools.UI
             ResetInputs();
         }
 
-        private void RemoveId(int id)
+        protected virtual void RemoveId(int id)
         {
             LevelEditor.RemoveMechanic(id, _mechanicType);
         }

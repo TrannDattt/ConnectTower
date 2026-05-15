@@ -33,10 +33,11 @@ namespace Assets._Scripts.Tools
                 return blockDatas; 
             }
         }
+        // public bool Trackable {get; private set;} = true;
 
         [field: SerializeField] public UnityEvent OnGroupRemoved { get; private set; } = new();
 
-        public void InitGroup(int lastBlockId, string tag, Sprite[] icons)
+        public void InitGroup(int startId, string tag, Sprite[] icons)
         {
             GroupTag = tag;
             var option = _groupNameDD.options.FirstOrDefault(o => string.Equals(o.text, tag));
@@ -54,16 +55,16 @@ namespace Assets._Scripts.Tools
 
             for (int i = 0; i < _blocks.Length; i++)
             {
-                _blocks[i].InitBlock(lastBlockId + 1, icons[i]);
-                lastBlockId++;
+                _blocks[i].InitBlock(startId + i, icons[i]);
                 // Debug.Log($"Init block with id: {_blocks[i].BlockId}");
             }
         }
 
-        public void InitGroup(int lastBlockId, BlockGroupSO data)
+        public void InitGroup(int startId, BlockGroupSO data)
         {
             data = data != null ? data : BlockGroupMapper.GetGroupData(_groupNameDD.options[0].text);
             var tag = data.Name;
+            // Trackable = trackable;
             var icons = new List<Sprite>(data.Icons);
             GroupTag = tag;
             var option = _groupNameDD.options.FirstOrDefault(o => string.Equals(o.text, tag));
@@ -84,12 +85,11 @@ namespace Assets._Scripts.Tools
                 if (icons == null || icons.Count == 0) break;
                 var randomIcon = icons[Random.Range(0, icons.Count)];
                 icons.Remove(randomIcon);
-                _blocks[i].InitBlock(lastBlockId + 1, randomIcon);
-                lastBlockId++;
+                _blocks[i].InitBlock(startId + i, randomIcon);
                 // Debug.Log($"Init block with id: {_blocks[i].BlockId}");
             }
 
-            if (data == null) LevelEditor.AddBlockGroup(this);
+            if (data == null) LevelEditor.AddBlockGroup(this, true);
         }
 
         public void RemoveGroup()
@@ -146,7 +146,8 @@ namespace Assets._Scripts.Tools
                 LevelEditor.UpdateBlockGroupData(this, new Datas.BlockGroup
                 {
                     Tag = tag,
-                    BlockDatas = Blocks
+                    BlockDatas = Blocks,
+                    Trackable = true
                 });
                 EventBus<IEditorChangeBlockGroup>.Publish(new IEditorChangeBlockGroup { Base = _groupNameDD, From = GroupTag, To = tag });
                 GroupTag = tag;

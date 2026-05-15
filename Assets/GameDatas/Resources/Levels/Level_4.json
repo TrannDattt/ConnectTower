@@ -4,23 +4,23 @@
   "MoveLimit": 14,
   "BlockGroups": [
     {
-      "Tag": "Fire Hydrants",
+      "Tag": "Fire Crackers",
       "BlockDatas": [
         {
           "Id": 0,
-          "IconId": "A_2_27"
-        },
-        {
-          "Id": 1,
-          "IconId": "A_1_85"
-        },
-        {
-          "Id": 2,
           "IconId": "A_3_106"
         },
         {
-          "Id": 3,
+          "Id": 1,
           "IconId": "A_4_13"
+        },
+        {
+          "Id": 2,
+          "IconId": "A_2_27"
+        },
+        {
+          "Id": 3,
+          "IconId": "A_1_85"
         }
       ]
     },
@@ -123,5 +123,11 @@
       ]
     }
   ],
+  "ScratchedBlockDatas": {
+    "BlockIds": [
+      0,
+      2
+    ]
+  },
   "CoinReward": 40
 }

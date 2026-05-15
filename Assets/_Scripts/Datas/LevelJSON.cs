@@ -14,6 +14,9 @@ namespace Assets._Scripts.Datas
         public HiddenBlockData HiddenBlockDatas;
         public List<CoveredPillarData> CoveredPillarDatas;
         public List<FrozenBlockData> FrozenBlockDatas;
+        public ScratchBlockData ScratchedBlockDatas;
+        public StickyBlockData StickyBlockDatas;
+        public List<TrapPillarData> TrapPillarDatas;
         public int CoinReward = 20;
 
         public LevelJSON()
@@ -22,12 +25,15 @@ namespace Assets._Scripts.Datas
             Difficulty = EDifficulty.Normal;
             MoveLimit = 0;
 
-            BlockGroups = new List<BlockGroup>();
-            PillarDatas = new List<PillarData>();
+            BlockGroups = new();
+            PillarDatas = new();
 
-            HiddenBlockDatas = new HiddenBlockData();
-            CoveredPillarDatas = new List<CoveredPillarData>();
-            FrozenBlockDatas = new List<FrozenBlockData>();
+            HiddenBlockDatas = new();
+            CoveredPillarDatas = new();
+            FrozenBlockDatas = new();
+            ScratchedBlockDatas = new();
+            StickyBlockDatas = new();
+            TrapPillarDatas = new();
             
             CoinReward = 0;
         }
@@ -38,6 +44,7 @@ namespace Assets._Scripts.Datas
     {
         public string Tag;
         public List<BlockData> BlockDatas = new();
+        public bool Trackable = true;
     }
 
     [Serializable]
@@ -61,6 +68,18 @@ namespace Assets._Scripts.Datas
     }
 
     [Serializable]
+    public class ScratchBlockData
+    {
+        public HashSet<int> BlockIds = new();
+    }
+
+    [Serializable]
+    public class StickyBlockData
+    {
+        public HashSet<int> BlockIds = new();
+    }
+
+    [Serializable]
     public class CoveredPillarData
     {
         public string TagToOpen;
@@ -72,5 +91,12 @@ namespace Assets._Scripts.Datas
     {
         public int MoveCountToRemove;
         public HashSet<int> BlockIds = new();
+    }
+
+    [Serializable]
+    public class TrapPillarData
+    {
+        public int PillarId;
+        public bool IsTrap;
     }
 }

@@ -1,8 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Interfaces;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns.EventBus;
+using Assets._Scripts.Visuals;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,7 +16,7 @@ namespace Assets._Scripts.Datas
     {
         public EMechanic Key {get; protected set;}
         protected IMechanicHandler _target;
-        private UnityAction<BlocksMovedEvent> OnCheckCondicion;
+        protected UnityAction<BlocksMovedEvent> OnCheckCondicion;
 
         protected EventBinding<BlocksMovedEvent> _blocksMovedBinding;
 
@@ -50,10 +54,13 @@ namespace Assets._Scripts.Datas
             _target = null;
             
             EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
-
             if (!doEffect) return;
+            DoMechanicSFX(Key);
+        }
 
-            var mechanicSFX = Key switch
+        protected void DoMechanicSFX(EMechanic key)
+        {
+            var mechanicSFX = key switch
             {
                 EMechanic.HiddenBlock => ESfx.HiddenBlockExit,
                 EMechanic.CoveredPillar => ESfx.CoveredPillarExit,
@@ -85,7 +92,7 @@ namespace Assets._Scripts.Datas
     {
         public string TagToOpen {get; private set;}
 
-        private UnityAction<PillarFullMatchedEvent> OnCheckCondicion;
+        private UnityAction<PillarFullMatchedEvent> OnCheckCoveredPillarCondicion;
         private EventBinding<PillarFullMatchedEvent> _pillarFullMatchedBinding;
 
         public CoveredPillarMechanic(string tagToOpen) : base()
@@ -93,7 +100,7 @@ namespace Assets._Scripts.Datas
             Key = EMechanic.CoveredPillar;
             TagToOpen = tagToOpen;
 
-            OnCheckCondicion = (evt) =>
+            OnCheckCoveredPillarCondicion = (evt) =>
             {
                 if (CheckRemoveCondition(evt.Tag))
                 {
@@ -101,7 +108,8 @@ namespace Assets._Scripts.Datas
                 }
             };
 
-            _pillarFullMatchedBinding = new(OnCheckCondicion);
+            _pillarFullMatchedBinding = new(OnCheckCoveredPillarCondicion);
+            _blocksMovedBinding = new(() => {});
         }
 
         public override void Apply(IMechanicHandler target)
@@ -178,5 +186,214 @@ namespace Assets._Scripts.Datas
         //     throw new System.NotImplementedException();
         // }
     }
-#endregion
+    #endregion
+
+    #region Scratched Block
+    public class ScratchedBlockMechanic : MechanicRuntimeData
+    {
+        private struct ScratchResolutionState
+        {
+            public int BlockId;
+            public bool IsResolved;
+        }
+
+        private const int InvalidBlockId = -1;
+        private static HashSet<BlockController> _scratchedBlocks;
+        private static int _sharedBlockId = InvalidBlockId;
+        private static int _sharedBlockSelectionFrame = -1;
+        private static int _scratchResolutionFrame = -1;
+        private static readonly Dictionary<int, ScratchResolutionState> _scratchResolutionByPillar = new();
+        private static bool _isResolvingScratchRemoval;
+
+        private EventBinding<PillarFullMatchedEvent> _pillarFullMatchBinding;
+
+        public ScratchedBlockMechanic() : base()
+        {
+            Key = EMechanic.ScratchBlock;
+            _pillarFullMatchBinding = new((evt) =>
+            {
+                if (_isResolvingScratchRemoval || !(_target is BlockController block) || evt.Pillar == null)
+                    return;
+
+                if (!TryResolveScratchForMatch(evt.Pillar.Id, block.Id))
+                    return;
+
+                _isResolvingScratchRemoval = true;
+                try
+                {
+                    Remove();
+                }
+                finally
+                {
+                    _isResolvingScratchRemoval = false;
+                }
+            });
+
+            _sharedBlockId = -1;
+            _blocksMovedBinding = new(() => {});
+        }
+
+        private static void ResetScratchResolutionStateIfNeeded()
+        {
+            if (_scratchResolutionFrame == Time.frameCount) return;
+
+            _scratchResolutionFrame = Time.frameCount;
+            _scratchResolutionByPillar.Clear();
+        }
+
+        private static bool TryResolveScratchForMatch(int pillarId, int blockId)
+        {
+            ResetScratchResolutionStateIfNeeded();
+
+            if (!_scratchResolutionByPillar.TryGetValue(pillarId, out var resolution))
+            {
+                var selectedBlockId = GetRandomBlockId();
+                if (selectedBlockId == InvalidBlockId)
+                    return false;
+
+                resolution = new ScratchResolutionState
+                {
+                    BlockId = selectedBlockId,
+                    IsResolved = false
+                };
+            }
+
+            if (resolution.IsResolved || resolution.BlockId != blockId)
+            {
+                _scratchResolutionByPillar[pillarId] = resolution;
+                return false;
+            }
+
+            resolution.IsResolved = true;
+            _scratchResolutionByPillar[pillarId] = resolution;
+            return true;
+        }
+
+        private static int GetRandomBlockId()
+        {
+            if (_scratchedBlocks == null || _scratchedBlocks.Count == 0)
+            {
+                Debug.Log($"Invalid ID: {InvalidBlockId}");
+                return InvalidBlockId;
+            }
+
+            if (_sharedBlockSelectionFrame != Time.frameCount ||
+                !_scratchedBlocks.Any(block => block != null && block.Id == _sharedBlockId))
+            {
+                _sharedBlockSelectionFrame = Time.frameCount;
+                _sharedBlockId = _scratchedBlocks.ElementAt(Random.Range(0, _scratchedBlocks.Count)).Id;
+            }
+
+            Debug.Log($"Get random ID: {_sharedBlockId}");
+            return _sharedBlockId;
+        }
+
+        public override void Apply(IMechanicHandler target)
+        {
+            EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchBinding);
+            _scratchedBlocks = BoardController.Instance.GetAllBlocks().Where(b => (b as IMechanicHandler).ActiveMechanic == EMechanic.ScratchBlock).ToHashSet();
+
+            if (target is BlockController block)
+                _scratchedBlocks.Add(block);
+
+            // string message = "Scratched block:";
+            // foreach (var sb in _scratchedBlocks)
+            //     message += $" {sb.Id},";
+            // Debug.Log(message);
+
+            base.Apply(target);
+        }
+
+        public override void Remove(bool doEffect = true)
+        {
+            var block = _target as BlockController;
+            if (block != null)
+                _scratchedBlocks?.Remove(block);
+
+            EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchBinding);
+            base.Remove(doEffect);
+
+            if (block != null)
+            {
+                var pillar = block.GetPillarParent();
+                pillar.CheckFullMatch();
+                if (pillar.IsFullMatch) pillar.DoFullMatchAnim();
+            } 
+        }
+
+        protected override bool CheckRemoveCondition()
+        {
+            return _target is BlockController block && block.Id == _sharedBlockId;
+        }
+    }
+    #endregion
+
+    #region Sticky Block
+    public class StickyBlockMechanic : MechanicRuntimeData
+    {
+        public StickyBlockMechanic()
+        {
+            Key = EMechanic.StickyBlock;
+        }
+
+
+        protected override bool CheckRemoveCondition()
+        {
+            return false;
+        }
+
+    }
+    #endregion
+
+    #region Trap Pillar
+    public class TrapPillarMechanic : MechanicRuntimeData
+    {
+        private IMechanicHandler _lastTarget;
+        public bool IsTrap {get; private set;}
+
+        public TrapPillarMechanic(bool isTrap) : base()
+        {
+            Key = EMechanic.TrapPillar;
+            IsTrap = isTrap;
+
+            OnCheckCondicion = (_) =>
+            {
+                var isTrapSnapshot = IsTrap;
+                IsTrap = !IsTrap;
+                if (isTrapSnapshot) Remove();
+                else Apply(_lastTarget);
+            };
+            _blocksMovedBinding = new(OnCheckCondicion);
+            EventBus<BlocksMovedEvent>.Subscribe(_blocksMovedBinding);
+        }
+
+        public override void Apply(IMechanicHandler target)
+        {
+            Debug.Log($"Applying mechanic {Key} to {target}");
+            _lastTarget = target;
+            _target = target;
+            if (_target.ActiveMechanic == Key) return;
+            _target.UpdateMechanic(this);
+            
+            if (!IsTrap) Remove();
+        }
+
+        public override void Remove(bool doEffect = true)
+        {
+            Debug.Log($"Removing mechanic {Key} from {_target}");
+            if (_target == null) return;
+            _target.ClearMechanic(doEffect);
+            _target = null;
+            
+            if (!doEffect) return;
+            DoMechanicSFX(Key);
+        }
+
+
+        protected override bool CheckRemoveCondition()
+        {
+            return true;
+        }
+    }
+    #endregion
 }

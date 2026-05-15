@@ -4,23 +4,23 @@
   "MoveLimit": 16,
   "BlockGroups": [
     {
-      "Tag": "Helmets",
+      "Tag": "Race Helmets",
       "BlockDatas": [
         {
           "Id": 0,
-          "IconId": "E_2_82"
+          "IconId": "A_1_49"
         },
         {
           "Id": 1,
-          "IconId": "E_4_55"
+          "IconId": "A_3_115"
         },
         {
           "Id": 2,
-          "IconId": "E_1_61"
+          "IconId": "C_4_125"
         },
         {
           "Id": 3,
-          "IconId": "E_4_55"
+          "IconId": "A_2_138"
         }
       ]
     },
@@ -80,5 +80,8 @@
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
   "CoinReward": 40
 }

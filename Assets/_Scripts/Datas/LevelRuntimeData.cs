@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
 using UnityEngine;
@@ -13,15 +14,18 @@ namespace Assets._Scripts.Datas
         public int MoveCount;
 
         public List<BlockGroup> BlockGroups;
-        public int MatchedGroups { get; private set; }
-        public int TotalGroups => BlockGroups.Count;
+        public int TotalGroups {get; private set;}
+        public int MatchedGroups => _matchedGroups.Count;
+        private HashSet<string> _matchedGroups = new();
         
         public List<PillarData> PillarDatas;
-
 
         public HiddenBlockData HiddenBlockDatas;
         public List<CoveredPillarData> CoveredPillarDatas;
         public List<FrozenBlockData> FrozenBlockDatas;
+        public ScratchBlockData ScratchedBlockDatas;
+        public StickyBlockData StickyBlockDatas;
+        public List<TrapPillarData> TrapPillarDatas;
 
         public int CoinReward;
 
@@ -35,13 +39,17 @@ namespace Assets._Scripts.Datas
             MoveLimit = 0;
             MoveCount = 0;
 
-            BlockGroups = new List<BlockGroup>();
-            MatchedGroups = 0;
-            PillarDatas = new List<PillarData>();
+            _matchedGroups.Clear();
+            BlockGroups = new();
+            PillarDatas = new();
+            TotalGroups = 0;
 
-            HiddenBlockDatas = new HiddenBlockData();
-            CoveredPillarDatas = new List<CoveredPillarData>();
-            FrozenBlockDatas = new List<FrozenBlockData>();
+            HiddenBlockDatas = new();
+            CoveredPillarDatas = new();
+            FrozenBlockDatas = new();
+            ScratchedBlockDatas = new();
+            StickyBlockDatas = new();
+            TrapPillarDatas = new();
             
             CoinReward = 0;
         }
@@ -54,13 +62,17 @@ namespace Assets._Scripts.Datas
             MoveLimit = levelData.MoveLimit;
             MoveCount = MoveLimit;
 
+            _matchedGroups.Clear();
             BlockGroups = levelData.BlockGroups;
-            MatchedGroups = 0;
             PillarDatas = levelData.PillarDatas;
+            TotalGroups = BlockGroups.Count(bg => bg.Trackable);
 
             HiddenBlockDatas = levelData.HiddenBlockDatas;
             CoveredPillarDatas = levelData.CoveredPillarDatas;
             FrozenBlockDatas = levelData.FrozenBlockDatas;
+            ScratchedBlockDatas = levelData.ScratchedBlockDatas;
+            StickyBlockDatas = levelData.StickyBlockDatas;
+            TrapPillarDatas = levelData.TrapPillarDatas;
 
             CoinReward = levelData.CoinReward;
         }
@@ -73,13 +85,17 @@ namespace Assets._Scripts.Datas
             MoveLimit = levelData.MoveLimit;
             MoveCount = MoveLimit;
 
+            _matchedGroups.Clear();
             BlockGroups = levelData.BlockGroups;
-            MatchedGroups = 0;
             PillarDatas = levelData.PillarDatas;
+            TotalGroups = BlockGroups.Count(bg => bg.Trackable);
 
             HiddenBlockDatas = levelData.HiddenBlockDatas;
             CoveredPillarDatas = levelData.CoveredPillarDatas;
             FrozenBlockDatas = levelData.FrozenBlockDatas;
+            ScratchedBlockDatas = levelData.ScratchedBlockDatas;
+            StickyBlockDatas = levelData.StickyBlockDatas;
+            TrapPillarDatas = levelData.TrapPillarDatas;
 
             CoinReward = levelData.CoinReward;
         }
@@ -94,9 +110,9 @@ namespace Assets._Scripts.Datas
             ChangeMoveAmount(-1);
         }
 
-        public void IncreaseMatchedPillars()
+        public void IncreaseMatchedPillars(string tag)
         {
-            MatchedGroups++;
+            _matchedGroups.Add(tag);
         }
 
         public void FinishLevel() 

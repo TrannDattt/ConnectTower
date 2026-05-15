@@ -6,5 +6,8 @@ namespace Assets._Scripts.Enums
         HiddenBlock,
         CoveredPillar,
         FrozenBlock,
+        ScratchBlock,
+        TrapPillar,
+        StickyBlock,
     }
 }

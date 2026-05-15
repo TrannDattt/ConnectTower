@@ -10,6 +10,7 @@ using Assets._Scripts.Managers;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Patterns.EventBus;
 using System.Linq;
+using Assets._Scripts.Interfaces;
 
 namespace Assets._Scripts.Controllers
 {
@@ -162,13 +163,21 @@ namespace Assets._Scripts.Controllers
             bool isLockedThisMove = toPillar.IsLocked();
             
             var newBlocks = toPillar.GetAllBlocks().ToList();
+
             List<BlockController> matched = new();
+            var toCompare = blocks[^1];
             for (int i = newBlocks.Count - 1; i >= 0; i--)
             {
                 var block = newBlocks.ElementAt(i);
                 if (block == null) continue;
-                if (block.IsSameTag(blocks[0]))
+                if (block.IsSameTag(toCompare)
+                    || block == toCompare
+                    || (block as IMechanicHandler).CanConnectDifferent()
+                    || (toCompare as IMechanicHandler).CanConnectDifferent())
+                {
                     matched.Add(block);
+                    toCompare = block;
+                }
                 else break;
             }
 
@@ -229,7 +238,7 @@ namespace Assets._Scripts.Controllers
             return sequence.Play();
         }
 
-        private Sequence DoMatchAnim(List<BlockController> blocks)
+        public Sequence DoMatchAnim(List<BlockController> blocks)
         {
             if (blocks == null || blocks.Count == 0) return null;
 
@@ -305,6 +314,7 @@ namespace Assets._Scripts.Controllers
 #region ON PILLAR CLICK
         public void OnPillarClicked(PillarClickedEvent evt)
         {
+            // Debug.Log("Pillar clicked 3");
             var pillar = evt.Pillar;
             if(pillar.IsLocked())
             {
@@ -319,9 +329,11 @@ namespace Assets._Scripts.Controllers
             }
             else
             {
+                // Debug.Log(1);
                 var parentPillar = _selectedBlocks[0].GetPillarParent();
                 if (parentPillar == pillar)
                 {
+                    // Debug.Log(2);
                     var toPutBack = new List<BlockController>(_selectedBlocks);
                     _selectedBlocks.Clear();
                     PutBackBlocks(toPutBack, pillar);
@@ -329,6 +341,7 @@ namespace Assets._Scripts.Controllers
                 }
                 else
                 {
+                    // Debug.Log(3);
                     int availableSpace = pillar.GetAvailableSlotCount();
                     var toMove = _selectedBlocks.GetRange(0, Mathf.Min(availableSpace, _selectedBlocks.Count));
                     var toReturn = new List<BlockController>();

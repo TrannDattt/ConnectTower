@@ -40,6 +40,7 @@ namespace Assets._Scripts.Controllers
                     var newBlock = _blockPool.GetItem();
                     newBlock.Init(d, blockGroup.Tag);
                     _blocks.Add(newBlock);
+                    newBlock.gameObject.name = $"Block_{d.Id}";
                 });
             }
 
@@ -51,6 +52,8 @@ namespace Assets._Scripts.Controllers
                 newPillar.transform.position = pillarPos[i];
 
                 newPillar.Init(levelData.PillarDatas[i]);
+                _pillars.Add(newPillar);
+                newPillar.gameObject.name = $"Pillar_{levelData.PillarDatas[i].Id}";
                 if (levelData.PillarDatas[i].BlockIds.Count == 0) continue;
 
                 int indexOffset = 0;
@@ -58,6 +61,14 @@ namespace Assets._Scripts.Controllers
                 {
                     var blockId = levelData.PillarDatas[i].BlockIds.ElementAt(j);
                     var block = _blocks.FirstOrDefault(b => b.Id == blockId);
+                    if (block == default(BlockController) && blockId >= 0)
+                    {
+                        block = _blockPool.GetItem();
+                        block.Init(new BlockData {Id = blockId, IconId = ""}, "");
+                        _blocks.Add(block);
+                        block.gameObject.name = $"Block_{blockId}";
+                    }
+
                     if (block == default(BlockController))
                     {
                         indexOffset++;
@@ -69,13 +80,12 @@ namespace Assets._Scripts.Controllers
                     }
                 }
                 newPillar.Arrange();
-                _pillars.Add(newPillar);
             }
 
             // Init Mechanics
             if (levelData.HiddenBlockDatas?.BlockIds != null)
             {
-                Debug.Log($"Init {levelData.HiddenBlockDatas.BlockIds.Count} hidden blocks");
+                // Debug.Log($"Init {levelData.HiddenBlockDatas.BlockIds.Count} hidden blocks");
                 foreach (var id in levelData.HiddenBlockDatas.BlockIds)
                 {
                     var toApply = _blocks.FirstOrDefault(b => b.Id == id);
@@ -88,7 +98,7 @@ namespace Assets._Scripts.Controllers
 
             levelData.CoveredPillarDatas?.ForEach(data =>
             {
-                Debug.Log($"Init {data.PillarIds} covered pillars");
+                // Debug.Log($"Init {data.PillarIds} covered pillars");
                 foreach (var id in data.PillarIds)
                 {
                     var toApply = _pillars.FirstOrDefault(p => p.Id == id);
@@ -101,7 +111,7 @@ namespace Assets._Scripts.Controllers
 
             levelData.FrozenBlockDatas?.ForEach(data =>
             {
-                Debug.Log($"Init {data.BlockIds} frozen blocks");
+                // Debug.Log($"Init {data.BlockIds} frozen blocks");
                 foreach (var id in data.BlockIds)
                 {
                     var toApply = _blocks.FirstOrDefault(b => b.Id == id);
@@ -114,6 +124,47 @@ namespace Assets._Scripts.Controllers
                     _mechanics.Add(mechanic);
                     _mechanics.Add(cloneMechanic);
                 };
+            });
+
+            if (levelData.ScratchedBlockDatas?.BlockIds != null)
+            {
+                // Debug.Log($"Init {levelData.ScratchedBlockDatas.BlockIds.Count} scratched blocks");
+                foreach (var id in levelData.ScratchedBlockDatas.BlockIds)
+                {
+                    var toApply = _blocks.FirstOrDefault(b => b.Id == id);
+                    if (toApply == null) continue;
+                    var mechanic = new ScratchedBlockMechanic();
+                    mechanic.Apply(toApply);
+                    _mechanics.Add(mechanic);
+                }
+            }
+
+            if (levelData.StickyBlockDatas?.BlockIds != null)
+            {
+                // Debug.Log($"Init {levelData.ScratchedBlockDatas.BlockIds.Count} scratched blocks");
+                foreach (var id in levelData.StickyBlockDatas.BlockIds)
+                {
+                    var toApply = _blocks.FirstOrDefault(b => b.Id == id);
+                    if (toApply == null) continue;
+                    var mechanic = new StickyBlockMechanic();
+                    mechanic.Apply(toApply);
+                    _mechanics.Add(mechanic);
+                }
+            }
+
+            levelData.TrapPillarDatas?.ForEach(data =>
+            {
+                var toApply = _pillars.FirstOrDefault(p => p.Id == data.PillarId);
+                if (toApply != null)
+                {
+                    var mechanic = new TrapPillarMechanic(data.IsTrap);
+                    mechanic.Apply(toApply);
+                    _mechanics.Add(mechanic);
+                }
+                else
+                {
+                    Debug.LogError($"Cant find trap pillar with id {data.PillarId}");
+                }
             });
         }
 
@@ -130,6 +181,11 @@ namespace Assets._Scripts.Controllers
             toAdd.Init(new PillarData {Id = _pillars[^1].Id + 1, BlockIds = new()});
             Debug.Log($"Add new pillar with id {toAdd.Id}");
             _pillars.Add(toAdd);
+        }
+
+        public int GetGroupsCount()
+        {
+            return LevelManager.PlayingLevel.TotalGroups;
         }
 
         public List<BlockController> GetAllBlocks()

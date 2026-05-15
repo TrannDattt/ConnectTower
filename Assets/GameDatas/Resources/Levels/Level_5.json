@@ -4,44 +4,44 @@
   "MoveLimit": 14,
   "BlockGroups": [
     {
-      "Tag": "Blue Things",
+      "Tag": "Firemans",
       "BlockDatas": [
         {
           "Id": 0,
-          "IconId": "A_4_47"
+          "IconId": "A_1_24"
         },
         {
           "Id": 1,
-          "IconId": "A_4_58"
+          "IconId": "A_3_62"
         },
         {
           "Id": 2,
-          "IconId": "A_4_64"
+          "IconId": "A_2_51"
         },
         {
           "Id": 3,
-          "IconId": "B_1_136"
+          "IconId": "A_4_79"
         }
       ]
     },
     {
-      "Tag": "Red Things",
+      "Tag": "Eggs",
       "BlockDatas": [
         {
           "Id": 4,
-          "IconId": "A_4_125"
+          "IconId": "A_1_58"
         },
         {
           "Id": 5,
-          "IconId": "A_3_56"
+          "IconId": "B_3_41"
         },
         {
           "Id": 6,
-          "IconId": "A_3_48"
+          "IconId": "B_1_76"
         },
         {
           "Id": 7,
-          "IconId": "A_3_37"
+          "IconId": "A_2_20"
         }
       ]
     },
@@ -110,5 +110,8 @@
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
   "CoinReward": 40
 }

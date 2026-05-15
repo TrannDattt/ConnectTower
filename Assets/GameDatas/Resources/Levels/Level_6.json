@@ -4,23 +4,23 @@
   "MoveLimit": 18,
   "BlockGroups": [
     {
-      "Tag": "Helmets",
+      "Tag": "Fruits",
       "BlockDatas": [
         {
           "Id": 0,
-          "IconId": "A_1_126"
+          "IconId": "A_4_124"
         },
         {
           "Id": 1,
-          "IconId": "A_2_121"
+          "IconId": "F_4_30"
         },
         {
           "Id": 2,
-          "IconId": "A_3_73"
+          "IconId": "B_2_66"
         },
         {
           "Id": 3,
-          "IconId": "A_3_11"
+          "IconId": "C_3_2"
         }
       ]
     },
@@ -46,23 +46,23 @@
       ]
     },
     {
-      "Tag": "People In Red",
+      "Tag": "Ginger Breads",
       "BlockDatas": [
         {
           "Id": 8,
-          "IconId": "B_1_138"
+          "IconId": "A_3_128"
         },
         {
           "Id": 9,
-          "IconId": "A_4_46"
+          "IconId": "A_1_1"
         },
         {
           "Id": 10,
-          "IconId": "A_3_74"
+          "IconId": "A_2_44"
         },
         {
           "Id": 11,
-          "IconId": "A_3_6"
+          "IconId": "A_4_3"
         }
       ]
     }
@@ -119,5 +119,8 @@
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
   "CoinReward": 40
 }

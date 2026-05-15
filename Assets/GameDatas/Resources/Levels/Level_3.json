@@ -4,23 +4,23 @@
   "MoveLimit": 14,
   "BlockGroups": [
     {
-      "Tag": "Purple Things",
+      "Tag": "Soaps",
       "BlockDatas": [
         {
           "Id": 0,
-          "IconId": "F_3_36"
+          "IconId": "A_3_66"
         },
         {
           "Id": 1,
-          "IconId": "C_2_95"
+          "IconId": "A_2_42"
         },
         {
           "Id": 2,
-          "IconId": "A_2_9"
+          "IconId": "A_4_63"
         },
         {
           "Id": 3,
-          "IconId": "E_4_103"
+          "IconId": "A_3_56"
         }
       ]
     },
@@ -46,23 +46,23 @@
       ]
     },
     {
-      "Tag": "Horses",
+      "Tag": "Boats",
       "BlockDatas": [
         {
           "Id": 8,
-          "IconId": "D_2_83"
+          "IconId": "A_4_138"
         },
         {
           "Id": 9,
-          "IconId": "D_4_31"
+          "IconId": "C_4_112"
         },
         {
           "Id": 10,
-          "IconId": "D_2_83"
+          "IconId": "A_3_9"
         },
         {
           "Id": 11,
-          "IconId": "C_4_85"
+          "IconId": "F_2_95"
         }
       ]
     }
@@ -110,5 +110,8 @@
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
   "CoinReward": 40
 }

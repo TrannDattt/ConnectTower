@@ -5,7 +5,10 @@ using System.Runtime.Serialization.Formatters;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Interfaces;
+using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns.EventBus;
+using Assets._Scripts.Tools;
+using Assets._Scripts.Visuals;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
@@ -77,7 +80,7 @@ namespace Assets._Scripts.Controllers
         {
             if (data == null) return;
             Id = data.Id;
-            _isFull = false;
+            IsFullMatch = false;
             ActiveMechanic = EMechanic.None;
         }
 
@@ -152,12 +155,14 @@ namespace Assets._Scripts.Controllers
         public bool TryGetTopBlocks(out List<BlockController> result, bool skipMechanic = false, bool ignoreLock = false)
         {
             result = new List<BlockController>();
+            // Debug.Log(1);
             if (!HasBlock() || (IsLocked() && !ignoreLock) || (this as IMechanicHandler).IsHidden()) return false;
 
+            // Debug.Log(2);
             int i = MAX_BLOCKS - 1;
             while (i >= 0 && _blocks[i] == null) i--;
 
-            bool IsInteractable(int idx) => (_blocks[idx] as IMechanicHandler).IsInMechanic();
+            bool IsInteractable(int idx) => (_blocks[idx] as IMechanicHandler).IsMovable();
 
             if (i >= 0 && !IsInteractable(i))
             {
@@ -167,12 +172,18 @@ namespace Assets._Scripts.Controllers
 
             if (i < 0) return false;
 
+            // Debug.Log($"3. i = {i}");
             BlockController toCompare = _blocks[i];
-            while (i >= 0 && _blocks[i] != null && _blocks[i].IsSameTag(toCompare) && (skipMechanic || IsInteractable(i)))
+            while (i >= 0
+                   && _blocks[i] != null
+                   && (_blocks[i].IsSameTag(toCompare) || _blocks[i] == toCompare || (_blocks[i] as IMechanicHandler).CanConnectDifferent() || (toCompare as IMechanicHandler).CanConnectDifferent())
+                   && (skipMechanic || IsInteractable(i)))
             {
                 result.Add(_blocks[i--]);
+                toCompare = result[^1];
             }
 
+            // Debug.Log($"4. i = {i}");
             return result.Count > 0;
         }
 #endregion
@@ -188,15 +199,29 @@ namespace Assets._Scripts.Controllers
             return _blocks.Any(b => b != null);
         }
 
-        private bool _isFull;
+        public bool IsFullMatch {get; private set;}
         public void CheckFullMatch()
         {
-            if (!_isFull && IsLocked())
+            if (!IsFullMatch && IsLocked())
             {
                 Debug.Log("Locked");
-                _isFull = true;
+                IsFullMatch = true;
                 EventBus<PillarFullMatchedEvent>.Publish(new PillarFullMatchedEvent { Pillar = this , Tag = _blocks[0].Tag});
             }
+        }
+
+        public Sequence DoFullMatchAnim()
+        {
+            Debug.Log("Do");
+            var blocks = GetAllBlocks().ToList();
+            var sequence = DOTween.Sequence().SetTarget(this).SetId("FullMatch").SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            sequence.Append(BlockMovementController.Instance.DoMatchAnim(blocks));
+            sequence.Append(GetComponent<PillarEffectVisual>().DoLockAnim(blocks[0].Tag));
+            sequence.JoinCallback(() =>
+            {
+                HapticManager.DoLightFeedback();
+            });
+            return sequence;
         }
 #endregion
 
@@ -279,6 +304,7 @@ namespace Assets._Scripts.Controllers
             if (!(this as IMechanicHandler).IsHidden())
             {
                 EventBus<PillarClickedEvent>.Publish(new PillarClickedEvent { Pillar = this });
+                // Debug.Log("Click to pillar");
             }
         }
     }

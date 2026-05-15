@@ -12,18 +12,27 @@ namespace Assets._Scripts.Interfaces
         private static readonly EMechanic[] HiddenMechanics = new EMechanic[]
         {
             EMechanic.HiddenBlock,
-            EMechanic.CoveredPillar
+            EMechanic.CoveredPillar,
+            EMechanic.ScratchBlock,
+            EMechanic.StickyBlock,
+            EMechanic.TrapPillar,
         };
 
         private static readonly EMechanic[] UnmovableMechanics = new EMechanic[]
         {
             EMechanic.FrozenBlock,
-            EMechanic.CoveredPillar
+            EMechanic.CoveredPillar,
+            EMechanic.TrapPillar,
+        };
+
+        private static readonly EMechanic[] ConnectDifferentMechanic = new EMechanic[]
+        {
+            EMechanic.StickyBlock,
         };
 
         public bool IsHidden() => HiddenMechanics.Contains(ActiveMechanic);
         public bool IsMovable() => !UnmovableMechanics.Contains(ActiveMechanic);
-        public bool IsInMechanic() => ActiveMechanic ==  EMechanic.None;
+        public bool CanConnectDifferent() => ConnectDifferentMechanic.Contains(ActiveMechanic);
         public MechanicVisualControl MechanicVisual {get; set;}
 
         public void UpdateMechanic(MechanicRuntimeData mechanicData)

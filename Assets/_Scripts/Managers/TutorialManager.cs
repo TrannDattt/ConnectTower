@@ -134,10 +134,11 @@ namespace Assets._Scripts.Managers
             }
             
             var behaviors = Object.FindFirstObjectByType<TutorialPopupVisual>(FindObjectsInactive.Include).GetComponents<BaseTutorialControl>();
-            foreach(var behavior in behaviors)
-            {
-                _tutorialBehaviorDict[behavior.Type] = behavior;
-            }
+            if (behaviors != null && behaviors.Length > 0)
+                foreach(var behavior in behaviors)
+                {
+                    _tutorialBehaviorDict[behavior.Type] = behavior;
+                }
             Debug.Log($"Found {_tutorialBehaviorDict.Count} tutorials");
         }
     }

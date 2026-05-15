@@ -107,7 +107,9 @@ namespace Assets._Scripts.Managers
 
         private void OnPillarFullMatched(PillarFullMatchedEvent evt)
         {
-            CurrentLevelData.IncreaseMatchedPillars();
+            int lastCount = LevelManager.PlayingLevel.MatchedGroups;
+            CurrentLevelData.IncreaseMatchedPillars(evt.Tag);
+            if (lastCount == LevelManager.PlayingLevel.MatchedGroups) return;
             IngameVisualController.Instance.UpdateProgressBar(CurrentLevelData.MatchedGroups, CurrentLevelData.TotalGroups);
         }
 
@@ -408,16 +410,17 @@ namespace Assets._Scripts.Managers
                 public WhilePlayingState(EPlayingSubState key) : base(key)
                 {
                     _startLevelBinding = new(() => _doRevive = false);
-                    Instance.SubcribeIngameEvent = SubcribeEvent;
-                    Instance.UnsubcribeIngameEvent = UnsubcribeEvent;
-                    Instance.SetInteractablePillarsEvent = SetInteractablePillars;
+                    // Instance.SubcribeIngameEvent = SubcribeEvent;
+                    // Instance.UnsubcribeIngameEvent = UnsubcribeEvent;
+                    // Instance.SetInteractablePillarsEvent = SetInteractablePillars;
                     EventBus<StartLevelEvent>.Subscribe(_startLevelBinding);
                     _blocksMovedBinding = new(OnBlocksMoved);
                     _pillarFullMatchedBinding = new(Instance.OnPillarFullMatched);
                     _pillarClickedBinding = new((e) =>
                     {
-                        if (_interactablePillars.Contains(e.Pillar))
-                            BlockMovementController.Instance.OnPillarClicked(e);
+                        // if (_interactablePillars.Contains(e.Pillar))
+                        // Debug.Log("Pillar clicked 2");
+                        BlockMovementController.Instance.OnPillarClicked(e);
                     });
                     _useBoosterBinding = new(OnUseBooster);
                     EventBus<UseBoosterEvent>.Subscribe(_useBoosterBinding);

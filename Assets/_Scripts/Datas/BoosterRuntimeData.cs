@@ -185,7 +185,7 @@ namespace Assets._Scripts.Datas
 
             // 1. Lấy tất cả blocks hợp lệ từ các pillars hợp lệ (Flattening)
             var allValidBlocks = BoardController.Instance.GetAllPillars()
-                .Where(p => !p.IsLocked() && ((IMechanicHandler)p).IsInMechanic())
+                .Where(p => !p.IsLocked() && !((IMechanicHandler)p).IsHidden())
                 .SelectMany(p => p.GetAllBlocks())
                 .ToArray();
 

@@ -12,8 +12,6 @@ namespace Assets._Scripts.Tools.UI
         [SerializeField] private BlockGroup _blockGroupPrefab;
         [SerializeField] private Button _addBlockGroupButton;
         [SerializeField] private GroupDropdownSelector _groupDropdownSelector;
-        
-        private int _lastBlockId = -1;
 
         public void OnAddedGroup(string name)
         {
@@ -22,9 +20,8 @@ namespace Assets._Scripts.Tools.UI
             {
                 // Debug.Log($"Get 4 {name} icons from pool with {icons.Count}");
                 var newGroup = Instantiate(_blockGroupPrefab, _blockGroupParent);
-                newGroup.InitGroup(_lastBlockId, groupData);
-                _lastBlockId += 4; 
-                LevelEditor.AddBlockGroup(newGroup);
+                newGroup.InitGroup(LevelEditor.GetLastBlockId() + 1, groupData);
+                LevelEditor.AddBlockGroup(newGroup, true);
             }
             else
             {
@@ -39,21 +36,20 @@ namespace Assets._Scripts.Tools.UI
             {
                 Destroy(group.gameObject);
             }
-            _lastBlockId = -1;
         }
 
         public void AddBlockGroupsFromJson(LevelJSON levelJSON)
         {
             foreach (var blockGroup in levelJSON.BlockGroups)
             {
+                if (!blockGroup.Trackable) continue;
                 var newGroup = Instantiate(_blockGroupPrefab, _blockGroupParent);
                 var groupData = BlockGroupMapper.GetGroupData(blockGroup.Tag);
                 if (groupData != null)
-                    newGroup.InitGroup(blockGroup.BlockDatas[0].Id - 1, groupData);
+                    newGroup.InitGroup(LevelEditor.GetLastBlockId() + 1, groupData);
                 else
-                    newGroup.InitGroup(blockGroup.BlockDatas[0].Id - 1, blockGroup.Tag, new Sprite[] {null, null, null, null});
+                    newGroup.InitGroup(blockGroup.BlockDatas[0].Id, blockGroup.Tag, new Sprite[] {null, null, null, null});
             }
-            _lastBlockId = levelJSON.BlockGroups.SelectMany(g => g.BlockDatas).Count() > 0 ? levelJSON.BlockGroups.SelectMany(g => g.BlockDatas).Max(b => b.Id) : -1;
         }
 
         void Start()

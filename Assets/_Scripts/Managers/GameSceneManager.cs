@@ -33,6 +33,12 @@ namespace Assets._Scripts.Managers
 
         public void ChangeScene(EGameScene scene,  UnityAction onUnload = null, UnityAction onLoad = null)
         {
+            if (!_sceneDict.TryGetValue(scene, out var toLoad))
+            {
+                Debug.Log($"Scene {scene} does not exist");
+                return;
+            }
+
             EBgm bgm = scene switch
             {
                 EGameScene.Menu => EBgm.MenuMusic,

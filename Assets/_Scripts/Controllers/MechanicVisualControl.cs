@@ -13,26 +13,31 @@ namespace Assets._Scripts.Controllers
 {
     public class MechanicVisualControl : MonoBehaviour
     {
-        //HiddenBlock
         [Header("Hidden Block")]
         [SerializeField] private BlockEffectVisual _blockVisual;
         [SerializeField] private Texture2D _hiddenTexture;
 
-        //FrozenBlock
         [Header("Frozen Block")]
-
         [SerializeField] private Image _frozenBlockIcon;
         [SerializeField] private GameObject _frozenPillarRod;
         [SerializeField] private GameObject _frozenPillarBase;
         // [SerializeField] private Text _frozenMoveCountText;
 
-        //CoveredPillar
         [Header("Covered Pillar")]
         [SerializeField] private SpriteRenderer _clothImage;
         [SerializeField] private Animator _clothAnimator;
         [SerializeField] private Image _clothIcon;
-        [SerializeField] private float _fadeDelayFactor = .7f;
         private string _clothTriggerParam = "Flip";
+
+        [Header("Scratched Block")]
+        [SerializeField] private Image _scratchImage;
+        // [SerializeField] private Texture2D _hiddenTexture;
+
+        [Header("Trap Pillar")]
+        [SerializeField] private SpriteRenderer _trapImage;
+        [SerializeField] private Animator _trapAnimator;
+        private string _applyTrapTriggerParam = "ApplyTrap";
+        private string _removeTrapTriggerParam = "RemoveTrap";
 
         public void ApplyVisual(MechanicRuntimeData mechanicData)
         {
@@ -68,6 +73,23 @@ namespace Assets._Scripts.Controllers
 
                     _clothImage.gameObject.SetActive(true);
                     break;
+                case EMechanic.ScratchBlock:
+                    if (_blockVisual != null)
+                    {
+                        _blockVisual.ChangeIconDisplay(false);
+                        _scratchImage.gameObject.SetActive(true);
+                        // _blockVisual.ChangeTexture(_hiddenTexture);    
+                    } 
+                    break;
+                case EMechanic.StickyBlock:
+                    if (_blockVisual != null)
+                    {
+                        _blockVisual.ChangeColor(EColor.Green);
+                    }
+                    break;
+                case EMechanic.TrapPillar:
+                    if (_trapImage != null) _trapImage.gameObject.SetActive(true);
+                    break;
                 default:
                     break;
             }
@@ -100,7 +122,6 @@ namespace Assets._Scripts.Controllers
 
                         var seqence = DOTween.Sequence().SetLink(_clothAnimator.gameObject, LinkBehaviour.KillOnDisable);
                         seqence.AppendInterval(animDur);
-                        seqence.Insert(animDur * _fadeDelayFactor, _clothImage.DOFade(0, animDur * (1 - _fadeDelayFactor)).SetEase(Ease.OutQuad));
                         seqence.OnComplete(() => 
                         {
                             var color = _clothImage.color;
@@ -109,9 +130,25 @@ namespace Assets._Scripts.Controllers
                             _clothImage.gameObject.SetActive(false);
                         });
 
-                        //TODO: Make pillar rotate around
                         seqence.Play();
                     }
+                    break;
+                case EMechanic.ScratchBlock:
+                    if (_blockVisual != null)
+                    {
+                        _blockVisual.ChangeIconDisplay(true);
+                        _scratchImage.gameObject.SetActive(false);
+                    }
+                    if(!doEffect) break;
+                    break;
+                case EMechanic.StickyBlock:
+                    if (_blockVisual != null)
+                    {
+                        _blockVisual.ChangeColor(EColor.None);
+                    }
+                    break;
+                case EMechanic.TrapPillar:
+                    if (_trapImage != null) _trapImage.gameObject.SetActive(false);
                     break;
                 default:
                     break;

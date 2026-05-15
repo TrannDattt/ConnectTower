@@ -43,5 +43,4 @@ namespace Assets._Scripts.Tools.UI
             base.Start();
         }
     }
-
 }

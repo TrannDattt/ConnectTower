@@ -4,65 +4,65 @@
   "MoveLimit": 30,
   "BlockGroups": [
     {
-      "Tag": "Keys",
+      "Tag": "Controllers",
       "BlockDatas": [
         {
           "Id": 0,
-          "IconId": "A_2_22"
+          "IconId": "F_3_9"
         },
         {
           "Id": 1,
-          "IconId": "A_1_51"
+          "IconId": "A_1_46"
         },
         {
           "Id": 2,
-          "IconId": "A_4_11"
+          "IconId": "D_4_136"
         },
         {
           "Id": 3,
-          "IconId": "A_1_51"
+          "IconId": "D_1_16"
         }
       ]
     },
     {
-      "Tag": "Letters",
+      "Tag": "Potions",
       "BlockDatas": [
         {
           "Id": 4,
-          "IconId": "A_2_8"
+          "IconId": "A_3_48"
         },
         {
           "Id": 5,
-          "IconId": "A_1_80"
+          "IconId": "A_1_27"
         },
         {
           "Id": 6,
-          "IconId": "A_3_16"
+          "IconId": "A_2_55"
         },
         {
           "Id": 7,
-          "IconId": "A_4_23"
+          "IconId": "A_4_148"
         }
       ]
     },
     {
-      "Tag": "Hourglasses",
+      "Tag": "Fruits",
       "BlockDatas": [
         {
           "Id": 8,
-          "IconId": "A_2_119"
+          "IconId": "D_2_23"
         },
         {
           "Id": 9,
-          "IconId": "A_1_19"
+          "IconId": "B_1_14"
         },
         {
           "Id": 10,
-          "IconId": "A_4_89"
+          "IconId": "D_3_24"
         },
         {
           "Id": 11,
-          "IconId": "A_4_89"
+          "IconId": "D_2_14"
         }
       ]
     },
@@ -109,23 +109,23 @@
       ]
     },
     {
-      "Tag": "Glasses",
+      "Tag": "Thrones",
       "BlockDatas": [
         {
           "Id": 24,
-          "IconId": "A_1_130"
+          "IconId": "A_3_82"
         },
         {
           "Id": 25,
-          "IconId": "A_2_23"
+          "IconId": "A_4_105"
         },
         {
           "Id": 26,
-          "IconId": "A_3_18"
+          "IconId": "E_3_34"
         },
         {
           "Id": 27,
-          "IconId": "A_1_130"
+          "IconId": "C_4_133"
         }
       ]
     }
@@ -228,5 +228,8 @@
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],
-  "CoinReward": 40
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
+  "CoinReward": 20
 }
