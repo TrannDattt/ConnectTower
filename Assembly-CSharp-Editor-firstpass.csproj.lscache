@@ -379,7 +379,15 @@ Library/ScriptAssemblies/
  MCPForUnity.Runtime.dll
 Temp/bin/Debug/
  Assembly-CSharp-firstpass.dll
+ Autodesk.Fbx.dll
+ Autodesk.Fbx.Editor.dll
+ CFXR.WelcomeScreen.dll
+ CFXRDemo.dll
+ CFXREditor.dll
+ CFXRRuntime.dll
+ KinoBloom.Runtime.dll
  PsdPlugin.dll
+ ToonyColorsPro.Demo.Editor.dll
  UIGradient.dll
  Unity.2D.Animation.Editor.dll
  Unity.2D.Animation.Runtime.dll
@@ -405,6 +413,8 @@ Temp/bin/Debug/
  Unity.Burst.Editor.dll
  Unity.Collections.dll
  Unity.Collections.Editor.dll
+ Unity.Formats.Fbx.Editor.dll
+ Unity.Formats.Fbx.Runtime.dll
  Unity.InputSystem.dll
  Unity.InputSystem.ForUI.dll
  Unity.InternalAPIEditorBridge.001.dll
@@ -415,6 +425,8 @@ Temp/bin/Debug/
  Unity.Mobile.AndroidLogcat.Editor.dll
  Unity.TextMeshPro.dll
  Unity.TextMeshPro.Editor.dll
+ Unity.Timeline.dll
+ Unity.Timeline.Editor.dll
  Unity.VisualStudio.Editor.dll
  UnityEditor.TestRunner.dll
  UnityEditor.UI.dll

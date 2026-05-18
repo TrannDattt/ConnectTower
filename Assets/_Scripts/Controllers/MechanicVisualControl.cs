@@ -4,6 +4,7 @@ using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
 using Assets._Scripts.Interfaces;
 using Assets._Scripts.Managers;
+using Assets._Scripts.Patterns.EventBus;
 using Assets._Scripts.Visuals;
 using DG.Tweening;
 using UnityEngine;
@@ -30,8 +31,11 @@ namespace Assets._Scripts.Controllers
         private string _clothTriggerParam = "Flip";
 
         [Header("Scratched Block")]
-        [SerializeField] private Image _scratchImage;
-        // [SerializeField] private Texture2D _hiddenTexture;
+        [SerializeField] private MeshFilter _scratchMeshFilter;
+        [SerializeField] private Mesh _scratchMesh1;
+        [SerializeField] private Mesh _scratchMesh2;
+        [SerializeField] private Mesh _scratchMesh3;
+        [SerializeField] private ParticleSystem _scratchParticle;
 
         [Header("Trap Pillar")]
         [SerializeField] private SpriteRenderer _trapImage;
@@ -77,8 +81,8 @@ namespace Assets._Scripts.Controllers
                     if (_blockVisual != null)
                     {
                         _blockVisual.ChangeIconDisplay(false);
-                        _scratchImage.gameObject.SetActive(true);
-                        // _blockVisual.ChangeTexture(_hiddenTexture);    
+                        _scratchMeshFilter.gameObject.SetActive(true);
+                        _scratchMeshFilter.sharedMesh = _scratchMesh1;
                     } 
                     break;
                 case EMechanic.StickyBlock:
@@ -137,7 +141,7 @@ namespace Assets._Scripts.Controllers
                     if (_blockVisual != null)
                     {
                         _blockVisual.ChangeIconDisplay(true);
-                        _scratchImage.gameObject.SetActive(false);
+                        _scratchMeshFilter.gameObject.SetActive(false);
                     }
                     if(!doEffect) break;
                     break;
@@ -149,6 +153,34 @@ namespace Assets._Scripts.Controllers
                     break;
                 case EMechanic.TrapPillar:
                     if (_trapImage != null) _trapImage.gameObject.SetActive(false);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void UpdateVisual(MechanicRuntimeData data)
+        {
+            if (data == null)
+            {
+                Debug.LogError("Mechanic data is null! Cant update visual");
+                return;
+            }
+
+            switch (data)
+            {
+                case ScratchedBlockMechanic scratchData:
+                    Debug.Log($"Change scratch mesh from block {gameObject.name} to state {scratchData.ScratchState}");
+                    var mesh = scratchData.ScratchState switch
+                    {
+                        1 => _scratchMesh1,
+                        2 => _scratchMesh2,
+                        3 => _scratchMesh3,
+                        _ => null
+                    };
+                    _scratchMeshFilter.sharedMesh = mesh;
+                    _scratchParticle.gameObject.SetActive(true);
+                    _scratchParticle.Play();
                     break;
                 default:
                     break;

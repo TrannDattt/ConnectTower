@@ -143,6 +143,27 @@ namespace Assets._Scripts.Controllers
             
             toPillar.AddBlocksToTop(blocks);
             DoMoveBlocksAnim(blocks, fromPillar, toPillar);
+
+            var pillarBlocks = toPillar.GetAllBlocks().ToList();
+            var toCompare = blocks[0];
+            int startIndex = pillarBlocks.IndexOf(toCompare);
+            int preMatchCount = 1;
+            for (int i = startIndex + 1; i < pillarBlocks.Count; i++)
+            {
+                if (pillarBlocks[i].IsSameTag(toCompare))
+                    preMatchCount++;
+                else break;
+            }
+            int matchCount = preMatchCount;
+            for (int i = startIndex - 1; i >= 0; i--)
+            {
+                if (pillarBlocks[i].IsSameTag(toCompare))
+                    matchCount++;
+                else break;
+            }
+
+            if (preMatchCount < matchCount)
+                EventBus<BlocksMatchedEvent>.Publish(new BlocksMatchedEvent{ Tag = toCompare.Tag, MatchCount = matchCount});
         }
 
         private Sequence DoMoveBlocksAnim(List<BlockController> blocks, PillarController fromPillar, PillarController toPillar)
@@ -373,5 +394,11 @@ namespace Assets._Scripts.Controllers
     public struct BlocksMovedEvent : IEvent
     {
         public bool MovedByPlayer;
+    }
+
+    public struct BlocksMatchedEvent : IEvent
+    {
+        public string Tag;
+        public int MatchCount;
     }
 }

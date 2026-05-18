@@ -37,6 +37,11 @@ namespace Assets._Scripts.Interfaces
 
         public void UpdateMechanic(MechanicRuntimeData mechanicData)
         {
+            if (mechanicData != null && mechanicData.Key.Equals(ActiveMechanic))
+            {
+                MechanicVisual.UpdateVisual(mechanicData);
+                return;
+            }
             MechanicVisual.RemoveVisual(ActiveMechanic);
             ActiveMechanic = mechanicData.Key;
             MechanicVisual.ApplyVisual(mechanicData);

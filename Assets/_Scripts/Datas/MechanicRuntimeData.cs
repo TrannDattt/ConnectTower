@@ -204,6 +204,8 @@ namespace Assets._Scripts.Datas
         private static int _scratchResolutionFrame = -1;
         private static readonly Dictionary<int, ScratchResolutionState> _scratchResolutionByPillar = new();
         private static bool _isResolvingScratchRemoval;
+        public int ScratchState {get; private set;}
+        private EventBinding<BlocksMatchedEvent> _blockMatchBinding;
 
         private EventBinding<PillarFullMatchedEvent> _pillarFullMatchBinding;
 
@@ -228,9 +230,16 @@ namespace Assets._Scripts.Datas
                     _isResolvingScratchRemoval = false;
                 }
             });
-
-            _sharedBlockId = -1;
             _blocksMovedBinding = new(() => {});
+            _blockMatchBinding = new((evt) =>
+            {
+                if (_sharedBlockId != (_target as BlockController).Id || evt.MatchCount <= ScratchState) return;
+                ScratchState = evt.MatchCount;
+                _target.UpdateMechanic(this);
+            });
+
+            if (_sharedBlockId == InvalidBlockId) GetRandomBlockId();
+            ScratchState = 1;
         }
 
         private static void ResetScratchResolutionStateIfNeeded()
@@ -247,7 +256,7 @@ namespace Assets._Scripts.Datas
 
             if (!_scratchResolutionByPillar.TryGetValue(pillarId, out var resolution))
             {
-                var selectedBlockId = GetRandomBlockId();
+                var selectedBlockId = _sharedBlockId;
                 if (selectedBlockId == InvalidBlockId)
                     return false;
 
@@ -274,6 +283,7 @@ namespace Assets._Scripts.Datas
             if (_scratchedBlocks == null || _scratchedBlocks.Count == 0)
             {
                 Debug.Log($"Invalid ID: {InvalidBlockId}");
+                _sharedBlockId = InvalidBlockId;
                 return InvalidBlockId;
             }
 
@@ -291,6 +301,7 @@ namespace Assets._Scripts.Datas
         public override void Apply(IMechanicHandler target)
         {
             EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchBinding);
+            EventBus<BlocksMatchedEvent>.Subscribe(_blockMatchBinding);
             _scratchedBlocks = BoardController.Instance.GetAllBlocks().Where(b => (b as IMechanicHandler).ActiveMechanic == EMechanic.ScratchBlock).ToHashSet();
 
             if (target is BlockController block)
@@ -310,6 +321,8 @@ namespace Assets._Scripts.Datas
             if (block != null)
                 _scratchedBlocks?.Remove(block);
 
+            GetRandomBlockId();
+            EventBus<BlocksMatchedEvent>.Unsubscribe(_blockMatchBinding);
             EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchBinding);
             base.Remove(doEffect);
 

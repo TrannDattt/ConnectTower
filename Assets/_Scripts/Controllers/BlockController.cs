@@ -40,13 +40,13 @@ namespace Assets._Scripts.Controllers
             return _tag == tag;
         }
 
-        public bool IsSameTag(BlockController other)
+        public bool IsSameTag(BlockController other, bool ignoreMechanic = false)
         {
             return other != null
                    && !string.IsNullOrEmpty(other.tag)
                    && !string.IsNullOrEmpty(_tag)
-                   && !(other as IMechanicHandler).IsHidden()
-                   && !(this as IMechanicHandler).IsHidden()
+                   && ((!(other as IMechanicHandler).IsHidden()
+                   && !(this as IMechanicHandler).IsHidden()) || ignoreMechanic)
                    && _tag == other._tag;
         }
 
