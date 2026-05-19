@@ -141,16 +141,6 @@ namespace Assets._Scripts.Datas
         {
             return _target != null && tag == TagToOpen;
         }
-
-        // protected override void DoApplyAnim(IMechanicHandler target)
-        // {
-        //     throw new System.NotImplementedException();
-        // }
-
-        // protected override void DoRemoveAnim(IMechanicHandler target)
-        // {
-        //     throw new System.NotImplementedException();
-        // }
     }
 #endregion
 
@@ -159,32 +149,41 @@ namespace Assets._Scripts.Datas
     {
         public int MoveCountToRemove {get; private set;}
         private int _currentMoveCount = 0;
+        private EventBinding<PillarFullMatchedEvent> _pillarFullMatchedBinding;
 
         public FrozenBlockMechanic(int moveCountToRemove) : base()
         {
             Key = EMechanic.FrozenBlock;
             MoveCountToRemove = moveCountToRemove;
-            // BlockMovementController.Instance.OnBlocksMoved.AddListener((moveByPlayer) =>
-            // {
-            //     if (moveByPlayer)
-            //         _currentMoveCount++;
-            // });
+            _pillarFullMatchedBinding = new((evt) =>
+            {
+                if (_target is PillarController pillar)
+                {
+                    if (evt.Pillar == pillar) Remove();
+                }
+                else if (_target is BlockController block)
+                {
+                    if (block.IsSameTag(evt.Tag)) Remove();
+                }
+            });
+        }
+
+        public override void Apply(IMechanicHandler target)
+        {
+            base.Apply(target);
+            EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchedBinding);
+        }
+
+        public override void Remove(bool doEffect = true)
+        {
+            EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchedBinding);
+            base.Remove(doEffect);
         }
 
         protected override bool CheckRemoveCondition()
         {
             return _currentMoveCount >= MoveCountToRemove;
         }
-
-        // protected override void DoApplyAnim(IMechanicHandler target)
-        // {
-        //     throw new System.NotImplementedException();
-        // }
-
-        // protected override void DoRemoveAnim(IMechanicHandler target)
-        // {
-        //     throw new System.NotImplementedException();
-        // }
     }
     #endregion
 
@@ -307,11 +306,6 @@ namespace Assets._Scripts.Datas
             if (target is BlockController block)
                 _scratchedBlocks.Add(block);
 
-            // string message = "Scratched block:";
-            // foreach (var sb in _scratchedBlocks)
-            //     message += $" {sb.Id},";
-            // Debug.Log(message);
-
             base.Apply(target);
         }
 
@@ -348,7 +342,6 @@ namespace Assets._Scripts.Datas
         {
             Key = EMechanic.StickyBlock;
         }
-
 
         protected override bool CheckRemoveCondition()
         {

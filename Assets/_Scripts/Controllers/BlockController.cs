@@ -37,7 +37,7 @@ namespace Assets._Scripts.Controllers
 
         public bool IsSameTag(string tag)
         {
-            return _tag == tag;
+            return !string.IsNullOrEmpty(_tag) && !string.IsNullOrEmpty(tag) && _tag == tag;
         }
 
         public bool IsSameTag(BlockController other, bool ignoreMechanic = false)

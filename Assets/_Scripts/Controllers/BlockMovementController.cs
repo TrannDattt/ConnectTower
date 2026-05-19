@@ -11,6 +11,7 @@ using Assets._Scripts.Enums;
 using Assets._Scripts.Patterns.EventBus;
 using System.Linq;
 using Assets._Scripts.Interfaces;
+using Assets._Scripts.Tools;
 
 namespace Assets._Scripts.Controllers
 {
@@ -19,6 +20,7 @@ namespace Assets._Scripts.Controllers
         private List<BlockController> _selectedBlocks = new();
 
         [SerializeField] private float _pickupHeight;
+        [SerializeField] private float _stickyOffset;
         public Coroutine CompleteCoroutine {get; private set;}
 
         private float _blockHeight => GameObjectDataHelper.BlockHeight;
@@ -32,6 +34,8 @@ namespace Assets._Scripts.Controllers
         {
             return pillar.BlockContainer.transform.position + index * _blockHeight * Vector3.up;
         }
+
+        bool IsSticky(BlockController block) => (block as IMechanicHandler).ActiveMechanic == EMechanic.StickyBlock;
 
 #region PICK UP
         private void PickUpBlocks(PillarController pillar)
@@ -61,7 +65,11 @@ namespace Assets._Scripts.Controllers
 
             for (int i = 0; i < blocks.Count; i++)
             {
-                targetPos[i] = pillar.BlockContainer.transform.position + Vector3.up * (firstOffset - i * blockOffset);
+                var lastOffset = i == 0 ? pillar.BlockContainer.transform.position + Vector3.up * firstOffset : targetPos[i - 1];
+                var stickyOffset = 0f;
+                if ((IsSticky(blocks[i]) && i != 0) || (i > 0 && IsSticky(blocks[i - 1])))
+                    stickyOffset = _stickyOffset;
+                targetPos[i] = lastOffset - Vector3.up * (blockOffset + stickyOffset);
                 sequence.Join(blocks[i].transform.DOMove(targetPos[i], tweenDuration).SetEase(Ease.OutQuad));
             }
 
@@ -116,6 +124,9 @@ namespace Assets._Scripts.Controllers
         {
             if (blocks.Count == 0) return;
 
+            // Debug.Log($"Block 0's mechanic: {(blocks[0] as IMechanicHandler).ActiveMechanic}, Block {blocks.Count - 1}'s mechanic: {(blocks[^1] as IMechanicHandler).ActiveMechanic}");
+            if (IsSticky(blocks[0])) blocks[0].MechanicVisual.RemoveStickyTarget(false);
+            if (IsSticky(blocks[^1])) blocks[^1].MechanicVisual.RemoveStickyTarget(true);
             DOTween.Kill(pillar, true);
             foreach (var block in blocks) block.transform.DOKill();
             var tweenId = "Put back";
@@ -170,6 +181,8 @@ namespace Assets._Scripts.Controllers
         {
             if (blocks.Count == 0 || fromPillar == null || toPillar == null) return null;
 
+            if (IsSticky(blocks[0])) blocks[0].MechanicVisual.RemoveStickyTarget(true);
+            if (IsSticky(blocks[^1])) blocks[^1].MechanicVisual.RemoveStickyTarget(false);
             DOTween.Kill(fromPillar, true);
             foreach (var block in blocks) block.transform.DOKill();
             string tweenId = "Move";
@@ -246,7 +259,7 @@ namespace Assets._Scripts.Controllers
                 
                 if (isLockedThisMove)
                 {
-                    feedbackSequence.AppendCallback(() => Debug.Log($"Start lock at: {Time.time}"));
+                    // feedbackSequence.AppendCallback(() => Debug.Log($"Start lock at: {Time.time}"));
                     feedbackSequence.Append(toPillar.gameObject.GetComponent<PillarEffectVisual>().DoLockAnim(blocks[0].Tag));
                     feedbackSequence.JoinCallback(() =>
                     {
@@ -255,6 +268,19 @@ namespace Assets._Scripts.Controllers
                 }
 
                 feedbackSequence.Play();
+            });
+
+            sequence.OnKill(() =>
+            {
+                var newBlocks = fromPillar.GetAllBlocks().ToList();
+                newBlocks.AddRange(toPillar.GetAllBlocks());
+                foreach (var block in newBlocks)
+                {
+                    if (IsSticky(block))
+                    {
+                        block.MechanicVisual.UpdateStickyTarget();
+                    }
+                }
             });
             return sequence.Play();
         }
@@ -298,7 +324,7 @@ namespace Assets._Scripts.Controllers
 
                 masterSequence.Insert(i * staggeredDelay, sequence);
             }
-            masterSequence.AppendCallback(() => Debug.Log($"Done match at: {Time.time}"));
+            // masterSequence.AppendCallback(() => Debug.Log($"Done match at: {Time.time}"));
 
             return masterSequence;
         }

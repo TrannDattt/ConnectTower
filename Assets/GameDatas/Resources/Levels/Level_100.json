@@ -1,7 +1,7 @@
 ﻿{
   "Index": 100,
   "Difficulty": 0,
-  "MoveLimit": 20,
+  "MoveLimit": 100,
   "BlockGroups": [
     {
       "Tag": "Birthday Cakes",
@@ -56,6 +56,16 @@
         }
       ],
       "Trackable": false
+    },
+    {
+      "Tag": "",
+      "BlockDatas": [
+        {
+          "Id": 9,
+          "IconId": ""
+        }
+      ],
+      "Trackable": false
     }
   ],
   "PillarDatas": [
@@ -94,6 +104,24 @@
         -3,
         -4
       ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
+    },
+    {
+      "Id": 5,
+      "BlockIds": [
+        9,
+        -2,
+        -3,
+        -4
+      ]
     }
   ],
   "HiddenBlockDatas": {
@@ -102,22 +130,17 @@
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],
   "ScratchedBlockDatas": {
-    "BlockIds": []
+    "BlockIds": [
+      0,
+      2
+    ]
   },
   "StickyBlockDatas": {
     "BlockIds": [
-      8
+      8,
+      9
     ]
   },
-  "TrapPillarDatas": [
-    {
-      "PillarId": 2,
-      "IsTrap": true
-    },
-    {
-      "PillarId": 3,
-      "IsTrap": false
-    }
-  ],
+  "TrapPillarDatas": [],
   "CoinReward": 5
 }
