@@ -38,7 +38,7 @@ namespace Assets._Scripts.Helpers
             return true;
         }
 
-        public static void SaveLevel(LevelJSON levelData)
+        public static void SaveLevel(LevelJSON levelData, bool overwriteExisting = false)
         {
             string json = JsonConvert.SerializeObject(levelData, Formatting.Indented);
             string fileName = $"Level_{levelData.Index}";
@@ -49,7 +49,7 @@ namespace Assets._Scripts.Helpers
                 System.IO.Directory.CreateDirectory(directory);
             }
 
-            if (System.IO.File.Exists(path))
+            if (!overwriteExisting && System.IO.File.Exists(path))
             {
                 SaveAction saveAction = AskSaveAction(fileName);
                 switch (saveAction)

@@ -1,8 +1,10 @@
+using System.Linq;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Editor;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
 using Assets._Scripts.Managers;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,6 +26,9 @@ namespace Assets._Scripts.Visuals
 
         [SerializeField] private GameObject _hardDecorate;
         [SerializeField] private GameObject _superHardDecorate;
+
+        [SerializeField] private Image[] _hardGlowings;
+        [SerializeField] private Image[] _superHardGlowings;
 
         [SerializeField] private Image _icon;
         [SerializeField] private GameObject _decorateHolder;
@@ -65,6 +70,17 @@ namespace Assets._Scripts.Visuals
             _decorateHolder.SetActive(_levelData.Difficulty != EDifficulty.Normal && !IsCleared());
             _hardDecorate.SetActive(_levelData.Difficulty == EDifficulty.Hard);
             _superHardDecorate.SetActive(_levelData.Difficulty == EDifficulty.SuperHard);
+
+            foreach (var glow in _hardGlowings)
+            {
+                glow.gameObject.SetActive(_levelData.Difficulty == EDifficulty.Hard && UserManager.CurUser.CurrentLevelIndex == _levelData.Index);
+                glow.DOFade(.15f, 1f).From(1f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            }
+            foreach (var glow in _superHardGlowings)
+            {
+                glow.gameObject.SetActive(_levelData.Difficulty == EDifficulty.SuperHard && UserManager.CurUser.CurrentLevelIndex == _levelData.Index);
+                glow.DOFade(.15f, 1f).From(1f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            }
 
             _indexText.text = _levelData.Index.ToString();
             gameObject.name = $"Level_{_levelData.Index}";

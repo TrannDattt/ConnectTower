@@ -1,7 +1,10 @@
+using System.Linq;
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Editor;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
+using Assets._Scripts.Managers;
+using Assets._Scripts.Patterns.EventBus;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,6 +27,8 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Vector2 _floatOffset;
         [SerializeField] private float _floatCycleDur;
         [SerializeField] private AnimationCurve _floatMoveCurve;
+
+        private EventBinding<CurrencyChangedEvent> _currencyChangedBinding;
 
         private Vector2 _initPos;
 
@@ -85,6 +90,13 @@ namespace Assets._Scripts.Visuals
                 if (active) Selected();
                 else Deselected();
             });
+
+            _currencyChangedBinding = new(() =>
+            {
+                var newCount = UserManager.CurUser.BoosterCount[Key];
+                _getMoreImage.gameObject.SetActive(newCount <= 0);
+                _useCount.text = newCount.ToString();
+            });
         }
 
         void OnEnable()
@@ -95,12 +107,14 @@ namespace Assets._Scripts.Visuals
                 Disable();
 
             Init();
+            EventBus<CurrencyChangedEvent>.Subscribe(_currencyChangedBinding);
         }
 
         void OnDisable()
         {
             _canvasGroup.alpha = _disableAlpha;
 
+            EventBus<CurrencyChangedEvent>.Unsubscribe(_currencyChangedBinding);
             DOTween.Kill(this, "Select");
             DOTween.Kill(this, "Deselect", true);
         }

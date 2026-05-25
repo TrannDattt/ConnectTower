@@ -54,6 +54,28 @@ namespace Assets._Scripts.Visuals
             var color = ColorMapper.GetColor(key);
             ChangeColor(color);
         }
+        
+        public void SetTrailColor(Color color)
+        {
+            if (_trailRenderer == null) return;
+
+            var gradient = new Gradient();
+
+            gradient.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(color, 0f),
+                    new GradientColorKey(color, 1f),
+                },
+                new[]
+                {
+                    new GradientAlphaKey(1f, 0f),
+                    new GradientAlphaKey(0f, 1f),
+                }
+            );
+
+            _trailRenderer.colorGradient = gradient;
+        }
 
         private void ChangeColor(Color color)
         {
@@ -69,6 +91,7 @@ namespace Assets._Scripts.Visuals
             ChangeIconDisplay(true);
             ChangeColor(_initialColor);
             ChangeTexture(null);
+            SetTrailColor(Color.white);
         }
 
         void Awake()

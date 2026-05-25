@@ -12,6 +12,7 @@ namespace Assets._Scripts.Managers
         [SerializeField] private float _maxSpaceX = 2.5f;
         [SerializeField] private float _minSpaceX = .94f;
         [SerializeField] private float _rowSpacing = 4.2f;
+        [SerializeField] private float _rowForwardOffset = 3f;
         [SerializeField] private int _referencePillarCount = 10;
         [SerializeField] private float _referenceCameraSize = 5.3f;
         [SerializeField] private float _cameraPaddingX = .75f;
@@ -49,6 +50,7 @@ namespace Assets._Scripts.Managers
             {
                 int currentPillarsInRow = minPerRow + (r < extraPillars ? 1 : 0);
                 float yPos = startY + r * _rowSpacing;
+                float zPos = board.position.z - (rowCount - 1 - r) * _rowForwardOffset;
 
                 float spacing;
                 if (currentPillarsInRow > 1)
@@ -66,7 +68,7 @@ namespace Assets._Scripts.Managers
 
                 for (int i = 0; i < currentPillarsInRow; i++)
                 {
-                    positions.Add(new Vector3(startX + i * spacing, yPos, board.position.z));
+                    positions.Add(new Vector3(startX + i * spacing, yPos, zPos));
                 }
             }
 

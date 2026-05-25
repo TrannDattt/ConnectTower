@@ -41,7 +41,7 @@ namespace Assets._Scripts.Visuals
                 _button.onClick.AddListener(() => 
                 {
                     OnClicked.Invoke();
-                    HapticManager.DoLightFeedback();
+                    HapticManager.DoFeedBack();
                     SoundManager.Instance.PlayRandomSFX(IsEnabled ? ESfx.ButtonClicked : ESfx.DisabledButtonClicked);
                 });
             }

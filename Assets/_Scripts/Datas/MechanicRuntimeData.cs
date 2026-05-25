@@ -46,6 +46,18 @@ namespace Assets._Scripts.Datas
             OnCheckCondicion?.Invoke(new BlocksMovedEvent { MovedByPlayer = false });
         }
 
+        public virtual void ApplyImmediate(IMechanicHandler target)
+        {
+            Debug.Log($"Applying mechanic immediately {Key} to {target}");
+            _target = target;
+            if (_target.ActiveMechanic == Key) return;
+            _target.UpdateMechanicImmediate(this);
+
+            EventBus<BlocksMovedEvent>.Subscribe(_blocksMovedBinding);
+
+            OnCheckCondicion?.Invoke(new BlocksMovedEvent { MovedByPlayer = false });
+        }
+
         public virtual void Remove(bool doEffect = true)
         {
             Debug.Log($"Removing mechanic {Key} from {_target}");
@@ -53,6 +65,18 @@ namespace Assets._Scripts.Datas
             _target.ClearMechanic(doEffect);
             _target = null;
             
+            EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
+            if (!doEffect) return;
+            DoMechanicSFX(Key);
+        }
+
+        public virtual void RemoveImmediate(bool doEffect = true)
+        {
+            Debug.Log($"Removing mechanic immediately {Key} from {_target}");
+            if (_target == null) return;
+            _target.ClearMechanicImmediate(doEffect);
+            _target = null;
+
             EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
             if (!doEffect) return;
             DoMechanicSFX(Key);
@@ -121,13 +145,32 @@ namespace Assets._Scripts.Datas
             EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchedBinding);
         }
 
+        public override void ApplyImmediate(IMechanicHandler target)
+        {
+            _target = target;
+            if (_target.ActiveMechanic == Key) return;
+            _target.UpdateMechanicImmediate(this);
+
+            EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchedBinding);
+        }
+
         public override void Remove(bool doEffect = true)
         {
             if (_target == null) return;
-            _target.ClearMechanic();
+            _target.ClearMechanic(doEffect);
             
             EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchedBinding);
             
+            _target = null;
+        }
+
+        public override void RemoveImmediate(bool doEffect = true)
+        {
+            if (_target == null) return;
+            _target.ClearMechanicImmediate(doEffect);
+
+            EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchedBinding);
+
             _target = null;
         }
 
@@ -144,17 +187,30 @@ namespace Assets._Scripts.Datas
     }
 #endregion
 
-#region Frozen Block
+    #region Frozen Block
     public class FrozenBlockMechanic : MechanicRuntimeData
     {
-        public int MoveCountToRemove {get; private set;}
-        private int _currentMoveCount = 0;
         private EventBinding<PillarFullMatchedEvent> _pillarFullMatchedBinding;
+        private bool _syncImmediately;
 
-        public FrozenBlockMechanic(int moveCountToRemove) : base()
+        public FrozenBlockMechanic() : base()
         {
             Key = EMechanic.FrozenBlock;
-            MoveCountToRemove = moveCountToRemove;
+            OnCheckCondicion = (_) =>
+            {
+                if (_target is PillarController pillar)
+                {
+                    ApplyFrozenToMatchingBlocks(pillar, _syncImmediately);
+                    return;
+                }
+
+                if (CheckRemoveCondition())
+                {
+                    Remove();
+                }
+            };
+            _blocksMovedBinding = new(OnCheckCondicion);
+
             _pillarFullMatchedBinding = new((evt) =>
             {
                 if (_target is PillarController pillar)
@@ -170,7 +226,16 @@ namespace Assets._Scripts.Datas
 
         public override void Apply(IMechanicHandler target)
         {
+            _syncImmediately = false;
             base.Apply(target);
+            EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchedBinding);
+        }
+
+        public override void ApplyImmediate(IMechanicHandler target)
+        {
+            _syncImmediately = true;
+            base.ApplyImmediate(target);
+            _syncImmediately = false;
             EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchedBinding);
         }
 
@@ -180,9 +245,50 @@ namespace Assets._Scripts.Datas
             base.Remove(doEffect);
         }
 
+        public override void RemoveImmediate(bool doEffect = true)
+        {
+            EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchedBinding);
+            base.RemoveImmediate(doEffect);
+        }
+
         protected override bool CheckRemoveCondition()
         {
-            return _currentMoveCount >= MoveCountToRemove;
+            return false;
+        }
+
+        private static void ApplyFrozenToMatchingBlocks(PillarController pillar, bool immediate)
+        {
+            if (pillar == null || pillar.ActiveMechanic != EMechanic.FrozenBlock)
+                return;
+
+            var pillarBlocks = pillar.GetAllBlocks().ToList();
+            if (pillarBlocks.Count == 0)
+                return;
+
+            var bottomBlock = pillar.GetBottomBlock();
+            if (bottomBlock == null)
+                return;
+
+            for (int i = 1; i < pillarBlocks.Count; i++)
+            {
+                var belowBlock = pillarBlocks[i - 1];
+                var block = pillarBlocks[i];
+                if (belowBlock == null || block == null || !block.IsSameTag(bottomBlock))
+                    continue;
+
+                var belowHandler = belowBlock as IMechanicHandler;
+                var handler = block as IMechanicHandler;
+                if (belowHandler.ActiveMechanic != EMechanic.FrozenBlock || handler.ActiveMechanic != EMechanic.None)
+                    continue;
+
+                var mechanic = new FrozenBlockMechanic();
+                if (immediate)
+                    mechanic.ApplyImmediate(block);
+                else
+                    mechanic.Apply(block);
+
+                BoardController.Instance?.RegisterMechanic(mechanic);
+            }
         }
     }
     #endregion
@@ -309,6 +415,18 @@ namespace Assets._Scripts.Datas
             base.Apply(target);
         }
 
+        public override void ApplyImmediate(IMechanicHandler target)
+        {
+            EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchBinding);
+            EventBus<BlocksMatchedEvent>.Subscribe(_blockMatchBinding);
+            _scratchedBlocks = BoardController.Instance.GetAllBlocks().Where(b => (b as IMechanicHandler).ActiveMechanic == EMechanic.ScratchBlock).ToHashSet();
+
+            if (target is BlockController block)
+                _scratchedBlocks.Add(block);
+
+            base.ApplyImmediate(target);
+        }
+
         public override void Remove(bool doEffect = true)
         {
             var block = _target as BlockController;
@@ -326,6 +444,24 @@ namespace Assets._Scripts.Datas
                 pillar.CheckFullMatch();
                 if (pillar.IsFullMatch) pillar.DoFullMatchAnim();
             } 
+        }
+
+        public override void RemoveImmediate(bool doEffect = true)
+        {
+            var block = _target as BlockController;
+            if (block != null)
+                _scratchedBlocks?.Remove(block);
+
+            GetRandomBlockId();
+            EventBus<BlocksMatchedEvent>.Unsubscribe(_blockMatchBinding);
+            EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchBinding);
+            base.RemoveImmediate(doEffect);
+
+            if (block != null)
+            {
+                var pillar = block.GetPillarParent();
+                pillar.CheckFullMatch();
+            }
         }
 
         protected override bool CheckRemoveCondition()
@@ -375,23 +511,87 @@ namespace Assets._Scripts.Datas
 
         public override void Apply(IMechanicHandler target)
         {
-            Debug.Log($"Applying mechanic {Key} to {target}");
+            // Debug.Log($"Applying mechanic {Key} to {target}");
             _lastTarget = target;
             _target = target;
+            if (!IsTrap) 
+            {
+                if (_target.ActiveMechanic == Key)
+                {
+                    Remove();
+                }
+                else
+                {
+                    _target.MechanicVisual?.RemoveVisualImmediate(Key, false);
+                    _target = null;
+                }
+                return;
+            }
+
             if (_target.ActiveMechanic == Key) return;
             _target.UpdateMechanic(this);
-            
-            if (!IsTrap) Remove();
+        }
+
+        public override void ApplyImmediate(IMechanicHandler target)
+        {
+            _lastTarget = target;
+            _target = target;
+            if (!IsTrap)
+            {
+                if (_target.ActiveMechanic == Key)
+                {
+                    RemoveImmediate();
+                }
+                else
+                {
+                    _target.MechanicVisual?.RemoveVisualImmediate(Key, false);
+                    _target = null;
+                }
+                return;
+            }
+
+            if (_target.ActiveMechanic == Key) return;
+            _target.UpdateMechanicImmediate(this);
         }
 
         public override void Remove(bool doEffect = true)
         {
-            Debug.Log($"Removing mechanic {Key} from {_target}");
+            if (!doEffect)
+            {
+                if (_target != null)
+                    _target.ClearMechanic(doEffect);
+
+                _target = null;
+                _lastTarget = null;
+                EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
+                return;
+            }
+
+            // Debug.Log($"Removing mechanic {Key} from {_target}");
             if (_target == null) return;
             _target.ClearMechanic(doEffect);
             _target = null;
-            
-            if (!doEffect) return;
+
+            DoMechanicSFX(Key);
+        }
+
+        public override void RemoveImmediate(bool doEffect = true)
+        {
+            if (!doEffect)
+            {
+                if (_target != null)
+                    _target.ClearMechanicImmediate(doEffect);
+
+                _target = null;
+                _lastTarget = null;
+                EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
+                return;
+            }
+
+            if (_target == null) return;
+            _target.ClearMechanicImmediate(doEffect);
+            _target = null;
+
             DoMechanicSFX(Key);
         }
 

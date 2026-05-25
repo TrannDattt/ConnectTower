@@ -1,126 +1,179 @@
-using UnityEngine;
-using System.Collections;
 using TMPro;
+using UnityEngine;
 
 namespace TMPro.Examples
 {
     [ExecuteAlways]
     public class WarpTextExample : MonoBehaviour
     {
-        private TMP_Text m_TextComponent;
+        private TMP_Text _textComponent;
+        private string _lastText;
+        private float _lastCurveScale;
+        private int _lastCurveHash;
+        private bool _needsWarp = true;
 
-        public AnimationCurve VertexCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(0.25f, 2.0f), new Keyframe(0.5f, 0), new Keyframe(0.75f, 2.0f), new Keyframe(1, 0f));
+        public AnimationCurve VertexCurve = new AnimationCurve(
+            new Keyframe(0, 0),
+            new Keyframe(0.25f, 2.0f),
+            new Keyframe(0.5f, 0),
+            new Keyframe(0.75f, 2.0f),
+            new Keyframe(1, 0f));
+
         public float CurveScale = 1.0f;
-        private float _curCurveScale;
 
         void Awake()
         {
-            m_TextComponent = gameObject.GetComponent<TMP_Text>();
+            CacheTextComponent();
         }
 
         void OnEnable()
         {
-            if (m_TextComponent == null) m_TextComponent = GetComponent<TMP_Text>();
-
-            _curCurveScale = CurveScale;
-
-            if (Application.isPlaying && m_TextComponent != null)
-                DoWarpText();
+            CacheTextComponent();
+            MarkDirty();
         }
 
         void OnValidate()
         {
-            _curCurveScale = CurveScale;
+            CacheTextComponent();
+            MarkDirty();
+            TryWarpText();
         }
 
-        void Start()
+        void LateUpdate()
         {
-            _curCurveScale = CurveScale;
-
-            if (Application.isPlaying && m_TextComponent != null)
-                DoWarpText();
-
-            // StartCoroutine(WarpTextCoroutine());
+            TryWarpText();
         }
 
-        IEnumerator WarpTextCoroutine()
+        private void CacheTextComponent()
         {
-            while (true)
-            {
-                _curCurveScale = CurveScale;
-                DoWarpText();
-                yield return new WaitForSeconds(0.05f);
-            }
+            if (_textComponent == null)
+                _textComponent = GetComponent<TMP_Text>();
         }
 
-        void Update()
+        private void MarkDirty()
         {
-            if (_curCurveScale != CurveScale)
-            {
-                _curCurveScale = CurveScale;
-                DoWarpText();
-            }
+            _needsWarp = true;
         }
 
-        public void DoWarpText()
+        private void TryWarpText()
         {
-            if (m_TextComponent == null) return;
+            if (_textComponent == null)
+                return;
 
-            m_TextComponent.ForceMeshUpdate();
+            int curveHash = GetCurveHash(VertexCurve);
+            bool curveScaleChanged = !Mathf.Approximately(_lastCurveScale, CurveScale);
+            bool curveShapeChanged = _lastCurveHash != curveHash;
+            bool textChanged = _lastText != _textComponent.text;
 
-            TMP_TextInfo textInfo = m_TextComponent.textInfo;
-            if (textInfo == null || textInfo.meshInfo == null) return;
+            if (!_needsWarp && !curveScaleChanged && !curveShapeChanged && !textChanged && !_textComponent.havePropertiesChanged)
+                return;
 
+            WarpText();
+        }
+
+        private void WarpText()
+        {
+            if (_textComponent == null)
+                return;
+
+            VertexCurve.preWrapMode = WrapMode.Clamp;
+            VertexCurve.postWrapMode = WrapMode.Clamp;
+
+            _textComponent.ForceMeshUpdate();
+
+            TMP_TextInfo textInfo = _textComponent.textInfo;
             int characterCount = textInfo.characterCount;
-            if (characterCount == 0) return;
 
-            float boundsMinX = m_TextComponent.bounds.min.x;
-            float boundsMaxX = m_TextComponent.bounds.max.x;
+            _lastText = _textComponent.text;
+            _lastCurveScale = CurveScale;
+            _lastCurveHash = GetCurveHash(VertexCurve);
+            _needsWarp = false;
+
+            if (characterCount == 0)
+                return;
+
+            float boundsMinX = _textComponent.bounds.min.x;
+            float boundsMaxX = _textComponent.bounds.max.x;
             float boundsWidth = boundsMaxX - boundsMinX;
 
-            if (Mathf.Approximately(boundsWidth, 0f)) return;
+            if (Mathf.Approximately(boundsWidth, 0f))
+                return;
 
             for (int i = 0; i < characterCount; i++)
             {
-                if (!textInfo.characterInfo[i].isVisible) continue;
+                TMP_CharacterInfo charInfo = textInfo.characterInfo[i];
+                if (!charInfo.isVisible)
+                    continue;
 
-                int vertexIndex = textInfo.characterInfo[i].vertexIndex;
-                int materialIndex = textInfo.characterInfo[i].materialReferenceIndex;
-
-                if (materialIndex < 0 || materialIndex >= textInfo.meshInfo.Length) continue;
-
+                int vertexIndex = charInfo.vertexIndex;
+                int materialIndex = charInfo.materialReferenceIndex;
                 Vector3[] vertices = textInfo.meshInfo[materialIndex].vertices;
-                if (vertices == null || vertexIndex + 3 >= vertices.Length) continue;
 
-                Vector2 charMidBaseline = new Vector2(
-                    (vertices[vertexIndex + 0].x + vertices[vertexIndex + 2].x) / 2,
-                    textInfo.characterInfo[i].baseLine);
+                Vector3 offsetToMidBaseline = new Vector3(
+                    (vertices[vertexIndex + 0].x + vertices[vertexIndex + 2].x) * 0.5f,
+                    charInfo.baseLine,
+                    0f);
 
-                vertices[vertexIndex + 0] -= (Vector3)charMidBaseline;
-                vertices[vertexIndex + 1] -= (Vector3)charMidBaseline;
-                vertices[vertexIndex + 2] -= (Vector3)charMidBaseline;
-                vertices[vertexIndex + 3] -= (Vector3)charMidBaseline;
+                vertices[vertexIndex + 0] -= offsetToMidBaseline;
+                vertices[vertexIndex + 1] -= offsetToMidBaseline;
+                vertices[vertexIndex + 2] -= offsetToMidBaseline;
+                vertices[vertexIndex + 3] -= offsetToMidBaseline;
 
-                float x0 = (charMidBaseline.x - boundsMinX) / boundsWidth;
+                float x0 = (offsetToMidBaseline.x - boundsMinX) / boundsWidth;
                 float x1 = x0 + 0.0001f;
-                float y0 = VertexCurve.Evaluate(x0) * _curCurveScale;
-                float y1 = VertexCurve.Evaluate(x1) * _curCurveScale;
+                float y0 = VertexCurve.Evaluate(x0) * CurveScale;
+                float y1 = VertexCurve.Evaluate(x1) * CurveScale;
 
-                float angle = Mathf.Atan2(y1 - y0, (x1 - x0) * boundsWidth) * Mathf.Rad2Deg;
-                Matrix4x4 matrix = Matrix4x4.TRS(new Vector3(0, y0, 0), Quaternion.Euler(0, 0, angle), Vector3.one);
+                Vector3 horizontal = Vector3.right;
+                Vector3 tangent = new Vector3(x1 * boundsWidth + boundsMinX, y1, 0f) - new Vector3(offsetToMidBaseline.x, y0, 0f);
+
+                float dot = Mathf.Acos(Mathf.Clamp(Vector3.Dot(horizontal, tangent.normalized), -1f, 1f)) * Mathf.Rad2Deg;
+                Vector3 cross = Vector3.Cross(horizontal, tangent);
+                float angle = cross.z > 0 ? dot : 360f - dot;
+
+                Matrix4x4 matrix = Matrix4x4.TRS(new Vector3(0f, y0, 0f), Quaternion.Euler(0f, 0f, angle), Vector3.one);
 
                 vertices[vertexIndex + 0] = matrix.MultiplyPoint3x4(vertices[vertexIndex + 0]);
                 vertices[vertexIndex + 1] = matrix.MultiplyPoint3x4(vertices[vertexIndex + 1]);
                 vertices[vertexIndex + 2] = matrix.MultiplyPoint3x4(vertices[vertexIndex + 2]);
                 vertices[vertexIndex + 3] = matrix.MultiplyPoint3x4(vertices[vertexIndex + 3]);
 
-                vertices[vertexIndex + 0] += (Vector3)charMidBaseline;
-                vertices[vertexIndex + 1] += (Vector3)charMidBaseline;
-                vertices[vertexIndex + 2] += (Vector3)charMidBaseline;
-                vertices[vertexIndex + 3] += (Vector3)charMidBaseline;
+                vertices[vertexIndex + 0] += offsetToMidBaseline;
+                vertices[vertexIndex + 1] += offsetToMidBaseline;
+                vertices[vertexIndex + 2] += offsetToMidBaseline;
+                vertices[vertexIndex + 3] += offsetToMidBaseline;
             }
 
-            m_TextComponent.UpdateVertexData(TMP_VertexDataUpdateFlags.Vertices);
+            _textComponent.UpdateVertexData(TMP_VertexDataUpdateFlags.Vertices);
+            _textComponent.havePropertiesChanged = false;
+        }
+
+        private static int GetCurveHash(AnimationCurve curve)
+        {
+            if (curve == null)
+                return 0;
+
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + (int)curve.preWrapMode;
+                hash = hash * 23 + (int)curve.postWrapMode;
+
+                Keyframe[] keys = curve.keys;
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    Keyframe key = keys[i];
+                    hash = hash * 23 + key.time.GetHashCode();
+                    hash = hash * 23 + key.value.GetHashCode();
+                    hash = hash * 23 + key.inTangent.GetHashCode();
+                    hash = hash * 23 + key.outTangent.GetHashCode();
+                    hash = hash * 23 + key.inWeight.GetHashCode();
+                    hash = hash * 23 + key.outWeight.GetHashCode();
+                    hash = hash * 23 + (int)key.weightedMode;
+                }
+
+                return hash;
+            }
         }
     }
 }

@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_1_85"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Cats",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_1_45"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Donuts",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_2_93"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -111,13 +114,11 @@
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [
     {
-      "MoveCountToRemove": 3,
       "BlockIds": [
         3
       ]
     },
     {
-      "MoveCountToRemove": 11,
       "BlockIds": [
         11
       ]
@@ -129,5 +130,10 @@
       2
     ]
   },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 13730,
   "CoinReward": 40
 }

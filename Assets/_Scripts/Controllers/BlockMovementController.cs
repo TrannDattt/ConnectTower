@@ -36,12 +36,16 @@ namespace Assets._Scripts.Controllers
         }
 
         bool IsSticky(BlockController block) => (block as IMechanicHandler).ActiveMechanic == EMechanic.StickyBlock;
+        bool IsFrozen(PillarController pillar) => pillar != null && pillar.ActiveMechanic == EMechanic.FrozenBlock;
 
 #region PICK UP
         private void PickUpBlocks(PillarController pillar)
         {
+            DOTween.Kill(pillar);
             if (pillar.TryRemoveTopBlocks(out _selectedBlocks))
             {
+                RefreshStickyTargetsForPillar(pillar);
+                RefreshStickyTargetsForPickedBlocks(_selectedBlocks);
                 // _selectedBlocks = blocks;
                 DoPickUpBlocksAnim(_selectedBlocks, pillar);
             }
@@ -53,7 +57,6 @@ namespace Assets._Scripts.Controllers
             if (blocks.Count == 0) return;
 
             string tweenId = "Pick up";
-            DOTween.Kill(pillar);
 
             var sequence = DOTween.Sequence().SetTarget(pillar).SetId(tweenId);
             float tweenDuration = 0.3f;
@@ -78,6 +81,32 @@ namespace Assets._Scripts.Controllers
                 foreach (var block in blocks) DoFloatAnim(block);
             });
             sequence.Play();
+        }
+
+        private void RefreshStickyTargetsForPillar(PillarController pillar)
+        {
+            if (pillar == null) return;
+
+            foreach (var block in pillar.GetAllBlocks())
+            {
+                if (IsSticky(block))
+                    block.MechanicVisual.UpdateStickyTarget();
+            }
+        }
+
+        private void RefreshStickyTargetsForPickedBlocks(List<BlockController> blocks)
+        {
+            if (blocks == null || blocks.Count == 0) return;
+
+            for (int i = 0; i < blocks.Count; i++)
+            {
+                var block = blocks[i];
+                if (!IsSticky(block)) continue;
+
+                var topBlock = i > 0 ? blocks[i - 1] : null;
+                var bottomBlock = i < blocks.Count - 1 ? blocks[i + 1] : null;
+                block.MechanicVisual.UpdateStickyTarget(topBlock, bottomBlock);
+            }
         }
 
         private void DoFloatAnim(BlockController target)
@@ -263,7 +292,7 @@ namespace Assets._Scripts.Controllers
                     feedbackSequence.Append(toPillar.gameObject.GetComponent<PillarEffectVisual>().DoLockAnim(blocks[0].Tag));
                     feedbackSequence.JoinCallback(() =>
                     {
-                        HapticManager.DoLightFeedback();
+                        HapticManager.DoFeedBack();
                     });
                 }
 
@@ -290,6 +319,9 @@ namespace Assets._Scripts.Controllers
             if (blocks == null || blocks.Count == 0) return null;
 
             var pillar = blocks[0].GetPillarParent();
+            if (IsFrozen(pillar))
+                return DOTween.Sequence().SetTarget(pillar).SetId("Match");
+
             string tweenId = "Match";
             var masterSequence = DOTween.Sequence().SetId(tweenId).SetTarget(pillar);
 
@@ -350,7 +382,7 @@ namespace Assets._Scripts.Controllers
 
             masterSequence.JoinCallback(() =>
             {
-                HapticManager.DoLightFeedback();
+                HapticManager.DoFeedBack();
                 StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Sparkle, blocks[^1].transform.position));
             });
 
@@ -410,7 +442,10 @@ namespace Assets._Scripts.Controllers
                         PutBackBlocks(toReturn, parentPillar);
                     }
                     
-                    EventBus<BlocksMovedEvent>.Publish(new BlocksMovedEvent { MovedByPlayer = true });
+                    if (toMove.Count > 0)
+                    {
+                        EventBus<BlocksMovedEvent>.Publish(new BlocksMovedEvent { MovedByPlayer = true });
+                    }
                 }
             }
         }

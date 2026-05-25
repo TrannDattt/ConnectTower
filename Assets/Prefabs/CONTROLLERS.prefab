@@ -47,7 +47,8 @@ MonoBehaviour:
   _maxPerRow: 5
   _maxSpaceX: 2
   _minSpaceX: 0.94
-  _rowSpacing: 4.2
+  _rowSpacing: 3
+  _rowForwardOffset: 3
   _referencePillarCount: 10
   _referenceCameraSize: 5.3
   _cameraPaddingX: 1.5

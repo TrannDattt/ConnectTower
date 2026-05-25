@@ -141,6 +141,11 @@
       9
     ]
   },
-  "TrapPillarDatas": [],
+  "TrapPillarDatas": [
+    {
+      "PillarId": 3,
+      "IsTrap": false
+    }
+  ],
   "CoinReward": 5
 }

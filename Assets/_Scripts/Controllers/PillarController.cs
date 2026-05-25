@@ -21,6 +21,7 @@ namespace Assets._Scripts.Controllers
         public int Id {get; private set;} = -1;
         [field: SerializeField] public Transform Base {get; private set;}
         [field: SerializeField] public Transform TopPillar {get; private set;}
+        [field: SerializeField] public Transform PortalBase {get; private set;}
         [field: SerializeField] public Transform BlockContainer {get; private set;}
         private List<BlockController> _blocks = new() {null, null, null, null}; // Block with index 0 is at the bottom, index 3 is at the top.
 
@@ -53,6 +54,11 @@ namespace Assets._Scripts.Controllers
         public BlockController GetTopBlock()
         {
             return _blocks[0] == null ? null : _blocks.Last(b => b != null);
+        }
+
+        public BlockController GetBottomBlock()
+        {
+            return _blocks[0];
         }
 
         public int GetBlockIndex(BlockController block)
@@ -219,7 +225,7 @@ namespace Assets._Scripts.Controllers
             sequence.Append(GetComponent<PillarEffectVisual>().DoLockAnim(blocks[0].Tag));
             sequence.JoinCallback(() =>
             {
-                HapticManager.DoLightFeedback();
+                HapticManager.DoFeedBack();
             });
             return sequence;
         }

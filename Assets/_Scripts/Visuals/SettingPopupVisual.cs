@@ -7,8 +7,11 @@ namespace Assets._Scripts.Visuals
 {
     public class SettingPopupVisual : GamePopupVisual
     {
-        [SerializeField] private ToggleButtonVisual _audioButton;
-        [SerializeField] private ToggleButtonVisual _vibrateButton;
+        // [SerializeField] private ToggleButtonVisual _audioButton;
+        // [SerializeField] private ToggleButtonVisual _vibrateButton;
+        [SerializeField] private AudioSliderButton _bgmSlider;
+        [SerializeField] private AudioSliderButton _sfxSlider;
+        [SerializeField] private AudioSliderButton _hapticSlider;
         [SerializeField] private GameButtonVisual _supportButton;
         [SerializeField] private GameButtonVisual _policyButton;
         [SerializeField] private GameButtonVisual _homeButton;
@@ -22,13 +25,24 @@ namespace Assets._Scripts.Visuals
 
         protected override void Start()
         {
-            _audioButton.UpdateToggle(SoundManager.Instance.IsEnable, false);
-            _vibrateButton.UpdateToggle(HapticManager.IsEnable, false);
+            _bgmSlider.UpdateToggle(SoundManager.Instance.IsEnable(true), false);
+            _sfxSlider.UpdateToggle(SoundManager.Instance.IsEnable(false), false);
+            _hapticSlider.UpdateToggle(HapticManager.IsEnable, false);
 
-            _audioButton.OnToggled.AddListener((isActive) => SoundManager.Instance.ChangeSoundVolume(isActive ? 1f : 0f));
-            _vibrateButton.OnToggled.AddListener((isActive) => HapticManager.SetEnable(isActive));
-            _supportButton.OnClicked.AddListener(() => Debug.Log("Support button clicked"));
-            _policyButton.OnClicked.AddListener(() => Debug.Log("Policy button clicked"));
+            _bgmSlider.UpdateSlider(SoundManager.Instance.BgmVolume, SoundManager.Instance.IsEnable(true));
+            _sfxSlider.UpdateSlider(SoundManager.Instance.SfxVolume, SoundManager.Instance.IsEnable(false));
+            _hapticSlider.UpdateSlider(HapticManager.VibrationLevel);
+
+            _bgmSlider.OnToggled.AddListener((isActive) => SoundManager.Instance.SetEnable(true, isActive));
+            _sfxSlider.OnToggled.AddListener((isActive) => SoundManager.Instance.SetEnable(false, isActive));
+            _hapticSlider.OnToggled.AddListener((isActive) => HapticManager.SetEnable(isActive));
+            
+            _bgmSlider.OnValueChanged.AddListener((value) => SoundManager.Instance.ChangeBgmVolume(value));
+            _sfxSlider.OnValueChanged.AddListener((value) => SoundManager.Instance.ChangeSfxVolume(value));
+            _hapticSlider.OnValueChanged.AddListener((value) => HapticManager.SetVibrationLevel(value));
+
+            _supportButton?.OnClicked.AddListener(() => Debug.Log("Support button clicked"));
+            _policyButton?.OnClicked.AddListener(() => Debug.Log("Policy button clicked"));
             _homeButton.OnClicked.AddListener(() => 
             {
 #if UNITY_EDITOR

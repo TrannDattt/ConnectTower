@@ -35,6 +35,8 @@ namespace Assets._Scripts.Visuals
             }
 
             _levelIndex.text = $"Level {_data.Index}";
+            _levelScore.text = _data.HighScore == 0 ? "No records" : _data.HighScore.ToString();
+            _levelScoreShadow.text = _levelScore.text;
 
             yield return Show();
         }
@@ -75,6 +77,7 @@ namespace Assets._Scripts.Visuals
                     if (BoosterController.Instance.GetUseCount(button.Key) <= 0)
                     {
                         PopupManager.Instance.ShowBundlePopup(EPopup.Booster, BundleManager.Instance.GetIngameBoosterBundle(button.Key));
+                        return;
                     }
 
                     if (toggleTrue) 

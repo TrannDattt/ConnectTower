@@ -7,6 +7,8 @@ using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns.EventBus;
 using Assets._Scripts.Visuals;
 using DG.Tweening;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,9 +21,14 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private Texture2D _hiddenTexture;
 
         [Header("Frozen Block")]
-        [SerializeField] private Image _frozenBlockIcon;
+        [SerializeField] private GameObject _frozenBlockHolder;
+        [SerializeField] private RectTransform _frozenBlockMask;
+        [SerializeField] private float _frozenApplyDur;
         [SerializeField] private GameObject _frozenPillarRod;
         [SerializeField] private GameObject _frozenPillarBase;
+        [SerializeField] private float _frozenPillarOffsetY;
+        [SerializeField] private ParticleSystem _frozenEmissionParticle;
+        [SerializeField] private ParticleSystem _iceRemoveParticle;
         // [SerializeField] private Text _frozenMoveCountText;
 
         [Header("Covered Pillar")]
@@ -38,10 +45,10 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private ParticleSystem _scratchParticle;
 
         [Header("Trap Pillar")]
-        [SerializeField] private SpriteRenderer _trapImage;
+        [SerializeField] private GameObject _trapHolder;
         [SerializeField] private Animator _trapAnimator;
-        private string _applyTrapTriggerParam = "ApplyTrap";
-        private string _removeTrapTriggerParam = "RemoveTrap";
+        [SerializeField] private AnimationClip _trapDownAnim;
+        [SerializeField] private AnimationClip _trapUpAnim;
 
         [Header("Sticky Block")]
         [SerializeField] private GameObject _slimeHolder;
@@ -50,14 +57,46 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private Image _bottomStrand;
         [field : SerializeField] public RectTransform BottomStrandAnchor {get; private set;}
         [SerializeField] private float _strandOffset = .2f;
+        [SerializeField] private ParticleSystem _particle;
         private bool _isSticky;
         private bool _swappedStrands;
         private MechanicVisualControl _stickTargetTop;
         private MechanicVisualControl _stickTargetBottom;
+        private const string FrozenBlockTweenId = "FrozenBlockMask";
+        private const string FrozenPillarRodTweenId = "FrozenPillarRod";
+        private Vector3 _frozenPillarRodOriginalLocalPosition;
+        private Transform _particleOriginalParent;
+        private Vector3 _particleOriginalLocalPosition;
+        private Quaternion _particleOriginalLocalRotation;
+        private Vector3 _particleOriginalLocalScale;
+        private Coroutine _stickyDetachParticleRoutine;
+        private Coroutine _trapAnimationRoutine;
+        private readonly Queue<MechanicVisualRequest> _pendingMechanicVisualRequests = new();
+        private Coroutine _mechanicVisualRequestRoutine;
 
         private BlockController _block;
 
-        public void ApplyVisual(MechanicRuntimeData mechanicData)
+        private struct MechanicVisualRequest
+        {
+            public bool IsApply;
+            public MechanicRuntimeData MechanicData;
+            public EMechanic MechanicType;
+            public bool DoEffect;
+        }
+
+        public void ApplyVisual(MechanicRuntimeData mechanicData, bool doEffect = true)
+        {
+            if (mechanicData == null || mechanicData.Key == EMechanic.None) return;
+
+            EnqueueMechanicVisualRequest(new MechanicVisualRequest
+            {
+                IsApply = true,
+                MechanicData = mechanicData,
+                DoEffect = doEffect
+            });
+        }
+
+        public void ApplyVisualImmediate(MechanicRuntimeData mechanicData, bool doEffect = true)
         {
             var type = mechanicData.Key;
             if (type == EMechanic.None) return;
@@ -72,10 +111,7 @@ namespace Assets._Scripts.Controllers
                     } 
                     break;
                 case EMechanic.FrozenBlock:
-                    if (_frozenBlockIcon != null) _frozenBlockIcon.gameObject.SetActive(true);
-                    if (_frozenPillarRod != null) _frozenPillarRod.SetActive(true);
-                    if (_frozenPillarBase != null) _frozenPillarBase.SetActive(true);
-                    //TODO: Move rod up base on block count
+                    ApplyFrozenVisual(doEffect);
                     break;
                 case EMechanic.CoveredPillar:
                     var coveredPillarData = mechanicData as CoveredPillarMechanic;
@@ -97,6 +133,7 @@ namespace Assets._Scripts.Controllers
                         _blockVisual.ChangeIconDisplay(false);
                         _scratchMeshFilter.gameObject.SetActive(true);
                         _scratchMeshFilter.sharedMesh = _scratchMesh1;
+                        _blockVisual.SetTrailColor(new Color(.53f, .55f, .56f));
                     } 
                     break;
                 case EMechanic.StickyBlock:
@@ -116,10 +153,14 @@ namespace Assets._Scripts.Controllers
                         pillar.TryGetBlockAt(blockIndex - 1, out var bottomBlock);
                         pillar.TryGetBlockAt(blockIndex + 1, out var topBlock);
                         SetStickyTarget(topBlock, bottomBlock);
+                        _blockVisual.SetTrailColor(new Color(.42f, .67f, .21f));
                     }
                     break;
                 case EMechanic.TrapPillar:
-                    if (_trapImage != null) _trapImage.gameObject.SetActive(true);
+                    if (_trapHolder != null)
+                    {
+                        PlayTrapAnimation(_trapUpAnim, keepTrapVisible: true, doEffect);
+                    } 
                     break;
                 default:
                     break;
@@ -127,6 +168,18 @@ namespace Assets._Scripts.Controllers
         }
 
         public void RemoveVisual(EMechanic type, bool doEffect = true)
+        {
+            if (type == EMechanic.None) return;
+
+            EnqueueMechanicVisualRequest(new MechanicVisualRequest
+            {
+                IsApply = false,
+                MechanicType = type,
+                DoEffect = doEffect
+            });
+        }
+
+        public void RemoveVisualImmediate(EMechanic type, bool doEffect = true)
         {
             if (type == EMechanic.None) return;
             switch (type)
@@ -141,25 +194,28 @@ namespace Assets._Scripts.Controllers
                     StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Smoke, transform.position));
                     break;
                 case EMechanic.FrozenBlock:
-                    if (_frozenBlockIcon != null) _frozenBlockIcon.gameObject.SetActive(false);
-                    if (_frozenPillarRod != null) _frozenPillarRod.SetActive(false);
-                    if (_frozenPillarBase != null) _frozenPillarBase.SetActive(false);
+                    RemoveFrozenVisual(doEffect);
                     break;
                 case EMechanic.CoveredPillar:
-                    if (_clothImage != null && doEffect) 
+                    if (_clothImage != null) 
                     {
+                        void reset()
+                        {
+                            _clothImage.gameObject.SetActive(false);
+                        }
+
+                        if (!doEffect) 
+                        {
+                            reset();
+                            break;
+                        }
+
                         _clothAnimator.SetTrigger(_clothTriggerParam);
                         var animDur = .98f;
 
                         var seqence = DOTween.Sequence().SetLink(_clothAnimator.gameObject, LinkBehaviour.KillOnDisable);
                         seqence.AppendInterval(animDur);
-                        seqence.OnComplete(() => 
-                        {
-                            var color = _clothImage.color;
-                            color.a = 1f;
-                            _clothImage.color = color;
-                            _clothImage.gameObject.SetActive(false);
-                        });
+                        seqence.OnComplete(reset).OnKill(reset);
 
                         seqence.Play();
                     }
@@ -169,6 +225,7 @@ namespace Assets._Scripts.Controllers
                     {
                         _blockVisual.ChangeIconDisplay(true);
                         _scratchMeshFilter.gameObject.SetActive(false);
+                        _blockVisual.SetTrailColor(Color.white);
                     }
                     if(!doEffect) break;
                     break;
@@ -180,14 +237,233 @@ namespace Assets._Scripts.Controllers
                         _slimeHolder.SetActive(false);
                         _stickTargetTop = null;
                         _stickTargetBottom = null;
+                        _blockVisual.SetTrailColor(Color.white);
                     }
                     break;
                 case EMechanic.TrapPillar:
-                    if (_trapImage != null) _trapImage.gameObject.SetActive(false);
+                    if (_trapHolder != null)
+                    {
+                        PlayTrapAnimation(_trapDownAnim, keepTrapVisible: true, doEffect);
+                    } 
                     break;
                 default:
                     break;
             }
+        }
+
+        private void EnqueueMechanicVisualRequest(MechanicVisualRequest request)
+        {
+            if (!gameObject.activeInHierarchy)
+                return;
+
+            _pendingMechanicVisualRequests.Enqueue(request);
+            if (_mechanicVisualRequestRoutine == null && isActiveAndEnabled)
+                _mechanicVisualRequestRoutine = StartCoroutine(ProcessMechanicVisualRequests());
+        }
+
+        private void ApplyFrozenVisual(bool doEffect)
+        {
+            if (_frozenEmissionParticle != null)
+            {
+                _frozenEmissionParticle.gameObject.SetActive(true);
+                _frozenEmissionParticle.Play();
+            }
+            if (_block != null)
+            {
+                DOTween.Kill(this, FrozenBlockTweenId);
+
+                if (_frozenBlockHolder != null)
+                    _frozenBlockHolder.SetActive(true);
+
+                if (_frozenBlockMask != null)
+                {
+                    var anchorMax = _frozenBlockMask.anchorMax;
+                    anchorMax.y = 0f;
+                    _frozenBlockMask.anchorMax = anchorMax;
+
+                    if (doEffect)
+                    {
+                        _frozenBlockMask
+                            .DOAnchorMax(new Vector2(anchorMax.x, 1f), _frozenApplyDur)
+                            .SetEase(Ease.OutQuad)
+                            .SetLink(gameObject, LinkBehaviour.KillOnDisable)
+                            .SetId(FrozenBlockTweenId)
+                            .SetTarget(this);
+                    }
+                    else
+                    {
+                        anchorMax.y = 1f;
+                        _frozenBlockMask.anchorMax = anchorMax;
+                    }
+                }
+
+                var pillarVisual = _block.GetPillarParent()?.MechanicVisual;
+                if (pillarVisual != null)
+                    pillarVisual.RefreshFrozenPillarRod();
+
+                return;
+            }
+
+            if (_frozenPillarRod != null) _frozenPillarRod.SetActive(true);
+            if (_frozenPillarBase != null) _frozenPillarBase.SetActive(true);
+
+            RefreshFrozenPillarRod();
+        }
+
+        private void RemoveFrozenVisual(bool doEffect)
+        {
+            DOTween.Kill(this, FrozenBlockTweenId);
+
+            if (_frozenEmissionParticle != null)
+            {
+                _frozenEmissionParticle.Stop();
+                _frozenEmissionParticle.gameObject.SetActive(false);
+            }
+            if (_block != null)
+            {
+                if (doEffect && _iceRemoveParticle != null)
+                {
+                    _iceRemoveParticle.gameObject.SetActive(true);
+                    _iceRemoveParticle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                    _iceRemoveParticle.Play();
+                }
+
+                if (_frozenBlockHolder != null)
+                    _frozenBlockHolder.SetActive(false);
+
+                if (_frozenBlockMask != null)
+                {
+                    var anchorMax = _frozenBlockMask.anchorMax;
+                    anchorMax.y = 0f;
+                    _frozenBlockMask.anchorMax = anchorMax;
+                }
+
+                var pillarVisual = _block.GetPillarParent()?.MechanicVisual;
+                if (pillarVisual != null)
+                    pillarVisual.RefreshFrozenPillarRod();
+
+                return;
+            }
+
+            if (_frozenPillarRod != null) _frozenPillarRod.SetActive(false);
+            if (_frozenPillarBase != null) _frozenPillarBase.SetActive(false);
+        }
+
+        private void RefreshFrozenPillarRod()
+        {
+            var pillar = _block != null ? _block.GetPillarParent() : GetComponent<PillarController>();
+            if (pillar == null || _frozenPillarRod == null) return;
+
+            var frozenBlockCount = pillar.GetAllBlocks()
+                .Count(block => block != null && (block as IMechanicHandler).ActiveMechanic == EMechanic.FrozenBlock);
+
+            var rodLocalPosition = _frozenPillarRodOriginalLocalPosition;
+            rodLocalPosition.y += Mathf.Max(0, frozenBlockCount - .5f) * _frozenPillarOffsetY;
+            DOTween.Kill(this, FrozenPillarRodTweenId);
+            _frozenPillarRod.transform
+                .DOLocalMove(rodLocalPosition, _frozenApplyDur)
+                .SetEase(Ease.OutQuad)
+                .SetLink(gameObject, LinkBehaviour.KillOnDisable)
+                .SetId(FrozenPillarRodTweenId)
+                .SetTarget(this);
+        }
+
+        private void PlayTrapAnimation(AnimationClip clip, bool keepTrapVisible, bool doEffect)
+        {
+            if (_trapHolder == null)
+                return;
+
+            var wasTrapHolderActive = _trapHolder.activeSelf;
+
+            if (_trapAnimationRoutine != null)
+            {
+                StopCoroutine(_trapAnimationRoutine);
+                _trapAnimationRoutine = null;
+            }
+
+            if (_trapAnimator == null || clip == null)
+            {
+                if (keepTrapVisible || !wasTrapHolderActive)
+                    _trapHolder.SetActive(keepTrapVisible);
+                return;
+            }
+
+            _trapHolder.SetActive(true);
+
+            if (!doEffect)
+            {
+                _trapAnimator.Play(clip.name, 0, 1f);
+                _trapAnimator.Update(0f);
+                if (keepTrapVisible || !wasTrapHolderActive)
+                    _trapHolder.SetActive(keepTrapVisible);
+                return;
+            }
+
+            _trapAnimator.Play(clip.name, 0, 0f);
+            _trapAnimator.Update(0f);
+            _trapAnimationRoutine = StartCoroutine(TrapAnimationRoutine(clip.length, keepTrapVisible, wasTrapHolderActive));
+        }
+
+        private IEnumerator TrapAnimationRoutine(float duration, bool keepTrapVisible, bool wasTrapHolderActive)
+        {
+            yield return new WaitForSeconds(duration);
+
+            if (_trapHolder != null && (keepTrapVisible || !wasTrapHolderActive))
+                _trapHolder.SetActive(keepTrapVisible);
+
+            _trapAnimationRoutine = null;
+        }
+
+        private IEnumerator ProcessMechanicVisualRequests()
+        {
+            while (_pendingMechanicVisualRequests.Count > 0)
+            {
+                yield return WaitForBlockingTweensToComplete();
+
+                var request = _pendingMechanicVisualRequests.Dequeue();
+                if (request.IsApply)
+                    ApplyVisualImmediate(request.MechanicData, request.DoEffect);
+                else
+                    RemoveVisualImmediate(request.MechanicType, request.DoEffect);
+            }
+
+            _mechanicVisualRequestRoutine = null;
+        }
+
+        private IEnumerator WaitForBlockingTweensToComplete()
+        {
+            while (HasBlockingTween())
+                yield return null;
+        }
+
+        private bool HasBlockingTween()
+        {
+            var pillar = _block != null ? _block.GetPillarParent() : null;
+
+            return HasBlockingTweenOnTarget(gameObject)
+                || HasBlockingTweenOnTarget(pillar)
+                || HasBlockingTweenOnTarget(pillar?.transform);
+        }
+
+        private bool HasBlockingTweenOnTarget(object target)
+        {
+            if (target == null) return false;
+
+            var tweens = DOTween.TweensByTarget(target, true);
+            if (tweens == null) return false;
+
+            foreach (var tween in tweens)
+            {
+                if (tween == null || !tween.active || !tween.IsPlaying())
+                    continue;
+
+                if (Equals(tween.id, "Float"))
+                    continue;
+
+                return true;
+            }
+
+            return false;
         }
 
         public void UpdateVisual(MechanicRuntimeData data)
@@ -232,6 +508,11 @@ namespace Assets._Scripts.Controllers
             SetStickyTarget(topBlock, bottomBlock);
         }
 
+        public void UpdateStickyTarget(BlockController topBlock, BlockController bottomBlock)
+        {
+            SetStickyTarget(topBlock, bottomBlock);
+        }
+
         private void SetStickyTarget(IMechanicHandler top, IMechanicHandler bottom)
         {
             if (top != null && top is BlockController block)
@@ -250,6 +531,8 @@ namespace Assets._Scripts.Controllers
 
         public void RemoveStickyTarget(bool top)
         {
+            var targetAnchor = top ? _stickTargetTop?.BottomStrandAnchor : _stickTargetBottom?.TopStrandAnchor;
+
             if (top)
             {
                 _stickTargetTop = null;
@@ -260,6 +543,62 @@ namespace Assets._Scripts.Controllers
                 _stickTargetBottom = null;
                 _bottomStrand.gameObject.SetActive(false);
             }
+
+            PlayStickyDetachParticle(targetAnchor);
+        }
+
+        private void PlayStickyDetachParticle(RectTransform targetAnchor)
+        {
+            if (_particle == null || targetAnchor == null) return;
+
+            if (_stickyDetachParticleRoutine != null)
+            {
+                StopCoroutine(_stickyDetachParticleRoutine);
+                RestoreStickyDetachParticleParent();
+            }
+
+            _stickyDetachParticleRoutine = StartCoroutine(PlayStickyDetachParticleRoutine(targetAnchor));
+        }
+
+        private IEnumerator PlayStickyDetachParticleRoutine(RectTransform targetAnchor)
+        {
+            var targetParent = GetActiveParticleParent(targetAnchor);
+            _particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            _particle.transform.SetParent(targetParent, true);
+            _particle.transform.position = targetAnchor.position;
+            _particle.transform.rotation = targetAnchor.rotation;
+            _particle.transform.localScale = Vector3.one;
+            _particle.Play();
+
+            yield return null;
+            yield return new WaitUntil(() => _particle == null || !_particle.IsAlive(true));
+
+            RestoreStickyDetachParticleParent();
+            _stickyDetachParticleRoutine = null;
+        }
+
+        private Transform GetActiveParticleParent(Transform targetAnchor)
+        {
+            var current = targetAnchor;
+            while (current != null)
+            {
+                if (current.gameObject.activeInHierarchy)
+                    return current;
+
+                current = current.parent;
+            }
+
+            return _particleOriginalParent != null ? _particleOriginalParent : transform;
+        }
+
+        private void RestoreStickyDetachParticleParent()
+        {
+            if (_particle == null) return;
+
+            _particle.transform.SetParent(_particleOriginalParent, false);
+            _particle.transform.localPosition = _particleOriginalLocalPosition;
+            _particle.transform.localRotation = _particleOriginalLocalRotation;
+            _particle.transform.localScale = _particleOriginalLocalScale;
         }
 
         public void ResetStickyStrand()
@@ -350,6 +689,61 @@ namespace Assets._Scripts.Controllers
         void Awake()
         {
             _block = GetComponent<BlockController>();
+            if (_frozenPillarRod != null) _frozenPillarRodOriginalLocalPosition = _frozenPillarRod.transform.localPosition;
+            if (_particle != null)
+            {
+                _particleOriginalParent = _particle.transform.parent;
+                _particleOriginalLocalPosition = _particle.transform.localPosition;
+                _particleOriginalLocalRotation = _particle.transform.localRotation;
+                _particleOriginalLocalScale = _particle.transform.localScale;
+            }
+        }
+
+        void OnDisable()
+        {
+            if (_mechanicVisualRequestRoutine != null)
+            {
+                StopCoroutine(_mechanicVisualRequestRoutine);
+                _mechanicVisualRequestRoutine = null;
+            }
+
+            if (GetCurrentMechanicType() == EMechanic.None)
+                _pendingMechanicVisualRequests.Clear();
+
+            if (_stickyDetachParticleRoutine != null)
+            {
+                StopCoroutine(_stickyDetachParticleRoutine);
+                _stickyDetachParticleRoutine = null;
+            }
+
+            if (_trapAnimationRoutine != null)
+            {
+                StopCoroutine(_trapAnimationRoutine);
+                _trapAnimationRoutine = null;
+            }
+
+            if (_trapHolder != null && _trapHolder.activeSelf)
+                _trapHolder.SetActive(false);
+
+            RestoreStickyDetachParticleParent();
+        }
+
+        void OnEnable()
+        {
+            if (_pendingMechanicVisualRequests.Count > 0 && _mechanicVisualRequestRoutine == null)
+                _mechanicVisualRequestRoutine = StartCoroutine(ProcessMechanicVisualRequests());
+        }
+
+        private EMechanic GetCurrentMechanicType()
+        {
+            if (_block != null)
+                return (_block as IMechanicHandler).ActiveMechanic;
+
+            var pillar = GetComponent<PillarController>();
+            if (pillar != null)
+                return (pillar as IMechanicHandler).ActiveMechanic;
+
+            return EMechanic.None;
         }
 
         void LateUpdate()

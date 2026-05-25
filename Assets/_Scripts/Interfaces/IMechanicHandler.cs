@@ -47,9 +47,28 @@ namespace Assets._Scripts.Interfaces
             MechanicVisual.ApplyVisual(mechanicData);
         }
 
+        public void UpdateMechanicImmediate(MechanicRuntimeData mechanicData)
+        {
+            if (mechanicData != null && mechanicData.Key.Equals(ActiveMechanic))
+            {
+                MechanicVisual.UpdateVisual(mechanicData);
+                return;
+            }
+
+            MechanicVisual.RemoveVisualImmediate(ActiveMechanic);
+            ActiveMechanic = mechanicData.Key;
+            MechanicVisual.ApplyVisualImmediate(mechanicData);
+        }
+
         public void ClearMechanic(bool doEffect = true)
         {
             MechanicVisual.RemoveVisual(ActiveMechanic, doEffect);
+            ActiveMechanic = EMechanic.None;
+        }
+
+        public void ClearMechanicImmediate(bool doEffect = true)
+        {
+            MechanicVisual.RemoveVisualImmediate(ActiveMechanic, doEffect);
             ActiveMechanic = EMechanic.None;
         }
     }

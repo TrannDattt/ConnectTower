@@ -21,6 +21,8 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private LevelIndexVisual _levelIndex;
         [SerializeField] private CoinDisplayVisual _coinDisplay;
         [SerializeField] private GameButtonVisual _settingButton;
+        [SerializeField] private IngameScoreVisual _scoreVisual;
+        [SerializeField] private float _levelClearBonusStepDuration = 0.2f;
         [SerializeField] private BoosterButtonVisual[] _boosterButtons;
 
 #if UNITY_EDITOR
@@ -41,6 +43,7 @@ namespace Assets._Scripts.Controllers
             _progressBar.UpdateProgress(0, data.TotalGroups);
             _difficultyTag.SetDifficulty(data.Difficulty);
             _coinDisplay.UpdateVisual();
+            _scoreVisual.InitScore();
             _levelIndex.SetLevelIndex(data.Index);
 
             foreach(var button in _boosterButtons)
@@ -72,6 +75,27 @@ namespace Assets._Scripts.Controllers
         public void UpdateProgressBar(int current, int target)
         {
             _progressBar.UpdateProgress(current, target);
+        }
+
+        public float GetScorePopDuration()
+        {
+            return _scoreVisual != null ? _scoreVisual.GetPopDuration() : 0f;
+        }
+
+        public IEnumerator PlayLevelClearBonusSequence(LevelRuntimeData data)
+        {
+            if (data == null || !data.BeginLevelClearBonusSequence())
+                yield break;
+
+            while (data.ApplyNextLevelClearBonusStep())
+            {
+                UpdateMoveCount(data.MoveCount, _levelClearBonusStepDuration);
+                var stepDuration = Mathf.Max(_levelClearBonusStepDuration, GetScorePopDuration());
+                if (stepDuration > 0f)
+                    yield return new WaitForSeconds(stepDuration);
+                else
+                    yield return null;
+            }
         }
 
         private void OnEnable()
@@ -139,7 +163,7 @@ namespace Assets._Scripts.Controllers
             if (_restartButton != null)
                 _restartButton.onClick.AddListener(() =>
                 {
-                    GameManager.Instance.StartLevel(LevelManager.PlayingLevel);
+                    GameManager.Instance.RestartLevel();
                 });
             if (_editButton != null)
                 _editButton.onClick.AddListener(() =>

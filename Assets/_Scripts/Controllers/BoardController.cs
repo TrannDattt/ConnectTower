@@ -91,7 +91,7 @@ namespace Assets._Scripts.Controllers
                     var toApply = _blocks.FirstOrDefault(b => b.Id == id);
                     if (toApply == null) continue;
                     var mechanic = new HiddenBlockMechanic();
-                    mechanic.Apply(toApply);
+                    mechanic.ApplyImmediate(toApply);
                     _mechanics.Add(mechanic);
                 }
             }
@@ -104,7 +104,7 @@ namespace Assets._Scripts.Controllers
                     var toApply = _pillars.FirstOrDefault(p => p.Id == id);
                     if (toApply == null) continue;
                     var mechanic = new CoveredPillarMechanic(data.TagToOpen);
-                    mechanic.Apply(toApply);
+                    mechanic.ApplyImmediate(toApply);
                     _mechanics.Add(mechanic);
                 };
             });
@@ -117,10 +117,10 @@ namespace Assets._Scripts.Controllers
                     var toApply = _blocks.FirstOrDefault(b => b.Id == id);
                     if (toApply == null) continue;
                     var pillar = toApply.GetPillarParent();
-                    var mechanic = new FrozenBlockMechanic(data.MoveCountToRemove);
-                    mechanic.Apply(toApply);
-                    var cloneMechanic = new FrozenBlockMechanic(data.MoveCountToRemove);
-                    cloneMechanic.Apply(pillar);
+                    var mechanic = new FrozenBlockMechanic();
+                    mechanic.ApplyImmediate(toApply);
+                    var cloneMechanic = new FrozenBlockMechanic();
+                    cloneMechanic.ApplyImmediate(pillar);
                     _mechanics.Add(mechanic);
                     _mechanics.Add(cloneMechanic);
                 };
@@ -134,7 +134,7 @@ namespace Assets._Scripts.Controllers
                     var toApply = _blocks.FirstOrDefault(b => b.Id == id);
                     if (toApply == null) continue;
                     var mechanic = new ScratchedBlockMechanic();
-                    mechanic.Apply(toApply);
+                    mechanic.ApplyImmediate(toApply);
                     _mechanics.Add(mechanic);
                 }
             }
@@ -147,7 +147,7 @@ namespace Assets._Scripts.Controllers
                     var toApply = _blocks.FirstOrDefault(b => b.Id == id);
                     if (toApply == null) continue;
                     var mechanic = new StickyBlockMechanic();
-                    mechanic.Apply(toApply);
+                    mechanic.ApplyImmediate(toApply);
                     _mechanics.Add(mechanic);
                 }
             }
@@ -158,7 +158,7 @@ namespace Assets._Scripts.Controllers
                 if (toApply != null)
                 {
                     var mechanic = new TrapPillarMechanic(data.IsTrap);
-                    mechanic.Apply(toApply);
+                    mechanic.ApplyImmediate(toApply);
                     _mechanics.Add(mechanic);
                 }
                 else
@@ -175,10 +175,17 @@ namespace Assets._Scripts.Controllers
             return _pillars;
         }
 
+        public void RegisterMechanic(MechanicRuntimeData mechanic)
+        {
+            if (mechanic == null) return;
+            _mechanics.Add(mechanic);
+        }
+
         public void AddNewPillar(out PillarController toAdd)
         {
             toAdd = _pillarPool.GetItem();
             toAdd.Init(new PillarData {Id = _pillars[^1].Id + 1, BlockIds = new()});
+            toAdd.gameObject.name = $"Pillar_{toAdd.Id}";
             Debug.Log($"Add new pillar with id {toAdd.Id}");
             _pillars.Add(toAdd);
         }
@@ -232,7 +239,7 @@ namespace Assets._Scripts.Controllers
         {
             foreach (var mechanic in _mechanics)
             {
-                mechanic.Remove(false);
+                mechanic.RemoveImmediate(false);
             }
             _mechanics.Clear();
 

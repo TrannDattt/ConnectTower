@@ -26,11 +26,27 @@ namespace Assets._Scripts.Managers
         [Header("SFX")]
         [SerializeField] private List<GameSFX> _gameSFX;
 
+        public float BgmVolume => _bgmSource.volume;
+        public float SfxVolume => _sfxSource.volume;
+
         private Dictionary<ESfx, List<AudioClip>> _sfxDict = new();
         private Dictionary<EBgm, float> _bgmProgress = new();
         private EBgm _currentBgm = EBgm.None;
 
-        public bool IsEnable {get; private set;} = true;
+        public bool IsEnable(bool bgm) => bgm ? _bgmSource.gameObject.activeInHierarchy : _sfxSource.gameObject.activeInHierarchy;
+
+        public void SetEnable(bool bgm, bool state)
+        {
+            if (bgm)
+            {
+                _bgmSource.gameObject.SetActive(state);
+                if (!state) _bgmSource.Stop();
+            }
+            else
+            {
+                _sfxSource.gameObject.SetActive(state);
+            }
+        }
 
         private AudioClip GetBGM(EBgm key) => key switch
         {
@@ -80,7 +96,7 @@ namespace Assets._Scripts.Managers
             var sounds = GetSFXs(key);
             if (sounds == null || sounds.Count == 0)
             {
-                Debug.Log($"Play random SFX of type {key}");
+                // Debug.Log($"Play random SFX of type {key}");
                 return;
             }
 

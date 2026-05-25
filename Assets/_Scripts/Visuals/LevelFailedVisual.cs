@@ -26,8 +26,7 @@ namespace Assets._Scripts.Visuals
             {
                 Debug.Log("Retry level");
                 StartCoroutine(Hide());
-                LevelRuntimeData toRestart = new(_curLevelData);
-                GameManager.Instance.StartLevel(toRestart);
+                GameManager.Instance.RestartLevel();
             });
             _homeButton.OnClicked.AddListener(() => 
             {

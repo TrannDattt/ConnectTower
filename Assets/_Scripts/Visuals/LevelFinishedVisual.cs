@@ -395,7 +395,7 @@ namespace Assets._Scripts.Visuals
                 _restartBtn.onClick.AddListener(() => 
                 {
                     StartCoroutine(Hide());
-                    GameManager.Instance.StartLevel(_curLevelData);
+                    GameManager.Instance.RestartLevel();
                 });
             }
 #endif
@@ -432,6 +432,8 @@ namespace Assets._Scripts.Visuals
 #if UNITY_EDITOR
                 }
 #endif
+                else
+                    GameManager.Instance.GoToMenu(() => UserManager.GainCoin(_curLevelData.CoinReward));
             });
             _adsRewardButton.OnClicked.AddListener(() => 
             {
@@ -456,6 +458,8 @@ namespace Assets._Scripts.Visuals
 #if UNITY_EDITOR
                 }
 #endif
+                else
+                    GameManager.Instance.GoToMenu(() => UserManager.GainCoin(_curLevelData.CoinReward));
             });
 
             base.Start();

@@ -177,7 +177,6 @@ namespace Assets._Scripts.Tools
                     }
                     return true;
                 case EMechanic.FrozenBlock:
-                    var frozenBlockData = mechanicData as FrozenBlockMechanic;
                     var existingFB = _levelData.FrozenBlockDatas.FirstOrDefault(fbd => fbd.BlockIds.Contains(id));
                     if (existingFB != null)
                     {
@@ -188,7 +187,6 @@ namespace Assets._Scripts.Tools
                     {
                         _levelData.FrozenBlockDatas.Add(new FrozenBlockData
                         {
-                            MoveCountToRemove = frozenBlockData.MoveCountToRemove,
                             BlockIds = new() { id }
                         });
                     }

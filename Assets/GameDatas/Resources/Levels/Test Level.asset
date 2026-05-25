@@ -67,6 +67,5 @@ MonoBehaviour:
   - TagToOpen: do
     PillarIds: 02000000
   FrozenBlockDatas:
-  - MoveCountToRemove: 2
-    BlockIds: 0200000003000000
+  - BlockIds: 0200000003000000
   CoinReward: 20

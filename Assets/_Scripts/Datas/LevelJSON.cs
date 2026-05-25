@@ -17,6 +17,9 @@ namespace Assets._Scripts.Datas
         public ScratchBlockData ScratchedBlockDatas;
         public StickyBlockData StickyBlockDatas;
         public List<TrapPillarData> TrapPillarDatas;
+
+        public int HighScore;
+
         public int CoinReward = 20;
 
         public LevelJSON()
@@ -36,6 +39,25 @@ namespace Assets._Scripts.Datas
             TrapPillarDatas = new();
             
             CoinReward = 0;
+        }
+
+        public LevelJSON(LevelRuntimeData levelData) : this()
+        {
+            if (levelData == null) return;
+
+            Index = levelData.Index;
+            Difficulty = levelData.Difficulty;
+            MoveLimit = levelData.MoveLimit;
+            BlockGroups = levelData.BlockGroups;
+            PillarDatas = levelData.PillarDatas;
+            HiddenBlockDatas = levelData.HiddenBlockDatas;
+            CoveredPillarDatas = levelData.CoveredPillarDatas;
+            FrozenBlockDatas = levelData.FrozenBlockDatas;
+            ScratchedBlockDatas = levelData.ScratchedBlockDatas;
+            StickyBlockDatas = levelData.StickyBlockDatas;
+            TrapPillarDatas = levelData.TrapPillarDatas;
+            HighScore = levelData.HighScore;
+            CoinReward = levelData.CoinReward;
         }
     }
 
@@ -89,7 +111,6 @@ namespace Assets._Scripts.Datas
     [Serializable]
     public class FrozenBlockData
     {
-        public int MoveCountToRemove;
         public HashSet<int> BlockIds = new();
     }
 

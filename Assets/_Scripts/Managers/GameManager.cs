@@ -113,6 +113,21 @@ namespace Assets._Scripts.Managers
             IngameVisualController.Instance.UpdateProgressBar(CurrentLevelData.MatchedGroups, CurrentLevelData.TotalGroups);
         }
 
+        private EBooster[] _lastUsedBoosters = new EBooster[0];
+        private LevelRuntimeData _lastLevel;
+
+        public void RestartLevel()
+        {
+            if (_lastLevel != null)
+            {
+                StartLevel(_lastLevel, false, _lastUsedBoosters);
+            }
+            else
+            {
+                Debug.Log("No level to restart");
+            }
+        }
+
         public void StartLevel(LevelRuntimeData levelData, bool isPlayTest = false, params EBooster[] boosters)
         {
 #if UNITY_EDITOR
@@ -123,8 +138,13 @@ namespace Assets._Scripts.Managers
                 Debug.Log("No level data");
                 return;
             }
+
+            _lastLevel = new(levelData);
+            _lastUsedBoosters = boosters;
+
             Debug.Log($"Start level {levelData.Index}");
             LevelManager.Instance.SetPlayingLevel(levelData);
+            LevelManager.PlayingLevel.SubscribeScoreEvent();
             BlockMovementController.Instance.Init();
             // BoardController.Instance.ClearBoard();
             BoardController.Instance.InitBoard(CurrentLevelData);
@@ -182,6 +202,11 @@ namespace Assets._Scripts.Managers
             {
                 Debug.Log("Try get data");
                 UserAPI.GetUser("CgqFZoKy6BV1BU0Ny7XN", out _);
+            }
+
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                LevelManager.PlayingLevel.UpdateScore(100);
             }
 #endif
             _gameSM.DoState();
@@ -496,8 +521,17 @@ namespace Assets._Scripts.Managers
 
                 private void OnBlocksMoved(BlocksMovedEvent @event)
                 {
-                    if (@event.MovedByPlayer) Instance.ChangeMoveCount(-1);
+                    if (@event.MovedByPlayer)
+                    {
+                        Instance.CurrentLevelData.BeginPlayerMoveScoreResolution();
+                        Instance.ChangeMoveCount(-1);
+                    }
+
                     foreach (var pillar in Instance._pillars) pillar.CheckFullMatch();
+
+                    if (@event.MovedByPlayer)
+                        Instance.CurrentLevelData.EndPlayerMoveScoreResolution();
+
                     CheckFinsihLevel();
                 }
 
@@ -568,12 +602,18 @@ namespace Assets._Scripts.Managers
                     yield return clearState ? _delayCleared : _delayFailed;
                     // yield return ParticleManager.Instance.GetParticleDuration(EParticle.Confetti, true);
                     // yield return BlockMovementController.Instance.CompleteCoroutine;
-                    FinishLevel(clearState);
+                    yield return FinishLevel(clearState);
                 }
 
-                private void FinishLevel(bool clearState)
+                private IEnumerator FinishLevel(bool clearState)
                 {
                     _coroutine = null;
+
+                    if (clearState)
+                    {
+                        yield return IngameVisualController.Instance.PlayLevelClearBonusSequence(Instance.CurrentLevelData);
+                    }
+
                     BoardController.Instance.ClearBoard();
 
                     if (clearState)
@@ -586,6 +626,7 @@ namespace Assets._Scripts.Managers
                         Debug.Log("Level Failed");
                         Instance.FailedLevel();
                     }
+                    yield break;
                     // if (Instance.CurrentLevelData.MatchedGroups == Instance.CurrentLevelData.TotalGroups)
                     // {
                     //     Debug.Log("Level Cleared");
