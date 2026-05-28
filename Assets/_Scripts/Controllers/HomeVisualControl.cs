@@ -36,6 +36,7 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private RectTransform _userInfoHolder;
         [SerializeField] private RectTransform _avatarRt;
         [SerializeField] private Image _avatarImage;
+        [SerializeField] private Image _nameBg;
         [SerializeField] private TextMeshProUGUI _nameText;
         [SerializeField] private TMP_InputField _nameInputField;
         [SerializeField] private ToggleButtonVisual _renameToggle;
@@ -58,6 +59,8 @@ namespace Assets._Scripts.Controllers
         private Vector2 _userInfoExpandedSize;
         private bool _isUserInfoExpanded;
         private bool _widthsCached = false;
+        private Color _nameBgInitialColor;
+        private bool _nameBgColorCached = false;
 
 #if UNITY_EDITOR
         [Header("----Debug----")]
@@ -68,6 +71,7 @@ namespace Assets._Scripts.Controllers
         void Awake()
         {
             CacheWidthsIfNeeded();
+            CacheNameBgColorIfNeeded();
         }
 
         public void InitVisual()
@@ -172,6 +176,14 @@ namespace Assets._Scripts.Controllers
             _userInfoCollapsedSize = _avatarRt.sizeDelta;
             _userInfoExpandedSize = _userInfoHolder.sizeDelta;
             _widthsCached = true;
+        }
+
+        private void CacheNameBgColorIfNeeded()
+        {
+            if (_nameBgColorCached || _nameBg == null) return;
+
+            _nameBgInitialColor = _nameBg.color;
+            _nameBgColorCached = true;
         }
 
         private Sequence ShowCurrency()
@@ -287,6 +299,9 @@ namespace Assets._Scripts.Controllers
         {
             if (_nameText == null || _nameInputField == null) return;
 
+            CacheNameBgColorIfNeeded();
+            ApplyNameBgValue(isOn);
+
             if (isOn)
             {
                 _nameInputField.SetTextWithoutNotify(_nameText.text);
@@ -301,6 +316,22 @@ namespace Assets._Scripts.Controllers
             _nameInputField.DeactivateInputField();
             _nameInputField.gameObject.SetActive(false);
             _nameText.gameObject.SetActive(true);
+        }
+
+        private void ApplyNameBgValue(bool isOn)
+        {
+            if (_nameBg == null || !_nameBgColorCached) return;
+
+            if (!isOn)
+            {
+                _nameBg.color = _nameBgInitialColor;
+                return;
+            }
+
+            Color.RGBToHSV(_nameBgInitialColor, out float hue, out float saturation, out _);
+            var hiddenColor = Color.HSVToRGB(hue, saturation, 0f);
+            hiddenColor.a = _nameBgInitialColor.a;
+            _nameBg.color = hiddenColor;
         }
 
         private void SyncNameVisualFromData()

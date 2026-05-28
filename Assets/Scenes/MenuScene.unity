@@ -1784,7 +1784,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 74449540123839752, guid: 648541d6ee0cbf547af7324421353e9d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -38.320114
+      value: -38.320118
       objectReference: {fileID: 0}
     - target: {fileID: 3446839616934652962, guid: 648541d6ee0cbf547af7324421353e9d, type: 3}
       propertyPath: m_Pivot.x
@@ -3306,7 +3306,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.0015258789}
+  m_AnchoredPosition: {x: 0, y: -0.00044250488}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &426045327
@@ -6330,7 +6330,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2905661, g: 0.22383708, b: 0.21216807, a: 1}
+  m_Color: {r: 0.64199996, g: 0.49451348, b: 0.46848646, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6760,6 +6760,7 @@ MonoBehaviour:
   _userInfoHolder: {fileID: 1646299336}
   _avatarRt: {fileID: 121882108}
   _avatarImage: {fileID: 2111482535}
+  _nameBg: {fileID: 792773672}
   _nameText: {fileID: 1819664011}
   _nameInputField: {fileID: 770703947}
   _renameToggle: {fileID: 566232275}
@@ -7558,7 +7559,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Name
+  m_text: "Name\u200B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0fb90b9198b681343b281ef5d0a20c29, type: 2}
   m_sharedMaterial: {fileID: 1044699458}
@@ -8132,7 +8133,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 74449540123839752, guid: 648541d6ee0cbf547af7324421353e9d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -38.320114
+      value: -38.320118
       objectReference: {fileID: 0}
     - target: {fileID: 3446839616934652962, guid: 648541d6ee0cbf547af7324421353e9d, type: 3}
       propertyPath: m_Pivot.x
@@ -12601,7 +12602,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 74449540123839752, guid: 648541d6ee0cbf547af7324421353e9d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -38.320114
+      value: -38.320118
       objectReference: {fileID: 0}
     - target: {fileID: 3446839616934652962, guid: 648541d6ee0cbf547af7324421353e9d, type: 3}
       propertyPath: m_Pivot.x
@@ -15142,7 +15143,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4044648115152975465, guid: d0501bd996654c34f843b35041d99e61, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 2730
+      value: 2750
       objectReference: {fileID: 0}
     - target: {fileID: 4299683142049525080, guid: d0501bd996654c34f843b35041d99e61, type: 3}
       propertyPath: m_AnchorMax.y
