@@ -241,7 +241,7 @@ PrefabInstance:
       objectReference: {fileID: 7340802514774174114}
     - target: {fileID: 3852045073151413779, guid: a1ce1fcabdf7f0743b7c2c169c09b1a5, type: 3}
       propertyPath: m_Name
-      value: AudioButton Variant
+      value: GameToggleButton
       objectReference: {fileID: 0}
     - target: {fileID: 4809112907303191749, guid: a1ce1fcabdf7f0743b7c2c169c09b1a5, type: 3}
       propertyPath: m_TargetGraphic
@@ -387,12 +387,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.ToggleButtonVisual
   _button: {fileID: 8654809648430750139}
   _buttonRt: {fileID: 7340802514774174114}
+  _content: {fileID: 0}
+  _buttonIcon: {fileID: 4504364271134228852}
   _pressedScale: 0.8
   _duration: 0.1
   OnClicked:
     m_PersistentCalls:
       m_Calls: []
   _disableIcon: {fileID: 4513520405577346668}
+  _onIcon: {fileID: 0}
+  _offIcon: {fileID: 0}
+  _changeIcon: 0
 --- !u!224 &6650689004865556504 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7415906145048497510, guid: a1ce1fcabdf7f0743b7c2c169c09b1a5, type: 3}

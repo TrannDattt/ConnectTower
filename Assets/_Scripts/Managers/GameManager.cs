@@ -11,6 +11,8 @@ using UnityEngine.Events;
 using UnityEngine.Playables;
 using Assets._Scripts.Services.APIs;
 using System.Linq;
+using System;
+using System.Threading.Tasks;
 using Assets._Scripts.Editor;
 
 
@@ -52,6 +54,7 @@ namespace Assets._Scripts.Managers
         public UnityAction UnsubcribeIngameEvent;
         public UnityAction<PillarController[]> SetInteractablePillarsEvent;
         private UnityAction _onGoToMenuCallback;
+        private Task _debugFetchUserTask;
 
         public void GoToMenu(UnityAction onLoaded = null)
         {
@@ -196,12 +199,6 @@ namespace Assets._Scripts.Managers
             if (Input.GetKeyDown(KeyCode.P))
             {
                 Time.timeScale = Time.timeScale == .1f ? 1f : .1f;
-            }
-
-            if (Input.GetKeyDown(KeyCode.U))
-            {
-                Debug.Log("Try get data");
-                UserAPI.GetUser("CgqFZoKy6BV1BU0Ny7XN", out _);
             }
 
             if (Input.GetKeyDown(KeyCode.I))

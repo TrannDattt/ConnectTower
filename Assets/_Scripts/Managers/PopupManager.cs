@@ -115,10 +115,10 @@ namespace Assets._Scripts.Managers
             popup.Pop(content, screenPos, () => _textPopupPool.ReturnItem(popup));
         }
 
-        public IEnumerator ShowConfirmPopup(string content, string confirmContent = "", UnityAction onConfirmed = null, string declineContent = "", UnityAction onDeclined = null)
+        public IEnumerator ShowConfirmPopup(string content, Sprite image = null, string confirmContent = "", UnityAction onConfirmed = null, string declineContent = "", UnityAction onDeclined = null)
         {
             if (_confirmPopup == null) yield break;
-            _confirmPopup.SetContent(content, confirmContent, declineContent);
+            _confirmPopup.SetContent(content, image, confirmContent, declineContent);
             _confirmPopup.SetActions(onConfirmed, onDeclined);
             ShowOverlay().Play();
             yield return _confirmPopup.Show();

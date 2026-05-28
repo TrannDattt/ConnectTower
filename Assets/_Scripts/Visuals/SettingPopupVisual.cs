@@ -15,6 +15,7 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private GameButtonVisual _supportButton;
         [SerializeField] private GameButtonVisual _policyButton;
         [SerializeField] private GameButtonVisual _homeButton;
+        [SerializeField] private Sprite _lostHeartWarningIcon;
 
         public override IEnumerator Show()
         {
@@ -56,7 +57,8 @@ namespace Assets._Scripts.Visuals
 #endif
                 Debug.Log("Home button clicked");
                 PopupManager.Instance.StartCoroutine(Hide());
-                PopupManager.Instance.StartCoroutine(PopupManager.Instance.ShowConfirmPopup("Are you sure to go to Main menu?\n You will lose a heart.",
+                PopupManager.Instance.StartCoroutine(PopupManager.Instance.ShowConfirmPopup("Do you want to abandon this level?",
+                                                                        _lostHeartWarningIcon,
                                                                       "Home",
                                                                       () =>
                                                                       {

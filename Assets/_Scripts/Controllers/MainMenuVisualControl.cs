@@ -13,6 +13,7 @@ namespace Assets._Scripts.Controllers
     {
         [SerializeField] private HomeVisualControl _homeControl;
         [SerializeField] private ShopVisualControl _shopControl;
+        [SerializeField] private RankingVisualControl _rankControl;
         [SerializeField] private NavigationBarVisual _navBar;
         [SerializeField] private NavigationTabVisual _homeTab;
         [SerializeField] private NavigationTabVisual _shopTab;
@@ -28,6 +29,7 @@ namespace Assets._Scripts.Controllers
             Debug.Log($"Init main menu");
             _homeControl.InitVisual();
             _shopControl.InitVisual();
+            _rankControl.InitVisual();
         }
 
         public void ChangeTab(EMenuTab tab)
@@ -79,7 +81,7 @@ namespace Assets._Scripts.Controllers
         {
             HomeState home = new(EMenuTab.Home, _homeTab, _homeControl, _homeControl.InitVisual);
             ShopState shop = new(EMenuTab.Shop, _shopTab, _shopControl, _shopControl.InitVisual);
-            RankingState ranking = new(EMenuTab.Ranking, _rankTab, null, null);
+            RankingState ranking = new(EMenuTab.Ranking, _rankTab, _rankControl, _rankControl.InitVisual);
 
             _homeTab.OnClicked.AddListener(() => ChangeTab(EMenuTab.Home));
             _shopTab.OnClicked.AddListener(() => ChangeTab(EMenuTab.Shop));

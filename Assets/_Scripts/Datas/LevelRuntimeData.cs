@@ -32,6 +32,8 @@ namespace Assets._Scripts.Datas
 
         public int HighScore;
         public int CurrentScore;
+        public int InitialHighScore { get; private set; }
+        public bool HasNewHighScore => CurrentScore > InitialHighScore;
 
         public int CoinReward;
 
@@ -58,6 +60,7 @@ namespace Assets._Scripts.Datas
             TrapPillarDatas = new();
 
             HighScore = 0;
+            InitialHighScore = HighScore;
             CurrentScore = 0;
             InitScoreBindings();
 
@@ -85,6 +88,7 @@ namespace Assets._Scripts.Datas
             TrapPillarDatas = levelData.TrapPillarDatas;
 
             HighScore = levelData.HighScore;
+            InitialHighScore = HighScore;
             CurrentScore = 0;
             InitScoreBindings();
 
@@ -112,6 +116,7 @@ namespace Assets._Scripts.Datas
             TrapPillarDatas = levelData.TrapPillarDatas;
 
             HighScore = levelData.HighScore;
+            InitialHighScore = HighScore;
             CurrentScore = 0;
             InitScoreBindings();
 

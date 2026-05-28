@@ -14,6 +14,7 @@ namespace Assets._Scripts.Visuals
         [SerializeField] protected Button _button;
         [SerializeField] protected RectTransform _buttonRt;
         [SerializeField] protected Text _content;
+        [SerializeField] protected Image _buttonIcon;
         
         [Header("Settings")]
         [SerializeField] private float _pressedScale = 0.8f;

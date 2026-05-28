@@ -110,7 +110,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.45
+  m_PixelsPerUnitMultiplier: 0.5
 --- !u!1 &2788473390297507952
 GameObject:
   m_ObjectHideFlags: 0
@@ -205,7 +205,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.6189475, b: 1, a: 1}
+  m_Color: {r: 0.10588236, g: 0.49411768, b: 0.9843138, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -221,7 +221,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 0.5
 --- !u!1 &4901752703146891239
 GameObject:
   m_ObjectHideFlags: 0
@@ -308,7 +308,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 0.844
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -452,8 +452,12 @@ PrefabInstance:
       value: Toggle
       objectReference: {fileID: 0}
     - target: {fileID: 3557197920905084569, guid: abd9f3b62b8d3a04280778c80bf8d2e4, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3557197920905084569, guid: abd9f3b62b8d3a04280778c80bf8d2e4, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4504364271134228852, guid: abd9f3b62b8d3a04280778c80bf8d2e4, type: 3}
       propertyPath: m_Sprite
@@ -497,11 +501,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6650689004865556504, guid: abd9f3b62b8d3a04280778c80bf8d2e4, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 140
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 6650689004865556504, guid: abd9f3b62b8d3a04280778c80bf8d2e4, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 140
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 6650689004865556504, guid: abd9f3b62b8d3a04280778c80bf8d2e4, type: 3}
       propertyPath: m_LocalPosition.x

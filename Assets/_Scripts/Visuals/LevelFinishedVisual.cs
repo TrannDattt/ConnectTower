@@ -27,11 +27,11 @@ namespace Assets._Scripts.Visuals
 
 
         [Header("Master Anim")]
-        [SerializeField] private float _textDelay;
+        // [SerializeField] private float _textDelay;
         [SerializeField] private float _starDelay;
         [SerializeField] private float _hornDelay;
         [SerializeField] private float _blockDelay;
-        [SerializeField] private float _particleDelay;
+        // [SerializeField] private float _particleDelay;
 
         [Header("Particle")]
         [SerializeField] private float _hornScaleYTime;
@@ -63,8 +63,33 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Image[] _blockImages;
         [SerializeField] private Vector2 _blockStartPos;
         [SerializeField] private float _blockDelayTime;
-        [SerializeField] private AnimationCurve _blockMoveCurve;
-        [SerializeField] private AnimationCurve _blockScaleCurve;
+        // [SerializeField] private AnimationCurve _blockMoveCurve;
+        // [SerializeField] private AnimationCurve _blockScaleCurve;
+
+        [Header("Score Anim")]
+        [SerializeField] private TextMeshProUGUI _scoreNumText;
+        [SerializeField] private RectTransform _scoreText;
+        [SerializeField] private RectTransform _newRecord;
+        [SerializeField] private float _scoreAnimDelay;
+        [SerializeField] private Vector2 _scoreTextStartOffset;
+        [SerializeField] private Vector2 _scoreNumTextStartOffset;
+        [SerializeField] private float _scoreElementDelay;
+        [SerializeField] private float _scoreRevealDuration = 0.35f;
+        [SerializeField] private Ease _scoreRevealMoveEase = Ease.OutBack;
+        [SerializeField] private Ease _scoreRevealFadeEase = Ease.OutQuad;
+        [SerializeField] private Vector3 _scoreRevealStartScale = new(.8f, .8f, 1f);
+        [SerializeField] private float _scoreWaveScaleFactor = 1.2f;
+        [SerializeField] private float _scoreWaveDuration = 0.3f;
+        [SerializeField] private AnimationCurve _scoreWaveScaleCurve;
+        [SerializeField] private float _scoreWaveStepDelay = 0.05f;
+        // [SerializeField] private Vector3 _scorePunchScale = new(.08f, .08f, 0f);
+        // [SerializeField] private float _scorePunchDuration = 0.25f;
+        // [SerializeField] private int _scorePunchVibrato = 8;
+        // [SerializeField] private float _scorePunchElasticity = 0.5f;
+        [SerializeField] private float _newRecordDelay;
+        [SerializeField] private float _newRecordDuration = 0.3f;
+        [SerializeField] private Ease _newRecordFadeEase = Ease.OutQuad;
+        [SerializeField] private Ease _newRecordEase = Ease.OutBack;
 
 #if UNITY_EDITOR
         [SerializeField] private Button _restartBtn;
@@ -94,10 +119,164 @@ namespace Assets._Scripts.Visuals
             StartCoroutine(PlayBottomParticle());
             return DOTween.Sequence().SetTarget(this).SetLink(gameObject, LinkBehaviour.KillOnDisable)
             .Append(DoTextAnim())
+            .Insert(_scoreAnimDelay, DoScoreAnim())
             .Insert(_hornDelay, DoHornAnim())
             .Insert(_starDelay, DoStarAnim())
             .Insert(_blockDelay, DoBlockImageAnim());
         }
+
+#region SCORE ANIM
+        private Vector2 _scoreTextTargetPos;
+        private Vector2 _scoreNumTextTargetPos;
+        private Vector3 _scoreTextTargetScale;
+        private Vector3 _scoreNumTextTargetScale;
+        private Vector3 _newRecordStartScale;
+        private CanvasGroup _scoreTextCanvasGroup;
+        private CanvasGroup _scoreNumTextCanvasGroup;
+        private CanvasGroup _newRecordCanvasGroup;
+
+        private Sequence DoScoreAnim()
+        {
+            PrepareScoreVisuals();
+
+            var sequence = DOTween.Sequence().SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            if (_scoreText != null)
+                sequence.Append(CreateScoreRevealSequence(_scoreText, _scoreTextTargetPos, _scoreTextTargetScale, _scoreTextStartOffset, _scoreTextCanvasGroup, GetScoreLabelText()));
+
+            if (_scoreText != null && _scoreNumText != null)
+                sequence.AppendInterval(_scoreElementDelay);
+
+            if (_scoreNumText != null)
+                sequence.Append(CreateScoreRevealSequence(_scoreNumText.rectTransform, _scoreNumTextTargetPos, _scoreNumTextTargetScale, _scoreNumTextStartOffset, _scoreNumTextCanvasGroup, _scoreNumText));
+
+            // if (_curLevelData.HasNewHighScore && _newRecord != null)
+            // {
+                sequence.AppendInterval(_newRecordDelay);
+                sequence.Append(CreateNewRecordSequence());
+            // }
+
+            return sequence;
+        }
+
+        private void PrepareScoreVisuals()
+        {
+            if (_scoreNumText != null)
+                _scoreNumText.SetText(_curLevelData.CurrentScore.ToString());
+
+            if (_scoreText != null)
+            {
+                _scoreText.DOKill(true);
+                _scoreText.anchoredPosition = _scoreTextTargetPos + _scoreTextStartOffset;
+                _scoreText.localScale = Vector3.Scale(_scoreTextTargetScale, _scoreRevealStartScale);
+                _scoreTextCanvasGroup.alpha = 0f;
+            }
+
+            if (_scoreNumText != null)
+            {
+                var scoreNumRect = _scoreNumText.rectTransform;
+                scoreNumRect.DOKill(true);
+                scoreNumRect.anchoredPosition = _scoreNumTextTargetPos + _scoreNumTextStartOffset;
+                scoreNumRect.localScale = Vector3.Scale(_scoreNumTextTargetScale, _scoreRevealStartScale);
+                _scoreNumTextCanvasGroup.alpha = 0f;
+            }
+
+            if (_newRecord != null)
+            {
+                _newRecord.DOKill(true);
+                _newRecordCanvasGroup.alpha = 0f;
+                _newRecord.localScale = _newRecordStartScale;
+                _newRecord.gameObject.SetActive(_curLevelData.HasNewHighScore);
+            }
+        }
+
+        private Sequence CreateScoreRevealSequence(RectTransform target, Vector2 targetPosition, Vector3 targetScale, Vector2 startOffset, CanvasGroup canvasGroup, TextMeshProUGUI text)
+        {
+            var sequence = DOTween.Sequence().SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            if (target == null || canvasGroup == null)
+                return sequence;
+
+            target.anchoredPosition = targetPosition + startOffset;
+            target.localScale = Vector3.Scale(targetScale, _scoreRevealStartScale);
+            canvasGroup.alpha = 0f;
+
+            sequence.Append(target.DOAnchorPos(targetPosition, _scoreRevealDuration).SetEase(_scoreRevealMoveEase));
+            sequence.Join(target.DOScale(targetScale, _scoreRevealDuration).SetEase(_scoreRevealMoveEase));
+            sequence.Join(canvasGroup.DOFade(1f, _scoreRevealDuration).SetEase(_scoreRevealFadeEase));
+
+            var waveTween = CreateScoreWaveTween(text);
+            if (waveTween != null)
+                sequence.Join(waveTween);
+
+            // if (_scorePunchDuration > 0f)
+            //     sequence.Append(target.DOPunchScale(_scorePunchScale, _scorePunchDuration, _scorePunchVibrato, _scorePunchElasticity));
+
+            return sequence;
+        }
+
+        private Tween CreateScoreWaveTween(TextMeshProUGUI text)
+        {
+            if (text == null)
+                return null;
+
+            text.ForceMeshUpdate();
+            var animator = new DOTweenTMPAnimator(text);
+            animator.Refresh();
+
+            var waveSequence = DOTween.Sequence().SetTarget(text).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            var visibleCharIndex = 0;
+            for (var i = 0; i < animator.textInfo.characterCount; i++)
+            {
+                if (!animator.textInfo.characterInfo[i].isVisible) continue;
+
+                animator.SetCharScale(i, Vector3.zero);
+                waveSequence.Insert(visibleCharIndex * _scoreWaveStepDelay, animator
+                    .DOScaleChar(i, _scoreWaveScaleFactor, _scoreWaveDuration)
+                    .SetEase(_scoreWaveScaleCurve));
+                // waveSequence.Join(animator
+                //     .DOScaleChar(i, _scoreWaveScaleFactor, _scoreWaveDuration + visibleCharIndex * _scoreWaveStepDelay)
+                //     .SetEase(_scoreWaveScaleCurve));
+                visibleCharIndex++;
+            }
+
+            waveSequence.OnKill(animator.Dispose);
+            waveSequence.OnComplete(animator.Dispose);
+            return waveSequence;
+        }
+
+        private Sequence CreateNewRecordSequence()
+        {
+            var sequence = DOTween.Sequence().SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            if (_newRecord == null || _newRecordCanvasGroup == null)
+                return sequence;
+
+            _newRecord.gameObject.SetActive(true);
+            _newRecord.localScale = _newRecordStartScale;
+            _newRecordCanvasGroup.alpha = 0f;
+
+            sequence.Append(_newRecordCanvasGroup.DOFade(1f, _newRecordDuration).SetEase(_newRecordFadeEase));
+            sequence.Join(_newRecord.DOScale(Vector3.one, _newRecordDuration).SetEase(_newRecordEase));
+            return sequence;
+        }
+
+        private TextMeshProUGUI GetScoreLabelText()
+        {
+            if (_scoreText == null)
+                return null;
+
+            return _scoreText.GetComponent<TextMeshProUGUI>() ?? _scoreText.GetComponentInChildren<TextMeshProUGUI>(true);
+        }
+
+        private CanvasGroup GetOrAddCanvasGroup(Component target)
+        {
+            if (target == null)
+                return null;
+
+            if (target.TryGetComponent<CanvasGroup>(out var canvasGroup))
+                return canvasGroup;
+
+            return target.gameObject.AddComponent<CanvasGroup>();
+        }
+#endregion
 
 #region STAR ANIM
         private Vector3 _initStarScale;
@@ -403,6 +582,24 @@ namespace Assets._Scripts.Visuals
             _initStarRotation = _star.transform.localRotation;
             CacheBlockTargets();
             CacheHornTargets();
+            _scoreTextCanvasGroup = GetOrAddCanvasGroup(_scoreText);
+            _scoreNumTextCanvasGroup = GetOrAddCanvasGroup(_scoreNumText);
+            _newRecordCanvasGroup = GetOrAddCanvasGroup(_newRecord);
+            if (_scoreText != null)
+            {
+                _scoreTextTargetPos = _scoreText.anchoredPosition;
+                _scoreTextTargetScale = _scoreText.localScale;
+            }
+            if (_scoreNumText != null)
+            {
+                _scoreNumTextTargetPos = _scoreNumText.rectTransform.anchoredPosition;
+                _scoreNumTextTargetScale = _scoreNumText.rectTransform.localScale;
+            }
+            if (_newRecord != null)
+            {
+                _newRecordStartScale = _newRecord.localScale;
+                _newRecord.gameObject.SetActive(false);
+            }
 
             _continueButton.OnClicked.AddListener(() => 
             {

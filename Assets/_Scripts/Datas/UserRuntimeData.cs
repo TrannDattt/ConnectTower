@@ -25,6 +25,16 @@ namespace Assets._Scripts.Datas
 
         public void MarkTutorialPlayed(ETutorial tutorial) => _playedTutorials.Add(tutorial);
 
+        public ETutorial[] GetPlayedTutorials()
+        {
+            return _playedTutorials == null ? new ETutorial[0] : new List<ETutorial>(_playedTutorials).ToArray();
+        }
+
+        public void SetPlayedTutorials(IEnumerable<ETutorial> tutorials)
+        {
+            _playedTutorials = tutorials == null ? new HashSet<ETutorial>() : new HashSet<ETutorial>(tutorials);
+        }
+
         // Constructor for new users
         public UserRuntimeData()
         {

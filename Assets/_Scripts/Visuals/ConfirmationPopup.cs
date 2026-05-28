@@ -6,12 +6,15 @@ namespace Assets._Scripts.Visuals
 {
     public class ConfirmationPopup : GamePopupVisual
     {
+        [SerializeField] private Image _image;
         [SerializeField] private Text _content;
         [SerializeField] private GameButtonVisual _confirmButton;
         [SerializeField] private GameButtonVisual _declineButton;
 
-        public void SetContent(string content, string confirmContent = "", string declineContent = "")
+        public void SetContent(string content, Sprite image = null, string confirmContent = "", string declineContent = "")
         {
+            _image.gameObject.SetActive(image != null);
+            if (_image.gameObject.activeSelf) _image.sprite = image;
             _content.text = content;
             if (!string.IsNullOrEmpty(confirmContent)) _confirmButton.SetContent(confirmContent);
             if (!string.IsNullOrEmpty(declineContent)) _declineButton.SetContent(declineContent);
