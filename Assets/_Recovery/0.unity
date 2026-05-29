@@ -79090,7 +79090,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08a78dff1d0963b449ab2a51c9fc3e2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.LevelIndexVisual
-  _levelIndexText: {fileID: 221434797}
+  _levelIndexText: {fileID: 0}
+  _textOutline: {fileID: 0}
+  _moveDuration: 0.5
+  _scaleFactor: 5
+  _scaleDuration: 0.5
+  _stayDuration: 0.7
 --- !u!224 &984
 RectTransform:
   m_ObjectHideFlags: 0
@@ -79184,7 +79189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 754c44e0dade11b439efd3d4531d5960, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.MoveCount
-  _moveCountText: {fileID: 1828779956}
+  _moveCountText: {fileID: 0}
   _warnThreshold: 5
 --- !u!224 &990
 RectTransform:
@@ -79489,17 +79494,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 527416653477897258, guid: dc1c16a4e31f31a4a9abde496a0de2f0, type: 3}
   m_PrefabInstance: {fileID: 6353078472333744446}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1009 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7388412577228235283, guid: dc1c16a4e31f31a4a9abde496a0de2f0, type: 3}
-  m_PrefabInstance: {fileID: 6353078472333744446}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7a2f793ed9311742880501395eff734, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.MechanicButtonVisual
 --- !u!224 &1011
 RectTransform:
   m_ObjectHideFlags: 0
@@ -80295,14 +80289,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c18c9bb6b76460a4ab4311c62e3190c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _transition: {fileID: 0}
+  _transitionMask: {fileID: 0}
   _backgroundImage: {fileID: 1198972666}
-  _normalBackground: {fileID: 21300000, guid: 53e495209e6436c458d43cc4b9383014, type: 3}
   _hardBackground: {fileID: 21300000, guid: df74fa23b3ae2674e9d867d43a486e74, type: 3}
   _superHardBackground: {fileID: 21300000, guid: 8ab91d712b335b94b8191b41539a0eaa, type: 3}
   _difficultyTag: {fileID: 1213518001}
   _hardTag: {fileID: 21300000, guid: 3742a2d76b3be3a4db16d478657e2af4, type: 3}
   _superHardTag: {fileID: 21300000, guid: 4c9cc41eca64b1d40bf1fbcc525553bd, type: 3}
-  _difficultyText: {fileID: 1000}
+  _difficultyText: {fileID: 0}
+  _textOutline: {fileID: 0}
+  _animDuration: 0.5
+  _scaleFactor: 5
+  _scaleDuration: 0.5
+  _stayDuration: 0.7
 --- !u!114 &1095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80339,14 +80339,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52af13d98f6b9df4c899e1bd00e619b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Base>k__BackingField: {fileID: 0}
   <TopPillar>k__BackingField: {fileID: 0}
+  <PortalBase>k__BackingField: {fileID: 0}
   <BlockContainer>k__BackingField: {fileID: 0}
-  OnPillarClicked:
-    m_PersistentCalls:
-      m_Calls: []
-  OnFullMatched:
-    m_PersistentCalls:
-      m_Calls: []
+  _blockScaleXCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _blockScaleYCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _blockFallCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _fallDuration: 0.4
+  _offsetY: 4.2
 --- !u!114 &1099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80359,14 +80375,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52af13d98f6b9df4c899e1bd00e619b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Base>k__BackingField: {fileID: 0}
   <TopPillar>k__BackingField: {fileID: 0}
+  <PortalBase>k__BackingField: {fileID: 0}
   <BlockContainer>k__BackingField: {fileID: 0}
-  OnPillarClicked:
-    m_PersistentCalls:
-      m_Calls: []
-  OnFullMatched:
-    m_PersistentCalls:
-      m_Calls: []
+  _blockScaleXCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _blockScaleYCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _blockFallCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _fallDuration: 0.4
+  _offsetY: 4.2
 --- !u!114 &1100
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80603,14 +80635,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52af13d98f6b9df4c899e1bd00e619b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Base>k__BackingField: {fileID: 0}
   <TopPillar>k__BackingField: {fileID: 0}
+  <PortalBase>k__BackingField: {fileID: 0}
   <BlockContainer>k__BackingField: {fileID: 0}
-  OnPillarClicked:
-    m_PersistentCalls:
-      m_Calls: []
-  OnFullMatched:
-    m_PersistentCalls:
-      m_Calls: []
+  _blockScaleXCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _blockScaleYCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _blockFallCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _fallDuration: 0.4
+  _offsetY: 4.2
 --- !u!114 &1127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80758,12 +80806,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33ec2455cd497904389f308ee8529d7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pillarHeight: 3.2
   _pickupHeight: 0.5
-  _blockHeight: 0.7
-  OnBlocksMoved:
-    m_PersistentCalls:
-      m_Calls: []
+  _stickyOffset: 0
+  _moveEase: 6
 --- !u!114 &1158
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80800,14 +80845,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52af13d98f6b9df4c899e1bd00e619b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Base>k__BackingField: {fileID: 0}
   <TopPillar>k__BackingField: {fileID: 0}
+  <PortalBase>k__BackingField: {fileID: 0}
   <BlockContainer>k__BackingField: {fileID: 0}
-  OnPillarClicked:
-    m_PersistentCalls:
-      m_Calls: []
-  OnFullMatched:
-    m_PersistentCalls:
-      m_Calls: []
+  _blockScaleXCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _blockScaleYCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _blockFallCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _fallDuration: 0.4
+  _offsetY: 4.2
 --- !u!114 &1161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80832,14 +80893,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52af13d98f6b9df4c899e1bd00e619b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Base>k__BackingField: {fileID: 0}
   <TopPillar>k__BackingField: {fileID: 0}
+  <PortalBase>k__BackingField: {fileID: 0}
   <BlockContainer>k__BackingField: {fileID: 0}
-  OnPillarClicked:
-    m_PersistentCalls:
-      m_Calls: []
-  OnFullMatched:
-    m_PersistentCalls:
-      m_Calls: []
+  _blockScaleXCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _blockScaleYCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _blockFallCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _fallDuration: 0.4
+  _offsetY: 4.2
 --- !u!114 &1164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81851,25 +81928,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e47e7846a9e98314bb5ea8690d2dcb2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.ProgressBarVisual
-  _backgroundImage: {fileID: 0}
   _slider: {fileID: 1137}
-  _progressText: {fileID: 1117}
+  _progressText: {fileID: 0}
 --- !u!224 &620566348 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6874394949055394402, guid: 5ed47c98038541b4cb96821854c7a0ac, type: 3}
   m_PrefabInstance: {fileID: 786912631890789888}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &620566349 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7226023261561761379, guid: 5ed47c98038541b4cb96821854c7a0ac, type: 3}
-  m_PrefabInstance: {fileID: 786912631890789888}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb01d9a644984e740b9d2315d6a53999, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.SettingPopupVisual
 --- !u!1001 &723223061
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -82043,7 +82108,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -82383,6 +82448,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.BoardController
   _boardTransform: {fileID: 400}
+  _pillarPrefab: {fileID: 0}
+  _blockPrefab: {fileID: 0}
 --- !u!1001 &1185374783
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -82628,17 +82695,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a825b866eef4a9648a2c70f7fd792e4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.GameManager
+  _canvasRt: {fileID: 0}
   _moveCount: {fileID: 989}
   _progressBar: {fileID: 550876353}
   _difficultyTag: {fileID: 1094}
   _levelIndex: {fileID: 978}
+  _coinDisplay: {fileID: 0}
   _settingButton: {fileID: 918}
-  _settingPopup: {fileID: 620566349}
-  _extraMoveButton: {fileID: 1009}
-  _shuffleButton: {fileID: 2935638850555573203}
-  _hintButton: {fileID: 6686336090028482636}
-  _blockInteractPanel: {fileID: 1999343295}
-  _testData: {fileID: 11400000, guid: 359988de35df6b04fa9dc54f4f0623a9, type: 2}
+  _scoreVisual: {fileID: 0}
+  _levelClearBonusStepDuration: 0.2
+  _boosterButtons: []
+  _clearLevel: {fileID: 0}
+  _failLevel: {fileID: 0}
+  _restartButton: {fileID: 0}
+  _editButton: {fileID: 0}
 --- !u!4 &1659867941 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1148393687574252151, guid: 95faded935a71784f9c80a45617e1181, type: 3}
@@ -83598,17 +83668,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b60cb8969b785a478a0b78664b58f68, type: 3}
---- !u!114 &2935638850555573203 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7716341143233452272, guid: 7b60cb8969b785a478a0b78664b58f68, type: 3}
-  m_PrefabInstance: {fileID: 2935638850555573202}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7a2f793ed9311742880501395eff734, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.MechanicButtonVisual
 --- !u!1001 &5632201056950484912
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -83908,17 +83967,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cdfed6bf6685e304781b984cde5bc96f, type: 3}
---- !u!114 &6686336090028482636 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7867003747281271730, guid: cdfed6bf6685e304781b984cde5bc96f, type: 3}
-  m_PrefabInstance: {fileID: 6686336090028482635}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7a2f793ed9311742880501395eff734, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.MechanicButtonVisual
 --- !u!1001 &7966329896160195908
 PrefabInstance:
   m_ObjectHideFlags: 0

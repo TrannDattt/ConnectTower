@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_2_138"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Wheels",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_4_17"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -83,5 +85,10 @@
   "ScratchedBlockDatas": {
     "BlockIds": []
   },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 29960,
   "CoinReward": 40
 }

@@ -14,9 +14,13 @@ namespace Assets._Scripts.Datas
 {
     public abstract class MechanicRuntimeData
     {
+        private static readonly Dictionary<IMechanicHandler, HashSet<MechanicRuntimeData>> MechanicsByTarget = new();
+        private static long _applySequence;
+
         public EMechanic Key {get; protected set;}
         protected IMechanicHandler _target;
         protected UnityAction<BlocksMovedEvent> OnCheckCondicion;
+        private long _applyOrder;
 
         protected EventBinding<BlocksMovedEvent> _blocksMovedBinding;
 
@@ -34,11 +38,63 @@ namespace Assets._Scripts.Datas
         }
 
         protected abstract bool CheckRemoveCondition();
+
+        public static MechanicRuntimeData GetLatestRegisteredMechanic(IMechanicHandler target)
+        {
+            if (target == null || !MechanicsByTarget.TryGetValue(target, out var mechanics))
+                return null;
+
+            return mechanics
+                .Where(mechanic => mechanic != null && mechanic._target == target)
+                .OrderByDescending(mechanic => mechanic._applyOrder)
+                .FirstOrDefault();
+        }
+
+        protected bool TryPrepareTarget(IMechanicHandler target)
+        {
+            if (target == null)
+                return false;
+
+            if (!ReferenceEquals(_target, target))
+                UnregisterCurrentTarget();
+
+            _target = target;
+            if (_target.ActiveMechanic == Key)
+                return false;
+
+            RegisterCurrentTarget();
+            return true;
+        }
+
+        protected void RegisterCurrentTarget()
+        {
+            if (_target == null)
+                return;
+
+            if (!MechanicsByTarget.TryGetValue(_target, out var mechanics))
+            {
+                mechanics = new();
+                MechanicsByTarget[_target] = mechanics;
+            }
+
+            mechanics.Add(this);
+            _applyOrder = ++_applySequence;
+        }
+
+        protected void UnregisterCurrentTarget()
+        {
+            if (_target == null || !MechanicsByTarget.TryGetValue(_target, out var mechanics))
+                return;
+
+            mechanics.Remove(this);
+            if (mechanics.Count == 0)
+                MechanicsByTarget.Remove(_target);
+        }
+
         public virtual void Apply(IMechanicHandler target)
         {
             Debug.Log($"Applying mechanic {Key} to {target}");
-            _target = target;
-            if (_target.ActiveMechanic == Key) return;
+            if (!TryPrepareTarget(target)) return;
             _target.UpdateMechanic(this);
             
             EventBus<BlocksMovedEvent>.Subscribe(_blocksMovedBinding);
@@ -49,8 +105,7 @@ namespace Assets._Scripts.Datas
         public virtual void ApplyImmediate(IMechanicHandler target)
         {
             Debug.Log($"Applying mechanic immediately {Key} to {target}");
-            _target = target;
-            if (_target.ActiveMechanic == Key) return;
+            if (!TryPrepareTarget(target)) return;
             _target.UpdateMechanicImmediate(this);
 
             EventBus<BlocksMovedEvent>.Subscribe(_blocksMovedBinding);
@@ -62,7 +117,9 @@ namespace Assets._Scripts.Datas
         {
             Debug.Log($"Removing mechanic {Key} from {_target}");
             if (_target == null) return;
-            _target.ClearMechanic(doEffect);
+            var target = _target;
+            UnregisterCurrentTarget();
+            target.ClearMechanic(doEffect);
             _target = null;
             
             EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
@@ -74,7 +131,9 @@ namespace Assets._Scripts.Datas
         {
             Debug.Log($"Removing mechanic immediately {Key} from {_target}");
             if (_target == null) return;
-            _target.ClearMechanicImmediate(doEffect);
+            var target = _target;
+            UnregisterCurrentTarget();
+            target.ClearMechanicImmediate(doEffect);
             _target = null;
 
             EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
@@ -138,8 +197,7 @@ namespace Assets._Scripts.Datas
 
         public override void Apply(IMechanicHandler target)
         {
-            _target = target;
-            if (_target.ActiveMechanic == Key) return;
+            if (!TryPrepareTarget(target)) return;
             _target.UpdateMechanic(this);
             
             EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchedBinding);
@@ -147,8 +205,7 @@ namespace Assets._Scripts.Datas
 
         public override void ApplyImmediate(IMechanicHandler target)
         {
-            _target = target;
-            if (_target.ActiveMechanic == Key) return;
+            if (!TryPrepareTarget(target)) return;
             _target.UpdateMechanicImmediate(this);
 
             EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchedBinding);
@@ -157,7 +214,9 @@ namespace Assets._Scripts.Datas
         public override void Remove(bool doEffect = true)
         {
             if (_target == null) return;
-            _target.ClearMechanic(doEffect);
+            var target = _target;
+            UnregisterCurrentTarget();
+            target.ClearMechanic(doEffect);
             
             EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchedBinding);
             
@@ -167,7 +226,9 @@ namespace Assets._Scripts.Datas
         public override void RemoveImmediate(bool doEffect = true)
         {
             if (_target == null) return;
-            _target.ClearMechanicImmediate(doEffect);
+            var target = _target;
+            UnregisterCurrentTarget();
+            target.ClearMechanicImmediate(doEffect);
 
             EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchedBinding);
 
@@ -219,7 +280,9 @@ namespace Assets._Scripts.Datas
                 }
                 else if (_target is BlockController block)
                 {
-                    if (block.IsSameTag(evt.Tag)) Remove();
+                    var handler = block as IMechanicHandler;
+                    if (block.IsSameTag(evt.Tag) && handler.ActiveMechanic == EMechanic.FrozenBlock)
+                        Remove();
                 }
             });
         }
@@ -254,6 +317,11 @@ namespace Assets._Scripts.Datas
         protected override bool CheckRemoveCondition()
         {
             return false;
+        }
+
+        public static void ReevaluateFrozenState(PillarController pillar, bool immediate)
+        {
+            ApplyFrozenToMatchingBlocks(pillar, immediate);
         }
 
         private static void ApplyFrozenToMatchingBlocks(PillarController pillar, bool immediate)
@@ -441,6 +509,12 @@ namespace Assets._Scripts.Datas
             if (block != null)
             {
                 var pillar = block.GetPillarParent();
+                if (doEffect)
+                {
+                    (block as IMechanicHandler).TryRestoreRegisteredMechanic();
+                    FrozenBlockMechanic.ReevaluateFrozenState(pillar, false);
+                }
+
                 pillar.CheckFullMatch();
                 if (pillar.IsFullMatch) pillar.DoFullMatchAnim();
             } 
@@ -460,6 +534,12 @@ namespace Assets._Scripts.Datas
             if (block != null)
             {
                 var pillar = block.GetPillarParent();
+                if (doEffect)
+                {
+                    (block as IMechanicHandler).TryRestoreRegisteredMechanic(true);
+                    FrozenBlockMechanic.ReevaluateFrozenState(pillar, true);
+                }
+
                 pillar.CheckFullMatch();
             }
         }
@@ -513,44 +593,44 @@ namespace Assets._Scripts.Datas
         {
             // Debug.Log($"Applying mechanic {Key} to {target}");
             _lastTarget = target;
-            _target = target;
             if (!IsTrap) 
             {
-                if (_target.ActiveMechanic == Key)
+                if (target.ActiveMechanic == Key)
                 {
+                    _target = target;
                     Remove();
                 }
                 else
                 {
-                    _target.MechanicVisual?.RemoveVisualImmediate(Key, false);
-                    _target = null;
+                    target.MechanicVisual?.RemoveVisualImmediate(Key, false);
                 }
+                _target = null;
                 return;
             }
 
-            if (_target.ActiveMechanic == Key) return;
+            if (!TryPrepareTarget(target)) return;
             _target.UpdateMechanic(this);
         }
 
         public override void ApplyImmediate(IMechanicHandler target)
         {
             _lastTarget = target;
-            _target = target;
             if (!IsTrap)
             {
-                if (_target.ActiveMechanic == Key)
+                if (target.ActiveMechanic == Key)
                 {
+                    _target = target;
                     RemoveImmediate();
                 }
                 else
                 {
-                    _target.MechanicVisual?.RemoveVisualImmediate(Key, false);
-                    _target = null;
+                    target.MechanicVisual?.RemoveVisualImmediate(Key, false);
                 }
+                _target = null;
                 return;
             }
 
-            if (_target.ActiveMechanic == Key) return;
+            if (!TryPrepareTarget(target)) return;
             _target.UpdateMechanicImmediate(this);
         }
 
@@ -559,7 +639,11 @@ namespace Assets._Scripts.Datas
             if (!doEffect)
             {
                 if (_target != null)
-                    _target.ClearMechanic(doEffect);
+                {
+                    var target = _target;
+                    UnregisterCurrentTarget();
+                    target.ClearMechanic(doEffect);
+                }
 
                 _target = null;
                 _lastTarget = null;
@@ -569,7 +653,9 @@ namespace Assets._Scripts.Datas
 
             // Debug.Log($"Removing mechanic {Key} from {_target}");
             if (_target == null) return;
-            _target.ClearMechanic(doEffect);
+            var currentTarget = _target;
+            UnregisterCurrentTarget();
+            currentTarget.ClearMechanic(doEffect);
             _target = null;
 
             DoMechanicSFX(Key);
@@ -580,7 +666,11 @@ namespace Assets._Scripts.Datas
             if (!doEffect)
             {
                 if (_target != null)
-                    _target.ClearMechanicImmediate(doEffect);
+                {
+                    var target = _target;
+                    UnregisterCurrentTarget();
+                    target.ClearMechanicImmediate(doEffect);
+                }
 
                 _target = null;
                 _lastTarget = null;
@@ -589,7 +679,9 @@ namespace Assets._Scripts.Datas
             }
 
             if (_target == null) return;
-            _target.ClearMechanicImmediate(doEffect);
+            var currentTarget = _target;
+            UnregisterCurrentTarget();
+            currentTarget.ClearMechanicImmediate(doEffect);
             _target = null;
 
             DoMechanicSFX(Key);

@@ -71,5 +71,20 @@ namespace Assets._Scripts.Interfaces
             MechanicVisual.RemoveVisualImmediate(ActiveMechanic, doEffect);
             ActiveMechanic = EMechanic.None;
         }
+
+        public void TryRestoreRegisteredMechanic(bool immediate = false)
+        {
+            if (ActiveMechanic != EMechanic.None)
+                return;
+
+            var fallbackMechanic = MechanicRuntimeData.GetLatestRegisteredMechanic(this);
+            if (fallbackMechanic == null || fallbackMechanic.Key == EMechanic.None)
+                return;
+
+            if (immediate)
+                UpdateMechanicImmediate(fallbackMechanic);
+            else
+                UpdateMechanic(fallbackMechanic);
+        }
     }
 }

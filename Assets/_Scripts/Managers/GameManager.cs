@@ -336,10 +336,10 @@ namespace Assets._Scripts.Managers
 
                 private IEnumerator DoOpeningAnim()
                 {
-                    IngameVisualController.Instance.PrepareIntroducingAnim();
+                    // IngameVisualController.Instance.PrepareIntroducingAnim();
 
                     yield return BoardController.Instance.DoSpawnBlockAnim();
-                    yield return IngameVisualController.Instance.DoLevelIntroducingAnim();
+                    // yield return IngameVisualController.Instance.DoLevelIntroducingAnim();
                     
                     _coroutine = null;
                     FinishState();

@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "C_3_2"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Letters",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_3_16"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Ginger Breads",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_4_3"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -122,5 +125,10 @@
   "ScratchedBlockDatas": {
     "BlockIds": []
   },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 8830,
   "CoinReward": 40
 }

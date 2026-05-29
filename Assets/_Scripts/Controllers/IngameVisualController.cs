@@ -54,18 +54,18 @@ namespace Assets._Scripts.Controllers
             }
         }
 
-        public void PrepareIntroducingAnim()
-        {
-            _levelIndex.PrepareAnim();
-            _difficultyTag.PrepareAnim();
-        }
+        // public void PrepareIntroducingAnim()
+        // {
+        //     _levelIndex.PrepareAnim();
+        //     _difficultyTag.PrepareAnim();
+        // }
 
-        public IEnumerator DoLevelIntroducingAnim()
-        {
-            yield return _levelIndex.DoLevelIndexAnim(_centerPoint);
-            if (LevelManager.PlayingLevel.Difficulty != EDifficulty.Normal)
-                yield return _difficultyTag.DoDifficultyAnim(_centerPoint);
-        }
+        // public IEnumerator DoLevelIntroducingAnim()
+        // {
+        //     yield return _levelIndex.DoLevelIndexAnim(_centerPoint);
+        //     if (LevelManager.PlayingLevel.Difficulty != EDifficulty.Normal)
+        //         yield return _difficultyTag.DoDifficultyAnim(_centerPoint);
+        // }
 
         public Tween UpdateMoveCount(int count, float duration = 0f)
         {
@@ -87,15 +87,35 @@ namespace Assets._Scripts.Controllers
             if (data == null || !data.BeginLevelClearBonusSequence())
                 yield break;
 
-            while (data.ApplyNextLevelClearBonusStep())
+            var totalUpdates = data.MoveCount;
+            if (totalUpdates <= 0)
+                yield break;
+
+            var baseStepDuration = Mathf.Max(_levelClearBonusStepDuration, GetScorePopDuration());
+            var totalDuration = _scoreVisual != null
+                ? _scoreVisual.GetLevelClearBonusTotalDuration(totalUpdates, baseStepDuration)
+                : Mathf.Max(0f, baseStepDuration) * Mathf.Max(0, totalUpdates - 1);
+            var sequenceStartTime = Time.unscaledTime;
+
+            for (var updateIndex = 1; updateIndex <= totalUpdates; updateIndex++)
             {
-                UpdateMoveCount(data.MoveCount, _levelClearBonusStepDuration);
-                var stepDuration = Mathf.Max(_levelClearBonusStepDuration, GetScorePopDuration());
-                if (stepDuration > 0f)
-                    yield return new WaitForSeconds(stepDuration);
-                else
-                    yield return null;
+                var scheduledTime = _scoreVisual != null
+                    ? _scoreVisual.GetLevelClearBonusStepTime(updateIndex, totalUpdates, totalDuration)
+                    : Mathf.Max(0f, baseStepDuration) * (updateIndex - 1);
+                var remainingWait = scheduledTime - (Time.unscaledTime - sequenceStartTime);
+                if (remainingWait > 0f)
+                    yield return new WaitForSecondsRealtime(remainingWait);
+
+                if (!data.ApplyNextLevelClearBonusStep())
+                    yield break;
+
+                var stepDuration = _scoreVisual != null
+                    ? _scoreVisual.GetLevelClearBonusStepDuration(updateIndex, totalUpdates, totalDuration)
+                    : baseStepDuration;
+                UpdateMoveCount(data.MoveCount, stepDuration);
             }
+
+            UpdateMoveCount(data.MoveCount, 0f);
         }
 
         private void OnEnable()

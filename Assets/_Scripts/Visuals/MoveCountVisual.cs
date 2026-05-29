@@ -7,6 +7,8 @@ namespace Assets._Scripts.Visuals
 {
     public class MoveCountVisual : MonoBehaviour
     {
+        private const string MoveCountTweenId = "MoveCountTween";
+
         [SerializeField] private Text _moveCountText;
         [Tooltip("Số lượt còn lại tối thiểu để bắt đầu hiệu ứng cảnh báo")]
         [SerializeField] private int _warnThreshold = 5;
@@ -29,6 +31,9 @@ namespace Assets._Scripts.Visuals
         {
             if (_moveCountText == null) return null;
 
+            DOTween.Kill(MoveCountTweenId, complete: false);
+            _moveCountText.transform.localScale = _originalScale;
+
             if (duration <= 0)
             {
                 _moveCountText.text = count.ToString();
@@ -39,7 +44,11 @@ namespace Assets._Scripts.Visuals
             int startVal = 0;
             int.TryParse(_moveCountText.text, out startVal);
 
-            Sequence sequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable).SetUpdate(true);
+            Sequence sequence = DOTween.Sequence()
+                .SetId(MoveCountTweenId)
+                .SetTarget(gameObject)
+                .SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable)
+                .SetUpdate(true);
             
             // 1. Phóng to lên
             sequence.Append(_moveCountText.transform.DOScale(_originalScale * 1.4f, duration * 0.3f).SetEase(Ease.OutBack));

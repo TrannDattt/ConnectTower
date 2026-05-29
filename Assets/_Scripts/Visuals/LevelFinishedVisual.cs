@@ -149,11 +149,11 @@ namespace Assets._Scripts.Visuals
             if (_scoreNumText != null)
                 sequence.Append(CreateScoreRevealSequence(_scoreNumText.rectTransform, _scoreNumTextTargetPos, _scoreNumTextTargetScale, _scoreNumTextStartOffset, _scoreNumTextCanvasGroup, _scoreNumText));
 
-            // if (_curLevelData.HasNewHighScore && _newRecord != null)
-            // {
+            if (_curLevelData.HasNewHighScore && _newRecord != null)
+            {
                 sequence.AppendInterval(_newRecordDelay);
                 sequence.Append(CreateNewRecordSequence());
-            // }
+            }
 
             return sequence;
         }
