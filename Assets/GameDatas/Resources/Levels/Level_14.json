@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_3_9"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Cameras",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_2_107"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Glasses",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_2_23"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Elephants",
@@ -85,7 +88,8 @@
           "Id": 15,
           "IconId": "A_1_35"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Letters",
@@ -106,7 +110,8 @@
           "Id": 19,
           "IconId": "A_4_23"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -175,19 +180,30 @@
     }
   ],
   "HiddenBlockDatas": {
-    "BlockIds": [
-      2,
-      3,
-      7,
-      11,
-      18,
-      19
-    ]
+    "BlockIds": []
   },
-  "CoveredPillarDatas": [],
+  "CoveredPillarDatas": [
+    {
+      "TagToOpen": "Elephants",
+      "PillarIds": [
+        3
+      ]
+    },
+    {
+      "TagToOpen": "Letters",
+      "PillarIds": [
+        0
+      ]
+    }
+  ],
   "FrozenBlockDatas": [],
   "ScratchedBlockDatas": {
     "BlockIds": []
   },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

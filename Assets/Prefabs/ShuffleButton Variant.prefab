@@ -9,8 +9,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 892167132670545408, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 892167132670545408, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1131538215886131317, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 1299499251447980915, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_Pivot.x
@@ -42,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1299499251447980915, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 210
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1299499251447980915, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_LocalPosition.x
@@ -92,6 +100,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -0
       objectReference: {fileID: 0}
+    - target: {fileID: 1345647299090173886, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1364672452820592930, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 1364672452820592930, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -99,6 +115,38 @@ PrefabInstance:
     - target: {fileID: 2024975903056803049, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_Name
       value: ShuffleButton Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 2024975903056803049, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3303994379413459655, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3665472186417423763, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3837796252508195648, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4018445957483363622, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -4.5999985
+      objectReference: {fileID: 0}
+    - target: {fileID: 5395922678548799331, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5740107383687342012, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6145751505784053713, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6145751505784053713, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: m_IsActive
@@ -108,10 +156,22 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 74a3b63ff636e294888d255f27cc7a8b, type: 2}
+    - target: {fileID: 6713254255123731453, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -4.199997
+      objectReference: {fileID: 0}
+    - target: {fileID: 6713254255123731453, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 1.3000793
+      objectReference: {fileID: 0}
     - target: {fileID: 8345617740352595274, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
       propertyPath: _effectVisual
       value: 
       objectReference: {fileID: 523889107701388766}
+    - target: {fileID: 8733585482665606167, guid: 74cdeec19db5a7b4bba9fb521d3a3769, type: 3}
+      propertyPath: m_SortingLayer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -379,8 +439,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _duration: 4
-  _cycles: 10
+  _duration: 3
+  _cycles: 4
   _rotateCurve:
     serializedVersion: 2
     m_Curve:
@@ -441,10 +501,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _blockMoveDelayToMain: 0.5
-  _blockMoveDelayToBlock: 0.1
+  _blockMoveDelayToMain: 0.3
+  _blockMoveDelayToBlock: 1
   _totalDelayMove: 1.5
-  _blockMoveDur: 0.5
+  _blockMoveDur: 0.7
   _blockMoveToCenterCurve:
     serializedVersion: 2
     m_Curve:
@@ -495,7 +555,49 @@ MonoBehaviour:
     m_RotationOrder: 4
   _radius: 1
   _radiusVariation: 0.2
-  _blockMoveCircleDur: 2
-  _blockCycle: 2
+  _blockMoveCircleDur: 1
+  _blockCycle: 1
   _baseMoveAmplitude: 0.2
-  _baseMoveCycles: 2
+  _baseMoveCycles: 1
+  _baseScaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.8519287
+      outSlope: 0.8519287
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.39089692
+    - serializedVersion: 3
+      time: 0.25
+      value: 0.15
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.75
+      value: -0.15
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0.8414017
+      outSlope: 0.8414017
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.36412382
+      outWeight: 0.33333334
+    m_PreInfinity: 1
+    m_PostInfinity: 1
+    m_RotationOrder: 4

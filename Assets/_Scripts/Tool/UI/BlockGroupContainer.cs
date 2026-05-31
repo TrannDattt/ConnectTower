@@ -44,11 +44,7 @@ namespace Assets._Scripts.Tools.UI
             {
                 if (!blockGroup.Trackable) continue;
                 var newGroup = Instantiate(_blockGroupPrefab, _blockGroupParent);
-                var groupData = BlockGroupMapper.GetGroupData(blockGroup.Tag);
-                if (groupData != null)
-                    newGroup.InitGroup(LevelEditor.GetLastBlockId() + 1, groupData);
-                else
-                    newGroup.InitGroup(blockGroup.BlockDatas[0].Id, blockGroup.Tag, new Sprite[] {null, null, null, null});
+                newGroup.InitGroup(blockGroup);
             }
         }
 

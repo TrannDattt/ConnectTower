@@ -1,7 +1,7 @@
 ﻿{
   "Index": 40,
   "Difficulty": 2,
-  "MoveLimit": 35,
+  "MoveLimit": 42,
   "BlockGroups": [
     {
       "Tag": "Boats",
@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_3_9"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Donuts",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_3_91"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Letters",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_4_23"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Drums",
@@ -85,7 +88,8 @@
           "Id": 15,
           "IconId": "A_3_93"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Glasses",
@@ -106,7 +110,8 @@
           "Id": 19,
           "IconId": "A_4_55"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Race Helmets",
@@ -127,7 +132,8 @@
           "Id": 23,
           "IconId": "A_3_11"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Houses",
@@ -148,7 +154,8 @@
           "Id": 27,
           "IconId": "A_3"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Wheels",
@@ -169,7 +176,28 @@
           "Id": 31,
           "IconId": "A_4_17"
         }
-      ]
+      ],
+      "Trackable": true
+    },
+    {
+      "Tag": "",
+      "BlockDatas": [
+        {
+          "Id": 32,
+          "IconId": ""
+        }
+      ],
+      "Trackable": false
+    },
+    {
+      "Tag": "",
+      "BlockDatas": [
+        {
+          "Id": 33,
+          "IconId": ""
+        }
+      ],
+      "Trackable": false
     }
   ],
   "PillarDatas": [
@@ -205,8 +233,8 @@
       "BlockIds": [
         8,
         4,
-        0,
-        -4
+        33,
+        0
       ]
     },
     {
@@ -241,8 +269,8 @@
       "BlockIds": [
         20,
         11,
-        17,
-        -4
+        32,
+        17
       ]
     },
     {
@@ -265,18 +293,7 @@
     }
   ],
   "HiddenBlockDatas": {
-    "BlockIds": [
-      25,
-      10,
-      18,
-      11,
-      5,
-      3,
-      26,
-      19,
-      28,
-      23
-    ]
+    "BlockIds": []
   },
   "CoveredPillarDatas": [
     {
@@ -299,5 +316,20 @@
     }
   ],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": [
+      3,
+      9,
+      25
+    ]
+  },
+  "StickyBlockDatas": {
+    "BlockIds": [
+      32,
+      33
+    ]
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 120
 }

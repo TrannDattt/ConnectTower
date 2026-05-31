@@ -1,28 +1,29 @@
 ﻿{
   "Index": 10,
   "Difficulty": 0,
-  "MoveLimit": 26,
+  "MoveLimit": 23,
   "BlockGroups": [
     {
-      "Tag": "Cars",
+      "Tag": "Elephants",
       "BlockDatas": [
         {
           "Id": 0,
-          "IconId": "A_1_67"
+          "IconId": "A_1_17"
         },
         {
           "Id": 1,
-          "IconId": "A_2_84"
+          "IconId": "A_3_140"
         },
         {
           "Id": 2,
-          "IconId": "B_1_96"
+          "IconId": "A_1_35"
         },
         {
           "Id": 3,
-          "IconId": "C_1_133"
+          "IconId": "A_4_14"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Shoes",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "D_1_69"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Hamsters",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_4_110"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Guitars",
@@ -85,7 +88,8 @@
           "Id": 15,
           "IconId": "A_3_10"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Jackets",
@@ -106,7 +110,8 @@
           "Id": 19,
           "IconId": "B_4_67"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -188,5 +193,13 @@
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

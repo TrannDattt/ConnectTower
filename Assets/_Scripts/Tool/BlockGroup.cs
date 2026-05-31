@@ -40,23 +40,30 @@ namespace Assets._Scripts.Tools
         public void InitGroup(int startId, string tag, Sprite[] icons)
         {
             GroupTag = tag;
-            var option = _groupNameDD.options.FirstOrDefault(o => string.Equals(o.text, tag));
-            if (option == null)
-            {
-                option = new (tag);
-                Debug.Log($"Add new option: {tag}");
-                _groupNameDD.options.Add(option);
-            }
-
-            Debug.Log($"Set tag to {tag}");
-            Debug.Log($"Index of {tag} is: {_groupNameDD.options.IndexOf(option)}");
-            _groupNameDD.SetValueWithoutNotify(_groupNameDD.options.IndexOf(option));
-            _groupNameDD.RefreshShownValue();
+            SetGroupDropdownValue(tag);
 
             for (int i = 0; i < _blocks.Length; i++)
             {
                 _blocks[i].InitBlock(startId + i, icons[i]);
                 // Debug.Log($"Init block with id: {_blocks[i].BlockId}");
+            }
+        }
+
+        public void InitGroup(Datas.BlockGroup blockGroup)
+        {
+            GroupTag = blockGroup.Tag;
+            SetGroupDropdownValue(GroupTag);
+
+            for (int i = 0; i < _blocks.Length && i < blockGroup.BlockDatas.Count; i++)
+            {
+                var blockData = blockGroup.BlockDatas[i];
+                var icon = BlockGroupMapper.GetIcon(GroupTag, blockData.IconId);
+                if (icon == null && !string.IsNullOrEmpty(blockData.IconId))
+                {
+                    Debug.LogWarning($"[BlockGroup] Missing icon '{blockData.IconId}' in group '{GroupTag}' for block {blockData.Id}.");
+                }
+
+                _blocks[i].InitBlock(blockData, icon);
             }
         }
 
@@ -67,18 +74,7 @@ namespace Assets._Scripts.Tools
             // Trackable = trackable;
             var icons = new List<Sprite>(data.Icons);
             GroupTag = tag;
-            var option = _groupNameDD.options.FirstOrDefault(o => string.Equals(o.text, tag));
-            if (option == null)
-            {
-                option = new (tag);
-                Debug.Log($"Add new option: {tag}");
-                _groupNameDD.options.Add(option);
-            }
-
-            Debug.Log($"Set tag to {tag}");
-            Debug.Log($"Index of {tag} is: {_groupNameDD.options.IndexOf(option)}");
-            _groupNameDD.SetValueWithoutNotify(_groupNameDD.options.IndexOf(option));
-            _groupNameDD.RefreshShownValue();
+            SetGroupDropdownValue(tag);
 
             for (int i = 0; i < _blocks.Length; i++)
             {
@@ -160,6 +156,22 @@ namespace Assets._Scripts.Tools
         void OnDestroy()
         {
             EventBus<IEditorChangeBlockGroup>.Unsubscribe(_groupChangedBinding);
+        }
+
+        private void SetGroupDropdownValue(string tag)
+        {
+            var option = _groupNameDD.options.FirstOrDefault(o => string.Equals(o.text, tag));
+            if (option == null)
+            {
+                option = new(tag);
+                Debug.Log($"Add new option: {tag}");
+                _groupNameDD.options.Add(option);
+            }
+
+            Debug.Log($"Set tag to {tag}");
+            Debug.Log($"Index of {tag} is: {_groupNameDD.options.IndexOf(option)}");
+            _groupNameDD.SetValueWithoutNotify(_groupNameDD.options.IndexOf(option));
+            _groupNameDD.RefreshShownValue();
         }
     }
 

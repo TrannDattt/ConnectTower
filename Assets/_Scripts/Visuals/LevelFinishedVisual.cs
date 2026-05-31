@@ -17,6 +17,129 @@ namespace Assets._Scripts.Visuals
 {
     public class LevelFinishedVisual : GamePopupVisual
     {
+        [System.Serializable]
+        private sealed class ButtonIdleFloatAnimation
+        {
+            [SerializeField] private float _moveOffsetY = 16f;
+            [SerializeField] private float _moveDuration = 1.35f;
+            [SerializeField] private AnimationCurve _moveCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+            [SerializeField] private float _startDelayStep = 0.12f;
+
+            private readonly List<Tween> _moveTweens = new();
+            private readonly Dictionary<RectTransform, Vector2> _initialPositions = new();
+
+            public void CacheTargets(IEnumerable<RectTransform> targets)
+            {
+                _initialPositions.Clear();
+                if (targets == null)
+                    return;
+
+                foreach (var target in targets)
+                {
+                    if (target == null)
+                        continue;
+
+                    _initialPositions[target] = target.anchoredPosition;
+                }
+            }
+
+            public void Play(IEnumerable<RectTransform> targets, GameObject owner)
+            {
+                Stop();
+                if (targets == null)
+                    return;
+
+                var index = 0;
+                foreach (var target in targets)
+                {
+                    if (target == null || !target.gameObject.activeInHierarchy)
+                        continue;
+
+                    if (!_initialPositions.TryGetValue(target, out var initialPosition))
+                    {
+                        initialPosition = target.anchoredPosition;
+                        _initialPositions[target] = initialPosition;
+                    }
+
+                    target.anchoredPosition = initialPosition;
+                    var tween = target.DOAnchorPosY(initialPosition.y + _moveOffsetY, _moveDuration)
+                        .SetEase(_moveCurve)
+                        .SetLoops(-1, LoopType.Yoyo)
+                        .SetDelay(index * _startDelayStep)
+                        .SetUpdate(true)
+                        .SetLink(owner, LinkBehaviour.KillOnDisable);
+                    _moveTweens.Add(tween);
+                    index++;
+                }
+            }
+
+            public void Stop()
+            {
+                foreach (var tween in _moveTweens)
+                    tween?.Kill();
+
+                _moveTweens.Clear();
+
+                foreach (var pair in _initialPositions)
+                {
+                    if (pair.Key == null)
+                        continue;
+
+                    pair.Key.anchoredPosition = pair.Value;
+                }
+            }
+        }
+
+        [System.Serializable]
+        private sealed class ScalePulseAnimation
+        {
+            [SerializeField] private float _scaleMultiplier = 1.08f;
+            [SerializeField] private float _duration = 0.8f;
+            [SerializeField] private AnimationCurve _scaleCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+            [SerializeField] private float _startDelay = 0.1f;
+
+            private Tween _scaleTween;
+            private Vector3 _initialScale = Vector3.one;
+            private bool _hasCachedScale;
+
+            public void CacheState(RectTransform target)
+            {
+                if (target == null)
+                    return;
+
+                _initialScale = target.localScale;
+                _hasCachedScale = true;
+            }
+
+            public void Play(RectTransform target, GameObject owner)
+            {
+                if (target == null || !target.gameObject.activeInHierarchy)
+                    return;
+
+                CacheState(target);
+                Stop(target);
+                target.localScale = _initialScale;
+
+                _scaleTween = target.DOScale(_initialScale * _scaleMultiplier, _duration)
+                    .SetEase(_scaleCurve)
+                    .SetLoops(-1, LoopType.Yoyo)
+                    .SetDelay(_startDelay)
+                    .SetUpdate(true)
+                    .SetLink(owner, LinkBehaviour.KillOnDisable);
+            }
+
+            public void Stop(RectTransform target)
+            {
+                _scaleTween?.Kill();
+                _scaleTween = null;
+
+                if (target == null || !_hasCachedScale)
+                    return;
+
+                target.localScale = _initialScale;
+            }
+        }
+
         [Header("Base")]
         [SerializeField] private TextMeshProUGUI _titleText;
         [SerializeField] private GameButtonVisual _continueButton;
@@ -25,6 +148,10 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private GameButtonVisual _adsRewardButton;
         [SerializeField] private Text _adsRewardText;
 
+        [Header("Idle Button Anim")]
+        [SerializeField] private RectTransform _buttonsRoot;
+        [SerializeField] private ButtonIdleFloatAnimation _buttonIdleFloat = new();
+        [SerializeField] private ScalePulseAnimation _adsRewardButtonPulse = new();
 
         [Header("Master Anim")]
         // [SerializeField] private float _textDelay;
@@ -110,8 +237,15 @@ namespace Assets._Scripts.Visuals
 
             yield return base.Show();
 
+            StartIdleButtonEffects();
             SoundManager.Instance.PlayRandomSFX(ESfx.Win);
             yield return DoWinPopupAnim().WaitForCompletion();
+        }
+
+        public override IEnumerator Hide()
+        {
+            StopIdleButtonEffects();
+            yield return base.Hide();
         }
 
         private Sequence DoWinPopupAnim()
@@ -550,6 +684,9 @@ namespace Assets._Scripts.Visuals
         }
 #endregion
 
+        private readonly List<GameButtonVisual> _idleButtons = new();
+        private readonly List<RectTransform> _buttonIdleTargets = new();
+
 #region PLAY PARTICLE
         private IEnumerator PlayTopParticles()
         {
@@ -565,6 +702,45 @@ namespace Assets._Scripts.Visuals
             yield return null;
         }
 #endregion
+
+        private void CacheIdleButtonTargets()
+        {
+            _idleButtons.Clear();
+            _buttonIdleTargets.Clear();
+            if (_buttonsRoot == null)
+            {
+                var buttonsTransform = transform.Find("Buttons") ?? transform.Find("Button");
+                if (buttonsTransform != null)
+                    _buttonsRoot = buttonsTransform as RectTransform;
+            }
+
+            if (_buttonsRoot == null)
+                return;
+
+            _buttonsRoot.GetComponentsInChildren(true, _idleButtons);
+            foreach (var button in _idleButtons)
+            {
+                if (button == null || button.ButtonRt == null)
+                    continue;
+
+                _buttonIdleTargets.Add(button.ButtonRt);
+            }
+
+            _buttonIdleFloat.CacheTargets(_buttonIdleTargets);
+        }
+
+        private void StartIdleButtonEffects()
+        {
+            StopIdleButtonEffects();
+            _buttonIdleFloat.Play(_buttonIdleTargets, gameObject);
+            _adsRewardButtonPulse.Play(_adsRewardButton != null ? _adsRewardButton.ButtonRt : null, gameObject);
+        }
+
+        private void StopIdleButtonEffects()
+        {
+            _buttonIdleFloat.Stop();
+            _adsRewardButtonPulse.Stop(_adsRewardButton != null ? _adsRewardButton.ButtonRt : null);
+        }
 
         protected override void Start()
         {
@@ -582,6 +758,7 @@ namespace Assets._Scripts.Visuals
             _initStarRotation = _star.transform.localRotation;
             CacheBlockTargets();
             CacheHornTargets();
+            CacheIdleButtonTargets();
             _scoreTextCanvasGroup = GetOrAddCanvasGroup(_scoreText);
             _scoreNumTextCanvasGroup = GetOrAddCanvasGroup(_scoreNumText);
             _newRecordCanvasGroup = GetOrAddCanvasGroup(_newRecord);
@@ -600,6 +777,8 @@ namespace Assets._Scripts.Visuals
                 _newRecordStartScale = _newRecord.localScale;
                 _newRecord.gameObject.SetActive(false);
             }
+            if (_adsRewardButton != null && _adsRewardButton.ButtonRt != null)
+                _adsRewardButtonPulse.CacheState(_adsRewardButton.ButtonRt);
 
             _continueButton.OnClicked.AddListener(() => 
             {
@@ -660,6 +839,11 @@ namespace Assets._Scripts.Visuals
             });
 
             base.Start();
+        }
+
+        private void OnDisable()
+        {
+            StopIdleButtonEffects();
         }
     }
 }

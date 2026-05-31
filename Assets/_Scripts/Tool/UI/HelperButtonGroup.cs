@@ -9,6 +9,8 @@ namespace Assets._Scripts.Tools.UI
         [SerializeField] private Button _loadButton;
         [SerializeField] private Button _clearButton;
         [SerializeField] private Button _playTestButton;
+        [SerializeField] private Button _loadPreviousButton;
+        [SerializeField] private Button _loadNextButton;
 
         void Start()
         {
@@ -30,6 +32,16 @@ namespace Assets._Scripts.Tools.UI
             _playTestButton.onClick.AddListener(() =>
             {
                 LevelEditor.TestCurrentLevel();
+            });
+
+            _loadPreviousButton.onClick.AddListener(() =>
+            {
+                LevelEditor.LoadPreviousLevel();
+            });
+
+            _loadNextButton.onClick.AddListener(() =>
+            {
+                LevelEditor.LoadNextLevel();
             });
         }
     }

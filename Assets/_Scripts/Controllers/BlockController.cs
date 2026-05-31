@@ -27,6 +27,10 @@ namespace Assets._Scripts.Controllers
             Id = data.Id;
             _tag = tag;
             _baseIcon = BlockGroupMapper.GetIcon(tag, data.IconId);
+            if (_baseIcon == null && !string.IsNullOrEmpty(tag) && !string.IsNullOrEmpty(data.IconId))
+            {
+                Debug.LogWarning($"[BlockController] Missing icon '{data.IconId}' in group '{tag}' for block {data.Id}.");
+            }
             _icon.sprite = _baseIcon;
             ActiveMechanic = EMechanic.None;
         }

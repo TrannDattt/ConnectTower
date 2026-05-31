@@ -1,7 +1,7 @@
 ﻿{
   "Index": 4,
   "Difficulty": 0,
-  "MoveLimit": 14,
+  "MoveLimit": 25,
   "BlockGroups": [
     {
       "Tag": "Fire Crackers",
@@ -84,16 +84,16 @@
       "Id": 1,
       "BlockIds": [
         1,
-        -2,
-        7,
-        2
+        9,
+        2,
+        -4
       ]
     },
     {
       "Id": 2,
       "BlockIds": [
         3,
-        10,
+        -2,
         -3,
         -4
       ]
@@ -103,32 +103,23 @@
       "BlockIds": [
         11,
         8,
-        9,
-        -4
+        7,
+        10
       ]
     }
   ],
   "HiddenBlockDatas": {
-    "BlockIds": []
+    "BlockIds": [
+      4,
+      7,
+      8,
+      9
+    ]
   },
   "CoveredPillarDatas": [],
-  "FrozenBlockDatas": [
-    {
-      "BlockIds": [
-        3
-      ]
-    },
-    {
-      "BlockIds": [
-        11
-      ]
-    }
-  ],
+  "FrozenBlockDatas": [],
   "ScratchedBlockDatas": {
-    "BlockIds": [
-      0,
-      2
-    ]
+    "BlockIds": []
   },
   "StickyBlockDatas": {
     "BlockIds": []

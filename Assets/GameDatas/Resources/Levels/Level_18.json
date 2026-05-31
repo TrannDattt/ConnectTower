@@ -22,7 +22,8 @@
           "Id": 7,
           "IconId": "A_4_23"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Hourglasses",
@@ -43,28 +44,30 @@
           "Id": 11,
           "IconId": "A_4_89"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
-      "Tag": "Drums",
+      "Tag": "Jewels",
       "BlockDatas": [
         {
           "Id": 12,
-          "IconId": "A_2_10"
+          "IconId": "C_1_118"
         },
         {
           "Id": 13,
-          "IconId": "A_1_25"
+          "IconId": "C_2_95"
         },
         {
           "Id": 14,
-          "IconId": "A_2_16"
+          "IconId": "A_1_141"
         },
         {
           "Id": 15,
-          "IconId": "A_3_0"
+          "IconId": "C_3_108"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Radios",
@@ -85,7 +88,8 @@
           "Id": 23,
           "IconId": "A_4_100"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Boats",
@@ -106,49 +110,52 @@
           "Id": 27,
           "IconId": "A_2_43"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
-      "Tag": "Helmets",
+      "Tag": "Keys",
       "BlockDatas": [
         {
           "Id": 28,
-          "IconId": "A_4_107"
+          "IconId": "A_4_11"
         },
         {
           "Id": 29,
-          "IconId": "A_3_115"
+          "IconId": "A_1_51"
         },
         {
           "Id": 30,
-          "IconId": "A_2_52"
+          "IconId": "A_2_22"
         },
         {
           "Id": 31,
-          "IconId": "A_1_49"
+          "IconId": "A_3_103"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
-      "Tag": "Mirrors",
+      "Tag": "Dragons",
       "BlockDatas": [
         {
           "Id": 32,
-          "IconId": "B_1_75"
+          "IconId": "F_2_53"
         },
         {
           "Id": 33,
-          "IconId": "B_2_101"
+          "IconId": "A_1_0"
         },
         {
           "Id": 34,
-          "IconId": "B_1_57"
+          "IconId": "A_4_67"
         },
         {
           "Id": 35,
-          "IconId": "B_2_144"
+          "IconId": "A_1_32"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -263,5 +270,13 @@
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

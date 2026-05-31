@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_3_91"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Hourglasses",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_4_89"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Boats",
@@ -64,7 +66,8 @@
           "Id": 15,
           "IconId": "A_3_9"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Race Helmets",
@@ -85,7 +88,8 @@
           "Id": 19,
           "IconId": "A_3_11"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Houses",
@@ -106,7 +110,8 @@
           "Id": 23,
           "IconId": "A_3"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Wheels",
@@ -127,7 +132,28 @@
           "Id": 27,
           "IconId": "A_4_17"
         }
-      ]
+      ],
+      "Trackable": true
+    },
+    {
+      "Tag": "",
+      "BlockDatas": [
+        {
+          "Id": 28,
+          "IconId": ""
+        }
+      ],
+      "Trackable": false
+    },
+    {
+      "Tag": "",
+      "BlockDatas": [
+        {
+          "Id": 29,
+          "IconId": ""
+        }
+      ],
+      "Trackable": false
     }
   ],
   "PillarDatas": [
@@ -135,7 +161,7 @@
       "Id": 0,
       "BlockIds": [
         1,
-        27,
+        29,
         18,
         0
       ]
@@ -152,7 +178,7 @@
     {
       "Id": 2,
       "BlockIds": [
-        -1,
+        27,
         -2,
         -3,
         -4
@@ -189,7 +215,7 @@
       "Id": 6,
       "BlockIds": [
         17,
-        -2,
+        28,
         -3,
         -4
       ]
@@ -207,7 +233,6 @@
   "HiddenBlockDatas": {
     "BlockIds": [
       18,
-      27,
       7,
       19
     ]
@@ -227,5 +252,16 @@
     }
   ],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
+  "StickyBlockDatas": {
+    "BlockIds": [
+      28,
+      29
+    ]
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

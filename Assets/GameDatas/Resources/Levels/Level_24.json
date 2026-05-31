@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_3_9"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Race Helmets",
@@ -43,7 +44,8 @@
           "Id": 11,
           "IconId": "A_3_11"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Keys",
@@ -64,7 +66,8 @@
           "Id": 15,
           "IconId": "A_4_11"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Wheels",
@@ -85,7 +88,8 @@
           "Id": 19,
           "IconId": "A_4_17"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Donuts",
@@ -106,7 +110,8 @@
           "Id": 23,
           "IconId": "A_3_91"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Glasses",
@@ -127,7 +132,8 @@
           "Id": 27,
           "IconId": "A_4_55"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -205,7 +211,16 @@
     }
   ],
   "HiddenBlockDatas": {
-    "BlockIds": []
+    "BlockIds": [
+      8,
+      12,
+      11,
+      21,
+      24,
+      15,
+      19,
+      27
+    ]
   },
   "CoveredPillarDatas": [
     {
@@ -222,5 +237,13 @@
     }
   ],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

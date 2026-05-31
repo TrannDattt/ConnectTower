@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "D_1_16"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Potions",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_4_148"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Fruits",
@@ -64,28 +66,30 @@
           "Id": 11,
           "IconId": "D_2_14"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
-      "Tag": "Drums",
+      "Tag": "Cameras",
       "BlockDatas": [
         {
           "Id": 12,
-          "IconId": "A_2_10"
+          "IconId": "A_3_84"
         },
         {
           "Id": 13,
-          "IconId": "A_1_25"
+          "IconId": "E_2_3"
         },
         {
           "Id": 14,
-          "IconId": "A_2_16"
+          "IconId": "A_4_62"
         },
         {
           "Id": 15,
-          "IconId": "A_3_0"
+          "IconId": "A_1_20"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Fairies",
@@ -106,7 +110,8 @@
           "Id": 23,
           "IconId": "A_3_139"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Thrones",
@@ -127,7 +132,8 @@
           "Id": 27,
           "IconId": "C_4_133"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -231,5 +237,10 @@
   "ScratchedBlockDatas": {
     "BlockIds": []
   },
-  "CoinReward": 20
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
+  "CoinReward": 40
 }

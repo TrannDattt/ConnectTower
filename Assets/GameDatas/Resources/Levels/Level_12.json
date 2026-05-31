@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_3_42"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Trees",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_1_6"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Birthday Cakes",
@@ -64,28 +66,30 @@
           "Id": 11,
           "IconId": "A_3_47"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
-      "Tag": "Drums",
+      "Tag": "Cars",
       "BlockDatas": [
         {
           "Id": 12,
-          "IconId": "A_2_10"
+          "IconId": "A_3_32"
         },
         {
           "Id": 13,
-          "IconId": "A_1_25"
+          "IconId": "A_1_67"
         },
         {
           "Id": 14,
-          "IconId": "A_2_16"
+          "IconId": "C_4_126"
         },
         {
           "Id": 15,
-          "IconId": "A_3_0"
+          "IconId": "B_1_96"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Potions",
@@ -106,7 +110,8 @@
           "Id": 19,
           "IconId": "A_2_55"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Fairies",
@@ -127,7 +132,8 @@
           "Id": 23,
           "IconId": "A_3_139"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -221,5 +227,10 @@
   "ScratchedBlockDatas": {
     "BlockIds": []
   },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_4_26"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Boats",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_4_138"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Fairies",
@@ -64,7 +66,30 @@
           "Id": 11,
           "IconId": "A_2_79"
         }
-      ]
+      ],
+      "Trackable": true
+    },
+    {
+      "Tag": "Birthday Cakes",
+      "BlockDatas": [
+        {
+          "Id": 12,
+          "IconId": "E_3_104"
+        },
+        {
+          "Id": 13,
+          "IconId": "E_4_21"
+        },
+        {
+          "Id": 14,
+          "IconId": "E_2_32"
+        },
+        {
+          "Id": 15,
+          "IconId": "A_2_60"
+        }
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -73,14 +98,14 @@
       "BlockIds": [
         1,
         10,
-        5,
+        12,
         0
       ]
     },
     {
       "Id": 1,
       "BlockIds": [
-        8,
+        13,
         6,
         11,
         4
@@ -89,8 +114,8 @@
     {
       "Id": 2,
       "BlockIds": [
-        -1,
-        -2,
+        14,
+        5,
         -3,
         -4
       ]
@@ -99,7 +124,7 @@
       "Id": 3,
       "BlockIds": [
         9,
-        7,
+        15,
         3,
         2
       ]
@@ -107,8 +132,8 @@
     {
       "Id": 4,
       "BlockIds": [
-        -1,
-        -2,
+        8,
+        7,
         -3,
         -4
       ]
@@ -116,15 +141,23 @@
   ],
   "HiddenBlockDatas": {
     "BlockIds": [
-      5,
-      10,
+      9,
+      1,
       11,
-      6,
+      13,
       3,
-      7
+      12
     ]
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

@@ -1,7 +1,7 @@
 ﻿{
   "Index": 8,
   "Difficulty": 0,
-  "MoveLimit": 24,
+  "MoveLimit": 15,
   "BlockGroups": [
     {
       "Tag": "Firemans",
@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_4_79"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Pants",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "B_4_143"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Eggs",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_4_90"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Old People",
@@ -85,7 +88,8 @@
           "Id": 15,
           "IconId": "A_3_36"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -159,5 +163,13 @@
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

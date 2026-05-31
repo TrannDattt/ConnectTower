@@ -1,7 +1,7 @@
 ﻿{
   "Index": 5,
   "Difficulty": 0,
-  "MoveLimit": 14,
+  "MoveLimit": 27,
   "BlockGroups": [
     {
       "Tag": "Firemans",
@@ -106,10 +106,26 @@
         9,
         10
       ]
+    },
+    {
+      "Id": 4,
+      "BlockIds": [
+        -1,
+        -2,
+        -3,
+        -4
+      ]
     }
   ],
   "HiddenBlockDatas": {
-    "BlockIds": []
+    "BlockIds": [
+      4,
+      5,
+      1,
+      2,
+      9,
+      7
+    ]
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],

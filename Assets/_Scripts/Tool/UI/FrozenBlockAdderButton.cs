@@ -16,9 +16,20 @@ namespace Assets._Scripts.Tools.UI
         {
             foreach (var fbm in levelJSON.FrozenBlockDatas)
             {
-                _idInput.text = fbm.BlockIds.ToString();
-                AddIdFromLevel();
+                if (fbm?.BlockIds == null) continue;
+
+                foreach (var id in fbm.BlockIds)
+                {
+                    AddIdFromLevel(id);
+                }
             }
+        }
+
+        private void AddIdFromLevel(int id)
+        {
+            var newIdButton = Instantiate(_idDisplayPrefab, _idContainer);
+            newIdButton.SetId(id);
+            newIdButton.OnRemoveClicked.AddListener(RemoveId);
         }
 
         protected override void Start()

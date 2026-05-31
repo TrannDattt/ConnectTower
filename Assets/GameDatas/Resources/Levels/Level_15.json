@@ -1,7 +1,7 @@
 ﻿{
   "Index": 15,
   "Difficulty": 1,
-  "MoveLimit": 30,
+  "MoveLimit": 28,
   "BlockGroups": [
     {
       "Tag": "Robots",
@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_1_119"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Houses",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_3_75"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Flags",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_4_104"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Socks",
@@ -85,7 +88,8 @@
           "Id": 15,
           "IconId": "A_3_124"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Octopuses",
@@ -106,7 +110,8 @@
           "Id": 19,
           "IconId": "A_4_109"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Dragons",
@@ -127,7 +132,8 @@
           "Id": 23,
           "IconId": "A_4_123"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Cats",
@@ -148,7 +154,8 @@
           "Id": 27,
           "IconId": "A_3_88"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -236,30 +243,42 @@
   ],
   "HiddenBlockDatas": {
     "BlockIds": [
-      3,
-      7,
-      9,
+      16,
+      1,
+      24,
       15,
       18,
-      19,
-      2,
-      23,
-      1,
-      10,
-      11,
-      17,
-      21,
-      22,
-      24,
-      25,
-      26,
-      27
+      11
     ]
   },
-  "CoveredPillarDatas": [],
+  "CoveredPillarDatas": [
+    {
+      "TagToOpen": "Robots",
+      "PillarIds": [
+        26
+      ]
+    },
+    {
+      "TagToOpen": "Cats",
+      "PillarIds": [
+        29
+      ]
+    },
+    {
+      "TagToOpen": "Socks",
+      "PillarIds": [
+        25
+      ]
+    }
+  ],
   "FrozenBlockDatas": [],
   "ScratchedBlockDatas": {
     "BlockIds": []
   },
-  "CoinReward": 60
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
+  "CoinReward": 80
 }

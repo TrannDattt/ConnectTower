@@ -21,6 +21,7 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private float _duration = 0.1f;
 
         public bool IsEnabled {get; protected set;} = true;
+        public RectTransform ButtonRt => _buttonRt;
         
         public UnityEvent OnClicked = new();
 
@@ -56,14 +57,29 @@ namespace Assets._Scripts.Visuals
 
         public virtual void OnPointerDown(PointerEventData eventData)
         {
-            if (_button != null && !_button.interactable) return;
+            if (!CanPlayPressFeedback(eventData)) return;
             Scale(_originalScale * _pressedScale);
         }
 
         public virtual void OnPointerUp(PointerEventData eventData)
         {
-            if (_button != null && !_button.interactable) return;
+            if (!CanPlayPressFeedback(eventData)) return;
             ResetScale();
+        }
+
+        private bool CanPlayPressFeedback(PointerEventData eventData)
+        {
+            if (!IsEnabled)
+                return false;
+
+            if (_button != null && !_button.interactable)
+                return false;
+
+            var raycastTarget = eventData?.pointerPressRaycast.gameObject ?? eventData?.pointerCurrentRaycast.gameObject;
+            if (raycastTarget == null)
+                return true;
+
+            return raycastTarget == gameObject || raycastTarget.transform.IsChildOf(transform);
         }
 
         private void Scale(Vector3 targetScale)

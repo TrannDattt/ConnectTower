@@ -1,10 +1,8 @@
 using System.Collections;
-using Assets._Scripts.Controllers;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
 using DG.Tweening;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,17 +23,34 @@ namespace Assets._Scripts.Visuals
 
         // UNLOCK
         [SerializeField] private float _shakeDur;
-        [SerializeField] private float _scaleFactor;
-        [SerializeField] private AnimationCurve _scaleCurve;
         [SerializeField] private float _posXOffset;
+        [SerializeField] private int _vibrateVibrato = 30;
+        [SerializeField] private float _vibrateRandomness = 20f;
+        [SerializeField] private bool _vibrateFadeOut = true;
         [SerializeField] private float _lockOpenDur;
         [SerializeField] private float _lockOpenAngle;
+        [SerializeField] private Vector2 _lockImageUpOffset = new(-28f, 36f);
+        [SerializeField] private Vector2 _lockImageDownOffset = new(28f, -24f);
+        [SerializeField] private AnimationCurve _lockSplitMoveCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        [SerializeField] private AnimationCurve _lockSplitRotateCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        [SerializeField] private float _launchDur = 0.24f;
+        [SerializeField] private Vector2 _launchOffset = new(80f, 540f);
+        [SerializeField] private float _launchRotateAngle = 18f;
+        [SerializeField] private float _launchScaleMultiplier = 1.08f;
+        [SerializeField] private AnimationCurve _launchMoveXCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        [SerializeField] private AnimationCurve _launchMoveYCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        [SerializeField] private AnimationCurve _launchRotateCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        [SerializeField] private AnimationCurve _launchScaleCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        [SerializeField] private float _fallDur = 0.42f;
+        [SerializeField] private Vector2 _fallOffset = new(140f, -980f);
+        [SerializeField] private float _fallRotateAngle = -24f;
+        [SerializeField] private float _fallScaleMultiplier = 0.92f;
+        [SerializeField] private AnimationCurve _fallMoveXCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        [SerializeField] private AnimationCurve _fallMoveYCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        [SerializeField] private AnimationCurve _fallRotateCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        [SerializeField] private AnimationCurve _fallScaleCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
         [SerializeField] private float _fadeDur;
-
-        //UNLOCK2
-        [SerializeField] private Image _glowImage;
-        [SerializeField] private float _glowDur;
-        [SerializeField] private AnimationCurve _glowCurve;
+        [SerializeField] private AnimationCurve _fadeCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
         [SerializeField] private ParticleSystem _unlockParticle;
 
         public bool IsLocked {get; private set;}
@@ -82,62 +97,138 @@ namespace Assets._Scripts.Visuals
 
         public Sequence DoUnlockAnim()
         {
-            void reset()
+            var lockRoot = _lockImage != null ? _lockImage.transform as RectTransform : null;
+            var lockImageUpRt = _lockImageUp != null ? _lockImageUp.rectTransform : null;
+            var lockImageDownRt = _lockImageDown != null ? _lockImageDown.rectTransform : null;
+            if (lockRoot == null || _lockBackground == null)
+                return DOTween.Sequence();
+
+            var initialLockAnchoredPos = lockRoot.anchoredPosition;
+            var initialLockScale = lockRoot.localScale;
+            var initialLockRotation = lockRoot.localRotation;
+            var initialLockImageUpPos = lockImageUpRt != null ? lockImageUpRt.anchoredPosition : Vector2.zero;
+            var initialLockImageDownPos = lockImageDownRt != null ? lockImageDownRt.anchoredPosition : Vector2.zero;
+            var initialLockImageUpRotation = lockImageUpRt != null ? lockImageUpRt.localRotation : Quaternion.identity;
+            var initialLockImageDownRotation = lockImageDownRt != null ? lockImageDownRt.localRotation : Quaternion.identity;
+            var initialLockBackgroundColor = _lockBackground.color;
+            bool isUnlocked = false;
+
+            void ResetLockVisualState()
             {
-                _lockImage.gameObject.SetActive(false);
-                _lockBackground.gameObject.SetActive(false);
+                lockRoot.DOKill();
+                lockImageUpRt?.DOKill();
+                lockImageDownRt?.DOKill();
+                _lockBackground.DOKill();
+                _lockImage.DOKill();
+
+                lockRoot.anchoredPosition = initialLockAnchoredPos;
+                lockRoot.localScale = initialLockScale;
+                lockRoot.localRotation = initialLockRotation;
+
+                if (lockImageUpRt != null)
+                {
+                    lockImageUpRt.anchoredPosition = initialLockImageUpPos;
+                    lockImageUpRt.localRotation = initialLockImageUpRotation;
+                }
+
+                if (lockImageDownRt != null)
+                {
+                    lockImageDownRt.anchoredPosition = initialLockImageDownPos;
+                    lockImageDownRt.localRotation = initialLockImageDownRotation;
+                }
+
                 _lockImage.alpha = 1f;
-                _lockBackground.color = Color.white;
-                //TEST
-                _lockImageUp.transform.localRotation = Quaternion.identity;
-                _lockImageDown.transform.localRotation = Quaternion.identity;
-                _lockImage.transform.localPosition = Vector3.zero;
-                _lockImage.transform.localScale = Vector3.one;
-                _lockImage.gameObject.SetActive(true);
-                _lockBackground.gameObject.SetActive(true);
+                _lockBackground.color = initialLockBackgroundColor;
             }
 
-            _glowImage.gameObject.SetActive(true);
-            _glowImage.color = new Color(_glowImage.color.r, _glowImage.color.g, _glowImage.color.b, 0f);
+            void ApplyLockedPresentation()
+            {
+                ResetLockVisualState();
+                _lockImage.gameObject.SetActive(true);
+                _lockBackground.gameObject.SetActive(true);
+                _baseContent.SetActive(false);
+            }
+
+            void ApplyUnlockedPresentation()
+            {
+                ResetLockVisualState();
+                Unlock();
+            }
+
+            ApplyLockedPresentation();
+            _unlockParticle?.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
             var sequence = DOTween.Sequence().SetTarget(this).SetLink(gameObject, LinkBehaviour.KillOnDisable);
-            
-            // sequence.Append(_lockImage.transform.DOShakePosition(_shakeDur, new Vector3(_posXOffset, 0f, 0f), vibrato: 10, randomness: 90, snapping: false, fadeOut: true))
-            //         .Join(_lockImage.transform.DOScaleX(_scaleFactor, _shakeDur).SetEase(_scaleCurve));
-            // sequence.Append(_lockImageUp.transform.DOLocalRotate(new Vector3(0f, 0f, _lockOpenAngle), _lockOpenDur).SetEase(Ease.OutSine));
-            // sequence.Join(_lockImageDown.transform.DOLocalRotate(new Vector3(0f, 0f, -_lockOpenAngle), _lockOpenDur).SetEase(Ease.OutSine));
-            // sequence.Append(_lockImage.DOFade(0f, _fadeDur).SetEase(Ease.OutSine));
-            // sequence.Join(_lockBackground.DOFade(0f, _fadeDur).SetEase(Ease.OutSine));
-            // sequence.OnComplete(() => reset()).OnKill(() => reset());
+            sequence.Append(lockRoot.DOShakeAnchorPos(
+                    _shakeDur,
+                    _posXOffset,
+                    _vibrateVibrato,
+                    _vibrateRandomness,
+                    false,
+                    _vibrateFadeOut)
+                .SetEase(Ease.Linear));
 
-            sequence.Append(_lockImage.transform.DOScale(_scaleFactor, _glowDur).SetEase(_scaleCurve).SetRelative());
-            sequence.Join(_glowImage.DOFade(1f, _glowDur).SetEase(_glowCurve));
-            sequence.JoinCallback(() =>
+            sequence.AppendCallback(() =>
             {
-                _lockImage.transform.DOShakePosition(_shakeDur, new Vector3(_posXOffset, _posXOffset, 0f), vibrato: 10, randomness: 90, snapping: false)
-                                    .SetLoops(-1, LoopType.Restart)
-                                    .SetTarget(this)
-                                    .SetId("Shake");
+                _baseContent.SetActive(true);
+                _unlockParticle?.Play();
             });
-            sequence.AppendInterval(_shakeDur);
-            sequence.Append(_lockImage.DOFade(0f, _fadeDur).SetEase(Ease.OutSine));
-            sequence.JoinCallback(() =>
+
+            Tween launchXTween = lockRoot.DOAnchorPosX(initialLockAnchoredPos.x + _launchOffset.x, _launchDur).SetEase(_launchMoveXCurve);
+            Tween launchYTween = lockRoot.DOAnchorPosY(initialLockAnchoredPos.y + _launchOffset.y, _launchDur).SetEase(_launchMoveYCurve);
+            Tween fallXTween = lockRoot.DOAnchorPosX(initialLockAnchoredPos.x + _fallOffset.x, _fallDur).SetEase(_fallMoveXCurve);
+            Tween fallYTween = lockRoot.DOAnchorPosY(initialLockAnchoredPos.y + _fallOffset.y, _fallDur).SetEase(_fallMoveYCurve);
+            Tween launchRotateTween = lockRoot.DOLocalRotate(new Vector3(0f, 0f, _launchRotateAngle), _launchDur).SetEase(_launchRotateCurve);
+            Tween fallRotateTween = lockRoot.DOLocalRotate(new Vector3(0f, 0f, _fallRotateAngle), _fallDur).SetEase(_fallRotateCurve);
+            Tween launchScaleTween = lockRoot.DOScale(initialLockScale * _launchScaleMultiplier, _launchDur).SetEase(_launchScaleCurve);
+            Tween fallScaleTween = lockRoot.DOScale(initialLockScale * _fallScaleMultiplier, _fallDur).SetEase(_fallScaleCurve);
+
+            sequence.Append(launchXTween);
+            sequence.Join(launchYTween);
+            sequence.Join(launchRotateTween);
+            sequence.Join(launchScaleTween);
+
+            if (lockImageUpRt != null)
             {
-                // _lockImage.gameObject.SetActive(false);
-                _unlockParticle.Play();
+                sequence.Join(lockImageUpRt.DOAnchorPos(initialLockImageUpPos + _lockImageUpOffset, _lockOpenDur).SetEase(_lockSplitMoveCurve));
+                sequence.Join(lockImageUpRt.DOLocalRotate(new Vector3(0f, 0f, _lockOpenAngle), _lockOpenDur).SetEase(_lockSplitRotateCurve));
+            }
+
+            if (lockImageDownRt != null)
+            {
+                sequence.Join(lockImageDownRt.DOAnchorPos(initialLockImageDownPos + _lockImageDownOffset, _lockOpenDur).SetEase(_lockSplitMoveCurve));
+                sequence.Join(lockImageDownRt.DOLocalRotate(new Vector3(0f, 0f, -_lockOpenAngle), _lockOpenDur).SetEase(_lockSplitRotateCurve));
+            }
+
+            sequence.Append(fallXTween);
+            sequence.Join(fallYTween);
+            sequence.Join(fallRotateTween);
+            sequence.Join(fallScaleTween);
+            sequence.Join(_lockImage.DOFade(0f, _fadeDur).SetEase(_fadeCurve));
+            sequence.Join(_lockBackground.DOFade(0f, _fadeDur).SetEase(_fadeCurve));
+
+            sequence.OnComplete(() =>
+            {
+                isUnlocked = true;
+                ApplyUnlockedPresentation();
             });
-            
-            sequence.OnComplete(() => reset()).OnKill(() => reset());
+            sequence.OnKill(() =>
+            {
+                if (!isUnlocked)
+                    ApplyLockedPresentation();
+            });
 
             return sequence;
         }
 
         void Update()
         {
+#if UNITY_EDITOR
             if (_lockImage.gameObject.activeInHierarchy && Input.GetKeyDown(KeyCode.Space))
             {
                 DoUnlockAnim().Play();
             }
+#endif
         }
     }
 }

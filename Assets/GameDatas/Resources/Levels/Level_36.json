@@ -1,7 +1,7 @@
 ﻿{
   "Index": 36,
   "Difficulty": 0,
-  "MoveLimit": 24,
+  "MoveLimit": 28,
   "BlockGroups": [
     {
       "Tag": "Donuts",
@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_3_91"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Glasses",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_4_55"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Keys",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_4_11"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Wheels",
@@ -85,7 +88,8 @@
           "Id": 15,
           "IconId": "A_4_17"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Letters",
@@ -106,7 +110,28 @@
           "Id": 19,
           "IconId": "A_4_23"
         }
-      ]
+      ],
+      "Trackable": true
+    },
+    {
+      "Tag": "",
+      "BlockDatas": [
+        {
+          "Id": 20,
+          "IconId": ""
+        }
+      ],
+      "Trackable": false
+    },
+    {
+      "Tag": "",
+      "BlockDatas": [
+        {
+          "Id": 21,
+          "IconId": ""
+        }
+      ],
+      "Trackable": false
     }
   ],
   "PillarDatas": [
@@ -124,7 +149,7 @@
       "BlockIds": [
         8,
         4,
-        -3,
+        5,
         -4
       ]
     },
@@ -132,7 +157,7 @@
       "Id": 2,
       "BlockIds": [
         10,
-        5,
+        20,
         9,
         -4
       ]
@@ -160,8 +185,8 @@
       "BlockIds": [
         17,
         6,
-        16,
-        -4
+        21,
+        16
       ]
     },
     {
@@ -187,5 +212,16 @@
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
+  "StickyBlockDatas": {
+    "BlockIds": [
+      20,
+      21
+    ]
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

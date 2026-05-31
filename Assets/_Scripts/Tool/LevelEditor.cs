@@ -266,10 +266,41 @@ namespace Assets._Scripts.Tools
             var levelData = LevelDataHelper.OpenLevelFileDialog();
             if (levelData != null)
             {
-                _levelData = levelData;
-                OnLevelCleared?.Invoke();
-                OnLevelLoaded?.Invoke(_levelData);
+                ApplyLoadedLevel(levelData);
             }
+        }
+
+        public static bool LoadLevelByIndex(int levelIndex)
+        {
+            if (levelIndex <= 0)
+            {
+                return false;
+            }
+
+            if (!LevelDataHelper.TryLoadLevel(levelIndex, out var levelData) || levelData == null)
+            {
+                return false;
+            }
+
+            ApplyLoadedLevel(levelData);
+            return true;
+        }
+
+        public static bool LoadPreviousLevel()
+        {
+            int targetLevelIndex = _levelData.Index - 1;
+            if (targetLevelIndex <= 0)
+            {
+                return false;
+            }
+
+            return LoadLevelByIndex(targetLevelIndex);
+        }
+
+        public static bool LoadNextLevel()
+        {
+            int targetLevelIndex = _levelData.Index > 0 ? _levelData.Index + 1 : 1;
+            return LoadLevelByIndex(targetLevelIndex);
         }
 
         public static void SaveLevel()
@@ -289,6 +320,13 @@ namespace Assets._Scripts.Tools
         {
             OnLevelCleared.RemoveAllListeners();
             OnLevelLoaded.RemoveAllListeners();
+        }
+
+        private static void ApplyLoadedLevel(LevelJSON levelData)
+        {
+            _levelData = levelData;
+            OnLevelCleared?.Invoke();
+            OnLevelLoaded?.Invoke(_levelData);
         }
     }
 }

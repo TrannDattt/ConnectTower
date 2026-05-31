@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_3_9"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Donuts",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_3_91"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Drums",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_3_93"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Glasses",
@@ -85,7 +88,8 @@
           "Id": 15,
           "IconId": "A_4_55"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Race Helmets",
@@ -106,7 +110,8 @@
           "Id": 19,
           "IconId": "A_3_11"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Hourglasses",
@@ -127,7 +132,8 @@
           "Id": 23,
           "IconId": "A_4_89"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Houses",
@@ -148,7 +154,8 @@
           "Id": 27,
           "IconId": "A_3"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Keys",
@@ -169,7 +176,28 @@
           "Id": 31,
           "IconId": "A_4_11"
         }
-      ]
+      ],
+      "Trackable": true
+    },
+    {
+      "Tag": "",
+      "BlockDatas": [
+        {
+          "Id": 32,
+          "IconId": ""
+        }
+      ],
+      "Trackable": false
+    },
+    {
+      "Tag": "",
+      "BlockDatas": [
+        {
+          "Id": 33,
+          "IconId": ""
+        }
+      ],
+      "Trackable": false
     }
   ],
   "PillarDatas": [
@@ -178,7 +206,7 @@
       "BlockIds": [
         4,
         0,
-        -3,
+        33,
         -4
       ]
     },
@@ -232,8 +260,8 @@
       "BlockIds": [
         17,
         2,
-        20,
-        -4
+        32,
+        20
       ]
     },
     {
@@ -278,26 +306,27 @@
       27
     ]
   },
-  "CoveredPillarDatas": [
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
+  "StickyBlockDatas": {
+    "BlockIds": [
+      32,
+      33
+    ]
+  },
+  "TrapPillarDatas": [
     {
-      "TagToOpen": "Glasses",
-      "PillarIds": [
-        5
-      ]
+      "PillarId": 6,
+      "IsTrap": true
     },
     {
-      "TagToOpen": "Donuts",
-      "PillarIds": [
-        7
-      ]
-    },
-    {
-      "TagToOpen": "Boats",
-      "PillarIds": [
-        9
-      ]
+      "PillarId": 2,
+      "IsTrap": false
     }
   ],
-  "FrozenBlockDatas": [],
+  "HighScore": 0,
   "CoinReward": 120
 }

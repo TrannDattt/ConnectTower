@@ -1,7 +1,7 @@
 ﻿{
   "Index": 19,
   "Difficulty": 0,
-  "MoveLimit": 25,
+  "MoveLimit": 30,
   "BlockGroups": [
     {
       "Tag": "Letters",
@@ -22,7 +22,8 @@
           "Id": 7,
           "IconId": "A_4_23"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Hourglasses",
@@ -43,28 +44,30 @@
           "Id": 11,
           "IconId": "A_4_89"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
-      "Tag": "Drums",
+      "Tag": "Trees",
       "BlockDatas": [
         {
           "Id": 12,
-          "IconId": "A_2_10"
+          "IconId": "A_2_35"
         },
         {
           "Id": 13,
-          "IconId": "A_1_25"
+          "IconId": "A_2_4"
         },
         {
           "Id": 14,
-          "IconId": "A_2_16"
+          "IconId": "A_1_6"
         },
         {
           "Id": 15,
-          "IconId": "A_3_0"
+          "IconId": "D_1_100"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Radios",
@@ -85,7 +88,8 @@
           "Id": 23,
           "IconId": "A_4_100"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Boats",
@@ -106,49 +110,52 @@
           "Id": 27,
           "IconId": "A_2_43"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
-      "Tag": "Helmets",
+      "Tag": "Origamis",
       "BlockDatas": [
         {
           "Id": 28,
-          "IconId": "A_4_107"
+          "IconId": "A_3_101"
         },
         {
           "Id": 29,
-          "IconId": "A_3_115"
+          "IconId": "A_1_53"
         },
         {
           "Id": 30,
-          "IconId": "A_2_52"
+          "IconId": "A_4_120"
         },
         {
           "Id": 31,
-          "IconId": "A_1_49"
+          "IconId": "A_4_57"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
-      "Tag": "Mirrors",
+      "Tag": "Masks",
       "BlockDatas": [
         {
           "Id": 32,
-          "IconId": "B_1_75"
+          "IconId": "A_4_139"
         },
         {
           "Id": 33,
-          "IconId": "B_2_101"
+          "IconId": "C_3_40"
         },
         {
           "Id": 34,
-          "IconId": "B_1_57"
+          "IconId": "A_3_72"
         },
         {
           "Id": 35,
-          "IconId": "B_2_144"
+          "IconId": "B_1_25"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -244,7 +251,14 @@
     }
   ],
   "HiddenBlockDatas": {
-    "BlockIds": []
+    "BlockIds": [
+      5,
+      8,
+      7,
+      13,
+      33,
+      34
+    ]
   },
   "CoveredPillarDatas": [
     {
@@ -261,5 +275,13 @@
     }
   ],
   "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

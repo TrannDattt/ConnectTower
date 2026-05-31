@@ -31,6 +31,22 @@ namespace Assets._Scripts.Tools
             }
         }
 
+        public void InitBlock(BlockData data, Sprite icon)
+        {
+            BlockId = data.Id;
+            IconId = data.IconId ?? "";
+
+            if (_blockIdText != null)
+            {
+                _blockIdText.text = $"{BlockId}";
+            }
+
+            if (_blockIcon != null)
+            {
+                _blockIcon.sprite = icon;
+            }
+        }
+
         public void ChangeIcon(Sprite icon)
         {
             IconId = icon.name;

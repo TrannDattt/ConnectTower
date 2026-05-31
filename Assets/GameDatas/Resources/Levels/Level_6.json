@@ -1,7 +1,7 @@
 ﻿{
   "Index": 6,
   "Difficulty": 0,
-  "MoveLimit": 18,
+  "MoveLimit": 23,
   "BlockGroups": [
     {
       "Tag": "Fruits",
@@ -76,15 +76,15 @@
       "BlockIds": [
         9,
         1,
-        4,
-        0
+        -3,
+        -4
       ]
     },
     {
       "Id": 1,
       "BlockIds": [
-        -1,
-        -2,
+        0,
+        4,
         -3,
         -4
       ]
@@ -95,7 +95,7 @@
         11,
         3,
         5,
-        2
+        -4
       ]
     },
     {
@@ -103,22 +103,29 @@
       "BlockIds": [
         10,
         8,
-        7,
-        6
+        -3,
+        -4
       ]
     },
     {
       "Id": 4,
       "BlockIds": [
-        -1,
-        -2,
-        -3,
+        6,
+        7,
+        2,
         -4
       ]
     }
   ],
   "HiddenBlockDatas": {
-    "BlockIds": []
+    "BlockIds": [
+      0,
+      3,
+      11,
+      10,
+      6,
+      7
+    ]
   },
   "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],

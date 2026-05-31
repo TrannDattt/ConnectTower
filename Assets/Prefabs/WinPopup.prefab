@@ -529,8 +529,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -140.83691}
-  m_SizeDelta: {x: -345.8716, y: 214.2896}
+  m_AnchoredPosition: {x: 0, y: -72.414986}
+  m_SizeDelta: {x: -345.8716, y: 163.42996}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3726384726256756807
 CanvasRenderer:
@@ -2481,6 +2481,63 @@ MonoBehaviour:
   _normalRewardText: {fileID: 7763523849011705165}
   _adsRewardButton: {fileID: 1010338329018021727}
   _adsRewardText: {fileID: 3479465026700906933}
+  _buttonsRoot: {fileID: 7523265486542138170}
+  _buttonIdleFloat:
+    _moveOffsetY: 16
+    _moveDuration: 1.35
+    _moveCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    _startDelayStep: 0.3
+  _adsRewardButtonPulse:
+    _scaleMultiplier: 0.95
+    _duration: 0.8
+    _scaleCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    _startDelay: 0.1
   _starDelay: 0.3
   _hornDelay: 0.5
   _blockDelay: 1
@@ -5150,11 +5207,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2013209120050846779, guid: 6c4c582d2ae92164bbb2f3ad2be5f9f2, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 350
+      value: 380
       objectReference: {fileID: 0}
     - target: {fileID: 2013209120050846779, guid: 6c4c582d2ae92164bbb2f3ad2be5f9f2, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 150
+      value: 160
       objectReference: {fileID: 0}
     - target: {fileID: 2013209120050846779, guid: 6c4c582d2ae92164bbb2f3ad2be5f9f2, type: 3}
       propertyPath: m_LocalPosition.x

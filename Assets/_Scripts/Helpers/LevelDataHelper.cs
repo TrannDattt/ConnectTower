@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Assets._Scripts.Datas;
 using Newtonsoft.Json;
 using SFB;
@@ -15,6 +16,17 @@ namespace Assets._Scripts.Helpers
 
         public static bool TryLoadLevel(int levelIndex, out LevelJSON levelData)
         {
+#if UNITY_EDITOR
+            string filePath = GetLevelFilePath(levelIndex);
+            if (File.Exists(filePath))
+            {
+                AssetDatabase.Refresh();
+                string json = File.ReadAllText(filePath);
+                levelData = JsonConvert.DeserializeObject<LevelJSON>(json);
+                return levelData != null;
+            }
+#endif
+
             TextAsset jsonFile = Resources.Load<TextAsset>($"Levels/Level_{levelIndex}");
             if (jsonFile == null)
             {
@@ -28,6 +40,29 @@ namespace Assets._Scripts.Helpers
         public static bool LoadAllLevels(out List<LevelJSON> levelDatas)
         {
             levelDatas = new List<LevelJSON>();
+#if UNITY_EDITOR
+            string folderPath = Application.dataPath + FOLDER_PATH;
+            if (Directory.Exists(folderPath))
+            {
+                AssetDatabase.Refresh();
+                string[] filePaths = Directory.GetFiles(folderPath, "Level_*.json");
+                foreach (var filePath in filePaths)
+                {
+                    string json = File.ReadAllText(filePath);
+                    LevelJSON levelData = JsonConvert.DeserializeObject<LevelJSON>(json);
+                    if (levelData != null)
+                    {
+                        levelDatas.Add(levelData);
+                    }
+                }
+
+                if (levelDatas.Count > 0)
+                {
+                    return true;
+                }
+            }
+#endif
+
             TextAsset[] jsonFiles = Resources.LoadAll<TextAsset>("Levels");
             if (jsonFiles.Length == 0) return false;
             foreach (var jsonFile in jsonFiles)
@@ -122,6 +157,11 @@ namespace Assets._Scripts.Helpers
                 return JsonConvert.DeserializeObject<LevelJSON>(json);
             }
             return null;
+        }
+
+        private static string GetLevelFilePath(int levelIndex)
+        {
+            return Path.Combine(Application.dataPath + FOLDER_PATH, $"Level_{levelIndex}.json");
         }
     }
 }

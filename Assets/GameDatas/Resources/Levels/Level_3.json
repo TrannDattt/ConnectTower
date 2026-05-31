@@ -1,7 +1,7 @@
 ﻿{
   "Index": 3,
   "Difficulty": 0,
-  "MoveLimit": 14,
+  "MoveLimit": 20,
   "BlockGroups": [
     {
       "Tag": "Soaps",
@@ -22,28 +22,30 @@
           "Id": 3,
           "IconId": "A_3_56"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Houses",
       "BlockDatas": [
         {
           "Id": 4,
-          "IconId": "B_2_147"
+          "IconId": "B_3_21"
         },
         {
           "Id": 5,
-          "IconId": "C_2_43"
+          "IconId": "A_1_43"
         },
         {
           "Id": 6,
-          "IconId": "B_2_104"
+          "IconId": "B_3_82"
         },
         {
           "Id": 7,
-          "IconId": "C_2_35"
+          "IconId": "A_2_136"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Boats",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "F_2_95"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -113,5 +116,10 @@
   "ScratchedBlockDatas": {
     "BlockIds": []
   },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

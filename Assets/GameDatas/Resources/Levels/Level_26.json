@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_3_91"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Drums",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_3_93"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Wheels",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_4_17"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Keys",
@@ -85,7 +88,8 @@
           "Id": 15,
           "IconId": "A_4_11"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Houses",
@@ -106,7 +110,8 @@
           "Id": 19,
           "IconId": "A_3"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Letters",
@@ -127,7 +132,8 @@
           "Id": 23,
           "IconId": "A_4_23"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -179,8 +185,8 @@
     {
       "Id": 5,
       "BlockIds": [
-        7,
         13,
+        -2,
         -3,
         -4
       ]
@@ -188,8 +194,8 @@
     {
       "Id": 6,
       "BlockIds": [
-        20,
         16,
+        20,
         14,
         -4
       ]
@@ -200,27 +206,38 @@
         21,
         3,
         2,
-        -4
+        7
       ]
     }
   ],
   "HiddenBlockDatas": {
     "BlockIds": []
   },
-  "CoveredPillarDatas": [
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [
     {
-      "TagToOpen": "Donuts",
-      "PillarIds": [
-        2
+      "BlockIds": [
+        18
       ]
     },
     {
-      "TagToOpen": "Drums",
-      "PillarIds": [
-        4
+      "BlockIds": [
+        19
+      ]
+    },
+    {
+      "BlockIds": [
+        13
       ]
     }
   ],
-  "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

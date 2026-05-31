@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_4_17"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Race Helmets",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_3_11"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Keys",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_4_11"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Boats",
@@ -85,7 +88,8 @@
           "Id": 15,
           "IconId": "A_3_9"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Donuts",
@@ -106,7 +110,8 @@
           "Id": 19,
           "IconId": "A_3_91"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Drums",
@@ -127,7 +132,8 @@
           "Id": 23,
           "IconId": "A_3_93"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -205,22 +211,39 @@
     }
   ],
   "HiddenBlockDatas": {
-    "BlockIds": []
+    "BlockIds": [
+      20,
+      21,
+      12,
+      9,
+      23
+    ]
   },
-  "CoveredPillarDatas": [
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [
     {
-      "TagToOpen": "Boats",
-      "PillarIds": [
-        0
+      "BlockIds": [
+        11
       ]
     },
     {
-      "TagToOpen": "Keys",
-      "PillarIds": [
-        4
+      "BlockIds": [
+        2
+      ]
+    },
+    {
+      "BlockIds": [
+        5
       ]
     }
   ],
-  "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

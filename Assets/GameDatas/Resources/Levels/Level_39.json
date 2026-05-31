@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_3_9"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Hourglasses",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_4_89"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Letters",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_4_23"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Wheels",
@@ -85,7 +88,8 @@
           "Id": 15,
           "IconId": "A_4_17"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Keys",
@@ -106,7 +110,8 @@
           "Id": 19,
           "IconId": "A_4_11"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Donuts",
@@ -127,24 +132,25 @@
           "Id": 23,
           "IconId": "A_3_91"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
     {
       "Id": 0,
       "BlockIds": [
-        15,
-        11,
         3,
-        14
+        11,
+        14,
+        -4
       ]
     },
     {
       "Id": 1,
       "BlockIds": [
         6,
-        19,
+        5,
         4,
         0
       ]
@@ -153,25 +159,25 @@
       "Id": 2,
       "BlockIds": [
         9,
-        12,
-        23,
-        8
+        8,
+        10,
+        12
       ]
     },
     {
       "Id": 3,
       "BlockIds": [
-        10,
+        1,
         7,
-        13,
-        -4
+        23,
+        13
       ]
     },
     {
       "Id": 4,
       "BlockIds": [
-        21,
-        1,
+        -1,
+        -2,
         -3,
         -4
       ]
@@ -182,7 +188,7 @@
         16,
         22,
         18,
-        5
+        19
       ]
     },
     {
@@ -191,13 +197,13 @@
         17,
         20,
         2,
-        -4
+        21
       ]
     },
     {
       "Id": 7,
       "BlockIds": [
-        -1,
+        15,
         -2,
         -3,
         -4
@@ -205,25 +211,21 @@
     }
   ],
   "HiddenBlockDatas": {
+    "BlockIds": []
+  },
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
     "BlockIds": [
-      18,
-      21,
-      22,
-      19,
-      6,
-      7,
-      10,
-      23
+      11,
+      4,
+      10
     ]
   },
-  "CoveredPillarDatas": [
-    {
-      "TagToOpen": "Donuts",
-      "PillarIds": [
-        0
-      ]
-    }
-  ],
-  "FrozenBlockDatas": [],
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

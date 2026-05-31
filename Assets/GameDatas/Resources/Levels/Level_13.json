@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "B_4_143"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Vikings",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_2_69"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Jewels",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_1_66"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Leaves",
@@ -85,7 +88,8 @@
           "Id": 15,
           "IconId": "A_1"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Lugages",
@@ -106,7 +110,8 @@
           "Id": 19,
           "IconId": "A_3_25"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Hamsters",
@@ -127,7 +132,8 @@
           "Id": 23,
           "IconId": "A_4_110"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -136,8 +142,8 @@
       "BlockIds": [
         10,
         1,
-        15,
-        0
+        -3,
+        -4
       ]
     },
     {
@@ -155,7 +161,7 @@
         17,
         7,
         2,
-        12
+        9
       ]
     },
     {
@@ -173,15 +179,15 @@
         11,
         6,
         13,
-        9
+        -4
       ]
     },
     {
       "Id": 13,
       "BlockIds": [
-        -1,
-        -2,
-        -3,
+        15,
+        12,
+        14,
         -4
       ]
     },
@@ -190,7 +196,7 @@
       "BlockIds": [
         19,
         20,
-        14,
+        0,
         16
       ]
     },
@@ -205,25 +211,30 @@
     }
   ],
   "HiddenBlockDatas": {
-    "BlockIds": [
-      3,
-      7,
-      9,
-      15,
-      18,
-      19,
-      2,
-      23,
-      1,
-      10,
-      11,
-      17
-    ]
+    "BlockIds": []
   },
-  "CoveredPillarDatas": [],
+  "CoveredPillarDatas": [
+    {
+      "TagToOpen": "Leaves",
+      "PillarIds": [
+        14
+      ]
+    },
+    {
+      "TagToOpen": "Hamsters",
+      "PillarIds": [
+        9
+      ]
+    }
+  ],
   "FrozenBlockDatas": [],
   "ScratchedBlockDatas": {
     "BlockIds": []
   },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

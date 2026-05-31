@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "A_3_91"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Letters",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_4_23"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Wheels",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_4_17"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Boats",
@@ -85,7 +88,8 @@
           "Id": 15,
           "IconId": "A_3_9"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Drums",
@@ -106,7 +110,8 @@
           "Id": 19,
           "IconId": "A_3_93"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Keys",
@@ -127,7 +132,18 @@
           "Id": 23,
           "IconId": "A_4_11"
         }
-      ]
+      ],
+      "Trackable": true
+    },
+    {
+      "Tag": "",
+      "BlockDatas": [
+        {
+          "Id": 24,
+          "IconId": ""
+        }
+      ],
+      "Trackable": false
     }
   ],
   "PillarDatas": [
@@ -162,7 +178,7 @@
       "Id": 3,
       "BlockIds": [
         19,
-        21,
+        15,
         10,
         16
       ]
@@ -170,7 +186,7 @@
     {
       "Id": 4,
       "BlockIds": [
-        -1,
+        21,
         -2,
         -3,
         -4
@@ -181,7 +197,7 @@
       "BlockIds": [
         23,
         18,
-        15,
+        24,
         17
       ]
     },
@@ -214,20 +230,28 @@
       19
     ]
   },
-  "CoveredPillarDatas": [
+  "CoveredPillarDatas": [],
+  "FrozenBlockDatas": [
     {
-      "TagToOpen": "Letters",
-      "PillarIds": [
-        5
+      "BlockIds": [
+        6
       ]
     },
     {
-      "TagToOpen": "Donuts",
-      "PillarIds": [
-        3
+      "BlockIds": [
+        23
       ]
     }
   ],
-  "FrozenBlockDatas": [],
+  "ScratchedBlockDatas": {
+    "BlockIds": []
+  },
+  "StickyBlockDatas": {
+    "BlockIds": [
+      24
+    ]
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }
