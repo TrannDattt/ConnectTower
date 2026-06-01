@@ -35,6 +35,19 @@ namespace Assets._Scripts.Managers
             return 0f;
         }
 
+        // public float GetParticleDuration(ParticleSystem particle, bool includeLifetime = false)
+        // {
+        //     foreach (var particle in _gameParticles)
+        //     {
+        //         if (particle.Key == key)
+        //         {
+        //             var main = particle.ParticlePrefab.main;
+        //             return main.startDelay.constantMax + main.duration + (includeLifetime ? main.startLifetime.constantMax : 0);
+        //         }
+        //     }
+        //     return 0f;
+        // }
+
         public IEnumerator<ParticleSystem> PlayParticle(EParticle key, Vector3 position, Transform parent = null)
         {
             if (_particleDict.TryGetValue(key, out var pool))

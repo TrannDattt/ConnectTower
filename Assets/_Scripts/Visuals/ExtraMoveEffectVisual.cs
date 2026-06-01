@@ -25,6 +25,8 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private float _textUpdateDur;
         [SerializeField] private float[] _particleDelay;
         [SerializeField] private float _particleFlyTime = .4f;
+        [SerializeField] private AudioClip _addMovePop;
+        [SerializeField] private float _pitchIncrease;
 
         //TODO: Change animation
 
@@ -48,7 +50,10 @@ namespace Assets._Scripts.Visuals
         private Sequence DoParticle(Image target)
         {
             _attractor = FindFirstObjectByType<MoveCountVisual>().GetComponentInChildren<UIParticleAttractor>();
+            var sfx = SoundManager.Instance.SFX;
+            var basePitch = sfx.pitch;
             var sequence = DOTween.Sequence();
+            
             for (int i = 0; i < _particleDelay.Length; i++)
             {
                 int index = i;
@@ -61,11 +66,15 @@ namespace Assets._Scripts.Visuals
 
                     if (_particles[^1] != null && _attractor != null)
                         _attractor.AddParticleSystem(_particles[^1]);
+                    
+                    sfx.pitch = basePitch + index * _pitchIncrease;
+                    SoundManager.Instance.PlaySFX(_addMovePop);
                 });
 
                 sequence.InsertCallback(_particleDelay[index] + _particleFlyTime, () =>
                 {
                     IngameVisualController.Instance.UpdateMoveCount(LevelManager.PlayingLevel.MoveCount - _particleDelay.Length + 1 + index, _textUpdateDur);
+                    if (index == _particleDelay.Length - 1) sfx.pitch = basePitch;
                 });
             }
 

@@ -26,8 +26,8 @@ namespace Assets._Scripts.Managers
         [Header("SFX")]
         [SerializeField] private List<GameSFX> _gameSFX;
 
-        public float BgmVolume => _bgmSource.volume;
-        public float SfxVolume => _sfxSource.volume;
+        public AudioSource SFX => _sfxSource;
+        public AudioSource BGM => _sfxSource;
 
         private Dictionary<ESfx, List<AudioClip>> _sfxDict = new();
         private Dictionary<EBgm, float> _bgmProgress = new();
@@ -102,6 +102,12 @@ namespace Assets._Scripts.Managers
 
             var toPlay = sounds[UnityEngine.Random.Range(0, sounds.Count)];
             _sfxSource.PlayOneShot(toPlay);
+        }
+
+        public void PlaySFX(AudioClip sfx)
+        {
+            if (sfx == null) return;
+            _sfxSource.PlayOneShot(sfx);
         }
 
         public void PlayChainedSFXs(ESfx key, int chainCount)

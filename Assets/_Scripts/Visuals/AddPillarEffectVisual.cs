@@ -23,6 +23,8 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private float _baseSpinCycle = 1f;
         [SerializeField] private float _baseRotateDur = .4f;
         [SerializeField] private float _baseRotationResetDur = .1f;
+        [SerializeField] private AudioClip _fxPillarPop;
+        [SerializeField] private AudioClip _fxPillarFall;
 
         [SerializeField] private Canvas _canvas;
         [SerializeField] private RectTransform _portalHolder;
@@ -197,10 +199,18 @@ namespace Assets._Scripts.Visuals
 
             sequence.AppendInterval(_pillarSpawnDelay);
 
+            sequence.AppendCallback(() =>
+            {
+                SoundManager.Instance.PlaySFX(_fxPillarPop);
+            });
             sequence.Append(pillar.transform.DOMoveY(_offsetY, _pillarFallDur).SetEase(_pillarMoveCurve).SetRelative());
             sequence.Join(pillar.Base.DOScale(baseScale, _pillarScaleDur).SetEase(_pillarScaleCurve));
             // sequence.Join(pillar.transform.DOLocalRotate(_baseTiltAngle, _pillarFallDur));
             sequence.Join(pillar.Base.DOLocalRotate(_baseTiltAngle, _pillarFallDur));
+            sequence.AppendCallback(() =>
+            {
+                SoundManager.Instance.PlaySFX(_fxPillarFall);
+            });
 
             sequence.Append(_portalIcon.transform.DOScale(Vector3.zero, _portalScaleDur).SetEase(_portalDisappearCurve));
 

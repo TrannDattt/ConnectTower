@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Assets._Scripts.Editor;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
 using Assets._Scripts.Managers;
@@ -9,8 +8,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
 #if UNITY_EDITOR
 using UnityEditor;
+using Assets._Scripts.Editor;
 using UnityEditor.SceneManagement;
 #endif
 
@@ -89,6 +90,8 @@ namespace Assets._Scripts.Controllers
         void Start()
         {
 #if UNITY_EDITOR
+            _indexInput.gameObject.SetActive(true);
+            _setLevelBtn.gameObject.SetActive(true);
             _setLevelBtn.onClick.AddListener(() =>
             {
                 if (!int.TryParse(_indexInput.text, out var index)) return;

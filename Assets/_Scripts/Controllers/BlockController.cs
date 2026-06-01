@@ -12,6 +12,7 @@ namespace Assets._Scripts.Controllers
     public class BlockController : MonoBehaviour, IMechanicHandler
     {
         public int Id {get; private set;} = -1;
+        public string IconId {get; private set;}
         [field: SerializeField] public GameObject Base {get; private set;}
         [SerializeField] private Image _icon;
         [SerializeField] private string _tag;
@@ -25,11 +26,12 @@ namespace Assets._Scripts.Controllers
         public void Init(BlockData data, string tag)
         {
             Id = data.Id;
+            IconId = data.IconId ?? string.Empty;
             _tag = tag;
-            _baseIcon = BlockGroupMapper.GetIcon(tag, data.IconId);
-            if (_baseIcon == null && !string.IsNullOrEmpty(tag) && !string.IsNullOrEmpty(data.IconId))
+            _baseIcon = BlockGroupMapper.GetIcon(tag, IconId);
+            if (_baseIcon == null && !string.IsNullOrEmpty(tag) && !string.IsNullOrEmpty(IconId))
             {
-                Debug.LogWarning($"[BlockController] Missing icon '{data.IconId}' in group '{tag}' for block {data.Id}.");
+                Debug.LogWarning($"[BlockController] Missing icon '{IconId}' in group '{tag}' for block {data.Id}.");
             }
             _icon.sprite = _baseIcon;
             ActiveMechanic = EMechanic.None;

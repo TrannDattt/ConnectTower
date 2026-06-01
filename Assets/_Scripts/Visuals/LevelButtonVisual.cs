@@ -1,6 +1,5 @@
 using System.Linq;
 using Assets._Scripts.Datas;
-using Assets._Scripts.Editor;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
 using Assets._Scripts.Managers;
@@ -8,6 +7,10 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
+#if UNITY_EDITOR
+using Assets._Scripts.Editor;
+#endif
 
 namespace Assets._Scripts.Visuals
 {

@@ -124,7 +124,7 @@ namespace Assets._Scripts.Datas
             
             EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
             if (!doEffect) return;
-            DoMechanicSFX(Key);
+            // DoMechanicSFX(Key);
         }
 
         public virtual void RemoveImmediate(bool doEffect = true)
@@ -138,20 +138,20 @@ namespace Assets._Scripts.Datas
 
             EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
             if (!doEffect) return;
-            DoMechanicSFX(Key);
+            // DoMechanicSFX(Key);
         }
 
-        protected void DoMechanicSFX(EMechanic key)
-        {
-            var mechanicSFX = key switch
-            {
-                EMechanic.HiddenBlock => ESfx.HiddenBlockExit,
-                EMechanic.CoveredPillar => ESfx.CoveredPillarExit,
-                EMechanic.FrozenBlock => ESfx.FrozenBlockExit,
-                _ => ESfx.None
-            };
-            SoundManager.Instance.PlayRandomSFX(mechanicSFX);
-        }
+        // protected void DoMechanicSFX(EMechanic key)
+        // {
+        //     var mechanicSFX = key switch
+        //     {
+        //         EMechanic.HiddenBlock => ESfx.HiddenBlockExit,
+        //         EMechanic.CoveredPillar => ESfx.CoveredPillarExit,
+        //         EMechanic.FrozenBlock => ESfx.FrozenBlockExit,
+        //         _ => ESfx.None
+        //     };
+        //     SoundManager.Instance.PlayRandomSFX(mechanicSFX);
+        // }
     }
 
 #region Hidden Block
@@ -578,8 +578,9 @@ namespace Assets._Scripts.Datas
             Key = EMechanic.TrapPillar;
             IsTrap = isTrap;
 
-            OnCheckCondicion = (_) =>
+            OnCheckCondicion = (e) =>
             {
+                if (!e.MovedByPlayer) return;
                 var isTrapSnapshot = IsTrap;
                 IsTrap = !IsTrap;
                 if (isTrapSnapshot) Remove();
@@ -658,7 +659,7 @@ namespace Assets._Scripts.Datas
             currentTarget.ClearMechanic(doEffect);
             _target = null;
 
-            DoMechanicSFX(Key);
+            // DoMechanicSFX(Key);
         }
 
         public override void RemoveImmediate(bool doEffect = true)
@@ -684,7 +685,7 @@ namespace Assets._Scripts.Datas
             currentTarget.ClearMechanicImmediate(doEffect);
             _target = null;
 
-            DoMechanicSFX(Key);
+            // DoMechanicSFX(Key);
         }
 
 

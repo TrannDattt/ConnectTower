@@ -22,13 +22,16 @@ namespace Assets._Scripts.Managers
         {
             toPlay = ETutorial.None;
 
-            if (CheckCanPlayMechanicTutorial(EMechanic.FrozenBlock)) toPlay = ETutorial.FrozenBlock;
-            if (CheckCanPlayBoosterTutorial(EBooster.Hint)) toPlay = ETutorial.Hint;
             if (CheckCanPlayBoosterTutorial(EBooster.AddPillar)) toPlay = ETutorial.AddPillar;
-            if (CheckCanPlayMechanicTutorial(EMechanic.CoveredPillar)) toPlay = ETutorial.CoveredPillar;
+            if (CheckCanPlayMechanicTutorial(EMechanic.TrapPillar)) toPlay = ETutorial.FrozenBlock;
+            if (CheckCanPlayMechanicTutorial(EMechanic.ScratchBlock)) toPlay = ETutorial.FrozenBlock;
+            if (CheckCanPlayBoosterTutorial(EBooster.Hint)) toPlay = ETutorial.Hint;
+            if (CheckCanPlayMechanicTutorial(EMechanic.StickyBlock)) toPlay = ETutorial.FrozenBlock;
+            if (CheckCanPlayMechanicTutorial(EMechanic.FrozenBlock)) toPlay = ETutorial.FrozenBlock;
             if (CheckCanPlayBoosterTutorial(EBooster.Shuffle)) toPlay = ETutorial.Shuffle;
-            if (CheckCanPlayMechanicTutorial(EMechanic.HiddenBlock)) toPlay = ETutorial.HiddenBlock;
+            if (CheckCanPlayMechanicTutorial(EMechanic.CoveredPillar)) toPlay = ETutorial.CoveredPillar;
             if (CheckCanPlayBoosterTutorial(EBooster.ExtraMove)) toPlay = ETutorial.ExtraMove;
+            if (CheckCanPlayMechanicTutorial(EMechanic.HiddenBlock)) toPlay = ETutorial.HiddenBlock;
             if (LevelManager.PlayingLevel.Index == 2) toPlay = ETutorial.BaseGameplay2;
             if (LevelManager.PlayingLevel.Index == 1) toPlay = ETutorial.BaseGameplay1;
 
@@ -102,6 +105,9 @@ namespace Assets._Scripts.Managers
             EMechanic.HiddenBlock    => ETutorial.HiddenBlock,
             EMechanic.CoveredPillar  => ETutorial.CoveredPillar,
             EMechanic.FrozenBlock    => ETutorial.FrozenBlock,
+            EMechanic.StickyBlock   => ETutorial.StickyBlock,
+            EMechanic.ScratchBlock  => ETutorial.ScratchBlock,
+            EMechanic.TrapPillar    => ETutorial.TrapPillar,
             _                        => null
         };
 
@@ -119,6 +125,9 @@ namespace Assets._Scripts.Managers
             ETutorial.HiddenBlock   => EMechanic.HiddenBlock,
             ETutorial.CoveredPillar   => EMechanic.CoveredPillar,
             ETutorial.FrozenBlock      => EMechanic.FrozenBlock,
+            ETutorial.StickyBlock   => EMechanic.StickyBlock,
+            ETutorial.ScratchBlock  => EMechanic.ScratchBlock,
+            ETutorial.TrapPillar    => EMechanic.TrapPillar,
             _ => null
         };
 

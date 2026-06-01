@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
-using Assets._Scripts.Editor;
 using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns;
 using DG.Tweening;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using Assets._Scripts.Editor;
+#endif
 
 namespace Assets._Scripts.Visuals
 {

@@ -35,7 +35,7 @@ namespace Assets._Scripts.Controllers
             return pillar.BlockContainer.transform.position + index * _blockHeight * Vector3.up;
         }
 
-        bool IsSticky(BlockController block) => (block as IMechanicHandler).ActiveMechanic == EMechanic.StickyBlock;
+        bool IsSticky(BlockController block) => block.ActiveMechanic == EMechanic.StickyBlock;
         bool IsFrozen(PillarController pillar) => pillar != null && pillar.ActiveMechanic == EMechanic.FrozenBlock;
 
 #region PICK UP
@@ -250,8 +250,9 @@ namespace Assets._Scripts.Controllers
 
             for (int i = 0; i < blocks.Count; i++)
             {
-                var targetSlot = groupStartIndex + i;
-                targetPos[i] = toPillar.BlockContainer.transform.position + targetSlot * _blockHeight * blockScaleFactor * Vector3.up;
+                int index = i;
+                var targetSlot = groupStartIndex + index;
+                targetPos[index] = toPillar.BlockContainer.transform.position + targetSlot * _blockHeight * blockScaleFactor * Vector3.up;
                 
                 Vector3 fromTop = fromPillar.TopPillar.position;
                 Vector3 toTop = toPillar.TopPillar.position;
@@ -260,19 +261,25 @@ namespace Assets._Scripts.Controllers
                 Vector3 midJump = (fromTop + toTop) / 2f + blockScaleFactor * jumpPower * Vector3.up;
                 
                 // Quy dao: Tu vi tri hien tai (dang hover) -> Qua dinh coc cu -> Qua diem giua -> Qua dinh coc moi -> Roi xuong
-                Vector3[] path = new Vector3[] { fromTop, midJump, toTop, targetPos[i] };
+                Vector3[] path = new Vector3[] { fromTop, midJump, toTop, targetPos[index] };
                 
-                sequence.Insert(i * staggeredDelay, 
-                    blocks[i].transform.DOPath(path, duration, PathType.CatmullRom)
+                sequence.Insert(index * staggeredDelay, 
+                    blocks[index].transform.DOPath(path, duration, PathType.CatmullRom)
                     .SetEase(_moveEase));
+
+                if (IsSticky(blocks[index]))
+                {
+                    sequence.InsertCallback(index * staggeredDelay + duration - .3f, () => blocks[index].MechanicVisual.DoStickySFX());
+                }
             }
-            
+
             sequence.OnComplete(() =>
             {
                 // Return if this tween is force-completed (e.g. blocks picked up again)
                 if (blocks.Count > 0 && _selectedBlocks.Contains(blocks[0])) return;
 
                 Sequence feedbackSequence = DOTween.Sequence();
+
                 if (matched.Count > blocks.Count)
                 {
                     // Debug.Log($"Match count: {matched.Count} => Matched");

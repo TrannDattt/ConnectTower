@@ -187,6 +187,7 @@ namespace Assets._Scripts.Datas
             var allValidBlocks = BoardController.Instance.GetAllPillars()
                 .Where(p => !p.IsLocked() && !((IMechanicHandler)p).IsHidden())
                 .SelectMany(p => p.GetAllBlocks())
+                .Where(b => b != null && !string.IsNullOrEmpty(b.IconId))
                 .ToArray();
 
             // 2. Nhóm các block theo Tag và lọc ra các nhóm có từ 2 block trở lên (để đảm bảo có cặp)

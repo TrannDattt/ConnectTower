@@ -8,7 +8,10 @@ using Assets._Scripts.Helpers;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+
+#if UNITY_EDITOR
 using Assets._Scripts.Editor;
+#endif
 
 namespace Assets._Scripts.Controllers
 {

@@ -42,13 +42,6 @@ namespace Assets._Scripts.Visuals
                 Debug.Log($"Do Booster {data.Key} Anim");
                 _button.interactable = false;
                 _gatherPoint = gatherPoint;
-                var boosterSFX = data.Key switch
-                {
-                    EBooster.ExtraMove => ESfx.ExtraMove,
-                    EBooster.Shuffle => ESfx.Shuffle,
-                    EBooster.Hint => ESfx.Hint,
-                    _ => ESfx.None
-                };
 
                 void reset()
                 {
@@ -62,8 +55,7 @@ namespace Assets._Scripts.Visuals
 
                 EventBus<UseBoosterEvent>.Publish(new UseBoosterEvent { IsFinish = false });
                 Sequence mainSequence = DOTween.Sequence()
-                                               .Append(DoBoosterAnim(data, _iconImage))
-                                               .JoinCallback(() => SoundManager.Instance.PlayRandomSFX(boosterSFX));
+                                               .Append(DoBoosterAnim(data, _iconImage));
 
                 Sequence masterSequence = DOTween.Sequence().SetTarget(gameObject).SetLink(gameObject, LinkBehaviour.KillOnDisable);
                 masterSequence.AppendCallback(() => Debug.Log($"Start Booster Anim: {data.Key}"))

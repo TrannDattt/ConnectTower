@@ -19,6 +19,7 @@ namespace Assets._Scripts.Controllers
         [Header("Hidden Block")]
         [SerializeField] private BlockEffectVisual _blockVisual;
         [SerializeField] private Texture2D _hiddenTexture;
+        [SerializeField] private AudioClip _fxHiddenRemove;
 
         [Header("Frozen Block")]
         [SerializeField] private GameObject _frozenBlockHolder;
@@ -29,6 +30,9 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private float _frozenPillarOffsetY;
         [SerializeField] private ParticleSystem _frozenEmissionParticle;
         [SerializeField] private ParticleSystem _iceRemoveParticle;
+        [SerializeField] private float _pillarRemoveIceDelay;
+        [SerializeField] private AudioClip _fxIceSpread;
+        [SerializeField] private AudioClip _fxIceRemove;
         // [SerializeField] private Text _frozenMoveCountText;
 
         [Header("Covered Pillar")]
@@ -36,6 +40,7 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private Animator _clothAnimator;
         [SerializeField] private Image _clothIcon;
         private string _clothTriggerParam = "Flip";
+        [SerializeField] private AudioClip _fxClotheRemove;
 
         [Header("Scratched Block")]
         [SerializeField] private MeshFilter _scratchMeshFilter;
@@ -43,12 +48,15 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private Mesh _scratchMesh2;
         [SerializeField] private Mesh _scratchMesh3;
         [SerializeField] private ParticleSystem _scratchParticle;
+        [SerializeField] private AudioClip _fxStoneBreak;
 
         [Header("Trap Pillar")]
         [SerializeField] private GameObject _trapHolder;
         [SerializeField] private Animator _trapAnimator;
         [SerializeField] private AnimationClip _trapDownAnim;
         [SerializeField] private AnimationClip _trapUpAnim;
+        [SerializeField] private AudioClip _fxTrapOpen;
+        [SerializeField] private AudioClip _fxTrapClose;
 
         [Header("Sticky Block")]
         [SerializeField] private GameObject _slimeHolder;
@@ -58,6 +66,8 @@ namespace Assets._Scripts.Controllers
         [field : SerializeField] public RectTransform BottomStrandAnchor {get; private set;}
         [SerializeField] private float _strandOffset = .2f;
         [SerializeField] private ParticleSystem _particle;
+        [SerializeField] private AudioClip _fxStickyMove;
+        [SerializeField] private AudioClip _fxStickyBreak;
         private bool _isSticky;
         private bool _swappedStrands;
         private MechanicVisualControl _stickTargetTop;
@@ -159,7 +169,8 @@ namespace Assets._Scripts.Controllers
                 case EMechanic.TrapPillar:
                     if (_trapHolder != null)
                     {
-                        PlayTrapAnimation(_trapUpAnim, keepTrapVisible: true, doEffect);
+                        PlayTrapAnimation(_trapUpAnim, keepTrapVisible: doEffect, doEffect);
+                        SoundManager.Instance.PlaySFX(_fxTrapClose);
                     } 
                     break;
                 default:
@@ -191,6 +202,7 @@ namespace Assets._Scripts.Controllers
                         _blockVisual.ChangeTexture(null);
                     }
                     if (!doEffect) break;
+                    SoundManager.Instance.PlaySFX(_fxHiddenRemove);
                     StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Smoke, transform.position));
                     break;
                 case EMechanic.FrozenBlock:
@@ -211,9 +223,10 @@ namespace Assets._Scripts.Controllers
                         }
 
                         _clothAnimator.SetTrigger(_clothTriggerParam);
-                        var animDur = .98f;
+                        var animDur = .95f;
 
                         var seqence = DOTween.Sequence().SetLink(_clothAnimator.gameObject, LinkBehaviour.KillOnDisable);
+                        seqence.AppendCallback(() => SoundManager.Instance.PlaySFX(_fxClotheRemove));
                         seqence.AppendInterval(animDur);
                         seqence.OnComplete(reset).OnKill(reset);
 
@@ -226,8 +239,11 @@ namespace Assets._Scripts.Controllers
                         _blockVisual.ChangeIconDisplay(true);
                         _scratchMeshFilter.gameObject.SetActive(false);
                         _blockVisual.SetTrailColor(Color.white);
+                        _scratchParticle.gameObject.SetActive(true);
+                        _scratchParticle.Play();
                     }
                     if(!doEffect) break;
+                    SoundManager.Instance.PlaySFX(_fxStoneBreak);
                     break;
                 case EMechanic.StickyBlock:
                     _isSticky = false;
@@ -243,7 +259,8 @@ namespace Assets._Scripts.Controllers
                 case EMechanic.TrapPillar:
                     if (_trapHolder != null)
                     {
-                        PlayTrapAnimation(_trapDownAnim, keepTrapVisible: true, doEffect);
+                        PlayTrapAnimation(_trapDownAnim, keepTrapVisible: doEffect, doEffect);
+                        if (doEffect) SoundManager.Instance.PlaySFX(_fxTrapOpen);
                     } 
                     break;
                 default:
@@ -267,6 +284,7 @@ namespace Assets._Scripts.Controllers
             {
                 _frozenEmissionParticle.gameObject.SetActive(true);
                 _frozenEmissionParticle.Play();
+                SoundManager.Instance.PlaySFX(_fxIceSpread);
             }
             if (_block != null)
             {
@@ -310,7 +328,7 @@ namespace Assets._Scripts.Controllers
             RefreshFrozenPillarRod();
         }
 
-        private void RemoveFrozenVisual(bool doEffect)
+        private Sequence RemoveFrozenVisual(bool doEffect)
         {
             DOTween.Kill(this, FrozenBlockTweenId);
 
@@ -342,11 +360,15 @@ namespace Assets._Scripts.Controllers
                 if (pillarVisual != null)
                     pillarVisual.RefreshFrozenPillarRod();
 
-                return;
+                return DOTween.Sequence();
             }
 
-            if (_frozenPillarRod != null) _frozenPillarRod.SetActive(false);
-            if (_frozenPillarBase != null) _frozenPillarBase.SetActive(false);
+            return DOTween.Sequence().InsertCallback(_pillarRemoveIceDelay, () =>
+            {
+                if (_frozenPillarRod != null) _frozenPillarRod.SetActive(false);
+                if (_frozenPillarBase != null) _frozenPillarBase.SetActive(false);
+                if (doEffect) SoundManager.Instance.PlaySFX(_fxIceRemove);
+            });
         }
 
         private void RefreshFrozenPillarRod()
@@ -492,6 +514,7 @@ namespace Assets._Scripts.Controllers
                     _scratchMeshFilter.sharedMesh = mesh;
                     _scratchParticle.gameObject.SetActive(true);
                     _scratchParticle.Play();
+                    SoundManager.Instance.PlaySFX(_fxStoneBreak);
                     break;
                 default:
                     break;
@@ -557,6 +580,7 @@ namespace Assets._Scripts.Controllers
                 RestoreStickyDetachParticleParent();
             }
 
+            SoundManager.Instance.PlaySFX(_fxStickyBreak);
             _stickyDetachParticleRoutine = StartCoroutine(PlayStickyDetachParticleRoutine(targetAnchor));
         }
 
@@ -682,6 +706,11 @@ namespace Assets._Scripts.Controllers
             strandRt.localPosition = fromLocal;
             strandRt.localRotation = Quaternion.Euler(0f, 0f, angle);
             strandRt.localScale = new Vector3(1f, strandLength / baseHeight, 1f);
+        }
+
+        public void DoStickySFX()
+        {
+            SoundManager.Instance.PlaySFX(_fxStickyMove);
         }
 
         private EventBinding<BlocksMovedEvent> _blocksMovedBinding;

@@ -1,6 +1,5 @@
 using System.Linq;
 using Assets._Scripts.Controllers;
-using Assets._Scripts.Editor;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
 using Assets._Scripts.Managers;
@@ -8,6 +7,10 @@ using Assets._Scripts.Patterns.EventBus;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+
+#if UNITY_EDITOR
+using Assets._Scripts.Editor;
+#endif
 
 namespace Assets._Scripts.Visuals
 {
@@ -101,7 +104,13 @@ namespace Assets._Scripts.Visuals
 
         void OnEnable()
         {
-            if (PlayerProgressHelper.CheckUnlockBooster(Key, passMilestone: true) || DebugFlagToggle.Instance.IgnoreMilestone)
+            bool enable = PlayerProgressHelper.CheckUnlockBooster(Key, passMilestone: true);
+
+#if UNITY_EDITOR
+            enable |= DebugFlagToggle.Instance.IgnoreMilestone;
+#endif
+
+            if (enable)
                 Enable();
             else
                 Disable();

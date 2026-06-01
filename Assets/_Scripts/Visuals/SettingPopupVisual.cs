@@ -30,8 +30,8 @@ namespace Assets._Scripts.Visuals
             _sfxSlider.UpdateToggle(SoundManager.Instance.IsEnable(false), false);
             _hapticSlider.UpdateToggle(HapticManager.IsEnable, false);
 
-            _bgmSlider.UpdateSlider(SoundManager.Instance.BgmVolume, SoundManager.Instance.IsEnable(true));
-            _sfxSlider.UpdateSlider(SoundManager.Instance.SfxVolume, SoundManager.Instance.IsEnable(false));
+            _bgmSlider.UpdateSlider(SoundManager.Instance.BGM.volume, SoundManager.Instance.IsEnable(true));
+            _sfxSlider.UpdateSlider(SoundManager.Instance.SFX.volume, SoundManager.Instance.IsEnable(false));
             _hapticSlider.UpdateSlider(HapticManager.VibrationLevel);
 
             _bgmSlider.OnToggled.AddListener((isActive) => SoundManager.Instance.SetEnable(true, isActive));

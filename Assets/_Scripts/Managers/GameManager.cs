@@ -13,11 +13,9 @@ using Assets._Scripts.Services.APIs;
 using System.Linq;
 using System;
 using System.Threading.Tasks;
-using Assets._Scripts.Editor;
-
-
 
 #if UNITY_EDITOR
+using Assets._Scripts.Editor;
 using UnityEditor;
 #endif
 
@@ -485,9 +483,9 @@ namespace Assets._Scripts.Managers
                 private void OnUseBooster(UseBoosterEvent @event) 
                 {
                     if (@event.IsFinish) 
-                        SubcribeEvent(); 
+                        ResumePillarInteraction(); 
                     else 
-                        UnsubcribeEvent();
+                        SuspendPillarInteraction();
                 }
 
                 private void SetInteractablePillars(params PillarController[] pillars)
@@ -516,6 +514,16 @@ namespace Assets._Scripts.Managers
                     EventBus<PillarClickedEvent>.Unsubscribe(_pillarClickedBinding);
                 }
 
+                private void SuspendPillarInteraction()
+                {
+                    EventBus<PillarClickedEvent>.Unsubscribe(_pillarClickedBinding);
+                }
+
+                private void ResumePillarInteraction()
+                {
+                    EventBus<PillarClickedEvent>.Subscribe(_pillarClickedBinding);
+                }
+
                 private void OnBlocksMoved(BlocksMovedEvent @event)
                 {
                     if (@event.MovedByPlayer)
@@ -525,6 +533,15 @@ namespace Assets._Scripts.Managers
                     }
 
                     foreach (var pillar in Instance._pillars) pillar.CheckFullMatch();
+
+                    if (!@event.MovedByPlayer)
+                    {
+                        foreach (var pillar in Instance._pillars)
+                        {
+                            if (pillar.IsFullMatch)
+                                pillar.DoFullMatchAnim();
+                        }
+                    }
 
                     if (@event.MovedByPlayer)
                         Instance.CurrentLevelData.EndPlayerMoveScoreResolution();

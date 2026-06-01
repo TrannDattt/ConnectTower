@@ -20,6 +20,7 @@ namespace Assets._Scripts.Interfaces
 
         private static readonly EMechanic[] UnmovableMechanics = new EMechanic[]
         {
+            EMechanic.HiddenBlock,
             EMechanic.FrozenBlock,
             EMechanic.CoveredPillar,
             EMechanic.TrapPillar,

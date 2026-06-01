@@ -32,11 +32,18 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private float _lensScaleDur;
         [SerializeField] private AnimationCurve _lensScaleCurve;
         [SerializeField] private EParticle _hintParticle;
+        [SerializeField] private AudioClip _fxHintPop;
+        [SerializeField] private AudioClip _fxHintReveal;
 
         public override Sequence DoBoosterAnim(BoosterRuntimeData data, Image target)
         {
             var hintData = data as HintBoosterRuntimeData;
             var groupBlock = hintData.GroupBlock;
+            if (groupBlock == null || groupBlock.Length == 0)
+            {
+                return DOTween.Sequence().SetTarget(this);
+            }
+
             var camera = _canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _canvas.worldCamera != null ? _canvas.worldCamera : Camera.main;
 
             // TODO: Spawn lens with smoke effect, make lens move around block, then scale to 0 and do hint effect
@@ -51,6 +58,7 @@ namespace Assets._Scripts.Visuals
                                                                             camera,
                                                                             out Vector2 localPos);
                     _smallLensImages[i].rectTransform.anchoredPosition = localPos;
+                    SoundManager.Instance.PlaySFX(_fxHintPop);
                     var it = ParticleManager.Instance.PlayParticle(_smokeParticle, _smallLensImages[i].transform.position, _lensImageHolder);
                     BoosterController.Instance.StartCoroutine(it);
                 }
@@ -71,7 +79,10 @@ namespace Assets._Scripts.Visuals
                 var image = _smallLensImages[i];
                 var block = groupBlock[i];
                 var hintSequence = DOTween.Sequence();
-                hintSequence.AppendCallback(() => image.gameObject.SetActive(true))
+                hintSequence.AppendCallback(() =>
+                            {
+                                image.gameObject.SetActive(true);
+                            })
                             .Append(image.rectTransform.DOAnchorPosX(_moveOffset.x, _lensMoveDur).SetEase(_moveXCurve).SetRelative())
                             .Join(image.rectTransform.DOAnchorPosY(_moveOffset.y, _lensMoveDur).SetEase(_moveYCurve).SetRelative())
                             .Append(image.transform.DOScale(Vector3.zero, _lensScaleDur).SetEase(_lensScaleCurve))
@@ -79,9 +90,13 @@ namespace Assets._Scripts.Visuals
                             {
                                 Debug.Log("DO hint effect");
                                 BoosterController.Instance.StartCoroutine(ParticleManager.Instance.PlayParticle(_hintParticle, image.transform.position, _lensImageHolder));
+                                SoundManager.Instance.PlaySFX(_fxHintReveal);
                             })
                             .Append(block.transform.DOScale(_blockScaleFactor, _blockScaleDur).SetEase(_blockScaleCurve).SetRelative())
-                            .AppendCallback(() => image.gameObject.SetActive(false))
+                            .AppendCallback(() =>
+                            {
+                                image.gameObject.SetActive(false);
+                            })
                             .OnKill(() => reset(image, block))
                             .OnComplete(() => reset(image, block));
 
@@ -98,7 +113,7 @@ namespace Assets._Scripts.Visuals
                 for (int i = 0; i < groupBlock.Length; i++)
                 {
                     var mechanicHandler = groupBlock[i] as IMechanicHandler;
-                    if (mechanicHandler.IsHidden()) mechanicHandler.ClearMechanic();
+                    if (mechanicHandler.IsHidden()) mechanicHandler.ClearMechanicImmediate();
                     groupBlock[i].GetComponent<BlockEffectVisual>().ChangeColor(toChange);
                 }
             });

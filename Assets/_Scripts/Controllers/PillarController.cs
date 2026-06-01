@@ -87,6 +87,7 @@ namespace Assets._Scripts.Controllers
             if (data == null) return;
             Id = data.Id;
             IsFullMatch = false;
+            _hasPlayedFullMatchAnim = false;
             ActiveMechanic = EMechanic.None;
         }
 
@@ -146,6 +147,8 @@ namespace Assets._Scripts.Controllers
             StopAllCoroutines();
             BlockContainer.DetachChildren();
             _blocks = new() {null, null, null, null};
+            IsFullMatch = false;
+            _hasPlayedFullMatchAnim = false;
         }
 
         public bool TryRemoveTopBlocks(out List<BlockController> result, bool skipMechanic = false)
@@ -206,6 +209,7 @@ namespace Assets._Scripts.Controllers
         }
 
         public bool IsFullMatch {get; private set;}
+        private bool _hasPlayedFullMatchAnim;
         public void CheckFullMatch()
         {
             if (!IsFullMatch && IsLocked())
@@ -218,6 +222,10 @@ namespace Assets._Scripts.Controllers
 
         public Sequence DoFullMatchAnim()
         {
+            if (!IsFullMatch || _hasPlayedFullMatchAnim)
+                return DOTween.Sequence().SetTarget(this).SetId("FullMatch");
+
+            _hasPlayedFullMatchAnim = true;
             Debug.Log("Do");
             var blocks = GetAllBlocks().ToList();
             var sequence = DOTween.Sequence().SetTarget(this).SetId("FullMatch").SetLink(gameObject, LinkBehaviour.KillOnDisable);

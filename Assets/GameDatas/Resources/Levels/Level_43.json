@@ -4,89 +4,67 @@
   "MoveLimit": 30,
   "BlockGroups": [
     {
-      "Tag": "Drums",
-      "BlockDatas": [
-        {
-          "Id": 0,
-          "IconId": "A_1_71"
-        },
-        {
-          "Id": 1,
-          "IconId": "A_2_10"
-        },
-        {
-          "Id": 2,
-          "IconId": "A_3_0"
-        },
-        {
-          "Id": 3,
-          "IconId": "A_3_93"
-        }
-      ],
-      "Trackable": true
-    },
-    {
       "Tag": "Boats",
       "BlockDatas": [
         {
-          "Id": 4,
+          "Id": 0,
           "IconId": "A_1_105"
         },
         {
-          "Id": 5,
+          "Id": 1,
           "IconId": "A_1_128"
         },
         {
-          "Id": 6,
+          "Id": 2,
           "IconId": "A_2_102"
         },
         {
-          "Id": 7,
+          "Id": 3,
           "IconId": "A_3_9"
         }
       ],
       "Trackable": true
     },
     {
-      "Tag": "Houses",
+      "Tag": "Hourglasses",
       "BlockDatas": [
         {
-          "Id": 8,
-          "IconId": "A_1_43"
+          "Id": 4,
+          "IconId": "A_1_19"
         },
         {
-          "Id": 9,
-          "IconId": "A_1_76"
+          "Id": 5,
+          "IconId": "A_2_119"
         },
         {
-          "Id": 10,
-          "IconId": "A_2_72"
+          "Id": 6,
+          "IconId": "A_3_119"
         },
         {
-          "Id": 11,
-          "IconId": "A_3"
+          "Id": 7,
+          "IconId": "A_4_89"
         }
       ],
       "Trackable": true
     },
     {
-      "Tag": "Letters",
+      "Tag": "Keys",
       "BlockDatas": [
         {
-          "Id": 12,
-          "IconId": "A_1_80"
+          "Id": 8,
+          "IconId": "A_1_51"
         },
         {
-          "Id": 13,
-          "IconId": "A_2_8"
+          "Id": 9,
+          "IconId": "A_2_22"
         },
         {
-          "Id": 14,
-          "IconId": "A_3_16"
+          "Id": 10,
+          "IconId": "A_3_103"
         },
         {
-          "Id": 15,
-          "IconId": "A_4_23"
+          "Id": 11,
+          "IconId": "A_4_11"
         }
       ],
       "Trackable": true
@@ -95,20 +73,64 @@
       "Tag": "Wheels",
       "BlockDatas": [
         {
-          "Id": 16,
+          "Id": 12,
           "IconId": "A_1_121"
         },
         {
-          "Id": 17,
+          "Id": 13,
           "IconId": "A_2_142"
         },
         {
-          "Id": 18,
+          "Id": 14,
           "IconId": "A_3_69"
         },
         {
-          "Id": 19,
+          "Id": 15,
           "IconId": "A_4_17"
+        }
+      ],
+      "Trackable": true
+    },
+    {
+      "Tag": "Letters",
+      "BlockDatas": [
+        {
+          "Id": 16,
+          "IconId": "A_1_80"
+        },
+        {
+          "Id": 17,
+          "IconId": "A_2_8"
+        },
+        {
+          "Id": 18,
+          "IconId": "A_3_16"
+        },
+        {
+          "Id": 19,
+          "IconId": "A_4_23"
+        }
+      ],
+      "Trackable": true
+    },
+    {
+      "Tag": "Houses",
+      "BlockDatas": [
+        {
+          "Id": 20,
+          "IconId": "A_1_43"
+        },
+        {
+          "Id": 21,
+          "IconId": "A_1_76"
+        },
+        {
+          "Id": 22,
+          "IconId": "A_2_72"
+        },
+        {
+          "Id": 23,
+          "IconId": "A_3"
         }
       ],
       "Trackable": true
@@ -127,74 +149,71 @@
     {
       "Id": 1,
       "BlockIds": [
-        14,
-        18,
+        8,
         4,
-        0
+        0,
+        -4
       ]
     },
     {
       "Id": 2,
       "BlockIds": [
-        6,
-        2,
-        5,
-        8
+        1,
+        12,
+        21,
+        5
       ]
     },
     {
       "Id": 3,
       "BlockIds": [
-        7,
         3,
-        1,
-        12
-      ]
-    },
-    {
-      "Id": 4,
-      "BlockIds": [
-        -1,
-        -2,
+        6,
         -3,
         -4
       ]
     },
     {
+      "Id": 4,
+      "BlockIds": [
+        13,
+        16,
+        7,
+        9
+      ]
+    },
+    {
       "Id": 5,
       "BlockIds": [
-        17,
-        13,
-        9,
-        16
+        22,
+        19,
+        15,
+        18
       ]
     },
     {
       "Id": 6,
       "BlockIds": [
-        19,
         11,
-        15,
+        14,
+        20,
+        -4
+      ]
+    },
+    {
+      "Id": 7,
+      "BlockIds": [
+        17,
+        23,
+        2,
         10
       ]
     }
   ],
   "HiddenBlockDatas": {
-    "BlockIds": [
-      3,
-      18,
-      13,
-      14
-    ]
+    "BlockIds": []
   },
-  "CoveredPillarDatas": [
-    {
-      "TagToOpen": "Drums",
-      "PillarIds": [
-        5
-      ]
-    }
-  ],
+  "CoveredPillarDatas": [],
   "FrozenBlockDatas": [],
   "ScratchedBlockDatas": {
     "BlockIds": []
@@ -204,7 +223,11 @@
   },
   "TrapPillarDatas": [
     {
-      "PillarId": 3,
+      "PillarId": 2,
+      "IsTrap": false
+    },
+    {
+      "PillarId": 6,
       "IsTrap": true
     }
   ],

@@ -177,20 +177,32 @@ namespace Assets._Scripts.Controllers
 
 #if UNITY_EDITOR
             if (_clearLevel != null)
+            {
+                _clearLevel.gameObject.SetActive(true);
                 _clearLevel.onClick.AddListener(() => GameManager.Instance.ClearedLevel(false));
+            }
             if (_failLevel != null)
+            {
+                _failLevel.gameObject.SetActive(true);
                 _failLevel.onClick.AddListener(() => GameManager.Instance.FailedLevel(false));
+            }
             if (_restartButton != null)
+            {
+                _restartButton.gameObject.SetActive(true);
                 _restartButton.onClick.AddListener(() =>
                 {
                     GameManager.Instance.RestartLevel();
                 });
+            }
             if (_editButton != null)
+            {
+                _editButton.gameObject.SetActive(true);
                 _editButton.onClick.AddListener(() =>
                 {
                     BoardController.Instance.ClearBoard();
                     GameSceneManager.Instance.ChangeScene(EGameScene.Editor);
                 });
+            }
 #endif
         }
 

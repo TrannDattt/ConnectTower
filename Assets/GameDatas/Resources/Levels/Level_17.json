@@ -22,7 +22,8 @@
           "Id": 7,
           "IconId": "G_2_26"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Boats",
@@ -43,7 +44,8 @@
           "Id": 11,
           "IconId": "A_2_43"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Masks",
@@ -64,7 +66,8 @@
           "Id": 15,
           "IconId": "A_3_72"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Socks",
@@ -85,7 +88,8 @@
           "Id": 23,
           "IconId": "A_1_91"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Keys",
@@ -106,7 +110,8 @@
           "Id": 27,
           "IconId": "A_2_22"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -188,10 +193,8 @@
       10,
       11,
       17,
-      21,
       22,
       24,
-      25,
       26,
       27,
       14
@@ -202,5 +205,10 @@
   "ScratchedBlockDatas": {
     "BlockIds": []
   },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Datas;
-using Assets._Scripts.Editor;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
 using DG.Tweening;
@@ -12,6 +11,10 @@ using TMPro;
 using TMPro.Examples;
 using UnityEngine;
 using UnityEngine.UI;
+
+#if UNITY_EDITOR
+using Assets._Scripts.Editor;
+#endif
 
 namespace Assets._Scripts.Visuals
 {
@@ -747,6 +750,7 @@ namespace Assets._Scripts.Visuals
 #if UNITY_EDITOR
             if (_restartBtn != null)
             {
+                _restartBtn.gameObject.SetActive(true);
                 _restartBtn.onClick.AddListener(() => 
                 {
                     StartCoroutine(Hide());
@@ -808,8 +812,6 @@ namespace Assets._Scripts.Visuals
 #if UNITY_EDITOR
                 }
 #endif
-                else
-                    GameManager.Instance.GoToMenu(() => UserManager.GainCoin(_curLevelData.CoinReward));
             });
             _adsRewardButton.OnClicked.AddListener(() => 
             {
@@ -834,8 +836,6 @@ namespace Assets._Scripts.Visuals
 #if UNITY_EDITOR
                 }
 #endif
-                else
-                    GameManager.Instance.GoToMenu(() => UserManager.GainCoin(_curLevelData.CoinReward));
             });
 
             base.Start();

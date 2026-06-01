@@ -520,6 +520,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.MechanicVisualControl
   _blockVisual: {fileID: 8404380825018531360}
   _hiddenTexture: {fileID: 2800000, guid: 40f1f92e92025bd4a8a48ac9e9bccf66, type: 3}
+  _fxHiddenRemove: {fileID: 8300000, guid: 0806ec77bb9f57b4abcb8a4b94bb14d7, type: 3}
   _frozenBlockHolder: {fileID: 3592697930245852617}
   _frozenBlockMask: {fileID: 1828986134475135829}
   _frozenApplyDur: 0.5
@@ -528,18 +529,25 @@ MonoBehaviour:
   _frozenPillarOffsetY: 0
   _frozenEmissionParticle: {fileID: 6692721358145194154}
   _iceRemoveParticle: {fileID: 3993076325761727612}
+  _pillarRemoveIceDelay: 0
+  _fxIceSpread: {fileID: 8300000, guid: b44dd078271c5bc4185652d2465e3a81, type: 3}
+  _fxIceRemove: {fileID: 0}
   _clothImage: {fileID: 0}
   _clothAnimator: {fileID: 0}
   _clothIcon: {fileID: 0}
+  _fxClotheRemove: {fileID: 0}
   _scratchMeshFilter: {fileID: 33809261465898096}
   _scratchMesh1: {fileID: 4300000, guid: c75f5eea4e38ddf489ffe17aa9409a25, type: 2}
   _scratchMesh2: {fileID: 4300000, guid: 40c8fa9ba1ab5ac45811d00ff2c7119a, type: 2}
   _scratchMesh3: {fileID: 4300000, guid: 0a99e791e6af56c4ca99ccc179908d4d, type: 2}
   _scratchParticle: {fileID: 4414776913242888963}
+  _fxStoneBreak: {fileID: 8300000, guid: 7fdf90646335ba04c83c9d74a7977865, type: 3}
   _trapHolder: {fileID: 0}
   _trapAnimator: {fileID: 0}
   _trapDownAnim: {fileID: 0}
   _trapUpAnim: {fileID: 0}
+  _fxTrapOpen: {fileID: 0}
+  _fxTrapClose: {fileID: 0}
   _slimeHolder: {fileID: 8381899937447861484}
   _topStrand: {fileID: 4594876677163243301}
   <TopStrandAnchor>k__BackingField: {fileID: 9021708240708786655}
@@ -547,6 +555,8 @@ MonoBehaviour:
   <BottomStrandAnchor>k__BackingField: {fileID: 720490336469153125}
   _strandOffset: 0.2
   _particle: {fileID: 1215313750211537207}
+  _fxStickyMove: {fileID: 8300000, guid: 77985432fb51bce49942c5d9c6f28f32, type: 3}
+  _fxStickyBreak: {fileID: 8300000, guid: d1724d82e97cdfe4683bcf7afa7bef1e, type: 3}
 --- !u!1 &1618152012296686
 GameObject:
   m_ObjectHideFlags: 0

@@ -491,6 +491,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.MechanicVisualControl
   _blockVisual: {fileID: 0}
   _hiddenTexture: {fileID: 0}
+  _fxHiddenRemove: {fileID: 0}
   _frozenBlockHolder: {fileID: 0}
   _frozenBlockMask: {fileID: 0}
   _frozenApplyDur: 0.5
@@ -499,18 +500,25 @@ MonoBehaviour:
   _frozenPillarOffsetY: 1.1974614
   _frozenEmissionParticle: {fileID: 0}
   _iceRemoveParticle: {fileID: 0}
+  _pillarRemoveIceDelay: 1
+  _fxIceSpread: {fileID: 0}
+  _fxIceRemove: {fileID: 8300000, guid: 35e2490af60921742b2566c5ef7fcbff, type: 3}
   _clothImage: {fileID: 1825766319187182658}
   _clothAnimator: {fileID: 1363332938153937344}
   _clothIcon: {fileID: 2072714258164137559}
+  _fxClotheRemove: {fileID: 8300000, guid: 180256fa980a6ec409cdcc7b95e8c16b, type: 3}
   _scratchMeshFilter: {fileID: 0}
   _scratchMesh1: {fileID: 0}
   _scratchMesh2: {fileID: 0}
   _scratchMesh3: {fileID: 0}
   _scratchParticle: {fileID: 0}
+  _fxStoneBreak: {fileID: 0}
   _trapHolder: {fileID: 4365068977080309895}
   _trapAnimator: {fileID: 7651340614315899347}
   _trapDownAnim: {fileID: 7400000, guid: 73c3cbe82bf1d964ca40da60054c2702, type: 2}
   _trapUpAnim: {fileID: 7400000, guid: adfc75dcc98fae7489b3c564a27d2565, type: 2}
+  _fxTrapOpen: {fileID: 8300000, guid: 6f752210ac3193043a94054172a90830, type: 3}
+  _fxTrapClose: {fileID: 0}
   _slimeHolder: {fileID: 0}
   _topStrand: {fileID: 0}
   <TopStrandAnchor>k__BackingField: {fileID: 0}
@@ -518,6 +526,8 @@ MonoBehaviour:
   <BottomStrandAnchor>k__BackingField: {fileID: 0}
   _strandOffset: 0.2
   _particle: {fileID: 0}
+  _fxStickyMove: {fileID: 0}
+  _fxStickyBreak: {fileID: 0}
 --- !u!1 &2975589777460377731
 GameObject:
   m_ObjectHideFlags: 0

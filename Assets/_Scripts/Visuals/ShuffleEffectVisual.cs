@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Datas;
+using Assets._Scripts.Managers;
 using Assets._Scripts.Patterns.EventBus;
 using DG.Tweening;
 using UnityEngine;
@@ -39,7 +40,7 @@ namespace Assets._Scripts.Visuals
         {
             var sequence = DOTween.Sequence();
 
-            sequence.Append(target.transform.DORotate(new Vector3(0, 0, 360 * _cycles), _duration, RotateMode.FastBeyond360).SetEase(Ease.InOutCubic))
+            sequence.Append(target.transform.DORotate(new Vector3(0, 0, 360 * _cycles), _duration + _blockMoveDelayToMain * 2, RotateMode.FastBeyond360).SetEase(Ease.InOutCubic))
                     .Insert(_blockMoveDelayToMain, DoShuffleBlockAnim(data as ShuffleBoosterRuntimeData));
 
             return sequence;
@@ -55,8 +56,9 @@ namespace Assets._Scripts.Visuals
             float remainingTime = Mathf.Max(0, _duration - _blockMoveCircleDur - 2 * _blockMoveDur);
             float calculatedDelay = blocks.Length > 1 ? remainingTime / (blocks.Length - 1) : 0;
             var delayMoveTime = Mathf.Min(calculatedDelay, _blockMoveDelayToBlock);
-            
             var baseRotation = blocks[0].transform.localRotation;
+            
+            sequence.AppendCallback(() => SoundManager.Instance.PlayRandomSFX(Enums.ESfx.Shuffle));
 
             float currentTime = 0f;
             foreach (var block in blocks)
