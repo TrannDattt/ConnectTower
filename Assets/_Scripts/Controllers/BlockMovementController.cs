@@ -41,7 +41,6 @@ namespace Assets._Scripts.Controllers
 #region PICK UP
         private void PickUpBlocks(PillarController pillar)
         {
-            DOTween.Kill(pillar);
             if (pillar.TryRemoveTopBlocks(out _selectedBlocks))
             {
                 RefreshStickyTargetsForPillar(pillar);
@@ -56,6 +55,8 @@ namespace Assets._Scripts.Controllers
         {
             if (blocks.Count == 0) return;
 
+            DOTween.Kill(pillar);
+            DOTween.Kill(pillar, "Feedback");
             string tweenId = "Pick up";
 
             var sequence = DOTween.Sequence().SetTarget(pillar).SetId(tweenId);
@@ -157,7 +158,6 @@ namespace Assets._Scripts.Controllers
             if (IsSticky(blocks[0])) blocks[0].MechanicVisual.RemoveStickyTarget(false);
             if (IsSticky(blocks[^1])) blocks[^1].MechanicVisual.RemoveStickyTarget(true);
             DOTween.Kill(pillar, true);
-            foreach (var block in blocks) block.transform.DOKill();
             var tweenId = "Put back";
             var sequence = DOTween.Sequence().SetTarget(pillar).SetId(tweenId);
             float tweenDuration = 0.3f;
@@ -212,7 +212,7 @@ namespace Assets._Scripts.Controllers
 
             if (IsSticky(blocks[0])) blocks[0].MechanicVisual.RemoveStickyTarget(true);
             if (IsSticky(blocks[^1])) blocks[^1].MechanicVisual.RemoveStickyTarget(false);
-            DOTween.Kill(fromPillar, true);
+            DOTween.Kill(fromPillar);
             foreach (var block in blocks) block.transform.DOKill();
             string tweenId = "Move";
             var sequence = DOTween.Sequence().SetTarget(toPillar).SetId(tweenId);
@@ -275,10 +275,12 @@ namespace Assets._Scripts.Controllers
 
             sequence.OnComplete(() =>
             {
+                var baseRotation = blocks[0].transform.localRotation;
+
                 // Return if this tween is force-completed (e.g. blocks picked up again)
                 if (blocks.Count > 0 && _selectedBlocks.Contains(blocks[0])) return;
 
-                Sequence feedbackSequence = DOTween.Sequence();
+                Sequence feedbackSequence = DOTween.Sequence().SetTarget(toPillar).SetId("Feedback");
 
                 if (matched.Count > blocks.Count)
                 {
@@ -302,6 +304,16 @@ namespace Assets._Scripts.Controllers
                         HapticManager.DoFeedBack();
                     });
                 }
+
+                feedbackSequence.OnKill(() =>
+                {
+                    foreach (var block in blocks)
+                    {
+                        block.transform.localRotation = baseRotation;
+                        block.transform.localScale = Vector3.one;
+                        block.transform.position = targetPos[blocks.IndexOf(block)];
+                    } 
+                });
 
                 feedbackSequence.Play();
             });
@@ -327,10 +339,9 @@ namespace Assets._Scripts.Controllers
 
             var pillar = blocks[0].GetPillarParent();
             if (IsFrozen(pillar))
-                return DOTween.Sequence().SetTarget(pillar).SetId("Match");
+                return DOTween.Sequence();
 
-            string tweenId = "Match";
-            var masterSequence = DOTween.Sequence().SetId(tweenId).SetTarget(pillar);
+            var masterSequence = DOTween.Sequence();
 
             float jumpHeight = .5f;
             float jumpDuration = 0.25f;
@@ -343,7 +354,6 @@ namespace Assets._Scripts.Controllers
                 var block = blocks[i];
                 block.transform.localScale = Vector3.one;
                 StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Compatible, block.transform.position));
-                block.transform.DOKill();
                 var sequence = DOTween.Sequence();
                 float initialY = block.transform.position.y;
                 Vector3 baseRotation = block.transform.localEulerAngles;
@@ -373,8 +383,7 @@ namespace Assets._Scripts.Controllers
             if (blocks == null || blocks.Count == 0) return null;
 
             var pillar = blocks[0].GetPillarParent();
-            string tweenId = "Not match";
-            var masterSequence = DOTween.Sequence().SetTarget(pillar).SetId(tweenId);
+            var masterSequence = DOTween.Sequence();
 
             float duration = 0.4f;
             float strength = 0.05f;
@@ -382,7 +391,6 @@ namespace Assets._Scripts.Controllers
 
             foreach (var block in blocks)
             {
-                block.transform.DOKill();
                 // Vibrate effect by shaking position specifically on the X axis
                 masterSequence.Join(block.transform.DOShakePosition(duration, new Vector3(strength, 0, 0), vibrato));
             }

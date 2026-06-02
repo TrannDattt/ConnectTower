@@ -571,6 +571,7 @@ namespace Assets._Scripts.Datas
     public class TrapPillarMechanic : MechanicRuntimeData
     {
         private IMechanicHandler _lastTarget;
+        private EventBinding<PillarFullMatchedEvent> _pillarFullMatchedBinding;
         public bool IsTrap {get; private set;}
 
         public TrapPillarMechanic(bool isTrap) : base()
@@ -587,7 +588,9 @@ namespace Assets._Scripts.Datas
                 else Apply(_lastTarget);
             };
             _blocksMovedBinding = new(OnCheckCondicion);
+            _pillarFullMatchedBinding = new(OnPillarFullMatched);
             EventBus<BlocksMovedEvent>.Subscribe(_blocksMovedBinding);
+            EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchedBinding);
         }
 
         public override void Apply(IMechanicHandler target)
@@ -603,7 +606,7 @@ namespace Assets._Scripts.Datas
                 }
                 else
                 {
-                    target.MechanicVisual?.RemoveVisualImmediate(Key, false);
+                    target.MechanicVisual?.ShowTrapInactiveImmediate();
                 }
                 _target = null;
                 return;
@@ -625,7 +628,7 @@ namespace Assets._Scripts.Datas
                 }
                 else
                 {
-                    target.MechanicVisual?.RemoveVisualImmediate(Key, false);
+                    target.MechanicVisual?.ShowTrapInactiveImmediate();
                 }
                 _target = null;
                 return;
@@ -649,6 +652,7 @@ namespace Assets._Scripts.Datas
                 _target = null;
                 _lastTarget = null;
                 EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
+                EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchedBinding);
                 return;
             }
 
@@ -676,6 +680,7 @@ namespace Assets._Scripts.Datas
                 _target = null;
                 _lastTarget = null;
                 EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
+                EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchedBinding);
                 return;
             }
 
@@ -692,6 +697,31 @@ namespace Assets._Scripts.Datas
         protected override bool CheckRemoveCondition()
         {
             return true;
+        }
+
+        private void OnPillarFullMatched(PillarFullMatchedEvent evt)
+        {
+            var trapPillar = _lastTarget as PillarController ?? _target as PillarController;
+            if (trapPillar == null || evt.Pillar != trapPillar)
+                return;
+
+            IsTrap = false;
+
+            if (_target != null)
+            {
+                var target = _target;
+                UnregisterCurrentTarget();
+                target.ClearMechanic();
+                _target = null;
+            }
+            else
+            {
+                trapPillar.MechanicVisual?.RemoveVisualImmediate(Key, false);
+            }
+
+            _lastTarget = null;
+            EventBus<BlocksMovedEvent>.Unsubscribe(_blocksMovedBinding);
+            EventBus<PillarFullMatchedEvent>.Unsubscribe(_pillarFullMatchedBinding);
         }
     }
     #endregion

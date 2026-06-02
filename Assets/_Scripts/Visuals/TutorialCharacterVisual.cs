@@ -18,7 +18,7 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private AnimationCurve _idleRotateCurve;
 
         // TALKING
-        [SerializeField] private Text _dialogText;
+        [SerializeField] private TextMeshProUGUI _dialogText;
         [SerializeField] private Image _dialogBox;
         [SerializeField] private float _dialogDisplayDur = 1f;
         [SerializeField] private Vector3 _baseRotateOffset;
@@ -94,13 +94,16 @@ namespace Assets._Scripts.Visuals
             // Setup
             _currentMessage = message;
             IsTalking = true;
-            _dialogText.text = "";
-            _dialogText.horizontalOverflow = HorizontalWrapMode.Wrap;
-            _dialogText.verticalOverflow = VerticalWrapMode.Overflow;
-            _dialogBox.gameObject.SetActive(true);
-            ResizeDialogBoxForMessage(message);
-            LayoutRebuilder.ForceRebuildLayoutImmediate(_dialogBox.rectTransform);
-            LayoutRebuilder.ForceRebuildLayoutImmediate(_dialogText.rectTransform);
+            _dialogText.SetText(string.Empty);
+            _dialogText.textWrappingMode = TextWrappingModes.Normal;
+            _dialogText.overflowMode = TextOverflowModes.Overflow;
+            if (_dialogBox != null)
+            {
+                _dialogBox.gameObject.SetActive(true);
+                ResizeDialogBoxForMessage(message);
+                LayoutRebuilder.ForceRebuildLayoutImmediate(_dialogBox.rectTransform);
+                LayoutRebuilder.ForceRebuildLayoutImmediate(_dialogText.rectTransform);
+            }
 
             var masterSequence = DOTween.Sequence().SetTarget(this).SetUpdate(true).SetId("Talk");
 
@@ -142,12 +145,12 @@ namespace Assets._Scripts.Visuals
 
         private void ResizeDialogBoxForMessage(string message)
         {
-            var rectTransform = _dialogBox.rectTransform;
-            if (rectTransform == null)
+            if (_dialogBox == null || _dialogText == null)
             {
                 return;
             }
 
+            var rectTransform = _dialogBox.rectTransform;
             var safeMessage = string.IsNullOrEmpty(message) ? " " : message;
             var fontSize = _dialogText.fontSize;
             var textRect = _dialogText.rectTransform;
@@ -155,23 +158,17 @@ namespace Assets._Scripts.Visuals
             var textInsetY = Mathf.Max(0f, -textRect.sizeDelta.y);
             var horizontalPadding = Mathf.Max(textInsetX, fontSize * 0.8f);
             var verticalPadding = Mathf.Max(textInsetY, fontSize * 0.4f);
-            var baseSettings = _dialogText.GetGenerationSettings(Vector2.zero);
             var canvas = _dialogBox.canvas != null ? _dialogBox.canvas.rootCanvas : null;
             var canvasRect = canvas != null ? canvas.GetComponent<RectTransform>() : null;
             var maxWidth = canvasRect != null ? canvasRect.rect.width * 0.6f : Screen.width * 0.6f;
             maxWidth = Mathf.Max(maxWidth, fontSize * 8f);
 
             // Grow width first; when width reaches 60% screen/canvas, extra content grows height via wrapping.
-            var singleLineWidth = _dialogText.cachedTextGeneratorForLayout.GetPreferredWidth(safeMessage, baseSettings) / _dialogText.pixelsPerUnit;
-            var width = Mathf.Clamp(singleLineWidth + (horizontalPadding * 2f), fontSize * 6f, maxWidth);
-
-            var wrappedSettings = baseSettings;
-            wrappedSettings.horizontalOverflow = HorizontalWrapMode.Wrap;
-            wrappedSettings.verticalOverflow = VerticalWrapMode.Overflow;
+            var singleLineSize = _dialogText.GetPreferredValues(safeMessage, Mathf.Infinity, Mathf.Infinity);
+            var width = Mathf.Clamp(singleLineSize.x + (horizontalPadding * 2f), fontSize * 6f, maxWidth);
             var innerWidth = Mathf.Max(1f, width - (horizontalPadding * 2f));
-            wrappedSettings.generationExtents = new Vector2(innerWidth, 0f);
-            var preferredWrappedHeight = _dialogText.cachedTextGeneratorForLayout.GetPreferredHeight(safeMessage, wrappedSettings) / _dialogText.pixelsPerUnit;
-            var height = Mathf.Max(preferredWrappedHeight + (verticalPadding * 2f), fontSize + (verticalPadding * 2f));
+            var wrappedSize = _dialogText.GetPreferredValues(safeMessage, innerWidth, Mathf.Infinity);
+            var height = Mathf.Max(wrappedSize.y + (verticalPadding * 2f), fontSize + (verticalPadding * 2f));
 
             rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
             rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
@@ -179,7 +176,10 @@ namespace Assets._Scripts.Visuals
 
         public void StopTalk(bool disableDialog)
         {
-            _dialogBox.gameObject.SetActive(!disableDialog);
+            if (_dialogBox != null)
+            {
+                _dialogBox.gameObject.SetActive(!disableDialog);
+            }
             DOTween.Kill(this, "Talk");
             IsTalking = false;
             _activeTalkTween = null;

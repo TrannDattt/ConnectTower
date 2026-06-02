@@ -26,14 +26,62 @@ namespace Assets._Scripts.Visuals
         private List<LevelButtonVisual> _activeButtons = new();
         private Pooling<LevelButtonVisual> _buttonPool = new();
         private int _totalLevels;
+        private int _pendingTargetIndex = -1;
+        private bool _hasPendingScroll;
         private float TotalHeight => _totalLevels * _buttonHeight + Mathf.Max(0, _totalLevels - 1) * _spacing;
 
         private int _poolAmount = 10;
         private int _maxActiveAmount = 10;
-        
-        //TODO: Add behaviors to button: Auto focus, scale when scroll, button change color,...
+
+        // TODO: Add behaviors to button: Auto focus, scale when scroll, button change color,...
 
         public void InitVisual(int targetIndex = -1, bool instant = false)
+        {
+            var allLevels = LevelManager.Instance.GetAllLevels();
+            _totalLevels = GetMaxLevelCount(allLevels.Count);
+
+            var containerRt = _levelContainer as RectTransform;
+            if (containerRt == null) return;
+
+            _pendingTargetIndex = targetIndex;
+            _hasPendingScroll = true;
+
+            if (gameObject.activeInHierarchy)
+            {
+                float targetY = GetTargetScrollY(targetIndex);
+                ScrollToPosition(targetY, instant);
+                RebuildButtonsAroundScrollY(targetY);
+                _hasPendingScroll = false;
+                return;
+            }
+
+            if (_activeButtons.Count == 0)
+            {
+                RebuildButtonsAroundScrollY(containerRt.anchoredPosition.y);
+            }
+        }
+
+        private int GetMaxLevelCount(int totalCount)
+        {
+            int maxLevels;
+#if UNITY_EDITOR
+            if (DebugFlagToggle.Instance.ShowAllLevel)
+                return totalCount;
+#endif
+            maxLevels = UserManager.CurUser.CurrentLevelIndex + 3;
+            if (UserManager.CurUser.CurrentLevelIndex < totalCount)
+            {
+                maxLevels = Mathf.Min(maxLevels, totalCount);
+            }
+            else
+            {
+                maxLevels = totalCount + 2; // Add 2 placeholders if current level is the last one.
+            }
+
+            return maxLevels;
+        }
+
+        private void RebuildButtonsAroundScrollY(float scrollY)
         {
             if (_activeButtons.Count > 0)
             {
@@ -41,51 +89,22 @@ namespace Assets._Scripts.Visuals
                 {
                     _buttonPool.ReturnItem(_activeButtons[i]);
                 }
+
                 _activeButtons.Clear();
             }
 
-            var allLevels = LevelManager.Instance.GetAllLevels();
-            var clearedLevel = allLevels.Where(l => l.Index < UserManager.CurUser.CurrentLevelIndex);
-            int totalLevels;
-#if UNITY_EDITOR
-            if (DebugFlagToggle.Instance.ShowAllLevel)
-                totalLevels = allLevels.Count;
-            else
-#endif
-                totalLevels = clearedLevel.Count() + 4;
-
-            if (UserManager.CurUser.CurrentLevelIndex < allLevels.Count)
-            {
-                totalLevels = Mathf.Min(totalLevels, allLevels.Count);
-            }
-            else
-            {
-                totalLevels = allLevels.Count + 2; // thêm 2 placeholders nếu là level cuối
-            }
-            _totalLevels = totalLevels;
-
-            // Đảm bảo container được scroll tới đúng vị trí trước khi spawn buttons
-            ScrollToCurrentLevel(targetIndex, instant);
-            
-            var containerRt = _levelContainer as RectTransform;
-            float currentY = containerRt.anchoredPosition.y;
-            
-            // Tính index đầu tiên hiển thị dựa trên vị trí container thực tế
-            float visibleBottom = -currentY; 
+            float visibleBottom = -scrollY;
             int firstVisibleIndex = Mathf.Max(1, Mathf.FloorToInt(visibleBottom / (_buttonHeight + _spacing)) + 1);
-
-            // Spawn nhiều hơn để bao phủ toàn bộ vùng nhìn thấy + buffer 2 bên
-            // Tăng startIndex lùi về sau nhiều hơn để đảm bảo không bị trống phía dưới
             int startIndex = Mathf.Max(1, firstVisibleIndex - 3);
+            int maxStartIndex = Mathf.Max(1, _totalLevels - _maxActiveAmount + 1);
+            startIndex = Mathf.Min(startIndex, maxStartIndex);
 
-            for(int i = 0; i < _maxActiveAmount; i++)
+            for (int i = 0; i < _maxActiveAmount; i++)
             {
                 int currIndex = startIndex + i;
                 if (currIndex > _totalLevels) break;
-                if (currIndex < 1) continue;
 
                 var levelData = LevelManager.Instance.GetLevel(currIndex);
-
                 var newButton = _buttonPool.GetItem();
                 newButton.UpdateVisual(levelData, currIndex);
                 SetButtonPosition(newButton, currIndex);
@@ -97,62 +116,55 @@ namespace Assets._Scripts.Visuals
         private void SetButtonPosition(LevelButtonVisual button, int levelIndex)
         {
             var rt = button.GetComponent<RectTransform>();
-            
-            // Container pinned to bottom: Y goes upwards standardly. Level 1 starts near Y=0.
+
             float yPos = (levelIndex - 1) * (_buttonHeight + _spacing);
             rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, yPos);
         }
 
         private bool CheckSensorInRange(Transform sensor)
         {
-            // Chuyển vị trí từ World Space về Local Space của _view để tính toán chính xác
-            // bất kể Canvas đang ở chế độ Overlay hay Camera
             Vector3 localPos = _view.InverseTransformPoint(sensor.position);
-            
+
             float viewHalfHeight = _view.rect.height * 0.5f;
-            float distance = Mathf.Abs(localPos.y); // localPos.y là khoảng cách tới tâm của _view
+            float distance = Mathf.Abs(localPos.y);
             return distance < (viewHalfHeight + _buttonHeight * 2f);
         }
 
         private bool CheckSensorOutRange(Transform sensor)
         {
             Vector3 localPos = _view.InverseTransformPoint(sensor.position);
-            
+
             float viewHalfHeight = _view.rect.height * 0.5f;
             float distance = Mathf.Abs(localPos.y);
             return distance > (viewHalfHeight + _buttonHeight * 3f);
         }
 
+        private void SyncButtonsToCurrentViewportIfNeeded()
+        {
+            var containerRt = _levelContainer as RectTransform;
+            if (containerRt == null) return;
+
+            if (_activeButtons.Count == 0)
+            {
+                RebuildButtonsAroundScrollY(containerRt.anchoredPosition.y);
+                return;
+            }
+
+            if (_activeButtons.All(button => CheckSensorOutRange(button.transform)))
+            {
+                RebuildButtonsAroundScrollY(containerRt.anchoredPosition.y);
+            }
+        }
+
         private void CheckAndUpdateVisual()
         {
+            SyncButtonsToCurrentViewportIfNeeded();
             if (_activeButtons.Count == 0) return;
 
-            // Arrays are ordered by LevelIndex ascending (e.g. 1, 2... 7)
-            // But because of our inversion:
-            // _activeButtons[0] (Index 1) is physically DOWN (Bottom).
-            // _activeButtons[^1] (Index 7) is physically UP (Top).
-
-            // 1. ADD ABOVE (Physically HIGHER, visually going towards Top)
             if (CheckSensorInRange(_activeButtons[^1].transform))
             {
                 int nextIndex = _activeButtons[^1].LevelIndex + 1;
-                int totalCount = LevelManager.Instance.GetTotalLevelCount();
-                
-                int maxLevels;
-#if UNITY_EDITOR
-                if (DebugFlagToggle.Instance.ShowAllLevel)
-                    maxLevels = totalCount;
-                else
-#endif
-                    maxLevels = UserManager.CurUser.CurrentLevelIndex + 3;
-                if (UserManager.CurUser.CurrentLevelIndex < totalCount)
-                {
-                    maxLevels = Mathf.Min(maxLevels, totalCount);
-                }
-                else
-                {
-                    maxLevels = totalCount + 2; // thêm 2 placeholders nếu là level cuối
-                }
+                int maxLevels = GetMaxLevelCount(LevelManager.Instance.GetTotalLevelCount());
 
                 if (nextIndex <= maxLevels)
                 {
@@ -164,11 +176,10 @@ namespace Assets._Scripts.Visuals
                     toAdd.transform.SetAsLastSibling();
                 }
             }
-            // 2. ADD BELOW (Physically LOWER, visually going towards Bottom)
             else if (CheckSensorInRange(_activeButtons[0].transform))
             {
                 int prevIndex = _activeButtons[0].LevelIndex - 1;
-                
+
                 if (prevIndex >= 1)
                 {
                     var prevLevelData = LevelManager.Instance.GetLevel(prevIndex);
@@ -180,14 +191,12 @@ namespace Assets._Scripts.Visuals
                 }
             }
 
-            // 3. REMOVE ABOVE (Physically HIGHER)
             if (_activeButtons.Count > _maxActiveAmount && CheckSensorOutRange(_activeButtons[^1].transform))
             {
                 var toRemove = _activeButtons[^1];
                 _activeButtons.Remove(toRemove);
                 _buttonPool.ReturnItem(toRemove);
             }
-            // 4. REMOVE BELOW (Physically LOWER)
             else if (_activeButtons.Count > _maxActiveAmount && CheckSensorOutRange(_activeButtons[0].transform))
             {
                 var toRemove = _activeButtons[0];
@@ -216,11 +225,8 @@ namespace Assets._Scripts.Visuals
             {
                 Vector3 localPos = _view.InverseTransformPoint(topButton.transform.position);
                 float viewTopY = _view.rect.yMax;
-                
-                // Enable Mystery Zone only when the absolute top level is visibly near the top edge.
-                // It shouldn't be way above the screen (e.g. user scrolled to bottom levels).
-                // It shouldn't be pulled way down (e.g. user elastic-scrolled it to the middle).
-                if (localPos.y <= viewTopY - _buttonHeight * .8f && 
+
+                if (localPos.y <= viewTopY - _buttonHeight * .8f &&
                     localPos.y >= viewTopY - _buttonHeight * 1.7f)
                 {
                     shouldEnable = true;
@@ -231,30 +237,32 @@ namespace Assets._Scripts.Visuals
                 _mysteryZone.gameObject.SetActive(shouldEnable);
         }
 
-        private void ScrollToCurrentLevel(int specificIndex = -1, bool instant = false)
+        private int GetTargetLevelIndex(int specificIndex = -1)
+        {
+            if (specificIndex > 0) return specificIndex;
+
+            var currentLevel = LevelManager.Instance.GetLatestNotClearedLevel();
+            return currentLevel != null ? currentLevel.Index : _totalLevels;
+        }
+
+        private float GetTargetScrollY(int specificIndex = -1)
         {
             var containerRt = _levelContainer as RectTransform;
-            if (containerRt == null) return;
+            if (containerRt == null) return 0f;
 
-            // Đảm bảo sizeDelta của container đã được cập nhật trước khi tính toán scroll
             containerRt.sizeDelta = new Vector2(containerRt.sizeDelta.x, TotalHeight);
 
-            int targetIndex = specificIndex;
-            if (targetIndex <= 0)
-            {
-                var currentLevel = LevelManager.Instance.GetLatestNotClearedLevel();
-                targetIndex = currentLevel != null ? currentLevel.Index : _totalLevels;
-            }
+            int targetIndex = GetTargetLevelIndex(specificIndex);
 
             float targetY;
             if (targetIndex <= 1)
             {
-                targetY = 0;
+                targetY = 0f;
             }
             else if (targetIndex >= _totalLevels)
             {
                 targetY = -(TotalHeight - _view.rect.height);
-                if (targetY > 0) targetY = 0;
+                if (targetY > 0f) targetY = 0f;
             }
             else
             {
@@ -262,10 +270,18 @@ namespace Assets._Scripts.Visuals
                 targetY += _view.rect.height * 0.5f;
                 targetY -= _buttonHeight;
 
-                if (targetY > 0) targetY = 0;
-                float minTargetY = -Mathf.Max(0, TotalHeight - _view.rect.height);
+                if (targetY > 0f) targetY = 0f;
+                float minTargetY = -Mathf.Max(0f, TotalHeight - _view.rect.height);
                 if (targetY < minTargetY) targetY = minTargetY;
             }
+
+            return targetY;
+        }
+
+        private void ScrollToPosition(float targetY, bool instant = false)
+        {
+            var containerRt = _levelContainer as RectTransform;
+            if (containerRt == null) return;
 
             containerRt.DOKill();
             if (instant)
@@ -275,12 +291,23 @@ namespace Assets._Scripts.Visuals
             else
             {
                 containerRt.DOAnchorPosY(targetY, 0.75f).SetEase(_scrollCurve).SetUpdate(true).SetLink(gameObject);
-                // containerRt.DOAnchorPosY(targetY, 0.75f).SetEase(Ease.OutSine).SetUpdate(true).SetLink(gameObject);
             }
+        }
+
+        private void ScrollToCurrentLevel(int specificIndex = -1, bool instant = false)
+        {
+            ScrollToPosition(GetTargetScrollY(specificIndex), instant);
         }
 
         void OnEnable()
         {
+            if (_hasPendingScroll)
+            {
+                ScrollToCurrentLevel(_pendingTargetIndex);
+                _hasPendingScroll = false;
+                return;
+            }
+
             ScrollToCurrentLevel();
         }
 

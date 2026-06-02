@@ -21,6 +21,9 @@ namespace Assets._Scripts.Controllers
 
         protected EventBinding<PlayerClickEvent> _playerClickBinding;
         protected int _clickCount;
+        protected int _currentDialogIndex;
+
+        private int _dialogCompletedClickFrame = -1;
 
         protected abstract void HandlingEvent(PlayerClickEvent @event);
         public abstract void Begin();
@@ -35,6 +38,8 @@ namespace Assets._Scripts.Controllers
         {
             IsFinished = false;
             _clickCount = 0;
+            _currentDialogIndex = -1;
+            _dialogCompletedClickFrame = -1;
             _playerClickBinding = new (HandlingEvent);
             EventBus<PlayerClickEvent>.Subscribe(_playerClickBinding);
         }
@@ -73,13 +78,59 @@ namespace Assets._Scripts.Controllers
             _clickCount++;
             Debug.Log($"Clicked {_clickCount} times");
         }
+
+        protected bool TryHandleDialogClick(UnityAction onDialogCompleted = null)
+        {
+            if (!HasDialog(_currentDialogIndex))
+            {
+                return false;
+            }
+
+            if (_visual.IsDisplayingText)
+            {
+                _dialogCompletedClickFrame = Time.frameCount;
+                _visual.CompleteDisplayedText();
+                return true;
+            }
+
+            if (_dialogCompletedClickFrame == Time.frameCount)
+            {
+                return true;
+            }
+
+            if (onDialogCompleted == null)
+            {
+                return false;
+            }
+
+            onDialogCompleted.Invoke();
+            return true;
+        }
+
+        protected void PlayDialog(int dialogIndex, UnityAction onFinishTalking = null)
+        {
+            if (!HasDialog(dialogIndex))
+            {
+                return;
+            }
+
+            _currentDialogIndex = dialogIndex;
+            _visual.DisplayText(_dialogActions[dialogIndex].Message, onFinishTalking);
+        }
+
+        protected bool HasDialog(int dialogIndex)
+        {
+            return _dialogActions != null
+                   && dialogIndex >= 0
+                   && dialogIndex < _dialogActions.Length;
+        }
     }
 
     [Serializable]
     public struct DialogAction
     {
         [TextArea(minLines: 1, maxLines: 3)] public string Message;
-        public bool StopFlag;
+        public Vector2 _handPos;
     }
 
     public struct PlayerClickEvent : IEvent

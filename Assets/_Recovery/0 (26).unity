@@ -7397,18 +7397,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.Gameplay1TutorialControl
   <Type>k__BackingField: 1
   _dialogActions:
-  - Message: Click to a pillar to pick up block
-    _handPos: {x: 0, y: 0}
-  - Message: Now click to other pillar to move selected block to that pillar
-    _handPos: {x: 0, y: 0}
-  _characterPos: {x: -310, y: -660}
+  - Message: Hello 1
+    StopFlag: 0
+  - Message: Hello 2
+    StopFlag: 1
+  - Message: Hello 3
+    StopFlag: 0
+  - Message: Hello 4
+    StopFlag: 1
+  - Message: Hello 5
+    StopFlag: 0
+  - Message: Hello 6
+    StopFlag: 1
+  - Message: Hello 7
+    StopFlag: 0
+  - Message: Hello 8
+    StopFlag: 1
+  _dialogDelay: 0.2
+  _characterPos:
+  - {x: 0, y: 0}
+  - {x: 0, y: -600}
+  - {x: -350, y: -250}
+  _overlayOpacity: 0.6
+  _changeLayerDur: 0.3
   _targetLayer:
     serializedVersion: 2
     m_Bits: 8192
   _pillarNewScaleFactor: 1.1
-  _pillar1Id: 2
-  _pillar2Id: 0
-  _endDelay: 3
+  _pillarHighlightScaleFactor: 1.2
+  _highlightTransitionDur: 0.5
+  _blockMoveDelay: 1
+  _disableHighlightTransitionDur: 0.1
+  _victoryPopupDur: 3
 --- !u!1 &1200861174
 GameObject:
   m_ObjectHideFlags: 0
@@ -11035,14 +11055,6 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 12
       objectReference: {fileID: 0}
-    - target: {fileID: 453281939138981040, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 640
-      objectReference: {fileID: 0}
-    - target: {fileID: 453281939138981040, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 160
-      objectReference: {fileID: 0}
     - target: {fileID: 2184928611996587831, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
       propertyPath: m_Name
       value: TutorialCharacter
@@ -13123,10 +13135,6 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 939347738787800716, guid: cf7a1bdedac7d7e4f8c43a228921fc0e, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 66.00001
-      objectReference: {fileID: 0}
-    - target: {fileID: 939347738787800716, guid: cf7a1bdedac7d7e4f8c43a228921fc0e, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
@@ -15073,7 +15081,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5224781559204543544, guid: d0501bd996654c34f843b35041d99e61, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -61.600006
+      value: -61.6
       objectReference: {fileID: 0}
     - target: {fileID: 5227781182838335714, guid: d0501bd996654c34f843b35041d99e61, type: 3}
       propertyPath: m_Pivot.x

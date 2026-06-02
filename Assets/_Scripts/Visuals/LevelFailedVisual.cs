@@ -159,10 +159,61 @@ namespace Assets._Scripts.Visuals
             }
         }
 
+        [System.Serializable]
+        private sealed class ScalePulseAnimation
+        {
+            [SerializeField] private float _scaleMultiplier = 1.08f;
+            [SerializeField] private float _duration = 0.8f;
+            [SerializeField] private AnimationCurve _scaleCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+            [SerializeField] private float _startDelay = 0.1f;
+
+            private Tween _scaleTween;
+            private Vector3 _initialScale = Vector3.one;
+            private bool _hasCachedScale;
+
+            public void CacheState(RectTransform target)
+            {
+                if (target == null)
+                    return;
+
+                _initialScale = target.localScale;
+                _hasCachedScale = true;
+            }
+
+            public void Play(RectTransform target, GameObject owner)
+            {
+                if (target == null || !target.gameObject.activeInHierarchy)
+                    return;
+
+                CacheState(target);
+                Stop(target);
+                target.localScale = _initialScale;
+
+                _scaleTween = target.DOScale(_initialScale * _scaleMultiplier, _duration)
+                    .SetEase(_scaleCurve)
+                    .SetLoops(-1, LoopType.Yoyo)
+                    .SetDelay(_startDelay)
+                    .SetUpdate(true)
+                    .SetLink(owner, LinkBehaviour.KillOnDisable);
+            }
+
+            public void Stop(RectTransform target)
+            {
+                _scaleTween?.Kill();
+                _scaleTween = null;
+
+                if (target == null || !_hasCachedScale)
+                    return;
+
+                target.localScale = _initialScale;
+            }
+        }
+
         [SerializeField] private GameButtonVisual _retryButton;
         [SerializeField] private GameButtonVisual _homeButton;
         [SerializeField] private RectTransform _buttonsRoot;
         [SerializeField] private ButtonIdleFloatAnimation _buttonIdleFloat = new();
+        [SerializeField] private ScalePulseAnimation _retryButtonPulse = new();
         [SerializeField] private FloatingBlockAnimation _leftBlock = new();
         [SerializeField] private FloatingBlockAnimation _rightBlock = new();
 
@@ -196,6 +247,8 @@ namespace Assets._Scripts.Visuals
             _leftBlock.CacheState();
             _rightBlock.CacheState();
             CacheIdleButtonTargets();
+            if (_retryButton != null && _retryButton.ButtonRt != null)
+                _retryButtonPulse.CacheState(_retryButton.ButtonRt);
         }
 
         public override IEnumerator Hide()
@@ -248,11 +301,13 @@ namespace Assets._Scripts.Visuals
         {
             StopIdleButtonEffects();
             _buttonIdleFloat.Play(_buttonIdleTargets, gameObject);
+            _retryButtonPulse.Play(_retryButton != null ? _retryButton.ButtonRt : null, gameObject);
         }
 
         private void StopIdleButtonEffects()
         {
             _buttonIdleFloat.Stop();
+            _retryButtonPulse.Stop(_retryButton != null ? _retryButton.ButtonRt : null);
         }
 
         private void OnDisable()

@@ -2483,7 +2483,7 @@ MonoBehaviour:
   _adsRewardText: {fileID: 3479465026700906933}
   _buttonsRoot: {fileID: 7523265486542138170}
   _buttonIdleFloat:
-    _moveOffsetY: 16
+    _moveOffsetY: 10
     _moveDuration: 1.35
     _moveCurve:
       serializedVersion: 2

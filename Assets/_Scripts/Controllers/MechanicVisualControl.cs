@@ -268,6 +268,14 @@ namespace Assets._Scripts.Controllers
             }
         }
 
+        public void ShowTrapInactiveImmediate()
+        {
+            if (_trapHolder == null)
+                return;
+
+            PlayTrapAnimation(_trapDownAnim, keepTrapVisible: true, doEffect: false);
+        }
+
         private void EnqueueMechanicVisualRequest(MechanicVisualRequest request)
         {
             if (!gameObject.activeInHierarchy)
@@ -777,6 +785,18 @@ namespace Assets._Scripts.Controllers
 
         void LateUpdate()
         {
+            var pillar = GetComponent<PillarController>();
+            if (pillar != null && pillar.IsFullMatch && _trapHolder != null && _trapHolder.activeSelf)
+            {
+                if (_trapAnimationRoutine != null)
+                {
+                    StopCoroutine(_trapAnimationRoutine);
+                    _trapAnimationRoutine = null;
+                }
+
+                _trapHolder.SetActive(false);
+            }
+
             if (_isSticky)
             {
                 var hasTopConnection = _stickTargetTop != null;

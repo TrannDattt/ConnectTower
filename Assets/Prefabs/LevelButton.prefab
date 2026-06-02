@@ -247,6 +247,7 @@ MonoBehaviour:
   _button: {fileID: 1570647791121423884}
   _buttonRt: {fileID: 3229714264194312414}
   _content: {fileID: 0}
+  _buttonIcon: {fileID: 0}
   _pressedScale: 1
   _duration: 0.1
   OnClicked:
@@ -1023,8 +1024,8 @@ MonoBehaviour:
     m_FontSize: 100
     m_FontStyle: 0
     m_BestFit: 1
-    m_MinSize: 100
-    m_MaxSize: 275
+    m_MinSize: 60
+    m_MaxSize: 188
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1

@@ -132,7 +132,7 @@ MonoBehaviour:
   _homeButton: {fileID: 6340301757382822764}
   _buttonsRoot: {fileID: 3999517297026384624}
   _buttonIdleFloat:
-    _moveOffsetY: 16
+    _moveOffsetY: 10
     _moveDuration: 1.35
     _moveCurve:
       serializedVersion: 2
@@ -159,6 +159,34 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     _startDelayStep: 0.3
+  _retryButtonPulse:
+    _scaleMultiplier: 0.95
+    _duration: 0.8
+    _scaleCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    _startDelay: 0.1
   _leftBlock:
     _target: {fileID: 4159661863316623344}
     _moveOffset: {x: 0, y: 18}
@@ -1554,11 +1582,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9123598671384322690, guid: e411a785d14a15547939d55f8742ec1a, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 340.1
+      value: 380
       objectReference: {fileID: 0}
     - target: {fileID: 9123598671384322690, guid: e411a785d14a15547939d55f8742ec1a, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 140
+      value: 160
       objectReference: {fileID: 0}
     - target: {fileID: 9123598671384322690, guid: e411a785d14a15547939d55f8742ec1a, type: 3}
       propertyPath: m_LocalPosition.x

@@ -455,7 +455,7 @@ namespace Assets._Scripts.Managers
 
                     if (LevelManager.PlayingLevel.Index == 1)
                     {
-                        // Instance.StartCoroutine(PlayTutorial(ETutorial.BaseGameplay1));
+                        Instance.StartCoroutine(PlayTutorial(ETutorial.BaseGameplay1));
                     }
                 }
 

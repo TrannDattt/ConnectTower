@@ -7,6 +7,9 @@ namespace Assets._Scripts.Visuals
     {
         [SerializeField] private TextMeshProUGUI _fps;
 
+        private float _elapsedTime;
+        private int _frameCount;
+
         void Update()
         {
             UpdateFpsDisplay();
@@ -19,9 +22,20 @@ namespace Assets._Scripts.Visuals
                 return;
             }
 
-            int currentFps = Mathf.RoundToInt(1f / Time.unscaledDeltaTime);
+            _elapsedTime += Time.unscaledDeltaTime;
+            _frameCount++;
+
+            if (_elapsedTime < 1f)
+            {
+                return;
+            }
+
+            int currentFps = Mathf.RoundToInt(_frameCount / _elapsedTime);
             _fps.SetText($"FPS: {currentFps}");
             _fps.color = GetFpsColor(currentFps);
+
+            _elapsedTime = 0f;
+            _frameCount = 0;
         }
 
         private static Color GetFpsColor(int fps)
