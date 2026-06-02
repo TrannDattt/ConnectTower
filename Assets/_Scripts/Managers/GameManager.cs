@@ -13,6 +13,8 @@ using Assets._Scripts.Services.APIs;
 using System.Linq;
 using System;
 using System.Threading.Tasks;
+using Assets._Scripts.Helpers;
+
 
 #if UNITY_EDITOR
 using Assets._Scripts.Editor;
@@ -274,6 +276,8 @@ namespace Assets._Scripts.Managers
             {
                 base.Enter();
 
+                // var levelIndex = LevelManager.PlayingLevel != null ? LevelManager.PlayingLevel.Index : -1;
+                // if (levelIndex == PlayerProgressHelper.ExtraMoveMilestone) 
                 _playingSM.ChangeState(EPlayingSubState.Opening);
             }
 
@@ -425,22 +429,22 @@ namespace Assets._Scripts.Managers
                 private EventBinding<StartLevelEvent> _startLevelBinding;
                 private EventBinding<UseBoosterEvent> _useBoosterBinding;
 
-                private List<PillarController> _interactablePillars = new();
+                private HashSet<PillarController> _interactablePillars = new();
 
                 public WhilePlayingState(EPlayingSubState key) : base(key)
                 {
                     _startLevelBinding = new(() => _doRevive = false);
-                    // Instance.SubcribeIngameEvent = SubcribeEvent;
-                    // Instance.UnsubcribeIngameEvent = UnsubcribeEvent;
-                    // Instance.SetInteractablePillarsEvent = SetInteractablePillars;
+                    Instance.SubcribeIngameEvent = SubcribeEvent;
+                    Instance.UnsubcribeIngameEvent = UnsubcribeEvent;
+                    Instance.SetInteractablePillarsEvent = SetInteractablePillars;
                     EventBus<StartLevelEvent>.Subscribe(_startLevelBinding);
                     _blocksMovedBinding = new(OnBlocksMoved);
                     _pillarFullMatchedBinding = new(Instance.OnPillarFullMatched);
                     _pillarClickedBinding = new((e) =>
                     {
-                        // if (_interactablePillars.Contains(e.Pillar))
+                        if (_interactablePillars.Contains(e.Pillar))
+                            BlockMovementController.Instance.OnPillarClicked(e);
                         // Debug.Log("Pillar clicked 2");
-                        BlockMovementController.Instance.OnPillarClicked(e);
                     });
                     _useBoosterBinding = new(OnUseBooster);
                     EventBus<UseBoosterEvent>.Subscribe(_useBoosterBinding);
@@ -453,9 +457,9 @@ namespace Assets._Scripts.Managers
                     SetInteractablePillars();
                     SubcribeEvent();
 
-                    if (LevelManager.PlayingLevel.Index == 1)
+                    if (TutorialManager.CheckCanPlayTutorial(out var toPlay))
                     {
-                        Instance.StartCoroutine(PlayTutorial(ETutorial.BaseGameplay1));
+                        Instance.StartCoroutine(PlayTutorial(toPlay));
                     }
                 }
 
@@ -464,6 +468,7 @@ namespace Assets._Scripts.Managers
                     base.Exit();
 
                     UnsubcribeEvent();
+                    _interactablePillars.Clear();
                 }
 
                 public override EPlayingSubState GetNextState()
@@ -492,12 +497,12 @@ namespace Assets._Scripts.Managers
                 {
                     if (pillars.Length == 0)
                     {
-                        _interactablePillars = BoardController.Instance.GetAllPillars();
+                        _interactablePillars = BoardController.Instance.GetAllPillars().ToHashSet();
                         return;
                     }
 
                     _interactablePillars.Clear();
-                    _interactablePillars.AddRange(pillars);
+                    _interactablePillars.UnionWith(pillars);
                 }
 
                 private void SubcribeEvent()
@@ -545,6 +550,11 @@ namespace Assets._Scripts.Managers
 
                     if (@event.MovedByPlayer)
                         Instance.CurrentLevelData.EndPlayerMoveScoreResolution();
+
+                    // if (LevelManager.PlayingLevel.MoveCount <= 5 || TutorialManager.CheckCanPlayBoosterTutorial(EBooster.ExtraMove))
+                    // {   
+                    //     Instance.StartCoroutine(PlayTutorial(ETutorial.ExtraMove));
+                    // }
 
                     CheckFinsihLevel();
                 }

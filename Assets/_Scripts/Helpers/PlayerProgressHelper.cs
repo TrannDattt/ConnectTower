@@ -19,7 +19,7 @@ namespace Assets._Scripts.Helpers
 
         public static bool CheckUnlockBooster(EBooster type, bool exactLevel = false, bool passMilestone = false)
         {
-            var curIndex = UserManager.CurUser.CurrentLevelIndex;
+            var curIndex = LevelManager.PlayingLevel != null ? LevelManager.PlayingLevel.Index : UserManager.CurUser.CurrentLevelIndex;
             var toCompare = type switch
             {
                 EBooster.ExtraMove => ExtraMoveMilestone,
@@ -31,7 +31,7 @@ namespace Assets._Scripts.Helpers
             return exactLevel ? curIndex == toCompare : curIndex >= toCompare + (passMilestone ? 1 : 0);
         }
 
-        public static bool CheckUnlockMechanic(EMechanic type, bool passMilestone = false)
+        public static bool CheckUnlockMechanic(EMechanic type, bool exactLevel = false, bool passMilestone = false)
         {
             var toCompare = type switch
             {
@@ -43,7 +43,7 @@ namespace Assets._Scripts.Helpers
                 EMechanic.TrapPillar => TrapPillarMilestone,
                 _ => Mathf.Infinity
             };
-            return UserManager.CurUser.CurrentLevelIndex >= toCompare + (passMilestone ? 1 : 0);
+            return exactLevel ? LevelManager.PlayingLevel.Index == toCompare : LevelManager.PlayingLevel.Index >= toCompare + (passMilestone ? 1 : 0);
         }
     }
 }

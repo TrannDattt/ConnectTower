@@ -19,7 +19,6 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Image _image;
         [SerializeField] private Text _detail;
         [SerializeField] private RectTransform _gameObjectHolder;
-        [SerializeField] private TutorialHandVisual _hand;
 
         public bool IsFinished => _activeTutorial == null || _activeTutorial.IsFinished;
         public bool IsDisplayingText => _tutorialCharacter != null && _tutorialCharacter.IsTalking;
@@ -42,6 +41,11 @@ namespace Assets._Scripts.Visuals
             _activeTutorial.Begin();
         }
 
+        public void StopPointing()
+        {
+            _tutorialCharacter.StopPoint(true);
+        }
+
         public Tween MoveNarrator(Vector2 pos)
         {
             return _tutorialCharacter.Move(pos);
@@ -54,9 +58,29 @@ namespace Assets._Scripts.Visuals
             yield return DoShowAnim();
         }
 
-        public Sequence DisplayText(string message, UnityAction onFinishTalking = null)
+        public override IEnumerator Hide()
         {
-            return _tutorialCharacter.Talk(message, () => onFinishTalking?.Invoke());
+            if (_activeTutorial != null)
+            {
+                if (!_activeTutorial.IsFinished)
+                {
+                    _activeTutorial.End();
+                }
+                else
+                {
+                    UserManager.CurUser.MarkTutorialPlayed(_activeTutorial.Type);
+                    Debug.Log($"Finish tutorial {_activeTutorial.Type}");
+                }
+            }
+            yield return base.Hide();
+        }
+
+        public Sequence DisplayText(DialogAction dialogAction, UnityAction onFinishTalking = null)
+        {
+            _tutorialCharacter.EnableHand(dialogAction._showHand);
+            if (dialogAction._showHand)
+                _tutorialCharacter.PointAt(dialogAction._handPos);
+            return _tutorialCharacter.Talk(dialogAction.Message, () => onFinishTalking?.Invoke());
         }
 
         public void CompleteDisplayedText()

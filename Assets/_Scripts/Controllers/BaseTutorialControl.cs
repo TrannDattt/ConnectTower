@@ -23,6 +23,7 @@ namespace Assets._Scripts.Controllers
         protected int _clickCount;
         protected int _currentDialogIndex;
 
+        private int _dialogStartedFrame = -1;
         private int _dialogCompletedClickFrame = -1;
 
         protected abstract void HandlingEvent(PlayerClickEvent @event);
@@ -39,6 +40,7 @@ namespace Assets._Scripts.Controllers
             IsFinished = false;
             _clickCount = 0;
             _currentDialogIndex = -1;
+            _dialogStartedFrame = -1;
             _dialogCompletedClickFrame = -1;
             _playerClickBinding = new (HandlingEvent);
             EventBus<PlayerClickEvent>.Subscribe(_playerClickBinding);
@@ -88,6 +90,11 @@ namespace Assets._Scripts.Controllers
 
             if (_visual.IsDisplayingText)
             {
+                if (_dialogStartedFrame == Time.frameCount)
+                {
+                    return true;
+                }
+
                 _dialogCompletedClickFrame = Time.frameCount;
                 _visual.CompleteDisplayedText();
                 return true;
@@ -115,7 +122,8 @@ namespace Assets._Scripts.Controllers
             }
 
             _currentDialogIndex = dialogIndex;
-            _visual.DisplayText(_dialogActions[dialogIndex].Message, onFinishTalking);
+            _dialogStartedFrame = Time.frameCount;
+            _visual.DisplayText(_dialogActions[dialogIndex], onFinishTalking);
         }
 
         protected bool HasDialog(int dialogIndex)
@@ -131,6 +139,7 @@ namespace Assets._Scripts.Controllers
     {
         [TextArea(minLines: 1, maxLines: 3)] public string Message;
         public Vector2 _handPos;
+        public bool _showHand;
     }
 
     public struct PlayerClickEvent : IEvent

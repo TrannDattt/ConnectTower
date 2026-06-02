@@ -7,40 +7,31 @@ using UnityEngine;
 
 namespace Assets._Scripts.Controllers.Tutorials
 {
-    public class Gameplay1TutorialControl : BaseTutorialControl
+    public class Gameplay2TutorialControl : BaseTutorialControl
     {
-        // Description: Tutorial for level 1: Show player how to move block from pillar1 to pillar2
-        // CHARACTER
         [SerializeField] private Vector2 _characterPos;
 
-        // CHANGE LAYER
         [SerializeField] private LayerMask _targetLayer;
-        [SerializeField] private float _pillarNewScaleFactor;
-
-        [SerializeField] private int _pillar1Id; // Pillar with 3 blocks
-        [SerializeField] private int _pillar2Id; // Other pillar
-
+        [SerializeField] private int _pillar1Id;
         [SerializeField] private float _endDelay;
 
         private PillarController _pillar1;
-        private PillarController _pillar2;
         private int _pillar1BaseLayer;
-        private int _pillar2BaseLayer;
 
         private EventBinding<PillarClickedEvent> _pillarClickedBinding;
-        private Coroutine _endTutorialCoroutine;
+        private Coroutine _finishTutorialCoroutine;
         private TutorialStep _currentStep;
 
         private enum TutorialStep
         {
             None,
-            WaitForPillar1,
-            WaitForPillar2,
+            WaitForFirstClick,
+            WaitForSecondClick,
             Ending,
         }
 
         public override void Begin()
-        {   
+        {
             var pillars = BoardController.Instance.GetAllPillars();
             _pillar1 = pillars.FirstOrDefault(p => p.Id == _pillar1Id);
             if (_pillar1 == null)
@@ -48,46 +39,26 @@ namespace Assets._Scripts.Controllers.Tutorials
                 Debug.LogError($"Cant find pillar with id {_pillar1Id}");
                 return;
             }
-            _pillar2 = pillars.FirstOrDefault(p => p.Id == _pillar2Id);
-            if (_pillar2 == null)
-            {
-                Debug.LogError($"Cant find pillar with id {_pillar2Id}");
-                return;
-            }
 
             _pillar1BaseLayer = _pillar1.gameObject.layer;
-            _pillar2BaseLayer = _pillar2.gameObject.layer;
             _visual.MoveNarrator(_characterPos);
 
-            GameManager.Instance.UnsubcribeIngameEvent?.Invoke();
-
-            StartCoroutine(DoTutorial());
-        }
-
-        private IEnumerator DoTutorial()
-        {
-            _currentStep = TutorialStep.WaitForPillar1;
-            ChangePillarsLayer(_pillar2, _pillar2BaseLayer);
-            ChangePillarsLayer(_pillar1, _targetLayer);
-
             DisableGameplayPillarInteraction();
-            PlayDialog(0, EnablePillar1Interaction);
-
-            yield break;
+            StartCoroutine(DoTutorial());
         }
 
         public override void End()
         {
-            if (_endTutorialCoroutine != null)
+            if (_finishTutorialCoroutine != null)
             {
-                StopCoroutine(_endTutorialCoroutine);
-                _endTutorialCoroutine = null;
+                StopCoroutine(_finishTutorialCoroutine);
+                _finishTutorialCoroutine = null;
             }
 
             RestorePillarState();
             EnableAllGameplayPillarInteraction();
+            _visual.StopPointing();
             _currentStep = TutorialStep.None;
-            BoardController.Instance.ClearBoard();
             IsFinished = true;
         }
 
@@ -104,10 +75,10 @@ namespace Assets._Scripts.Controllers.Tutorials
             EventBus<PillarClickedEvent>.Unsubscribe(_pillarClickedBinding);
             RestorePillarState();
 
-            if (_endTutorialCoroutine != null)
+            if (_finishTutorialCoroutine != null)
             {
-                StopCoroutine(_endTutorialCoroutine);
-                _endTutorialCoroutine = null;
+                StopCoroutine(_finishTutorialCoroutine);
+                _finishTutorialCoroutine = null;
             }
 
             base.OnDisable();
@@ -119,9 +90,17 @@ namespace Assets._Scripts.Controllers.Tutorials
             RegisterPlayerClick(@event);
         }
 
+        private IEnumerator DoTutorial()
+        {
+            _currentStep = TutorialStep.WaitForFirstClick;
+            ChangePillarLayer(_targetLayer);
+            PlayDialog(0, EnableFirstPillarInteraction);
+            yield break;
+        }
+
         private void OnPillarClicked(PillarClickedEvent @event)
         {
-            if (IsFinished || @event.Pillar == null)
+            if (IsFinished || @event.Pillar != _pillar1)
             {
                 return;
             }
@@ -133,43 +112,39 @@ namespace Assets._Scripts.Controllers.Tutorials
         {
             switch (_currentStep)
             {
-                case TutorialStep.WaitForPillar1 when clickedPillar == _pillar1:
+                case TutorialStep.WaitForFirstClick when clickedPillar == _pillar1:
                     DisableGameplayPillarInteraction();
-                    // ChangePillarsLayer(_pillar1, _pillar1BaseLayer);
-                    ChangePillarsLayer(_pillar2, _targetLayer);
-                    _currentStep = TutorialStep.WaitForPillar2;
-                    PlayDialog(1, EnablePillar2Interaction);
+                    _currentStep = TutorialStep.WaitForSecondClick;
+                    PlayDialog(1, EnableSecondPillarInteraction);
                     break;
 
-                case TutorialStep.WaitForPillar2 when clickedPillar == _pillar2:
+                case TutorialStep.WaitForSecondClick when clickedPillar == _pillar1:
                     DisableGameplayPillarInteraction();
-                    // ChangePillarsLayer(_pillar2, _pillar2BaseLayer);
-                    _visual.StopPointing();
                     _currentStep = TutorialStep.Ending;
-                    _endTutorialCoroutine ??= StartCoroutine(WaitAndEndTutorial());
+                    _finishTutorialCoroutine ??= StartCoroutine(WaitAndEndTutorial());
                     break;
             }
         }
 
-        private void EnablePillar1Interaction()
+        private void EnableFirstPillarInteraction()
         {
-            if (IsFinished || _currentStep != TutorialStep.WaitForPillar1)
+            if (IsFinished || _currentStep != TutorialStep.WaitForFirstClick)
             {
                 return;
             }
 
-            GameManager.Instance.SetInteractablePillarsEvent?.Invoke(new[] {_pillar1});
+            GameManager.Instance.SetInteractablePillarsEvent?.Invoke(new[] { _pillar1 });
             GameManager.Instance.SubcribeIngameEvent?.Invoke();
         }
 
-        private void EnablePillar2Interaction()
+        private void EnableSecondPillarInteraction()
         {
-            if (IsFinished || _currentStep != TutorialStep.WaitForPillar2)
+            if (IsFinished || _currentStep != TutorialStep.WaitForSecondClick)
             {
                 return;
             }
 
-            GameManager.Instance.SetInteractablePillarsEvent?.Invoke(new[] {_pillar2});
+            GameManager.Instance.SetInteractablePillarsEvent?.Invoke(new[] { _pillar1 });
             GameManager.Instance.SubcribeIngameEvent?.Invoke();
         }
 
@@ -187,7 +162,7 @@ namespace Assets._Scripts.Controllers.Tutorials
         private IEnumerator WaitAndEndTutorial()
         {
             yield return new WaitForSeconds(_endDelay);
-            _endTutorialCoroutine = null;
+            _finishTutorialCoroutine = null;
             End();
         }
 
@@ -195,23 +170,18 @@ namespace Assets._Scripts.Controllers.Tutorials
         {
             if (_pillar1 != null)
             {
-                ChangePillarsLayer(_pillar1, _pillar1BaseLayer);
-            }
-
-            if (_pillar2 != null)
-            {
-                ChangePillarsLayer(_pillar2, _pillar2BaseLayer);
+                ChangePillarLayer(_pillar1BaseLayer);
             }
         }
 
-        private void ChangePillarsLayer(PillarController pillar, LayerMask layer)
+        private void ChangePillarLayer(LayerMask layer)
         {
-            pillar.GetComponent<PillarEffectVisual>().ChangeLayer(layer);
+            _pillar1.GetComponent<PillarEffectVisual>().ChangeLayer(layer);
         }
 
-        private void ChangePillarsLayer(PillarController pillar, int layer)
+        private void ChangePillarLayer(int layer)
         {
-            pillar.GetComponent<PillarEffectVisual>().ChangeLayer(layer);
+            _pillar1.GetComponent<PillarEffectVisual>().ChangeLayer(layer);
         }
     }
 }

@@ -5957,11 +5957,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745658409}
   m_CullTransparentMesh: 1
---- !u!1 &769021131 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5696757293461681474, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-  m_PrefabInstance: {fileID: 279980165571522513}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &770703945
 GameObject:
   m_ObjectHideFlags: 0
@@ -6509,17 +6504,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 854721583}
   m_CullTransparentMesh: 1
---- !u!114 &910752010 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6734799355810881787, guid: 2e9f544616b33934eac54fb2bc397470, type: 3}
-  m_PrefabInstance: {fileID: 8261164954335173629}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 754c44e0dade11b439efd3d4531d5960, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.MoveCount
 --- !u!1 &949456040
 GameObject:
   m_ObjectHideFlags: 0
@@ -7377,166 +7361,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4229606670171339498, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
   m_PrefabInstance: {fileID: 279980165571522513}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 769021131}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ca5b5ef762eb874d94740468a8d97c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.TutorialPopupVisual
---- !u!114 &1195574890
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 769021131}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75717cdac411a1e4ab1264bc95b4e888, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.Gameplay2TutorialControl
-  <Type>k__BackingField: 2
-  _dialogActions:
-  - Message: You can pickup multiple blocks of same type at once
-    _handPos: {x: 480, y: 372}
-    _showHand: 1
-  - Message: You can click to the pillar again to put them down
-    _handPos: {x: 480, y: 372}
-    _showHand: 1
-  _characterPos: {x: -310, y: -660}
-  _targetLayer:
-    serializedVersion: 2
-    m_Bits: 8192
-  _pillar1Id: 1
-  _endDelay: 0.5
---- !u!114 &1195574892
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 769021131}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08ee324fd9809ae42ab8c86dcff48c3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.HiddenBlockTutorialControl
-  <Type>k__BackingField: 7
-  _dialogActions:
-  - Message: Hidden Blocks are block with hidden type
-    _handPos: {x: 0, y: 0}
-    _showHand: 0
-  - Message: Your have to move the blocks above them...
-    _handPos: {x: 388, y: 480}
-    _showHand: 1
-  - Message: ... so they can reveal themselves
-    _handPos: {x: 570, y: 480}
-    _showHand: 1
-  _characterPos: {x: -310, y: -660}
-  _targetLayer:
-    serializedVersion: 2
-    m_Bits: 8192
-  _pillar1Id: 1
-  _pillar2Id: 2
-  _endDelay: 1.5
---- !u!114 &1195574894
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 769021131}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e317f3bd93dd27d42abe390c05c061c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.ExtraMoveTutorialControl
-  <Type>k__BackingField: 3
-  _dialogActions:
-  - Message: Becareful!!! You are running out of move
-    _handPos: {x: 0, y: 0}
-    _showHand: 0
-  - Message: Use Extra Move to gain 5 more moves
-    _handPos: {x: 0, y: 0}
-    _showHand: 0
-  _characterPos: {x: 0, y: 0}
-  _targetLayer:
-    serializedVersion: 2
-    m_Bits: 8192
-  _endDelay: 0
-  _moveCounter: {fileID: 910752010}
-  _extraMoveButton: {fileID: 2033047787}
---- !u!114 &1195574896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 769021131}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9721263b1680fe449fe2d230407120d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.CoveredPillarTutorialControl
-  <Type>k__BackingField: 8
-  _dialogActions:
-  - Message: Cover Pillars are lock by a specific type of block
-    _handPos: {x: 0, y: 0}
-    _showHand: 0
-  - Message: You have to match the block with that same type...
-    _handPos: {x: 180, y: 340}
-    _showHand: 1
-  - Message: ... to lift up the clothe
-    _handPos: {x: 380, y: 340}
-    _showHand: 1
-  _characterPos: {x: -310, y: -250}
-  _targetLayer:
-    serializedVersion: 2
-    m_Bits: 8192
-  _pillar1Id: 14
-  _pillar2Id: 12
-  _pillar3Id: 13
-  _endDelay: 3
---- !u!114 &1195574897
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 769021131}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 971f78e2268f75b4db77e662f567d19c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.FrozenBlockTutorialControl
-  <Type>k__BackingField: 9
-  _dialogActions:
-  - Message: Frozen Blocks can not move for the rest of the level
-    _handPos: {x: 0, y: 0}
-    _showHand: 0
-  - Message: When you let a block of same type...
-    _handPos: {x: 550, y: 340}
-    _showHand: 1
-  - Message: ... touch the Frozen Blocks...
-    _handPos: {x: 380, y: 340}
-    _showHand: 1
-  - Message: ... will also make that block freeze
-    _handPos: {x: 0, y: 0}
-    _showHand: 0
-  - Message: But by matching all the blocks of that type,...
-    _handPos: {x: 730, y: -240}
-    _showHand: 1
-  - Message: ... you will destry the ice
-    _handPos: {x: 380, y: 340}
-    _showHand: 1
-  _characterPos: {x: -310, y: -250}
-  _targetLayer:
-    serializedVersion: 2
-    m_Bits: 8192
-  _pillar1Id: 5
-  _pillar2Id: 6
-  _pillar3Id: 3
-  _endDelay: 3
 --- !u!1 &1200861174
 GameObject:
   m_ObjectHideFlags: 0
@@ -8735,7 +8565,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9051018180230183593, guid: 76f930e3660492445b107ed945e4834e, type: 3}
       propertyPath: m_Pivot.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 9051018180230183593, guid: 76f930e3660492445b107ed945e4834e, type: 3}
       propertyPath: m_AnchorMax.x
@@ -8743,7 +8573,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9051018180230183593, guid: 76f930e3660492445b107ed945e4834e, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 9051018180230183593, guid: 76f930e3660492445b107ed945e4834e, type: 3}
       propertyPath: m_AnchorMin.x
@@ -8751,7 +8581,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9051018180230183593, guid: 76f930e3660492445b107ed945e4834e, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 9051018180230183593, guid: 76f930e3660492445b107ed945e4834e, type: 3}
       propertyPath: m_SizeDelta.x
@@ -8791,11 +8621,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9051018180230183593, guid: 76f930e3660492445b107ed945e4834e, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 240.7
+      value: 357.71
       objectReference: {fileID: 0}
     - target: {fileID: 9051018180230183593, guid: 76f930e3660492445b107ed945e4834e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -170.02
+      value: 856.71
       objectReference: {fileID: 0}
     - target: {fileID: 9051018180230183593, guid: 76f930e3660492445b107ed945e4834e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -10030,17 +9860,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2031440646}
   m_CullTransparentMesh: 1
---- !u!114 &2033047787 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4203123174479332029, guid: 2e9f544616b33934eac54fb2bc397470, type: 3}
-  m_PrefabInstance: {fileID: 8261164954335173629}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7a2f793ed9311742880501395eff734, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.MechanicButtonVisual
 --- !u!1 &2034269220
 GameObject:
   m_ObjectHideFlags: 0
@@ -10923,46 +10742,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 957630271}
     m_Modifications:
-    - target: {fileID: 724341697816659827, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 724341697816659827, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 724341697816659827, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2437083262339507048, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2437083262339507048, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      propertyPath: _dialogActions.Array.data[0]._showHand
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2437083262339507048, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      propertyPath: _dialogActions.Array.data[1]._showHand
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2437083262339507048, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      propertyPath: _dialogActions.Array.data[0]._handPos.x
-      value: 680
-      objectReference: {fileID: 0}
-    - target: {fileID: 2437083262339507048, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      propertyPath: _dialogActions.Array.data[0]._handPos.y
-      value: 372
-      objectReference: {fileID: 0}
-    - target: {fileID: 2437083262339507048, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      propertyPath: _dialogActions.Array.data[1]._handPos.x
-      value: 280
-      objectReference: {fileID: 0}
-    - target: {fileID: 2437083262339507048, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      propertyPath: _dialogActions.Array.data[1]._handPos.y
-      value: 372
-      objectReference: {fileID: 0}
     - target: {fileID: 3246104878535052872, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
       propertyPath: _idleMoveOffset.y
       value: 10
@@ -11058,22 +10837,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5696757293461681474, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1195574890}
-    - targetCorrespondingSourceObject: {fileID: 5696757293461681474, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1195574892}
-    - targetCorrespondingSourceObject: {fileID: 5696757293461681474, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1195574894}
-    - targetCorrespondingSourceObject: {fileID: 5696757293461681474, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1195574896}
-    - targetCorrespondingSourceObject: {fileID: 5696757293461681474, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1195574897}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 93e101dc89df26f43bd1c7551016a04d, type: 3}
 --- !u!1001 &1754362612009393833
 PrefabInstance:
@@ -12590,7 +12354,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9192086617889321832, guid: 75f201a19287e2a4988a18d415ec1812, type: 3}
       propertyPath: <AllowPlayLockedLevel>k__BackingField
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13043,7 +12807,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 939347738787800716, guid: cf7a1bdedac7d7e4f8c43a228921fc0e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 66
+      value: 66.00001
       objectReference: {fileID: 0}
     - target: {fileID: 939347738787800716, guid: cf7a1bdedac7d7e4f8c43a228921fc0e, type: 3}
       propertyPath: m_ConstrainProportionsScale
@@ -14992,7 +14756,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5224781559204543544, guid: d0501bd996654c34f843b35041d99e61, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -61.59999
+      value: -61.600006
       objectReference: {fileID: 0}
     - target: {fileID: 5227781182838335714, guid: d0501bd996654c34f843b35041d99e61, type: 3}
       propertyPath: m_Pivot.x

@@ -30,10 +30,10 @@ namespace Assets._Scripts.Managers
             if (CheckCanPlayMechanicTutorial(EMechanic.FrozenBlock)) toPlay = ETutorial.FrozenBlock;
             if (CheckCanPlayBoosterTutorial(EBooster.Shuffle)) toPlay = ETutorial.Shuffle;
             if (CheckCanPlayMechanicTutorial(EMechanic.CoveredPillar)) toPlay = ETutorial.CoveredPillar;
-            if (CheckCanPlayBoosterTutorial(EBooster.ExtraMove)) toPlay = ETutorial.ExtraMove;
+            // if (CheckCanPlayBoosterTutorial(EBooster.ExtraMove)) toPlay = ETutorial.ExtraMove;
             if (CheckCanPlayMechanicTutorial(EMechanic.HiddenBlock)) toPlay = ETutorial.HiddenBlock;
-            if (LevelManager.PlayingLevel.Index == 2) toPlay = ETutorial.BaseGameplay2;
-            if (LevelManager.PlayingLevel.Index == 1) toPlay = ETutorial.BaseGameplay1;
+            if (LevelManager.PlayingLevel.Index == 2 && !UserManager.HasPlayedTutorial(ETutorial.BaseGameplay2)) toPlay = ETutorial.BaseGameplay2;
+            if (LevelManager.PlayingLevel.Index == 1 && !UserManager.HasPlayedTutorial(ETutorial.BaseGameplay1)) toPlay = ETutorial.BaseGameplay1;
 
             return toPlay != ETutorial.None;
         }
@@ -41,7 +41,7 @@ namespace Assets._Scripts.Managers
         /// <summary>Kiểm tra có thể phát tutorial của Booster không (chưa unlock hoặc đã chơi rồi thì bỏ qua).</summary>
         public static bool CheckCanPlayBoosterTutorial(EBooster type)
         {
-            if (!PlayerProgressHelper.CheckUnlockBooster(type)) return false;
+            if (!PlayerProgressHelper.CheckUnlockBooster(type, exactLevel: true)) return false;
             if (CheckPlayBoosterTutorialBefore(type)) return false;
             return true;
         }
@@ -49,7 +49,7 @@ namespace Assets._Scripts.Managers
         /// <summary>Kiểm tra có thể phát tutorial của Mechanic không (chưa unlock hoặc đã chơi rồi thì bỏ qua).</summary>
         public static bool CheckCanPlayMechanicTutorial(EMechanic type)
         {
-            if (!PlayerProgressHelper.CheckUnlockMechanic(type)) return false;
+            if (!PlayerProgressHelper.CheckUnlockMechanic(type, exactLevel: true)) return false;
             if (CheckPlayMechanicTutorialBefore(type)) return false;
             return true;
         }

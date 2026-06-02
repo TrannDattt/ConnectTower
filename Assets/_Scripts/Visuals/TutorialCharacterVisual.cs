@@ -31,6 +31,9 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private float _fadeDur;
         [SerializeField] private Image _characterBase;
         [SerializeField] private GameObject _characterHand;
+        [SerializeField] private float _pointMoveDur = 0.35f;
+        [SerializeField] private float _pointIdleLoopDur = 0.55f;
+        [SerializeField] private float _pointIdleDistance = 30f;
 
         // MOVING
         [SerializeField] private float _moveDur;
@@ -39,6 +42,8 @@ namespace Assets._Scripts.Visuals
 
         private Tween _activeTalkTween;
         private string _currentMessage;
+        private RectTransform _characterHandRect;
+        private Vector2 _characterHandOriginPos;
 
         public Tween Show()
         {
@@ -55,6 +60,7 @@ namespace Assets._Scripts.Visuals
 
         public Tween Hide()
         {
+            StopPoint(false);
             return _characterGroup.DOFade(0f, _fadeDur)
                                   .SetEase(Ease.InQuad)
                                   .SetTarget(gameObject)
@@ -193,27 +199,110 @@ namespace Assets._Scripts.Visuals
             _activeTalkTween.Kill();
         }
 
-        public void PointAt(Vector3 worldPos)
+        public void EnableHand(bool enable)
         {
-            // Setup
+            if (_characterHand != null)
+            {
+                _characterHand.gameObject.SetActive(enable);
+            }
+        }
+
+        public void PointAt(Vector2 anchoredPos)
+        {
+            if (_characterHandRect == null)
+            {
+                return;
+            }
+
+            DOTween.Kill(_characterHandRect);
+
+            if (!_characterHand.gameObject.activeSelf)
+            {
+                _characterHandRect.anchoredPosition = _characterHandOriginPos;
+            }
+
             _characterHand.gameObject.SetActive(true);
 
-            //TODO: Hand move in a parabol-path and rotate at oposite direction
+            var pointMoveDur = Mathf.Max(0.01f, _pointMoveDur);
+            var pointIdleLoopDur = Mathf.Max(0.01f, _pointIdleLoopDur);
+            var awayDirection = anchoredPos.sqrMagnitude > 0.001f
+                ? anchoredPos.normalized
+                : Vector2.right;
+            var pointIdleTarget = anchoredPos + (awayDirection * _pointIdleDistance);
+
+            _characterHandRect.DOAnchorPos(anchoredPos, pointMoveDur)
+                              .SetEase(Ease.OutQuad)
+                              .SetUpdate(true)
+                              .SetTarget(_characterHandRect)
+                              .OnComplete(() =>
+                              {
+                                  DOTween.Sequence()
+                                         .SetTarget(_characterHandRect)
+                                         .SetUpdate(true)
+                                         .SetId("Point")
+                                         .Append(_characterHandRect.DOAnchorPos(pointIdleTarget, pointIdleLoopDur).SetEase(Ease.InOutSine))
+                                         .Append(_characterHandRect.DOAnchorPos(anchoredPos, pointIdleLoopDur).SetEase(Ease.InOutSine))
+                                         .SetLoops(-1, LoopType.Restart);
+                              });
+        }
+
+        public void PointAt(Vector3 worldPos)
+        {
+            if (_characterHandRect == null)
+            {
+                return;
+            }
+
+            var canvas = _rt != null ? _rt.GetComponentInParent<Canvas>() : null;
+            if (canvas != null)
+            {
+                canvas = canvas.rootCanvas;
+            }
+            var parentRect = _characterHandRect.parent as RectTransform;
+            if (parentRect == null)
+            {
+                return;
+            }
+
+            var screenPoint = RectTransformUtility.WorldToScreenPoint(canvas != null ? canvas.worldCamera : null, worldPos);
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPoint, canvas != null ? canvas.worldCamera : null, out var localPoint))
+            {
+                PointAt(localPoint);
+            }
         }
 
         public void StopPoint(bool withAnim)
         {
-            if (!withAnim)
+            if (_characterHandRect == null)
             {
-                _characterHand.gameObject.SetActive(false);
+                return;
             }
 
-            //TODO: Retreat hand back to base
+            DOTween.Kill(_characterHandRect);
+
+            if (!withAnim)
+            {
+                _characterHandRect.anchoredPosition = _characterHandOriginPos;
+                _characterHand.gameObject.SetActive(false);
+                return;
+            }
+
+            _characterHandRect.DOAnchorPos(_characterHandOriginPos, Mathf.Max(0.01f, _pointMoveDur))
+                              .SetEase(Ease.InQuad)
+                              .SetUpdate(true)
+                              .SetTarget(_characterHandRect)
+                              .OnComplete(() => _characterHand.gameObject.SetActive(false))
+                              .OnKill(() =>
+                              {
+                                  _characterHandRect.anchoredPosition = _characterHandOriginPos;
+                                  _characterHand.gameObject.SetActive(false);
+                              });
         }
 
         public Tween Move(Vector2 anchorPos)
         {
             StopTalk(true);
+            StopPoint(false);
             return _rt.DOAnchorPos(anchorPos, _moveDur).SetEase(Ease.OutQuad).SetUpdate(true).SetTarget(this).SetId("Move");
         }
 
@@ -221,6 +310,11 @@ namespace Assets._Scripts.Visuals
         {
             _baseOriginScale = _characterBase.transform.localScale;
             _baseOriginRotation = _characterBase.transform.rotation;
+            _characterHandRect = _characterHand != null ? _characterHand.GetComponent<RectTransform>() : null;
+            if (_characterHandRect != null)
+            {
+                _characterHandOriginPos = _characterHandRect.anchoredPosition;
+            }
         }
 
         void OnEnable()
@@ -230,6 +324,7 @@ namespace Assets._Scripts.Visuals
 
         void OnDisable()
         {
+            StopPoint(false);
             DOTween.Kill(this);
         }
 
