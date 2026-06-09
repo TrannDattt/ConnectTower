@@ -35,7 +35,7 @@ namespace Assets._Scripts.Visuals
 
         [SerializeField] private Image _icon;
         [SerializeField] private GameObject _decorateHolder;
-        [SerializeField] private Text _indexText;
+        [SerializeField] private TextMeshProUGUI _indexText;
 
         private LevelRuntimeData _levelData;
         private int _placeholderIndex = -1;
@@ -49,7 +49,7 @@ namespace Assets._Scripts.Visuals
             if (data == null)
             {
                 _levelData = null;
-                _indexText.text = "Coming soon";
+                _indexText.SetText("Coming soon");
                 _icon.sprite = _normalIcon;
                 _decorateHolder.SetActive(false);
                 gameObject.name = $"Level_{backupIndex}_PlaceHolder";
@@ -85,7 +85,7 @@ namespace Assets._Scripts.Visuals
                 glow.DOFade(.15f, 1f).From(1f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine).SetLink(gameObject, LinkBehaviour.KillOnDisable);
             }
 
-            _indexText.text = _levelData.Index.ToString();
+            _indexText.SetText(_levelData.Index.ToString());
             gameObject.name = $"Level_{_levelData.Index}";
         }
 

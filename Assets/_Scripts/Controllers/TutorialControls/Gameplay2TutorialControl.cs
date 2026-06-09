@@ -41,7 +41,7 @@ namespace Assets._Scripts.Controllers.Tutorials
             }
 
             _pillar1BaseLayer = _pillar1.gameObject.layer;
-            _visual.MoveNarrator(_characterPos);
+            MoveNarratorToTutorialTarget(_characterPos);
 
             DisableGameplayPillarInteraction();
             StartCoroutine(DoTutorial());

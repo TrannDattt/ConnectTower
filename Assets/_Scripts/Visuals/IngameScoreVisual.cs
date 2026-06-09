@@ -34,8 +34,6 @@ namespace Assets._Scripts.Visuals
         [SerializeField] private Vector3 _textRotateAngle;
         [SerializeField] private float _textRotateDur = 0.3f;
         [SerializeField] private float _autoHideDelay = 5f;
-        [SerializeField] private float _maxScoreDur = 3f;
-
         private Vector2 _originPos;
         private DOTweenTMPAnimator _scoreAnimator;
 
@@ -89,41 +87,6 @@ namespace Assets._Scripts.Visuals
                 ? 0f
                 : _textScaleDur + Mathf.Max(0, visibleCharCount - 1) * _charWaveStepDelay;
             return Mathf.Max(_textRotateDur, waveDuration);
-        }
-
-        public float GetLevelClearBonusTotalDuration(int totalUpdates, float baseStepDuration)
-        {
-            if (totalUpdates <= 1)
-                return 0f;
-
-            var unclampedDuration = Mathf.Max(0f, baseStepDuration) * (totalUpdates - 1);
-            return Mathf.Min(_maxScoreDur, unclampedDuration);
-        }
-
-        public float GetLevelClearBonusStepTime(int updateIndex, int totalUpdates, float totalDuration)
-        {
-            if (totalUpdates <= 1 || totalDuration <= 0f || updateIndex <= 1)
-                return 0f;
-
-            var clampedIndex = Mathf.Clamp(updateIndex, 1, totalUpdates);
-            var normalizedProgress = (float)(clampedIndex - 1) / (totalUpdates - 1);
-            return EvaluateLevelClearBonusProgress(normalizedProgress) * totalDuration;
-        }
-
-        public float GetLevelClearBonusStepDuration(int updateIndex, int totalUpdates, float totalDuration)
-        {
-            if (updateIndex >= totalUpdates)
-                return 0f;
-
-            var currentStepTime = GetLevelClearBonusStepTime(updateIndex, totalUpdates, totalDuration);
-            var nextStepTime = GetLevelClearBonusStepTime(updateIndex + 1, totalUpdates, totalDuration);
-            return Mathf.Max(0f, nextStepTime - currentStepTime);
-        }
-
-        private float EvaluateLevelClearBonusProgress(float normalizedProgress)
-        {
-            normalizedProgress = Mathf.Clamp01(normalizedProgress);
-            return normalizedProgress + (normalizedProgress * (1f - normalizedProgress) * 0.35f);
         }
 
         private Tween CreateScoreWaveTween()

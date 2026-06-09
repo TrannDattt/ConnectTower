@@ -22,13 +22,13 @@ namespace Assets._Scripts.Managers
         {
             toPlay = ETutorial.None;
 
-            if (CheckCanPlayBoosterTutorial(EBooster.AddPillar)) toPlay = ETutorial.AddPillar;
-            if (CheckCanPlayMechanicTutorial(EMechanic.TrapPillar)) toPlay = ETutorial.FrozenBlock;
-            if (CheckCanPlayMechanicTutorial(EMechanic.ScratchBlock)) toPlay = ETutorial.FrozenBlock;
-            if (CheckCanPlayBoosterTutorial(EBooster.Hint)) toPlay = ETutorial.Hint;
-            if (CheckCanPlayMechanicTutorial(EMechanic.StickyBlock)) toPlay = ETutorial.FrozenBlock;
+            // if (CheckCanPlayBoosterTutorial(EBooster.AddPillar)) toPlay = ETutorial.AddPillar;
+            if (CheckCanPlayMechanicTutorial(EMechanic.TrapPillar)) toPlay = ETutorial.TrapPillar;
+            if (CheckCanPlayMechanicTutorial(EMechanic.ScratchBlock)) toPlay = ETutorial.ScratchBlock;
+            // if (CheckCanPlayBoosterTutorial(EBooster.Hint)) toPlay = ETutorial.Hint;
+            if (CheckCanPlayMechanicTutorial(EMechanic.StickyBlock)) toPlay = ETutorial.StickyBlock;
             if (CheckCanPlayMechanicTutorial(EMechanic.FrozenBlock)) toPlay = ETutorial.FrozenBlock;
-            if (CheckCanPlayBoosterTutorial(EBooster.Shuffle)) toPlay = ETutorial.Shuffle;
+            // if (CheckCanPlayBoosterTutorial(EBooster.Shuffle)) toPlay = ETutorial.Shuffle;
             if (CheckCanPlayMechanicTutorial(EMechanic.CoveredPillar)) toPlay = ETutorial.CoveredPillar;
             // if (CheckCanPlayBoosterTutorial(EBooster.ExtraMove)) toPlay = ETutorial.ExtraMove;
             if (CheckCanPlayMechanicTutorial(EMechanic.HiddenBlock)) toPlay = ETutorial.HiddenBlock;
@@ -72,7 +72,15 @@ namespace Assets._Scripts.Managers
 
         public static bool GetBehavior(ETutorial key, out BaseTutorialControl behavior)
         {
-            return _tutorialBehaviorDict.TryGetValue(key, out behavior);
+            EnsureTutorialDataLoaded();
+
+            if (_tutorialBehaviorDict.TryGetValue(key, out behavior) && behavior != null)
+            {
+                return true;
+            }
+
+            RebuildBehaviorCache();
+            return _tutorialBehaviorDict.TryGetValue(key, out behavior) && behavior != null;
         }
 
         // ─── PRIVATE CHECKS ───────────────────────────────────────────
@@ -134,20 +142,54 @@ namespace Assets._Scripts.Managers
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Init()
         {
-            var datas = Resources.LoadAll<TutorialSO>(_path);
-            if (datas.Length == 0) return;
+            EnsureTutorialDataLoaded();
+            RebuildBehaviorCache();
+        }
 
-            foreach(var data in datas)
+        private static void EnsureTutorialDataLoaded()
+        {
+            if (_tutorialDict.Count > 0)
+            {
+                return;
+            }
+
+            var datas = Resources.LoadAll<TutorialSO>(_path);
+            if (datas.Length == 0)
+            {
+                Debug.LogWarning($"No tutorial data found in Resources/{_path}");
+                return;
+            }
+
+            foreach (var data in datas)
             {
                 _tutorialDict[data.Type] = data;
             }
-            
-            var behaviors = Object.FindFirstObjectByType<TutorialPopupVisual>(FindObjectsInactive.Include).GetComponents<BaseTutorialControl>();
-            if (behaviors != null && behaviors.Length > 0)
-                foreach(var behavior in behaviors)
+        }
+
+        private static void RebuildBehaviorCache()
+        {
+            _tutorialBehaviorDict.Clear();
+
+            var tutorialPopups = Object.FindObjectsByType<TutorialPopupVisual>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var popup in tutorialPopups)
+            {
+                if (popup == null)
                 {
+                    continue;
+                }
+
+                var behaviors = popup.GetComponents<BaseTutorialControl>();
+                foreach (var behavior in behaviors)
+                {
+                    if (behavior == null || behavior.Type == ETutorial.None)
+                    {
+                        continue;
+                    }
+
                     _tutorialBehaviorDict[behavior.Type] = behavior;
                 }
+            }
+
             Debug.Log($"Found {_tutorialBehaviorDict.Count} tutorials");
         }
     }

@@ -18,9 +18,7 @@ MonoBehaviour:
   Reward:
     CoinAmount: 0
     HeartAmount: 1
-    ExtraMoveAmount: 0
-    ShuffleAmount: 0
-    HintAmount: 0
+    BoosterRewards: []
   Detail: Get more life to continue playing
-  Price: 500
+  Price: 1000
   UseOnBought: 1

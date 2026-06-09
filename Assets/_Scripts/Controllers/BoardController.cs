@@ -15,6 +15,9 @@ namespace Assets._Scripts.Controllers
 {
     public class BoardController : Singleton<BoardController>
     {
+        private const string DefaultPillarLayerName = "Pillar";
+        private const string DefaultBlockLayerName = "Block";
+
         [SerializeField] private Transform _boardTransform;
         public Transform BoardTransform => _boardTransform;
         [SerializeField] private PillarController _pillarPrefab;
@@ -237,6 +240,11 @@ namespace Assets._Scripts.Controllers
 
         public void ClearBoard()
         {
+            var pillarLayer = LayerMask.NameToLayer(DefaultPillarLayerName);
+            var blockLayer = LayerMask.NameToLayer(DefaultBlockLayerName);
+
+            BlockMovementController.Instance.CleanupMotionState(_pillars, _blocks);
+
             foreach (var mechanic in _mechanics)
             {
                 mechanic.RemoveImmediate(false);
@@ -247,7 +255,11 @@ namespace Assets._Scripts.Controllers
             {
                 pillar.RemoveAllBlocks();
                 if (pillar.gameObject.TryGetComponent(out PillarEffectVisual pillarVisual))
+                {
+                    if (pillarLayer >= 0) pillarVisual.ChangeLayer(pillarLayer);
+                    else pillarVisual.ResetLayer();
                     pillarVisual.ResetVisual();
+                }
                 _pillarPool.ReturnItem(pillar);
             }
             _pillars.Clear();
@@ -255,7 +267,11 @@ namespace Assets._Scripts.Controllers
             foreach(var block in _blocks)
             {
                 if (block.gameObject.TryGetComponent(out BlockEffectVisual blockVisual))
+                {
+                    if (blockLayer >= 0) blockVisual.ChangeLayer(blockLayer);
+                    else blockVisual.ResetLayer();
                     blockVisual.ResetVisual();
+                }
                 _blockPool.ReturnItem(block);
                 block.transform.SetParent(transform);
             }

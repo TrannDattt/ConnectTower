@@ -22,7 +22,8 @@
           "Id": 3,
           "IconId": "B_1_16"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Keys",
@@ -43,7 +44,8 @@
           "Id": 7,
           "IconId": "A_4_11"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Trees",
@@ -64,7 +66,8 @@
           "Id": 11,
           "IconId": "A_4_15"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
       "Tag": "Gnomes",
@@ -85,28 +88,30 @@
           "Id": 15,
           "IconId": "A_3_17"
         }
-      ]
+      ],
+      "Trackable": true
     },
     {
-      "Tag": "Scopes",
+      "Tag": "Potions",
       "BlockDatas": [
         {
           "Id": 16,
-          "IconId": "B_1_85"
+          "IconId": "A_4_148"
         },
         {
           "Id": 17,
-          "IconId": "B_2_37"
+          "IconId": "A_3_48"
         },
         {
           "Id": 18,
-          "IconId": "B_1_85"
+          "IconId": "A_2_55"
         },
         {
           "Id": 19,
-          "IconId": "B_2_37"
+          "IconId": "A_1_27"
         }
-      ]
+      ],
+      "Trackable": true
     }
   ],
   "PillarDatas": [
@@ -191,5 +196,10 @@
   "ScratchedBlockDatas": {
     "BlockIds": []
   },
+  "StickyBlockDatas": {
+    "BlockIds": []
+  },
+  "TrapPillarDatas": [],
+  "HighScore": 0,
   "CoinReward": 40
 }

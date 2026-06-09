@@ -25,6 +25,10 @@ namespace Assets._Scripts.Visuals
         private PillarController _pillar;
         private static HashSet<EColor> _unusedColor = new();
         private EColor _currentColor = EColor.None;
+        private int _baseLayer;
+        private int _baseCanvasSortingLayerId;
+        private int _baseCanvasSortingOrder;
+        private bool _baseCanvasOverrideSorting;
 
         private static void InitializePool(bool force = false)
         {
@@ -124,6 +128,8 @@ namespace Assets._Scripts.Visuals
         void Awake()
         {
             _pillar = GetComponent<PillarController>();
+            _baseLayer = gameObject.layer;
+            CacheCanvasSortingDefaults();
             InitializePool();
         }
 
@@ -156,6 +162,12 @@ namespace Assets._Scripts.Visuals
             }
 
             SetLayerRecursively(transform, layer);
+            SyncCanvasSortingLayer(layer);
+        }
+
+        public void ResetLayer()
+        {
+            ChangeLayer(_baseLayer);
         }
 
         private static void SetLayerRecursively(Transform target, int layer)
@@ -180,6 +192,50 @@ namespace Assets._Scripts.Visuals
             }
 
             return index;
+        }
+
+        private void CacheCanvasSortingDefaults()
+        {
+            if (_canvas == null)
+            {
+                return;
+            }
+
+            _baseCanvasSortingLayerId = _canvas.sortingLayerID;
+            _baseCanvasSortingOrder = _canvas.sortingOrder;
+            _baseCanvasOverrideSorting = _canvas.overrideSorting;
+        }
+
+        private void SyncCanvasSortingLayer(int layer)
+        {
+            if (_canvas == null)
+            {
+                return;
+            }
+
+            if (layer == _baseLayer)
+            {
+                _canvas.overrideSorting = _baseCanvasOverrideSorting;
+                _canvas.sortingLayerID = _baseCanvasSortingLayerId;
+                _canvas.sortingOrder = _baseCanvasSortingOrder;
+                return;
+            }
+
+            var layerName = LayerMask.LayerToName(layer);
+            if (string.IsNullOrEmpty(layerName))
+            {
+                return;
+            }
+
+            var sortingLayerId = SortingLayer.NameToID(layerName);
+            if (sortingLayerId == 0 && !string.Equals(layerName, "Default", StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _canvas.overrideSorting = true;
+            _canvas.sortingLayerID = sortingLayerId;
+            _canvas.sortingOrder = _baseCanvasSortingOrder;
         }
     }
 }

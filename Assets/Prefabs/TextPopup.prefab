@@ -149,7 +149,7 @@ MonoBehaviour:
   _offsetY: 120
   _duration: 0.7
   _content: {fileID: 4398758113153792816}
-  _popupRt: {fileID: 0}
+  _popupRt: {fileID: 9105227753807724324}
 --- !u!225 &5138701690592593831
 CanvasGroup:
   m_ObjectHideFlags: 0

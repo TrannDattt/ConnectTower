@@ -13,11 +13,19 @@ namespace Assets._Scripts.Helpers
             var json = PlayerPrefs.GetString(PlayerDataKey, string.Empty);
             if (string.IsNullOrEmpty(json))
             {
-                Debug.Log("Create new user.");
-                return new UserRuntimeData();
+                return null;
             }
-            Debug.Log("Loading JSON: " + json);
-            return JsonConvert.DeserializeObject<UserRuntimeData>(json);
+
+            try
+            {
+                Debug.Log("Loading JSON: " + json);
+                return JsonConvert.DeserializeObject<UserRuntimeData>(json);
+            }
+            catch (JsonException ex)
+            {
+                Debug.LogWarning($"Failed to parse cached user data. {ex}");
+                return null;
+            }
         }
 
         public static void SaveUser(UserRuntimeData user)

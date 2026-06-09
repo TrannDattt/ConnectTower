@@ -19,36 +19,43 @@ namespace Assets._Scripts.Managers
     public static class UserManager
     {
         private const string SessionDirtyKey = "UserProgressDirty";
+        private const string LifecycleObjectName = "__UserManagerLifecycle";
         public static UserRuntimeData CurUser {get; private set;}
+        public static bool IsRemoteLoadCompleted => _remoteLoadCompleted;
         public static string TEST_UserID => "CgqFZoKy6BV1BU0Ny7XN";
         private static bool _remoteLoadCompleted;
         private static bool _hasUnsyncedChanges;
         private static bool _isQuitSaveInProgress;
         private static bool _allowQuitAfterSave;
+        private static bool _pendingQuitAfterSave;
+        private static UserManagerLifecycleProxy _lifecycleProxy;
 
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
         {
+            EnsureLifecycleProxy();
+
             if (CurUser == null)
             {
-                CurUser = UserDataHelper.LoadUser() ?? CreateDefaultUser();
+                CurUser = LoadCachedUser() ?? CreateDefaultUser();
                 EnsureBoosterKeys(CurUser);
                 Debug.Log("UserManager Initialized");
             }
 
-            _hasUnsyncedChanges = PlayerPrefs.GetInt(SessionDirtyKey, 0) == 1;
-            _remoteLoadCompleted = _hasUnsyncedChanges;
+            _hasUnsyncedChanges = HasPersistedUnsyncedChanges();
+            _remoteLoadCompleted = false;
             _isQuitSaveInProgress = false;
             _allowQuitAfterSave = false;
+            _pendingQuitAfterSave = false;
 
             Application.wantsToQuit -= HandleWantsToQuit;
             Application.wantsToQuit += HandleWantsToQuit;
 
             if (_hasUnsyncedChanges)
             {
-                CurUser.Id = TEST_UserID;
-                Debug.LogWarning("Unsynced local user data detected. Skipping Firestore load until data is flushed on quit.");
+                _remoteLoadCompleted = true;
+                Debug.LogWarning("Unsynced cached user data detected. Skipping Firestore load to avoid overwriting newer PlayerPrefs data.");
                 return;
             }
 
@@ -62,17 +69,14 @@ namespace Assets._Scripts.Managers
                 return;
             }
 
-            CurUser.Id = TEST_UserID;
-            UserDataHelper.SaveUser(CurUser);
-            _hasUnsyncedChanges = true;
-            PlayerPrefs.SetInt(SessionDirtyKey, 1);
-            PlayerPrefs.Save();
+            PersistLocalSnapshot(markUnsynced: true);
         }
 
         private static async Task LoadRemoteUserDataAsync()
         {
             try
             {
+                var cachedUser = LoadCachedUser();
                 var userTask = UserAPI.GetUserAsync(TEST_UserID);
                 var currencyTask = UserCurrencyAPI.GetUserAsync(TEST_UserID);
                 var boosterTask = UserBoosterAPI.GetUserAsync(TEST_UserID);
@@ -85,72 +89,51 @@ namespace Assets._Scripts.Managers
 
                 if (_hasUnsyncedChanges)
                 {
-                    _remoteLoadCompleted = true;
-                    Debug.LogWarning("Local session data changed before Firestore load completed. Keeping local cache.");
+                    Debug.LogWarning("Local user data changed before Firestore load completed. Keeping runtime snapshot.");
                     return;
                 }
 
                 var hasRemoteData = remoteUser.HasValue || remoteCurrency.HasValue || remoteBooster.HasValue;
                 var hasMissingRemoteSegments = !remoteUser.HasValue || !remoteCurrency.HasValue || !remoteBooster.HasValue;
 
-                CurUser ??= CreateDefaultUser();
-                CurUser.Id = TEST_UserID;
-
-                if (remoteUser.HasValue)
-                {
-                    CurUser.Name = remoteUser.Value.Name;
-                    CurUser.AvatarURL = remoteUser.Value.AvatarURL;
-                    CurUser.CurrentLevelIndex = Mathf.Max(1, remoteUser.Value.CurrentLevelIndex);
-                    CurUser.SetPlayedTutorials(ParseTutorials(remoteUser.Value.PlayedTutorials));
-                }
-
-                if (remoteCurrency.HasValue)
-                {
-                    CurUser.CoinCount = remoteCurrency.Value.Coin;
-                    CurUser.HeartCount = remoteCurrency.Value.Heart;
-                }
-
-                if (remoteBooster.HasValue)
-                {
-                    CurUser.BoosterCount = ToBoosterDictionary(remoteBooster.Value.BoostersCount);
-                }
-
-                EnsureBoosterKeys(CurUser);
-                _remoteLoadCompleted = true;
-                UserDataHelper.SaveUser(CurUser);
-
                 if (!hasRemoteData)
                 {
-                    _hasUnsyncedChanges = true;
-                    PlayerPrefs.SetInt(SessionDirtyKey, 1);
-                    PlayerPrefs.Save();
-                    Debug.LogWarning($"No remote data found for user '{TEST_UserID}'. Using local/default snapshot and deferring Firestore creation until quit.");
+                    CurUser = cachedUser ?? CreateAndCacheNewUser();
+                    MarkLocalStateDirty();
+                    Debug.LogWarning(
+                        cachedUser != null
+                            ? $"No remote data found for user '{TEST_UserID}'. Loaded cached PlayerPrefs user and will sync it back to Firestore on quit."
+                            : $"No remote data or PlayerPrefs cache found for user '{TEST_UserID}'. Created a new user and cached it locally.");
                     return;
                 }
 
+                CurUser = BuildUserFromSources(remoteUser, remoteCurrency, remoteBooster, cachedUser);
+                UserDataHelper.SaveUser(CurUser);
+
+                _hasUnsyncedChanges = hasMissingRemoteSegments;
+                SetPersistedUnsyncedChanges(hasMissingRemoteSegments);
+
                 if (hasMissingRemoteSegments)
                 {
-                    _hasUnsyncedChanges = true;
-                    PlayerPrefs.SetInt(SessionDirtyKey, 1);
-                    PlayerPrefs.Save();
-                    Debug.LogWarning($"Remote data for '{TEST_UserID}' is incomplete. Missing fields will be written back to Firestore on quit.");
-                }
-                else
-                {
-                    _hasUnsyncedChanges = false;
-                    PlayerPrefs.SetInt(SessionDirtyKey, 0);
-                    PlayerPrefs.Save();
+                    Debug.LogWarning(
+                        cachedUser != null
+                            ? $"Remote data for '{TEST_UserID}' is incomplete. Missing fields were filled from PlayerPrefs and will be written back to Firestore on quit."
+                            : $"Remote data for '{TEST_UserID}' is incomplete. Missing fields were filled with defaults and will be written back to Firestore on quit.");
                 }
 
                 Debug.Log($"Remote user data synced for {CurUser.Id}.");
             }
             catch (Exception ex)
             {
+                var cachedUser = LoadCachedUser();
+                var usedCachedUser = cachedUser != null;
+                CurUser = cachedUser ?? CreateAndCacheNewUser();
+                MarkLocalStateDirty();
+                Debug.LogWarning($"Failed to sync remote user data from Firestore. Falling back to {(usedCachedUser ? "cached PlayerPrefs data" : "a newly created user")} for this session. {ex}");
+            }
+            finally
+            {
                 _remoteLoadCompleted = true;
-                _hasUnsyncedChanges = true;
-                PlayerPrefs.SetInt(SessionDirtyKey, 1);
-                PlayerPrefs.Save();
-                Debug.LogWarning($"Failed to sync remote user data from Firestore. Using local snapshot for this session. {ex}");
             }
         }
 
@@ -163,6 +146,7 @@ namespace Assets._Scripts.Managers
 
             if (_isQuitSaveInProgress)
             {
+                _pendingQuitAfterSave = true;
                 return false;
             }
 
@@ -171,12 +155,40 @@ namespace Assets._Scripts.Managers
                 return true;
             }
 
-            _isQuitSaveInProgress = true;
-            _ = SaveToFirestoreAndQuitAsync();
+            QueueFirestoreSave("quit", quitAfterSave: true);
             return false;
         }
 
-        private static async Task SaveToFirestoreAndQuitAsync()
+        private static void QueueFirestoreSave(string reason, bool quitAfterSave)
+        {
+            if (quitAfterSave)
+            {
+                _pendingQuitAfterSave = true;
+            }
+
+            if (_isQuitSaveInProgress)
+            {
+                return;
+            }
+
+            if (!_hasUnsyncedChanges || CurUser == null)
+            {
+                if (quitAfterSave)
+                {
+                    _allowQuitAfterSave = true;
+                    RequestQuit();
+                }
+
+                return;
+            }
+
+            PersistLocalSnapshot(markUnsynced: true);
+
+            _isQuitSaveInProgress = true;
+            _ = SaveToFirestoreAsync(reason);
+        }
+
+        private static async Task SaveToFirestoreAsync(string reason)
         {
             try
             {
@@ -189,19 +201,24 @@ namespace Assets._Scripts.Managers
 
                 await Task.WhenAll(userTask, currencyTask, boosterTask);
                 _hasUnsyncedChanges = false;
-                PlayerPrefs.SetInt(SessionDirtyKey, 0);
-                PlayerPrefs.Save();
-                Debug.Log($"Saved user data to Firestore for {CurUser.Id} on quit.");
+                SetPersistedUnsyncedChanges(false);
+                Debug.Log($"Saved user data to Firestore for {CurUser.Id} during {reason}.");
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to save user data to Firestore on quit: {ex}");
+                MarkLocalStateDirty();
+                Debug.LogError($"Failed to save user data to Firestore during {reason}: {ex}");
             }
             finally
             {
                 _isQuitSaveInProgress = false;
-                _allowQuitAfterSave = true;
-                RequestQuit();
+
+                if (_pendingQuitAfterSave)
+                {
+                    _pendingQuitAfterSave = false;
+                    _allowQuitAfterSave = true;
+                    RequestQuit();
+                }
             }
         }
 
@@ -213,6 +230,116 @@ namespace Assets._Scripts.Managers
             };
 
             return user;
+        }
+
+        private static UserRuntimeData LoadCachedUser()
+        {
+            var cachedUser = UserDataHelper.LoadUser();
+            if (cachedUser == null)
+            {
+                return null;
+            }
+
+            cachedUser.Id = TEST_UserID;
+            EnsureBoosterKeys(cachedUser);
+            return cachedUser;
+        }
+
+        private static UserRuntimeData CreateAndCacheNewUser()
+        {
+            var user = CreateDefaultUser();
+            EnsureBoosterKeys(user);
+            UserDataHelper.SaveUser(user);
+            SetPersistedUnsyncedChanges(true);
+            return user;
+        }
+
+        private static void EnsureLifecycleProxy()
+        {
+            if (_lifecycleProxy != null)
+            {
+                return;
+            }
+
+            var lifecycleObject = new GameObject(LifecycleObjectName);
+            UnityEngine.Object.DontDestroyOnLoad(lifecycleObject);
+            _lifecycleProxy = lifecycleObject.AddComponent<UserManagerLifecycleProxy>();
+        }
+
+        private static bool HasPersistedUnsyncedChanges()
+        {
+            return PlayerPrefs.GetInt(SessionDirtyKey, 0) == 1;
+        }
+
+        private static void SetPersistedUnsyncedChanges(bool hasUnsyncedChanges)
+        {
+            PlayerPrefs.SetInt(SessionDirtyKey, hasUnsyncedChanges ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+
+        private static void MarkLocalStateDirty()
+        {
+            _hasUnsyncedChanges = true;
+            SetPersistedUnsyncedChanges(true);
+        }
+
+        private static void PersistLocalSnapshot(bool markUnsynced)
+        {
+            if (CurUser == null)
+            {
+                return;
+            }
+
+            CurUser.Id = TEST_UserID;
+            EnsureBoosterKeys(CurUser);
+            UserDataHelper.SaveUser(CurUser);
+
+            if (markUnsynced)
+            {
+                MarkLocalStateDirty();
+            }
+        }
+
+        private static void HandleApplicationBackgrounded(string reason)
+        {
+            PersistLocalSnapshot(markUnsynced: _hasUnsyncedChanges);
+
+            if (_hasUnsyncedChanges)
+            {
+                QueueFirestoreSave(reason, quitAfterSave: false);
+            }
+        }
+
+        private static UserRuntimeData BuildUserFromSources(
+            UserModel? remoteUser,
+            UserCurrencyModel? remoteCurrency,
+            UserBoosterModel? remoteBooster,
+            UserRuntimeData cachedUser)
+        {
+            var resolvedUser = cachedUser ?? CreateDefaultUser();
+            resolvedUser.Id = TEST_UserID;
+
+            if (remoteUser.HasValue)
+            {
+                resolvedUser.Name = remoteUser.Value.Name;
+                resolvedUser.AvatarURL = remoteUser.Value.AvatarURL;
+                resolvedUser.CurrentLevelIndex = Mathf.Max(1, remoteUser.Value.CurrentLevelIndex);
+                resolvedUser.SetPlayedTutorials(ParseTutorials(remoteUser.Value.PlayedTutorials));
+            }
+
+            if (remoteCurrency.HasValue)
+            {
+                resolvedUser.CoinCount = remoteCurrency.Value.Coin;
+                resolvedUser.HeartCount = remoteCurrency.Value.Heart;
+            }
+
+            if (remoteBooster.HasValue)
+            {
+                resolvedUser.BoosterCount = ToBoosterDictionary(remoteBooster.Value.BoostersCount);
+            }
+
+            EnsureBoosterKeys(resolvedUser);
+            return resolvedUser;
         }
 
         private static UserModel ToUserModel(UserRuntimeData user)
@@ -324,6 +451,30 @@ namespace Assets._Scripts.Managers
             }
 #endif
             Application.Quit();
+        }
+
+        private sealed class UserManagerLifecycleProxy : MonoBehaviour
+        {
+            private void OnApplicationPause(bool pauseStatus)
+            {
+                if (pauseStatus)
+                {
+                    HandleApplicationBackgrounded("pause");
+                }
+            }
+
+            private void OnApplicationFocus(bool hasFocus)
+            {
+                if (!hasFocus)
+                {
+                    HandleApplicationBackgrounded("focus-lost");
+                }
+            }
+
+            private void OnApplicationQuit()
+            {
+                HandleApplicationBackgrounded("quit-event");
+            }
         }
 
 #region INFO

@@ -140,7 +140,7 @@ namespace Assets._Scripts.Datas
 
         public void FinishLevel() 
         {
-            CompletePendingLevelClearBonus();
+            ApplyLevelClearBonusImmediately(false);
             UnsubscribeScoreEvent();
             UserManager.UpdateProgress(Index + 1);
 
@@ -149,6 +149,15 @@ namespace Assets._Scripts.Datas
 
             HighScore = updatedHighScore;
             SaveHighScore();
+        }
+
+        public void ApplyLevelClearBonusImmediately(bool notify = false)
+        {
+            if (_hasAppliedLevelClearBonus || MoveCount <= 0) return;
+
+            _hasAppliedLevelClearBonus = true;
+            UpdateScore(ScoreCalculator.CalculateLevelClearScore(MoveCount), notify);
+            MoveCount = 0;
         }
 
         private void SaveHighScore()
@@ -180,7 +189,6 @@ namespace Assets._Scripts.Datas
         private bool _isResolvingPlayerMove;
         private bool _currentMoveHasFullMatch;
         private bool _hasAppliedLevelClearBonus;
-        private int _levelClearBonusPerMove;
 
         public void SubscribeScoreEvent()
         {
@@ -205,7 +213,6 @@ namespace Assets._Scripts.Datas
             _isResolvingPlayerMove = false;
             _currentMoveHasFullMatch = false;
             _hasAppliedLevelClearBonus = false;
-            _levelClearBonusPerMove = 0;
 
             _blockMoveBinding = new((e) =>
             {
@@ -242,53 +249,6 @@ namespace Assets._Scripts.Datas
                 _consecutiveFullMatchMoveCount = 0;
 
             _isResolvingPlayerMove = false;
-        }
-
-        public void ApplyLevelClearBonus()
-        {
-            if (_hasAppliedLevelClearBonus) return;
-
-            _hasAppliedLevelClearBonus = true;
-            UpdateScore(ScoreCalculator.CalculateLevelClearScore(MoveCount));
-        }
-
-        public bool BeginLevelClearBonusSequence()
-        {
-            if (_hasAppliedLevelClearBonus) return false;
-
-            _hasAppliedLevelClearBonus = true;
-            if (MoveCount <= 0)
-            {
-                _levelClearBonusPerMove = 0;
-                return false;
-            }
-
-            _levelClearBonusPerMove = ScoreCalculator.GetMoveLeftMultiplier(MoveCount);
-            return _levelClearBonusPerMove > 0;
-        }
-
-        public bool ApplyNextLevelClearBonusStep()
-        {
-            if (!_hasAppliedLevelClearBonus || MoveCount <= 0 || _levelClearBonusPerMove <= 0)
-                return false;
-
-            DecreaseMove();
-            UpdateScore(_levelClearBonusPerMove);
-            if (MoveCount <= 0)
-                _levelClearBonusPerMove = 0;
-            return true;
-        }
-
-        public void CompletePendingLevelClearBonus(bool notify = false)
-        {
-            if (!_hasAppliedLevelClearBonus || MoveCount <= 0 || _levelClearBonusPerMove <= 0)
-                return;
-
-            var remainingMoveCount = MoveCount;
-            MoveCount = 0;
-            var remainingScore = remainingMoveCount * _levelClearBonusPerMove;
-            _levelClearBonusPerMove = 0;
-            UpdateScore(remainingScore, notify);
         }
 
         private int ResolveCurrentFullMatchCombo()

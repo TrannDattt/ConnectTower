@@ -22,5 +22,5 @@ MonoBehaviour:
     - Type: 1
       Amount: 3
   Detail: Use it to shuffle blocks
-  Price: 1
+  Price: 900
   UseOnBought: 0

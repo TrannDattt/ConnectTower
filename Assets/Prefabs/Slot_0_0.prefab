@@ -476,7 +476,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _lockHolder: {fileID: 4729314200881906781}
+  _lockHolder: {fileID: 5439391584573743960}
 --- !u!114 &-4181390421866993807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -492,15 +492,20 @@ MonoBehaviour:
   _blockVisual: {fileID: 0}
   _hiddenTexture: {fileID: 0}
   _fxHiddenRemove: {fileID: 0}
+  _hiddenRemoveParticle: {fileID: 0}
   _frozenBlockHolder: {fileID: 0}
-  _frozenBlockMask: {fileID: 0}
+  _frozenBlockIcon: {fileID: 0}
+  _frozenBlockRotateFrom: 0
+  _frozenBlockRotateTo: 0
+  _frozenBlockPositionFrom: {x: 0, y: 0, z: 0}
+  _frozenBlockPositionTo: {x: 0, y: 0, z: 0}
   _frozenApplyDur: 0.5
   _frozenPillarRod: {fileID: 3892464854677964641}
   _frozenPillarBase: {fileID: 209825025550724801}
   _frozenPillarOffsetY: 1.1974614
   _frozenEmissionParticle: {fileID: 0}
   _iceRemoveParticle: {fileID: 0}
-  _pillarRemoveIceDelay: 1
+  _pillarRemoveIceDelay: 1.8
   _fxIceSpread: {fileID: 0}
   _fxIceRemove: {fileID: 8300000, guid: 35e2490af60921742b2566c5ef7fcbff, type: 3}
   _clothImage: {fileID: 1825766319187182658}
@@ -518,7 +523,7 @@ MonoBehaviour:
   _trapDownAnim: {fileID: 7400000, guid: 73c3cbe82bf1d964ca40da60054c2702, type: 2}
   _trapUpAnim: {fileID: 7400000, guid: adfc75dcc98fae7489b3c564a27d2565, type: 2}
   _fxTrapOpen: {fileID: 8300000, guid: 6f752210ac3193043a94054172a90830, type: 3}
-  _fxTrapClose: {fileID: 0}
+  _fxTrapClose: {fileID: 8300000, guid: 6f752210ac3193043a94054172a90830, type: 3}
   _slimeHolder: {fileID: 0}
   _topStrand: {fileID: 0}
   <TopStrandAnchor>k__BackingField: {fileID: 0}
@@ -1060,7 +1065,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &253156607499715578
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1236,7 +1241,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7651496138706096702
 RectTransform:
   m_ObjectHideFlags: 0

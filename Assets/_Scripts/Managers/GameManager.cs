@@ -44,8 +44,16 @@ namespace Assets._Scripts.Managers
         private LevelRuntimeData CurrentLevelData => LevelManager.PlayingLevel;
 
         private EGameState _lastState;
+        private static readonly EBooster[] _earlyLevelBoosters =
+        {
+            EBooster.ExtraMove,
+            EBooster.Shuffle,
+            EBooster.Hint
+        };
 
-        public EGameState CurState => _gameSM.CurrentState.Key;
+        private const int AutoSkipMenuLevelThreshold = 5;
+
+        public EGameState CurState => _gameSM.CurrentState?.Key ?? EGameState.None;
         public bool IsPlaying => CurState == EGameState.Playing
                                  && _gameSM.TryGetState(EGameState.Playing, out var playState)
                                  && (playState as PlayingState).CurState == PlayingState.EPlayingSubState.WhilePlaying;
@@ -55,6 +63,7 @@ namespace Assets._Scripts.Managers
         public UnityAction<PillarController[]> SetInteractablePillarsEvent;
         private UnityAction _onGoToMenuCallback;
         private Task _debugFetchUserTask;
+        private bool _isStartupLoadingPending;
 
         public void GoToMenu(UnityAction onLoaded = null)
         {
@@ -131,6 +140,32 @@ namespace Assets._Scripts.Managers
             }
         }
 
+        public bool TryStartLevelIngame(int levelIndex, bool isPlayTest = false, params EBooster[] boosters)
+        {
+            var levelData = LevelManager.Instance.GetLevel(levelIndex);
+            if (levelData == null)
+            {
+                Debug.LogWarning($"No level data found for level {levelIndex}");
+                return false;
+            }
+
+            void StartSelectedLevel()
+            {
+                StartLevel(levelData, isPlayTest, boosters);
+            }
+
+            if (GameSceneManager.Instance.GetActiveScene() == EGameScene.Ingame)
+            {
+                StartSelectedLevel();
+            }
+            else
+            {
+                GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: StartSelectedLevel);
+            }
+
+            return true;
+        }
+
         public void StartLevel(LevelRuntimeData levelData, bool isPlayTest = false, params EBooster[] boosters)
         {
 #if UNITY_EDITOR
@@ -158,6 +193,7 @@ namespace Assets._Scripts.Managers
             EventBus<StartLevelEvent>.Publish(new StartLevelEvent { LevelData = new(levelData) });
             
             _gameSM.ChangeState(EGameState.Playing, true);
+            CompleteStartupLoadingIfNeeded();
         }
 
         protected override void Awake()
@@ -175,22 +211,43 @@ namespace Assets._Scripts.Managers
 
             _gameSM.AddStates(menuState, playingState, pauseState, reviveState, winState, loseState);
             _gameSM.SetDefaultState(EGameState.None);
+        }
+
+        private void CompleteStartupLoadingIfNeeded()
+        {
+            if (!_isStartupLoadingPending)
+            {
+                return;
+            }
+
+            _isStartupLoadingPending = false;
+            PopupManager.Instance.CompleteStartupLoading();
+        }
+
+        private IEnumerator WaitForUserSyncAndMaybeAutoStart()
+        {
+            yield return new WaitUntil(() => UserManager.IsRemoteLoadCompleted);
+
+            var curIndex = Mathf.Max(1, UserManager.CurUser.CurrentLevelIndex);
+            bool shouldAutoStart = curIndex <= AutoSkipMenuLevelThreshold;
+#if UNITY_EDITOR
+            shouldAutoStart &= DebugFlagToggle.Instance.SkipFirstLevel;
+#endif
+
+            if (shouldAutoStart)
+            {
+                TryStartLevelIngame(curIndex, false, _earlyLevelBoosters);
+                yield break;
+            }
+
             _gameSM.ChangeToDefault();
         }
 
         void Start()
         {
-            var curIndex = UserManager.CurUser.CurrentLevelIndex;
-#if UNITY_EDITOR
-            if (DebugFlagToggle.Instance.SkipFirstLevel)
-#endif
-                if (curIndex <= 5)
-                {
-                    GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
-                    {
-                        StartLevel(LevelManager.Instance.GetLevel(curIndex), false, EBooster.ExtraMove, EBooster.Shuffle, EBooster.Hint);
-                    });
-                }
+            _isStartupLoadingPending = true;
+            StartCoroutine(PopupManager.Instance.ShowStartupLoading());
+            StartCoroutine(WaitForUserSyncAndMaybeAutoStart());
         }
 
         void Update()
@@ -206,7 +263,8 @@ namespace Assets._Scripts.Managers
                 LevelManager.PlayingLevel.UpdateScore(100);
             }
 #endif
-            _gameSM.DoState();
+            if (_gameSM.CurrentState != null)
+                _gameSM.DoState();
         }
 
         public abstract class GameState : AState<EGameState>
@@ -226,8 +284,8 @@ namespace Assets._Scripts.Managers
             public override void Enter()
             {
                 base.Enter();
-                
-                GameSceneManager.Instance.ChangeScene(EGameScene.Menu, onLoad: () =>
+
+                void InitMenuScene()
                 {
                     MainMenuVisualControl.Instance.InitVisual();
                     MainMenuVisualControl.Instance.ChangeTab(EMenuTab.Home);
@@ -235,7 +293,16 @@ namespace Assets._Scripts.Managers
                     Instance._onGoToMenuCallback?.Invoke();
                     Instance._onGoToMenuCallback = null;
                     LevelManager.Instance.SetPlayingLevel(null);
-                });
+                    Instance.CompleteStartupLoadingIfNeeded();
+                }
+
+                if (GameSceneManager.Instance.GetActiveScene() == EGameScene.Menu)
+                {
+                    InitMenuScene();
+                    return;
+                }
+
+                GameSceneManager.Instance.ChangeScene(EGameScene.Menu, onLoad: InitMenuScene);
             }
         }
         #endregion
@@ -459,6 +526,7 @@ namespace Assets._Scripts.Managers
 
                     if (TutorialManager.CheckCanPlayTutorial(out var toPlay))
                     {
+                        SuspendPillarInteraction();
                         Instance.StartCoroutine(PlayTutorial(toPlay));
                     }
                 }
@@ -479,9 +547,11 @@ namespace Assets._Scripts.Managers
 
                 private IEnumerator PlayTutorial(ETutorial key)
                 {
+                    yield return new WaitUntil(() => !PopupManager.Instance.IsPopupVisible(EPopup.Loading));
                     yield return PopupManager.Instance.ShowTutorial(key);
                     yield return new WaitUntil(PopupManager.Instance.IsFinishedTutorial);
                     Instance.StartCoroutine(PopupManager.Instance.HidePopup(EPopup.Tutorial));
+                    ResumePillarInteraction();
                     FinishState();
                 }
 
@@ -590,7 +660,7 @@ namespace Assets._Scripts.Managers
             private class ClosingState : PlayingSubState
             {
                 private Coroutine _coroutine;
-                private WaitForSeconds _delayCleared = new(3f);
+                private WaitForSeconds _delayCleared = new(2f);
                 private WaitForSeconds _delayFailed = new(1f);
 
                 public ClosingState(EPlayingSubState key) : base(key)
@@ -632,11 +702,6 @@ namespace Assets._Scripts.Managers
                 private IEnumerator FinishLevel(bool clearState)
                 {
                     _coroutine = null;
-
-                    if (clearState)
-                    {
-                        yield return IngameVisualController.Instance.PlayLevelClearBonusSequence(Instance.CurrentLevelData);
-                    }
 
                     BoardController.Instance.ClearBoard();
 

@@ -229,6 +229,14 @@ namespace Assets._Scripts.Visuals
 
         public override IEnumerator Show()
         {
+            if (_curLevelData == null)
+            {
+                Debug.LogWarning($"{nameof(LevelFinishedVisual)} tried to show before a level was ready.", this);
+                yield break;
+            }
+
+            Debug.Log($"Showing {nameof(LevelFinishedVisual)} for level {_curLevelData.Index}", this);
+
             var clearedState = _curLevelData.IsCleared;
             _continueButton.gameObject.SetActive(clearedState);
             _normalRewardText.text = _curLevelData.CoinReward.ToString();
@@ -793,49 +801,13 @@ namespace Assets._Scripts.Visuals
             _normalRewardButton.OnClicked.AddListener(() => 
             {
                 Debug.Log("Gained level reward");
-                StartCoroutine(Hide());
-
-#if UNITY_EDITOR
-                if (DebugFlagToggle.Instance.SkipFirstLevel)
-                {
-#endif
-                    if (UserManager.CurUser.CurrentLevelIndex <= 5)
-                    {
-                        GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
-                        {
-                            UserManager.GainCoin(_curLevelData.CoinReward);
-                            GameManager.Instance.StartLevel(LevelManager.Instance.GetLevel(_curLevelData.Index + 1), false, EBooster.ExtraMove, EBooster.Shuffle, EBooster.Hint);
-                        });
-                    }
-                    else
-                        GameManager.Instance.GoToMenu(() => UserManager.GainCoin(_curLevelData.CoinReward));
-#if UNITY_EDITOR
-                }
-#endif
+                StartCoroutine(ClaimRewardAndContinue(_curLevelData.CoinReward));
             });
             _adsRewardButton.OnClicked.AddListener(() => 
             {
                 //TODO: Ads Service
                 Debug.Log("Gained double reward via ads");
-                StartCoroutine(Hide());
-
-#if UNITY_EDITOR
-                if (DebugFlagToggle.Instance.SkipFirstLevel)
-                {
-#endif
-                    if (_curLevelData.Index + 1 <= 5)
-                    {
-                        GameSceneManager.Instance.ChangeScene(EGameScene.Ingame, onLoad: () =>
-                        {
-                            UserManager.GainCoin(_curLevelData.CoinReward * 2);
-                            GameManager.Instance.StartLevel(LevelManager.Instance.GetLevel(_curLevelData.Index + 1), false, EBooster.ExtraMove, EBooster.Shuffle, EBooster.Hint);
-                        });
-                    }
-                    else
-                        GameManager.Instance.GoToMenu(() => UserManager.GainCoin(_curLevelData.CoinReward * 2));
-#if UNITY_EDITOR
-                }
-#endif
+                StartCoroutine(ClaimRewardAndContinue(_curLevelData.CoinReward * 2));
             });
 
             base.Start();
@@ -844,6 +816,21 @@ namespace Assets._Scripts.Visuals
         private void OnDisable()
         {
             StopIdleButtonEffects();
+        }
+
+        private IEnumerator ClaimRewardAndContinue(int rewardAmount)
+        {
+            yield return Hide();
+
+            if (_curLevelData != null
+                && _curLevelData.Index <= 5
+                && GameManager.Instance.TryStartLevelIngame(_curLevelData.Index + 1, false, EBooster.ExtraMove, EBooster.Shuffle, EBooster.Hint))
+            {
+                UserManager.GainCoin(rewardAmount);
+                yield break;
+            }
+
+            GameManager.Instance.GoToMenu(() => UserManager.GainCoin(rewardAmount));
         }
     }
 }

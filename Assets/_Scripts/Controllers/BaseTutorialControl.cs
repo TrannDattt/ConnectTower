@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Patterns.EventBus;
 using Assets._Scripts.Visuals;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -30,6 +31,19 @@ namespace Assets._Scripts.Controllers
         public abstract void Begin();
         public abstract void End();
 
+        protected TutorialPopupVisual Visual
+        {
+            get
+            {
+                if (_visual == null)
+                {
+                    _visual = GetComponent<TutorialPopupVisual>();
+                }
+
+                return _visual;
+            }
+        }
+
         protected virtual void Awake()
         {
             _visual = GetComponent<TutorialPopupVisual>();
@@ -37,6 +51,7 @@ namespace Assets._Scripts.Controllers
 
         protected virtual void OnEnable()
         {
+            _visual = Visual;
             IsFinished = false;
             _clickCount = 0;
             _currentDialogIndex = -1;
@@ -88,7 +103,7 @@ namespace Assets._Scripts.Controllers
                 return false;
             }
 
-            if (_visual.IsDisplayingText)
+            if (Visual != null && Visual.IsDisplayingText)
             {
                 if (_dialogStartedFrame == Time.frameCount)
                 {
@@ -96,7 +111,7 @@ namespace Assets._Scripts.Controllers
                 }
 
                 _dialogCompletedClickFrame = Time.frameCount;
-                _visual.CompleteDisplayedText();
+                Visual.CompleteDisplayedText();
                 return true;
             }
 
@@ -123,7 +138,13 @@ namespace Assets._Scripts.Controllers
 
             _currentDialogIndex = dialogIndex;
             _dialogStartedFrame = Time.frameCount;
-            _visual.DisplayText(_dialogActions[dialogIndex], onFinishTalking);
+            if (Visual == null)
+            {
+                Debug.LogError($"Missing {nameof(TutorialPopupVisual)} on tutorial control {name}");
+                return;
+            }
+
+            Visual.DisplayText(_dialogActions[dialogIndex], onFinishTalking);
         }
 
         protected bool HasDialog(int dialogIndex)
@@ -131,6 +152,17 @@ namespace Assets._Scripts.Controllers
             return _dialogActions != null
                    && dialogIndex >= 0
                    && dialogIndex < _dialogActions.Length;
+        }
+
+        protected Tween MoveNarratorToTutorialTarget(Vector2 fallbackPosition)
+        {
+            if (Visual == null)
+            {
+                Debug.LogError($"Missing {nameof(TutorialPopupVisual)} on tutorial control {name}");
+                return null;
+            }
+
+            return Visual.MoveNarrator(fallbackPosition);
         }
     }
 

@@ -107,8 +107,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9183587765829652130}
-  - {fileID: 3719425859723993630}
   - {fileID: 3102448806293339713}
+  - {fileID: 3719425859723993630}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -461,6 +461,13 @@ MonoBehaviour:
   _pointIdleLoopDur: 0.55
   _pointIdleDistance: 30
   _moveDur: 0.5
+  _delayTalkSFX: 0.05
+  _talkSFXs:
+  - {fileID: 8300000, guid: e99e884176355374cb1b67df551ffc2b, type: 3}
+  - {fileID: 8300000, guid: 87addab42478e59459297f8826e3e653, type: 3}
+  - {fileID: 8300000, guid: a5d00724fcb4a4645a8819a16d376d0d, type: 3}
+  - {fileID: 8300000, guid: 5288f6aba11d1b14a86f8cc7ec93bb2b, type: 3}
+  - {fileID: 8300000, guid: 36549d757f3e7174fb6cf90cdc87012f, type: 3}
 --- !u!1 &3785161533836278240
 GameObject:
   m_ObjectHideFlags: 0

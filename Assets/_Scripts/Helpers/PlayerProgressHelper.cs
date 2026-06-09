@@ -8,7 +8,7 @@ namespace Assets._Scripts.Helpers
     {
         public const int ExtraMoveMilestone = 8;
         public const int ShuffleMilestone = 18;
-        public const int HintMilestone = 36;
+        public const int HintMilestone = 33;
         public const int AddPillarMilestone = 46;
         public const int HiddenBlockMilestone = 4;
         public const int CoveredPillarMilestone = 13;

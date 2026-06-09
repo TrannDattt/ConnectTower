@@ -375,6 +375,7 @@ namespace Assets._Scripts.Datas
         private static int _sharedBlockId = InvalidBlockId;
         private static int _sharedBlockSelectionFrame = -1;
         private static int _scratchResolutionFrame = -1;
+        private static int _playerTriggeredScratchFrame = -1;
         private static readonly Dictionary<int, ScratchResolutionState> _scratchResolutionByPillar = new();
         private static bool _isResolvingScratchRemoval;
         public int ScratchState {get; private set;}
@@ -385,9 +386,17 @@ namespace Assets._Scripts.Datas
         public ScratchedBlockMechanic() : base()
         {
             Key = EMechanic.ScratchBlock;
+            _blocksMovedBinding = new((evt) =>
+            {
+                if (evt.MovedByPlayer)
+                    _playerTriggeredScratchFrame = Time.frameCount;
+            });
             _pillarFullMatchBinding = new((evt) =>
             {
-                if (_isResolvingScratchRemoval || !(_target is BlockController block) || evt.Pillar == null)
+                if (_isResolvingScratchRemoval
+                    || _playerTriggeredScratchFrame != Time.frameCount
+                    || !(_target is BlockController block)
+                    || evt.Pillar == null)
                     return;
 
                 if (!TryResolveScratchForMatch(evt.Pillar.Id, block.Id))
@@ -403,7 +412,6 @@ namespace Assets._Scripts.Datas
                     _isResolvingScratchRemoval = false;
                 }
             });
-            _blocksMovedBinding = new(() => {});
             _blockMatchBinding = new((evt) =>
             {
                 if (_sharedBlockId != (_target as BlockController).Id || evt.MatchCount <= ScratchState) return;
@@ -471,6 +479,21 @@ namespace Assets._Scripts.Datas
             return _sharedBlockId;
         }
 
+        private static void EnsureSharedScratchBlockId()
+        {
+            if (_scratchedBlocks == null || _scratchedBlocks.Count == 0)
+            {
+                _sharedBlockId = InvalidBlockId;
+                return;
+            }
+
+            if (_sharedBlockId == InvalidBlockId
+                || !_scratchedBlocks.Any(block => block != null && block.Id == _sharedBlockId))
+            {
+                GetRandomBlockId();
+            }
+        }
+
         public override void Apply(IMechanicHandler target)
         {
             EventBus<PillarFullMatchedEvent>.Subscribe(_pillarFullMatchBinding);
@@ -479,6 +502,8 @@ namespace Assets._Scripts.Datas
 
             if (target is BlockController block)
                 _scratchedBlocks.Add(block);
+
+            EnsureSharedScratchBlockId();
 
             base.Apply(target);
         }
@@ -491,6 +516,8 @@ namespace Assets._Scripts.Datas
 
             if (target is BlockController block)
                 _scratchedBlocks.Add(block);
+
+            EnsureSharedScratchBlockId();
 
             base.ApplyImmediate(target);
         }
@@ -546,7 +573,7 @@ namespace Assets._Scripts.Datas
 
         protected override bool CheckRemoveCondition()
         {
-            return _target is BlockController block && block.Id == _sharedBlockId;
+            return false;
         }
     }
     #endregion

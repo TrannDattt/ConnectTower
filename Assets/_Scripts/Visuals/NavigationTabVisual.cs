@@ -8,7 +8,7 @@ namespace Assets._Scripts.Visuals
     public class NavigationTabVisual : GameButtonVisual
     {
         [SerializeField] private Image _icon;
-        [SerializeField] private Text _name;
+        [SerializeField] private TextMeshProUGUI _name;
 
         [SerializeField] private float _animDuration = 0.25f;
         [SerializeField] private float _offsetY;
@@ -30,11 +30,11 @@ namespace Assets._Scripts.Visuals
             _offsetPos = _originPos + new Vector2(0, _offsetY);
             _iconRt.DOAnchorPos(_offsetPos, _animDuration)
                 .SetEase(Ease.InOutQuad)
-                .SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable)
-                .OnComplete(() =>
-                {
-                    _name.gameObject.SetActive(true);
-                });
+                .SetLink(gameObject, LinkBehaviour.CompleteAndKillOnDisable);
+                // .OnComplete(() =>
+                // {
+                //     _name.gameObject.SetActive(true);
+                // });
         }
 
         public void DoOnDeselectedAnim()

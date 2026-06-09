@@ -3,6 +3,7 @@ using Assets._Scripts.Enums;
 using Assets._Scripts.Helpers;
 using Assets._Scripts.Interfaces;
 using Assets._Scripts.Managers;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -14,7 +15,8 @@ namespace Assets._Scripts.Controllers
         public int Id {get; private set;} = -1;
         public string IconId {get; private set;}
         [field: SerializeField] public GameObject Base {get; private set;}
-        [SerializeField] private Image _icon;
+        // [SerializeField] private Image _icon;
+        [SerializeField] private SpriteRenderer _icon;
         [SerializeField] private string _tag;
         public string Tag => _tag;
 
@@ -22,6 +24,8 @@ namespace Assets._Scripts.Controllers
         
         public EMechanic ActiveMechanic {get; set;} = EMechanic.None;
         public MechanicVisualControl MechanicVisual { get; set; }
+        private Vector3 _defaultLocalScale;
+        private Vector3 _defaultBaseLocalScale;
 
         public void Init(BlockData data, string tag)
         {
@@ -64,6 +68,30 @@ namespace Assets._Scripts.Controllers
         void Awake()
         {
             MechanicVisual = GetComponent<MechanicVisualControl>();
+            _defaultLocalScale = transform.localScale;
+            _defaultBaseLocalScale = Base != null ? Base.transform.localScale : Vector3.one;
+        }
+
+        public void StopMotion(bool complete = false)
+        {
+            transform.DOKill(complete);
+            if (Base != null)
+                Base.transform.DOKill(complete);
+        }
+
+        public void ResetRuntimeState(bool completeTween = false)
+        {
+            StopMotion(completeTween);
+            transform.localScale = _defaultLocalScale;
+            transform.rotation = Quaternion.identity;
+
+            if (Base != null)
+                Base.transform.localScale = _defaultBaseLocalScale;
+        }
+
+        void OnDisable()
+        {
+            ResetRuntimeState();
         }
     }
 }

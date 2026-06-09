@@ -38,7 +38,7 @@ namespace Assets._Scripts.Controllers.Tutorials
 
             _moveCounterBaseLayer = _moveCounter.gameObject.layer;
             _extraMoveButtonBaseLayer = _extraMoveButton.gameObject.layer;
-            _visual.MoveNarrator(_characterPos);
+            MoveNarratorToTutorialTarget(_characterPos);
 
             _extraMoveButton.OnClicked.RemoveListener(OnExtraMoveButtonClicked);
             // _extraMoveButton.OnClicked.AddListener(OnExtraMoveButtonClicked);

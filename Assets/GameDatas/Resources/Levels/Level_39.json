@@ -151,8 +151,8 @@
       "BlockIds": [
         6,
         5,
-        4,
-        0
+        7,
+        10
       ]
     },
     {
@@ -160,15 +160,15 @@
       "BlockIds": [
         9,
         8,
-        10,
-        12
+        12,
+        4
       ]
     },
     {
       "Id": 3,
       "BlockIds": [
         1,
-        7,
+        0,
         23,
         13
       ]
@@ -217,8 +217,6 @@
   "FrozenBlockDatas": [],
   "ScratchedBlockDatas": {
     "BlockIds": [
-      11,
-      4,
       10
     ]
   },
@@ -226,6 +224,6 @@
     "BlockIds": []
   },
   "TrapPillarDatas": [],
-  "HighScore": 0,
+  "HighScore": 37260,
   "CoinReward": 40
 }

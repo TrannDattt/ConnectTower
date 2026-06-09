@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Linq;
 using Assets._Scripts.Datas;
 using Assets._Scripts.Enums;
@@ -22,7 +21,6 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private CoinDisplayVisual _coinDisplay;
         [SerializeField] private GameButtonVisual _settingButton;
         [SerializeField] private IngameScoreVisual _scoreVisual;
-        [SerializeField] private float _levelClearBonusStepDuration = 0.2f;
         [SerializeField] private BoosterButtonVisual[] _boosterButtons;
 
 #if UNITY_EDITOR
@@ -43,7 +41,10 @@ namespace Assets._Scripts.Controllers
             _progressBar.UpdateProgress(0, data.TotalGroups);
             _difficultyTag.SetDifficulty(data.Difficulty);
             _coinDisplay.UpdateVisual();
-            _scoreVisual.InitScore();
+            if (_scoreVisual != null)
+            {
+                _scoreVisual.InitScore();
+            }
             _levelIndex.SetLevelIndex(data.Index);
 
             foreach(var button in _boosterButtons)
@@ -75,47 +76,6 @@ namespace Assets._Scripts.Controllers
         public void UpdateProgressBar(int current, int target)
         {
             _progressBar.UpdateProgress(current, target);
-        }
-
-        public float GetScorePopDuration()
-        {
-            return _scoreVisual != null ? _scoreVisual.GetPopDuration() : 0f;
-        }
-
-        public IEnumerator PlayLevelClearBonusSequence(LevelRuntimeData data)
-        {
-            if (data == null || !data.BeginLevelClearBonusSequence())
-                yield break;
-
-            var totalUpdates = data.MoveCount;
-            if (totalUpdates <= 0)
-                yield break;
-
-            var baseStepDuration = Mathf.Max(_levelClearBonusStepDuration, GetScorePopDuration());
-            var totalDuration = _scoreVisual != null
-                ? _scoreVisual.GetLevelClearBonusTotalDuration(totalUpdates, baseStepDuration)
-                : Mathf.Max(0f, baseStepDuration) * Mathf.Max(0, totalUpdates - 1);
-            var sequenceStartTime = Time.unscaledTime;
-
-            for (var updateIndex = 1; updateIndex <= totalUpdates; updateIndex++)
-            {
-                var scheduledTime = _scoreVisual != null
-                    ? _scoreVisual.GetLevelClearBonusStepTime(updateIndex, totalUpdates, totalDuration)
-                    : Mathf.Max(0f, baseStepDuration) * (updateIndex - 1);
-                var remainingWait = scheduledTime - (Time.unscaledTime - sequenceStartTime);
-                if (remainingWait > 0f)
-                    yield return new WaitForSecondsRealtime(remainingWait);
-
-                if (!data.ApplyNextLevelClearBonusStep())
-                    yield break;
-
-                var stepDuration = _scoreVisual != null
-                    ? _scoreVisual.GetLevelClearBonusStepDuration(updateIndex, totalUpdates, totalDuration)
-                    : baseStepDuration;
-                UpdateMoveCount(data.MoveCount, stepDuration);
-            }
-
-            UpdateMoveCount(data.MoveCount, 0f);
         }
 
         private void OnEnable()

@@ -12,6 +12,7 @@ namespace Assets._Scripts.Visuals
 
         void Update()
         {
+            if (!gameObject.activeInHierarchy) return;
             UpdateFpsDisplay();
         }
 
@@ -51,6 +52,13 @@ namespace Assets._Scripts.Visuals
             }
 
             return Color.red;
+        }
+
+        void Start()
+        {
+#if !UNITY_EDITOR
+            gameObject.SetActive(false);
+#endif
         }
     }
 }

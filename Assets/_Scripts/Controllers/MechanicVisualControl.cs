@@ -20,10 +20,15 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private BlockEffectVisual _blockVisual;
         [SerializeField] private Texture2D _hiddenTexture;
         [SerializeField] private AudioClip _fxHiddenRemove;
+        [SerializeField] private ParticleSystem _hiddenRemoveParticle;
 
         [Header("Frozen Block")]
         [SerializeField] private GameObject _frozenBlockHolder;
-        [SerializeField] private RectTransform _frozenBlockMask;
+        [SerializeField] private GameObject _frozenBlockIcon;
+        [SerializeField] private float _frozenBlockRotateFrom;
+        [SerializeField] private float _frozenBlockRotateTo;
+        [SerializeField] private Vector3 _frozenBlockPositionFrom;
+        [SerializeField] private Vector3 _frozenBlockPositionTo;
         [SerializeField] private float _frozenApplyDur;
         [SerializeField] private GameObject _frozenPillarRod;
         [SerializeField] private GameObject _frozenPillarBase;
@@ -60,10 +65,10 @@ namespace Assets._Scripts.Controllers
 
         [Header("Sticky Block")]
         [SerializeField] private GameObject _slimeHolder;
-        [SerializeField] private Image _topStrand;
-        [field : SerializeField] public RectTransform TopStrandAnchor {get; private set;}
-        [SerializeField] private Image _bottomStrand;
-        [field : SerializeField] public RectTransform BottomStrandAnchor {get; private set;}
+        [SerializeField] private SpriteRenderer _topStrand;
+        [field : SerializeField] public Transform TopStrandAnchor {get; private set;}
+        [SerializeField] private SpriteRenderer _bottomStrand;
+        [field : SerializeField] public Transform BottomStrandAnchor {get; private set;}
         [SerializeField] private float _strandOffset = .2f;
         [SerializeField] private ParticleSystem _particle;
         [SerializeField] private AudioClip _fxStickyMove;
@@ -72,7 +77,9 @@ namespace Assets._Scripts.Controllers
         private bool _swappedStrands;
         private MechanicVisualControl _stickTargetTop;
         private MechanicVisualControl _stickTargetBottom;
-        private const string FrozenBlockTweenId = "FrozenBlockMask";
+        private Vector3 _topStrandBaseLocalScale = Vector3.one;
+        private Vector3 _bottomStrandBaseLocalScale = Vector3.one;
+        private const string FrozenBlockTweenId = "FrozenBlock";
         private const string FrozenPillarRodTweenId = "FrozenPillarRod";
         private Vector3 _frozenPillarRodOriginalLocalPosition;
         private Transform _particleOriginalParent;
@@ -80,6 +87,7 @@ namespace Assets._Scripts.Controllers
         private Quaternion _particleOriginalLocalRotation;
         private Vector3 _particleOriginalLocalScale;
         private Coroutine _stickyDetachParticleRoutine;
+        private Coroutine _hiddenRemoveParticleRoutine;
         private Coroutine _trapAnimationRoutine;
         private readonly Queue<MechanicVisualRequest> _pendingMechanicVisualRequests = new();
         private Coroutine _mechanicVisualRequestRoutine;
@@ -182,6 +190,12 @@ namespace Assets._Scripts.Controllers
         {
             if (type == EMechanic.None) return;
 
+            if (type == EMechanic.ScratchBlock)
+            {
+                RemoveVisualImmediate(type, doEffect);
+                return;
+            }
+
             EnqueueMechanicVisualRequest(new MechanicVisualRequest
             {
                 IsApply = false,
@@ -203,7 +217,11 @@ namespace Assets._Scripts.Controllers
                     }
                     if (!doEffect) break;
                     SoundManager.Instance.PlaySFX(_fxHiddenRemove);
-                    StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Smoke, transform.position));
+                    // StartCoroutine(ParticleManager.Instance.PlayParticle(EParticle.Smoke, transform.position));
+                    if (_hiddenRemoveParticle != null)
+                    {
+                        PlayHiddenRemoveParticle();
+                    }
                     break;
                 case EMechanic.FrozenBlock:
                     RemoveFrozenVisual(doEffect);
@@ -301,25 +319,28 @@ namespace Assets._Scripts.Controllers
                 if (_frozenBlockHolder != null)
                     _frozenBlockHolder.SetActive(true);
 
-                if (_frozenBlockMask != null)
+                if (_frozenBlockIcon != null)
                 {
-                    var anchorMax = _frozenBlockMask.anchorMax;
-                    anchorMax.y = 0f;
-                    _frozenBlockMask.anchorMax = anchorMax;
+                    SetFrozenBlockIconPose(_frozenBlockPositionFrom, _frozenBlockRotateFrom);
 
                     if (doEffect)
                     {
-                        _frozenBlockMask
-                            .DOAnchorMax(new Vector2(anchorMax.x, 1f), _frozenApplyDur)
+                        var iconTransform = _frozenBlockIcon.transform;
+                        var toPosition = GetFrozenBlockIconLocalPosition(_frozenBlockPositionTo);
+                        var toRotation = iconTransform.localEulerAngles;
+                        toRotation.x = _frozenBlockRotateTo;
+
+                        DOTween.Sequence()
                             .SetEase(Ease.OutQuad)
                             .SetLink(gameObject, LinkBehaviour.KillOnDisable)
                             .SetId(FrozenBlockTweenId)
-                            .SetTarget(this);
+                            .SetTarget(this)
+                            .Join(iconTransform.DOLocalMove(toPosition, _frozenApplyDur))
+                            .Join(iconTransform.DOLocalRotate(toRotation, _frozenApplyDur));
                     }
                     else
                     {
-                        anchorMax.y = 1f;
-                        _frozenBlockMask.anchorMax = anchorMax;
+                        SetFrozenBlockIconPose(_frozenBlockPositionTo, _frozenBlockRotateTo);
                     }
                 }
 
@@ -357,12 +378,8 @@ namespace Assets._Scripts.Controllers
                 if (_frozenBlockHolder != null)
                     _frozenBlockHolder.SetActive(false);
 
-                if (_frozenBlockMask != null)
-                {
-                    var anchorMax = _frozenBlockMask.anchorMax;
-                    anchorMax.y = 0f;
-                    _frozenBlockMask.anchorMax = anchorMax;
-                }
+                if (_frozenBlockIcon != null)
+                    SetFrozenBlockIconPose(_frozenBlockPositionFrom, _frozenBlockRotateFrom);
 
                 var pillarVisual = _block.GetPillarParent()?.MechanicVisual;
                 if (pillarVisual != null)
@@ -377,6 +394,26 @@ namespace Assets._Scripts.Controllers
                 if (_frozenPillarBase != null) _frozenPillarBase.SetActive(false);
                 if (doEffect) SoundManager.Instance.PlaySFX(_fxIceRemove);
             });
+        }
+
+        private void SetFrozenBlockIconPose(Vector3 localPosition, float localXRotation)
+        {
+            if (_frozenBlockIcon == null) return;
+
+            var iconTransform = _frozenBlockIcon.transform;
+            iconTransform.localPosition = GetFrozenBlockIconLocalPosition(localPosition);
+
+            var localEulerAngles = iconTransform.localEulerAngles;
+            localEulerAngles.x = localXRotation;
+            iconTransform.localEulerAngles = localEulerAngles;
+        }
+
+        private Vector3 GetFrozenBlockIconLocalPosition(Vector3 localPosition)
+        {
+            if (_frozenBlockIcon == null) return localPosition;
+
+            var currentLocalPosition = _frozenBlockIcon.transform.localPosition;
+            return new Vector3(localPosition.x, localPosition.y, currentLocalPosition.z);
         }
 
         private void RefreshFrozenPillarRod()
@@ -452,12 +489,26 @@ namespace Assets._Scripts.Controllers
 
                 var request = _pendingMechanicVisualRequests.Dequeue();
                 if (request.IsApply)
+                {
+                    // Ignore stale apply requests that were queued before the mechanic changed/cleared.
+                    if (!ShouldProcessApplyRequest(request))
+                        continue;
+
                     ApplyVisualImmediate(request.MechanicData, request.DoEffect);
+                }
                 else
                     RemoveVisualImmediate(request.MechanicType, request.DoEffect);
             }
 
             _mechanicVisualRequestRoutine = null;
+        }
+
+        private bool ShouldProcessApplyRequest(MechanicVisualRequest request)
+        {
+            if (request.MechanicData == null)
+                return false;
+
+            return request.MechanicData.Key == GetCurrentMechanicType();
         }
 
         private IEnumerator WaitForBlockingTweensToComplete()
@@ -578,7 +629,7 @@ namespace Assets._Scripts.Controllers
             PlayStickyDetachParticle(targetAnchor);
         }
 
-        private void PlayStickyDetachParticle(RectTransform targetAnchor)
+        private void PlayStickyDetachParticle(Transform targetAnchor)
         {
             if (_particle == null || targetAnchor == null) return;
 
@@ -592,7 +643,7 @@ namespace Assets._Scripts.Controllers
             _stickyDetachParticleRoutine = StartCoroutine(PlayStickyDetachParticleRoutine(targetAnchor));
         }
 
-        private IEnumerator PlayStickyDetachParticleRoutine(RectTransform targetAnchor)
+        private IEnumerator PlayStickyDetachParticleRoutine(Transform targetAnchor)
         {
             var targetParent = GetActiveParticleParent(targetAnchor);
             _particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -607,6 +658,33 @@ namespace Assets._Scripts.Controllers
 
             RestoreStickyDetachParticleParent();
             _stickyDetachParticleRoutine = null;
+        }
+
+        private void PlayHiddenRemoveParticle()
+        {
+            if (_hiddenRemoveParticle == null) return;
+
+            if (_hiddenRemoveParticleRoutine != null)
+            {
+                StopCoroutine(_hiddenRemoveParticleRoutine);
+                _hiddenRemoveParticleRoutine = null;
+            }
+
+            _hiddenRemoveParticle.gameObject.SetActive(true);
+            _hiddenRemoveParticle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            _hiddenRemoveParticle.Play();
+            _hiddenRemoveParticleRoutine = StartCoroutine(HiddenRemoveParticleRoutine());
+        }
+
+        private IEnumerator HiddenRemoveParticleRoutine()
+        {
+            yield return null;
+            yield return new WaitUntil(() => _hiddenRemoveParticle == null || !_hiddenRemoveParticle.IsAlive(true));
+
+            if (_hiddenRemoveParticle != null)
+                _hiddenRemoveParticle.gameObject.SetActive(false);
+
+            _hiddenRemoveParticleRoutine = null;
         }
 
         private Transform GetActiveParticleParent(Transform targetAnchor)
@@ -635,10 +713,19 @@ namespace Assets._Scripts.Controllers
 
         public void ResetStickyStrand()
         {
-            _topStrand.rectTransform.localScale = new Vector3(1, 0, 1);
-            _bottomStrand.rectTransform.localScale = new Vector3(1, 0, 1);
-            _topStrand.rectTransform.rotation = Quaternion.identity;
-            _bottomStrand.rectTransform.rotation = Quaternion.identity;
+            if (_topStrand != null)
+            {
+                var topBaseScale = GetStickyStrandBaseScale(true);
+                _topStrand.transform.localScale = new Vector3(topBaseScale.x, 0, topBaseScale.z);
+                _topStrand.transform.localRotation = Quaternion.identity;
+            }
+
+            if (_bottomStrand != null)
+            {
+                var bottomBaseScale = GetStickyStrandBaseScale(false);
+                _bottomStrand.transform.localScale = new Vector3(bottomBaseScale.x, 0, bottomBaseScale.z);
+                _bottomStrand.transform.localRotation = Quaternion.identity;
+            }
         }
 
         private bool ShouldSwapStickyTargets(bool hasTopConnection, bool hasBottomConnection)
@@ -650,7 +737,7 @@ namespace Assets._Scripts.Controllers
 
         private bool IsStickyStrandAngleOutsideRange(bool topStrand)
         {
-            if (!TryGetStickyStrandData(topStrand, out _, out var fromTarget, out var toTarget, out var parent))
+            if (!TryGetStickyStrandData(topStrand, out _, out _, out var fromTarget, out var toTarget, out var parent))
                 return false;
 
             var fromLocal = parent.InverseTransformPoint(fromTarget.position);
@@ -670,17 +757,19 @@ namespace Assets._Scripts.Controllers
 
         private bool TryGetStickyStrandData(
             bool topStrand,
-            out RectTransform strandRt,
-            out RectTransform fromTarget,
-            out RectTransform toTarget,
+            out Transform strandTf,
+            out SpriteRenderer strandRenderer,
+            out Transform fromTarget,
+            out Transform toTarget,
             out Transform parent)
         {
-            strandRt = (topStrand ? _topStrand : _bottomStrand)?.rectTransform;
+            strandRenderer = topStrand ? _topStrand : _bottomStrand;
+            strandTf = strandRenderer?.transform;
             fromTarget = topStrand ? TopStrandAnchor : BottomStrandAnchor;
             toTarget = topStrand ? _stickTargetTop?.BottomStrandAnchor : _stickTargetBottom?.TopStrandAnchor;
-            parent = strandRt?.parent;
+            parent = strandTf?.parent;
 
-            return strandRt != null && fromTarget != null && toTarget != null && parent != null;
+            return strandTf != null && strandRenderer != null && fromTarget != null && toTarget != null && parent != null;
         }
 
         private void SwapStickyTargets()
@@ -692,7 +781,7 @@ namespace Assets._Scripts.Controllers
 
         private void DoStickyStrandAnim(bool topStrand)
         {
-            if (!TryGetStickyStrandData(topStrand, out var strandRt, out var fromTarget, out var toTarget, out var parent))
+            if (!TryGetStickyStrandData(topStrand, out var strandTf, out var strandRenderer, out var fromTarget, out var toTarget, out var parent))
                 return;
 
             var fromLocal = parent.InverseTransformPoint(fromTarget.position);
@@ -701,19 +790,39 @@ namespace Assets._Scripts.Controllers
 
             if (delta.sqrMagnitude <= Mathf.Epsilon)
             {
-                strandRt.localPosition = fromLocal;
-                strandRt.localRotation = Quaternion.identity;
-                strandRt.localScale = new Vector3(1f, 0f, 1f);
+                var baseScale = GetStickyStrandBaseScale(topStrand);
+                strandTf.localPosition = fromLocal;
+                strandTf.localRotation = Quaternion.identity;
+                strandTf.localScale = new Vector3(baseScale.x, 0f, baseScale.z);
                 return;
             }
 
             var angle = GetStickyStrandAngle(delta, topStrand);
-            var baseHeight = Mathf.Max(strandRt.rect.height, 0.0001f);
+            var baseHeight = GetStickyStrandBaseHeight(strandRenderer);
             var strandLength = delta.magnitude + _strandOffset;
+            var strandBaseScale = GetStickyStrandBaseScale(topStrand);
+            var strandDirection = delta.normalized;
+            var strandCenter = fromLocal + strandDirection * (strandLength * 0.5f);
 
-            strandRt.localPosition = fromLocal;
-            strandRt.localRotation = Quaternion.Euler(0f, 0f, angle);
-            strandRt.localScale = new Vector3(1f, strandLength / baseHeight, 1f);
+            // SpriteRenderer strands use a centered pivot, so we place the transform
+            // at the midpoint and scale along its local Y axis to keep the strand
+            // anchored cleanly between the two blocks.
+            strandTf.localPosition = strandCenter;
+            strandTf.localRotation = Quaternion.Euler(0f, 0f, angle);
+            strandTf.localScale = new Vector3(strandBaseScale.x, strandLength / baseHeight, strandBaseScale.z);
+        }
+
+        private float GetStickyStrandBaseHeight(SpriteRenderer strandRenderer)
+        {
+            if (strandRenderer == null || strandRenderer.sprite == null)
+                return 0.0001f;
+
+            return Mathf.Max(strandRenderer.sprite.bounds.size.y, 0.0001f);
+        }
+
+        private Vector3 GetStickyStrandBaseScale(bool topStrand)
+        {
+            return topStrand ? _topStrandBaseLocalScale : _bottomStrandBaseLocalScale;
         }
 
         public void DoStickySFX()
@@ -727,6 +836,8 @@ namespace Assets._Scripts.Controllers
         {
             _block = GetComponent<BlockController>();
             if (_frozenPillarRod != null) _frozenPillarRodOriginalLocalPosition = _frozenPillarRod.transform.localPosition;
+            if (_topStrand != null) _topStrandBaseLocalScale = _topStrand.transform.localScale;
+            if (_bottomStrand != null) _bottomStrandBaseLocalScale = _bottomStrand.transform.localScale;
             if (_particle != null)
             {
                 _particleOriginalParent = _particle.transform.parent;
@@ -759,8 +870,17 @@ namespace Assets._Scripts.Controllers
                 _trapAnimationRoutine = null;
             }
 
+            if (_hiddenRemoveParticleRoutine != null)
+            {
+                StopCoroutine(_hiddenRemoveParticleRoutine);
+                _hiddenRemoveParticleRoutine = null;
+            }
+
             if (_trapHolder != null && _trapHolder.activeSelf)
                 _trapHolder.SetActive(false);
+
+            if (_hiddenRemoveParticle != null)
+                _hiddenRemoveParticle.gameObject.SetActive(false);
 
             RestoreStickyDetachParticleParent();
         }

@@ -1,3 +1,4 @@
+using Assets._Scripts.Managers;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -37,8 +38,12 @@ namespace Assets._Scripts.Visuals
 
         // MOVING
         [SerializeField] private float _moveDur;
+        [SerializeField] private float _delayTalkSFX = .05f;
+        [SerializeField] private AudioClip[] _talkSFXs;
 
         public bool IsTalking { get; private set; }
+        public RectTransform CharacterRectTransform => _rt;
+        public RectTransform HandRectTransform => _characterHandRect;
 
         private Tween _activeTalkTween;
         private string _currentMessage;
@@ -128,6 +133,18 @@ namespace Assets._Scripts.Visuals
             var baseSequence = DOTween.Sequence();
             baseSequence.Append(_characterBase.transform.DOScale(Vector3.one * _baseScaleFactor, _dialogDisplayDur).SetEase(_baseScaleCurve).SetRelative());
             baseSequence.Join(_characterBase.transform.DOLocalRotate(_baseRotateOffset, _dialogDisplayDur).SetEase(_baseRotateCurve).SetRelative());
+            for(int i = 0; i < 5; i++)
+            {
+                int index = i;
+                var sfxIndex = Random.Range(0, _talkSFXs.Length);
+                baseSequence.InsertCallback(index * _delayTalkSFX, () =>
+                {
+                    if (_talkSFXs.Length > 0)
+                    {
+                        SoundManager.Instance.PlaySFX(_talkSFXs[sfxIndex]);
+                    }
+                });
+            }
             baseSequence.OnComplete(resetBase).OnKill(resetBase);
 
             _activeTalkTween = masterSequence.Append(dialogSequence)

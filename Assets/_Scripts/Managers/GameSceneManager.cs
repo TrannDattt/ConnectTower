@@ -59,15 +59,13 @@ namespace Assets._Scripts.Managers
 
             if (_activeScene == toLoad) yield break;
 
-            yield return PopupManager.Instance.ShowPopup(EPopup.Loading);
+            yield return PopupManager.Instance.ShowLoadingPopup();
 
             TryUnload(_activeScene);
             onUnload?.Invoke();
             TryLoad(toLoad);
             _activeScene = toLoad;
 
-            yield return new WaitForSeconds(2f);
-            yield return PopupManager.Instance.HidePopup(EPopup.Loading);
             onLoad?.Invoke();
         }
 

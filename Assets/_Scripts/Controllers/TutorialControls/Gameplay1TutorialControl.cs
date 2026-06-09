@@ -30,6 +30,7 @@ namespace Assets._Scripts.Controllers.Tutorials
         private EventBinding<PillarClickedEvent> _pillarClickedBinding;
         private Coroutine _endTutorialCoroutine;
         private TutorialStep _currentStep;
+        private static readonly PillarController[] _blockedPillars = { null };
 
         private enum TutorialStep
         {
@@ -57,7 +58,7 @@ namespace Assets._Scripts.Controllers.Tutorials
 
             _pillar1BaseLayer = _pillar1.gameObject.layer;
             _pillar2BaseLayer = _pillar2.gameObject.layer;
-            _visual.MoveNarrator(_characterPos);
+            MoveNarratorToTutorialTarget(_characterPos);
 
             GameManager.Instance.UnsubcribeIngameEvent?.Invoke();
 
@@ -86,8 +87,8 @@ namespace Assets._Scripts.Controllers.Tutorials
 
             RestorePillarState();
             EnableAllGameplayPillarInteraction();
+            _visual.StopPointing();
             _currentStep = TutorialStep.None;
-            BoardController.Instance.ClearBoard();
             IsFinished = true;
         }
 
@@ -142,7 +143,8 @@ namespace Assets._Scripts.Controllers.Tutorials
                     break;
 
                 case TutorialStep.WaitForPillar2 when clickedPillar == _pillar2:
-                    DisableGameplayPillarInteraction();
+                    // Defer blocking to the next frame so the current click can still be consumed by gameplay.
+                    StartCoroutine(DisableFurtherGameplayPillarClicksNextFrame());
                     // ChangePillarsLayer(_pillar2, _pillar2BaseLayer);
                     _visual.StopPointing();
                     _currentStep = TutorialStep.Ending;
@@ -182,6 +184,23 @@ namespace Assets._Scripts.Controllers.Tutorials
         private void DisableGameplayPillarInteraction()
         {
             GameManager.Instance.UnsubcribeIngameEvent?.Invoke();
+        }
+
+        private void DisableFurtherGameplayPillarClicks()
+        {
+            GameManager.Instance.SetInteractablePillarsEvent?.Invoke(_blockedPillars);
+        }
+
+        private IEnumerator DisableFurtherGameplayPillarClicksNextFrame()
+        {
+            yield return null;
+
+            if (IsFinished || _currentStep != TutorialStep.Ending)
+            {
+                yield break;
+            }
+
+            DisableFurtherGameplayPillarClicks();
         }
 
         private IEnumerator WaitAndEndTutorial()

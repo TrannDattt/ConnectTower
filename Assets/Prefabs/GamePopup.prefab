@@ -355,11 +355,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.SettingPopupVisual
   _popupRt: {fileID: 6874394949055394402}
   _closeButton: {fileID: 5617057775305046852}
-  _audioButton: {fileID: 0}
-  _vibrateButton: {fileID: 0}
+  _bgmSlider: {fileID: 0}
+  _sfxSlider: {fileID: 0}
+  _hapticSlider: {fileID: 0}
   _supportButton: {fileID: 7947664950405662075}
   _policyButton: {fileID: 8276630317535298515}
   _homeButton: {fileID: 3727236283352264855}
+  _lostHeartWarningIcon: {fileID: 0}
 --- !u!1 &7320819623994180826
 GameObject:
   m_ObjectHideFlags: 0

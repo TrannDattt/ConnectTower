@@ -30,6 +30,23 @@ namespace Assets._Scripts.Controllers
             _selectedBlocks.Clear();
         }
 
+        public void CleanupMotionState(IEnumerable<PillarController> pillars, IEnumerable<BlockController> blocks)
+        {
+            _selectedBlocks.Clear();
+
+            if (pillars != null)
+            {
+                foreach (var pillar in pillars.Where(p => p != null))
+                    DOTween.Kill(pillar, false);
+            }
+
+            if (blocks != null)
+            {
+                foreach (var block in blocks.Where(b => b != null))
+                    block.ResetRuntimeState();
+            }
+        }
+
         public Vector3 GetBlockPosition(PillarController pillar, int index)
         {
             return pillar.BlockContainer.transform.position + index * _blockHeight * Vector3.up;
@@ -59,7 +76,7 @@ namespace Assets._Scripts.Controllers
             DOTween.Kill(pillar, "Feedback");
             string tweenId = "Pick up";
 
-            var sequence = DOTween.Sequence().SetTarget(pillar).SetId(tweenId);
+            var sequence = DOTween.Sequence().SetTarget(pillar).SetId(tweenId).SetLink(pillar.gameObject, LinkBehaviour.KillOnDisable);
             float tweenDuration = 0.3f;
             var scaleFactor = pillar.transform.localScale.x;
             float blockOffset = (_blockHeight + .1f) * scaleFactor;
@@ -117,7 +134,7 @@ namespace Assets._Scripts.Controllers
             var rotateOffset = 5f;
 
             string tweenId = "Float";
-            var sequence = DOTween.Sequence().SetRelative().SetTarget(target.GetPillarParent()).SetId(tweenId);
+            var sequence = DOTween.Sequence().SetRelative().SetTarget(target.GetPillarParent()).SetId(tweenId).SetLink(target.gameObject, LinkBehaviour.KillOnDisable);
 
             // Di chuyen len xuong
             sequence.Append(target.transform.DOMoveY(moveOffset, 0.6f).SetEase(Ease.InOutSine).SetLoops(int.MaxValue, LoopType.Yoyo));
@@ -159,7 +176,7 @@ namespace Assets._Scripts.Controllers
             if (IsSticky(blocks[^1])) blocks[^1].MechanicVisual.RemoveStickyTarget(true);
             DOTween.Kill(pillar, true);
             var tweenId = "Put back";
-            var sequence = DOTween.Sequence().SetTarget(pillar).SetId(tweenId);
+            var sequence = DOTween.Sequence().SetTarget(pillar).SetId(tweenId).SetLink(pillar.gameObject, LinkBehaviour.KillOnDisable);
             float tweenDuration = 0.3f;
             var blockScaleFactor = pillar.transform.localScale.x;
             var firstPos = pillar.BlockContainer.transform.position + _blockHeight * blockScaleFactor * (pillar.GetBlockCount() - blocks.Count) * Vector3.up;
@@ -213,9 +230,10 @@ namespace Assets._Scripts.Controllers
             if (IsSticky(blocks[0])) blocks[0].MechanicVisual.RemoveStickyTarget(true);
             if (IsSticky(blocks[^1])) blocks[^1].MechanicVisual.RemoveStickyTarget(false);
             DOTween.Kill(fromPillar);
+            DOTween.Kill(toPillar, true);
             foreach (var block in blocks) block.transform.DOKill();
             string tweenId = "Move";
-            var sequence = DOTween.Sequence().SetTarget(toPillar).SetId(tweenId);
+            var sequence = DOTween.Sequence().SetTarget(toPillar).SetId(tweenId).SetLink(toPillar.gameObject, LinkBehaviour.KillOnDisable);
 
             float duration = 0.7f; 
             float staggeredDelay = 0.05f;
@@ -280,7 +298,7 @@ namespace Assets._Scripts.Controllers
                 // Return if this tween is force-completed (e.g. blocks picked up again)
                 if (blocks.Count > 0 && _selectedBlocks.Contains(blocks[0])) return;
 
-                Sequence feedbackSequence = DOTween.Sequence().SetTarget(toPillar).SetId("Feedback");
+                Sequence feedbackSequence = DOTween.Sequence().SetTarget(toPillar).SetId("Feedback").SetLink(toPillar.gameObject, LinkBehaviour.KillOnDisable);
 
                 if (matched.Count > blocks.Count)
                 {
@@ -341,7 +359,7 @@ namespace Assets._Scripts.Controllers
             if (IsFrozen(pillar))
                 return DOTween.Sequence();
 
-            var masterSequence = DOTween.Sequence();
+            var masterSequence = DOTween.Sequence().SetLink(pillar.gameObject, LinkBehaviour.KillOnDisable);
 
             float jumpHeight = .5f;
             float jumpDuration = 0.25f;
@@ -383,7 +401,7 @@ namespace Assets._Scripts.Controllers
             if (blocks == null || blocks.Count == 0) return null;
 
             var pillar = blocks[0].GetPillarParent();
-            var masterSequence = DOTween.Sequence();
+            var masterSequence = DOTween.Sequence().SetLink(pillar.gameObject, LinkBehaviour.KillOnDisable);
 
             float duration = 0.4f;
             float strength = 0.05f;

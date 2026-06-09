@@ -61,11 +61,25 @@ namespace Assets._Scripts.Visuals
                                  });
         }
 
+        public void HideInstant()
+        {
+            IsActive = false;
+
+            if (_popupRt != null)
+            {
+                _popupRt.DOKill(true);
+                _popupRt.localScale = Vector3.zero;
+            }
+
+            gameObject.SetActive(false);
+        }
+
         protected virtual void Start()
         {
             _closeButton?.OnClicked.AddListener(() => StartCoroutine(Hide()));
 
-            // Hide();
+            if (!IsActive)
+                HideInstant();
         }
 
         protected virtual void OnDestroy()

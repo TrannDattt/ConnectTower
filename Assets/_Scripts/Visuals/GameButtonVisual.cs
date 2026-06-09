@@ -1,6 +1,7 @@
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -13,7 +14,7 @@ namespace Assets._Scripts.Visuals
     {
         [SerializeField] protected Button _button;
         [SerializeField] protected RectTransform _buttonRt;
-        [SerializeField] protected Text _content;
+        [SerializeField] protected TextMeshProUGUI _content;
         [SerializeField] protected Image _buttonIcon;
         
         [Header("Settings")]
@@ -111,7 +112,7 @@ namespace Assets._Scripts.Visuals
         public void SetContent(string content)
         {
             if (_content == null) return;
-            _content.text = content;
+            _content.SetText(content);
         }
 
         public void ShowPopupText(string message)

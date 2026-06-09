@@ -12,6 +12,7 @@ namespace Assets._Scripts.Controllers
         [SerializeField] private CoinDisplayVisual _coinDisplay;
         [SerializeField] private RectTransform _bundleContainer;
         [SerializeField] private GameButtonVisual _settingButton;
+        [SerializeField] private bool _usePopupLifecycle = true;
 
         public void InitVisual()
         {
@@ -37,7 +38,10 @@ namespace Assets._Scripts.Controllers
                 PopupManager.Instance.ShowPopup(EPopup.Setting);
             });
 
-            base.Start();
+            if (_usePopupLifecycle)
+            {
+                base.Start();
+            }
         }
     }
 }

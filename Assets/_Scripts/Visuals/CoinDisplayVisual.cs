@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using Assets._Scripts.Controllers;
 using Assets._Scripts.Enums;
 using Assets._Scripts.Managers;
@@ -40,7 +42,7 @@ namespace Assets._Scripts.Visuals
             }
             else
             {
-                _coinCountText.text = to.ToString();
+                _coinCountText.text = FormatCoinCount(to);
             }
         }
 
@@ -66,7 +68,7 @@ namespace Assets._Scripts.Visuals
                 yield return new WaitForSeconds(textDelayTime);
             }
             
-            yield return DOTween.To(() => from, x => _coinCountText.text = x.ToString(), to, duration)
+            yield return DOTween.To(() => from, x => _coinCountText.text = FormatCoinCount(x), to, duration)
                                 .SetTarget(_coinCountText)
                                 .SetLink(gameObject, LinkBehaviour.KillOnDisable)
                                 .OnKill(() =>
@@ -105,7 +107,37 @@ namespace Assets._Scripts.Visuals
             EventBus<CurrencyChangedEvent>.Unsubscribe(_currencyChangedBinding);
             DOTween.Kill(_coinCountText, true);
             _lastCount = UserManager.CurUser.CoinCount;
-            _coinCountText.text = _lastCount.ToString();
+            _coinCountText.text = FormatCoinCount(_lastCount);
+        }
+
+        private static string FormatCoinCount(int amount)
+        {
+            if (amount >= 1_000_000_000)
+                return FormatWithSuffix(amount, 1_000_000_000d, "B", true);
+
+            if (amount >= 100_000_000)
+                return FormatWithSuffix(amount, 1_000_000d, "M", false);
+
+            if (amount >= 1_000_000)
+                return FormatWithSuffix(amount, 1_000_000d, "M", true);
+
+            if (amount >= 100_000)
+                return FormatWithSuffix(amount, 1_000d, "K", false);
+
+            if (amount >= 1_000)
+                return FormatWithSuffix(amount, 1_000d, "K", true);
+
+            return amount.ToString();
+        }
+
+        private static string FormatWithSuffix(int amount, double divisor, string suffix, bool showDecimals)
+        {
+            double shortenedValue = amount / divisor;
+            if (!showDecimals)
+                return $"{Math.Floor(shortenedValue)}{suffix}";
+
+            double truncatedValue = Math.Floor(shortenedValue * 100d) / 100d;
+            return $"{truncatedValue.ToString("0.00", CultureInfo.InvariantCulture)}{suffix}";
         }
 
         // private void OnDestroy()

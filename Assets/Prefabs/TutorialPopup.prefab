@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8294893279395785782}
   - component: {fileID: 4333627607860967776}
   - component: {fileID: 2522215058963798053}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: CloseText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4254533746614855239}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: Content
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -163,7 +163,7 @@ GameObject:
   - component: {fileID: 1692170455575155015}
   - component: {fileID: 2655284276609448376}
   - component: {fileID: 9020191612763546480}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: CloseButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -264,7 +264,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3693936271996161392}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: GameObjectHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -299,7 +299,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6527999493885728825}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -340,7 +340,7 @@ GameObject:
   - component: {fileID: 2222136397890230505}
   - component: {fileID: 4889565555975408716}
   - component: {fileID: 7191301166217236510}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: UnlockText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -452,7 +452,7 @@ GameObject:
   - component: {fileID: 3434409836904286628}
   - component: {fileID: 4719558995922794512}
   - component: {fileID: 8756291336940337402}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: NameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -562,7 +562,7 @@ GameObject:
   - component: {fileID: 3307579537936058506}
   - component: {fileID: 3343490779037853134}
   - component: {fileID: 4086161206443403699}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -636,13 +636,13 @@ GameObject:
   m_Component:
   - component: {fileID: 1243901994962972066}
   - component: {fileID: 8146655451062309151}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: Hand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1243901994962972066
 RectTransform:
   m_ObjectHideFlags: 0
@@ -661,7 +661,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -306, y: -801}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 180, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8146655451062309151
@@ -689,13 +689,13 @@ GameObject:
   - component: {fileID: 3921542137379154800}
   - component: {fileID: 8261687404489444974}
   - component: {fileID: 6574490595334178337}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: HandPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3921542137379154800
 RectTransform:
   m_ObjectHideFlags: 0
@@ -764,7 +764,7 @@ GameObject:
   - component: {fileID: 4302659285736587211}
   - component: {fileID: 4421474606132726962}
   - component: {fileID: 8836159034706058347}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: HandClick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -839,7 +839,15 @@ GameObject:
   - component: {fileID: 8507643104542614624}
   - component: {fileID: 4229606670171339498}
   - component: {fileID: 2437083262339507048}
-  m_Layer: 12
+  - component: {fileID: 3391511131444251648}
+  - component: {fileID: 1778217590600684510}
+  - component: {fileID: 731664734714469627}
+  - component: {fileID: 7850872305319959719}
+  - component: {fileID: 2752734665754135649}
+  - component: {fileID: 8834881894320950486}
+  - component: {fileID: 3811170992794530794}
+  - component: {fileID: 8612973946659663217}
+  m_Layer: 13
   m_Name: TutorialPopup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -860,9 +868,9 @@ RectTransform:
   m_Children:
   - {fileID: 4254533746614855239}
   - {fileID: 4390423469282232889}
-  - {fileID: 1243901994962972066}
   - {fileID: 3693936271996161392}
   - {fileID: 7288688320649524859}
+  - {fileID: 1243901994962972066}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -884,12 +892,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Visuals.TutorialPopupVisual
   _popupRt: {fileID: 8507643104542614624}
   _closeButton: {fileID: 2655284276609448376}
+  _canvas: {fileID: 0}
   _tutorialCharacter: {fileID: 3246104878535052872}
   _skipButton: {fileID: 4727283440864496620}
-  _name: {fileID: 3434409836904286628}
-  _image: {fileID: 4086161206443403699}
-  _detail: {fileID: 1343163133662853127}
-  _gameObjectHolder: {fileID: 3693936271996161392}
   _hand: {fileID: 8146655451062309151}
 --- !u!114 &2437083262339507048
 MonoBehaviour:
@@ -906,9 +911,11 @@ MonoBehaviour:
   <Type>k__BackingField: 1
   _dialogActions:
   - Message: Click to a pillar to pick up block
-    _handPos: {x: 0, y: 0}
+    _handPos: {x: 680, y: 372}
+    _showHand: 1
   - Message: Now click to other pillar to move selected block to that pillar
-    _handPos: {x: 0, y: 0}
+    _handPos: {x: 280, y: 372}
+    _showHand: 1
   _characterPos: {x: -310, y: -660}
   _targetLayer:
     serializedVersion: 2
@@ -917,6 +924,262 @@ MonoBehaviour:
   _pillar1Id: 2
   _pillar2Id: 0
   _endDelay: 3
+--- !u!114 &3391511131444251648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5696757293461681474}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75717cdac411a1e4ab1264bc95b4e888, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.Gameplay2TutorialControl
+  <Type>k__BackingField: 2
+  _dialogActions:
+  - Message: You can pickup multiple blocks of same type at once
+    _handPos: {x: 480, y: 372}
+    _showHand: 1
+  - Message: You can click to the pillar again to put them down
+    _handPos: {x: 480, y: 372}
+    _showHand: 1
+  _characterPos: {x: -310, y: -660}
+  _targetLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  _pillar1Id: 1
+  _endDelay: 0.5
+--- !u!114 &1778217590600684510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5696757293461681474}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08ee324fd9809ae42ab8c86dcff48c3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.HiddenBlockTutorialControl
+  <Type>k__BackingField: 7
+  _dialogActions:
+  - Message: Hidden Blocks are block with hidden type
+    _handPos: {x: 0, y: 0}
+    _showHand: 0
+  - Message: Your have to move the blocks above them...
+    _handPos: {x: 388, y: 480}
+    _showHand: 1
+  - Message: ... so they can reveal themselves
+    _handPos: {x: 570, y: 480}
+    _showHand: 1
+  _characterPos: {x: -310, y: -660}
+  _targetLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  _pillar1Id: 1
+  _pillar2Id: 2
+  _endDelay: 1.5
+--- !u!114 &731664734714469627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5696757293461681474}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e317f3bd93dd27d42abe390c05c061c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.ExtraMoveTutorialControl
+  <Type>k__BackingField: 3
+  _dialogActions:
+  - Message: Becareful!!! You are running out of move
+    _handPos: {x: 0, y: 0}
+    _showHand: 0
+  - Message: Use Extra Move to gain 5 more moves
+    _handPos: {x: 0, y: 0}
+    _showHand: 0
+  _characterPos: {x: 0, y: 0}
+  _targetLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  _endDelay: 0
+  _moveCounter: {fileID: 0}
+  _extraMoveButton: {fileID: 0}
+--- !u!114 &7850872305319959719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5696757293461681474}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9721263b1680fe449fe2d230407120d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.CoveredPillarTutorialControl
+  <Type>k__BackingField: 8
+  _dialogActions:
+  - Message: Cover Pillars are lock by a specific type of block
+    _handPos: {x: 0, y: 0}
+    _showHand: 0
+  - Message: You have to match the block with that same type...
+    _handPos: {x: 180, y: 340}
+    _showHand: 1
+  - Message: ... to lift up the clothe
+    _handPos: {x: 380, y: 340}
+    _showHand: 1
+  _characterPos: {x: -310, y: -250}
+  _targetLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  _pillar1Id: 14
+  _pillar2Id: 12
+  _pillar3Id: 13
+  _endDelay: 3
+--- !u!114 &2752734665754135649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5696757293461681474}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 971f78e2268f75b4db77e662f567d19c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.FrozenBlockTutorialControl
+  <Type>k__BackingField: 9
+  _dialogActions:
+  - Message: Frozen Blocks can not move for the rest of the level
+    _handPos: {x: 0, y: 0}
+    _showHand: 0
+  - Message: When you let a block of same type...
+    _handPos: {x: 550, y: 340}
+    _showHand: 1
+  - Message: ... touch the Frozen Blocks...
+    _handPos: {x: 380, y: 340}
+    _showHand: 1
+  - Message: ... will also make that block freeze
+    _handPos: {x: 0, y: 0}
+    _showHand: 0
+  - Message: But by matching all the blocks of that type,...
+    _handPos: {x: 730, y: -240}
+    _showHand: 1
+  - Message: ... you will destry the ice
+    _handPos: {x: 380, y: 340}
+    _showHand: 1
+  _characterPos: {x: -310, y: -250}
+  _targetLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  _pillar1Id: 5
+  _pillar2Id: 6
+  _pillar3Id: 3
+  _endDelay: 3
+--- !u!114 &8834881894320950486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5696757293461681474}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d6d220efd0e6f342bcd44e83ae5ff25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.ScratchBlockTutorialControl
+  <Type>k__BackingField: 10
+  _dialogActions:
+  - Message: Stone Blocks are covered by a layer of stone
+    _handPos: {x: 370, y: -520}
+    _showHand: 1
+  - Message: This block can be moved freely...
+    _handPos: {x: 200, y: -520}
+    _showHand: 1
+  - Message: ... and you can break the stone layer...
+    _handPos: {x: 550, y: -520}
+    _showHand: 1
+  - Message: ... by fully matching any type of block
+    _handPos: {x: 370, y: -520}
+    _showHand: 1
+  _characterPos: {x: -310, y: 100}
+  _targetLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  _pillar1Id: 1
+  _pillar2Id: 0
+  _pillar3Id: 2
+  _endDelay: 2
+--- !u!114 &3811170992794530794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5696757293461681474}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8ba8c741822f9d40b1aa087e46d7923, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.StickyBlockTutorialControl
+  <Type>k__BackingField: 11
+  _dialogActions:
+  - Message: Sticky Blocks can connect block with different type...
+    _handPos: {x: 380, y: -580}
+    _showHand: 1
+  - Message: ... and also move them around
+    _handPos: {x: 710, y: -580}
+    _showHand: 1
+  - Message: But if the destination pillar doesn't have enough space,...
+    _handPos: {x: 710, y: -580}
+    _showHand: 1
+  - Message: ... their connection will be broken
+    _handPos: {x: 550, y: -580}
+    _showHand: 1
+  _characterPos: {x: -310, y: 100}
+  _targetLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  _pillar1Id: 1
+  _pillar2Id: 3
+  _pillar3Id: 2
+  _endDelay: 1.5
+--- !u!114 &8612973946659663217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5696757293461681474}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d806217ab7300d142ae89b54a007018c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Scripts.Controllers.Tutorials.TrapPillarTutorialControl
+  <Type>k__BackingField: 12
+  _dialogActions:
+  - Message: 'Trap Pillars have two states: Open and Close'
+    _handPos: {x: 0, y: 0}
+    _showHand: 0
+  - Message: You can not pick up block from closed Trap Pillar...
+    _handPos: {x: 560, y: -1140}
+    _showHand: 1
+  - Message: ... but you can still  pick up from the open one
+    _handPos: {x: 740, y: -1140}
+    _showHand: 1
+  - Message: Each time you move, trap pillars will switch their state
+    _handPos: {x: 0, y: 0}
+    _showHand: 0
+  _characterPos: {x: -310, y: 650}
+  _targetLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  _pillar1Id: 2
+  _pillar2Id: 6
+  _pillar3Id: 3
+  _endDelay: 1.5
 --- !u!1 &6361591156909769121
 GameObject:
   m_ObjectHideFlags: 0
@@ -930,7 +1193,7 @@ GameObject:
   - component: {fileID: 1343163133662853127}
   - component: {fileID: 7954205009237869732}
   - component: {fileID: 6957033993419459576}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: Detail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1139,7 +1402,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1567396126296689764, guid: 9e0deacd8346dd247b83870c33344527, type: 3}
       propertyPath: m_Layer
-      value: 12
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 2512653905195687959, guid: 9e0deacd8346dd247b83870c33344527, type: 3}
       propertyPath: m_Name
@@ -1147,7 +1410,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2512653905195687959, guid: 9e0deacd8346dd247b83870c33344527, type: 3}
       propertyPath: m_Layer
-      value: 12
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 3235021445727136950, guid: 9e0deacd8346dd247b83870c33344527, type: 3}
       propertyPath: m_Enabled
@@ -1159,7 +1422,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7389963354282352427, guid: 9e0deacd8346dd247b83870c33344527, type: 3}
       propertyPath: m_Layer
-      value: 12
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 8555517105801397471, guid: 9e0deacd8346dd247b83870c33344527, type: 3}
       propertyPath: m_Enabled
@@ -1187,9 +1450,45 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8507643104542614624}
     m_Modifications:
+    - target: {fileID: 245343059340010901, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 1485930331325541157, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
+      propertyPath: _delayTalkSFX
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1485930331325541157, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
+      propertyPath: _idleMoveOffset.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1485930331325541157, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
+      propertyPath: _idleRotateAngle.z
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2184928611996587831, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
       propertyPath: m_Name
       value: TutorialCharacter
+      objectReference: {fileID: 0}
+    - target: {fileID: 2184928611996587831, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 3785161533836278240, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 4728928592648406207, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 5930138974425307297, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 6645559625635567313, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 6680511267574633238, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
       propertyPath: m_Pivot.x
@@ -1271,6 +1570,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8722629234353152106, guid: a2eb00b3937cf5b49a24b0159fd57a0b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1306,7 +1609,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2673046400755384152, guid: 96cb5545c0c40a14a95e5ed2c89a3c79, type: 3}
       propertyPath: m_Layer
-      value: 12
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 2673046400755384152, guid: 96cb5545c0c40a14a95e5ed2c89a3c79, type: 3}
       propertyPath: m_IsActive
@@ -1314,7 +1617,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8137689637267370105, guid: 96cb5545c0c40a14a95e5ed2c89a3c79, type: 3}
       propertyPath: m_Layer
-      value: 12
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 8540848298851990573, guid: 96cb5545c0c40a14a95e5ed2c89a3c79, type: 3}
       propertyPath: m_Pivot.x

@@ -11,11 +11,12 @@ namespace Assets._Scripts.Visuals
     {
         [SerializeField] private MeshRenderer _blockRenderer;
         [SerializeField] private TrailRenderer _trailRenderer;
-        [SerializeField] private Image _blockIcon;
+        [SerializeField] private SpriteRenderer _blockIcon;
 
         private BlockController _block;
         private Color _initialColor;
         private EColor _curColor = EColor.None;
+        private int _baseLayer;
 
         private MaterialPropertyBlock _propertyBlock;
         private MaterialPropertyBlock PropertyBlock
@@ -94,10 +95,36 @@ namespace Assets._Scripts.Visuals
             SetTrailColor(Color.white);
         }
 
+        public void ChangeLayer(int layer)
+        {
+            if (layer < 0 || layer > 31)
+            {
+                Debug.LogWarning($"Invalid layer index: {layer}. Expected value in range [0..31].", this);
+                return;
+            }
+
+            SetLayerRecursively(transform, layer);
+        }
+
+        public void ResetLayer()
+        {
+            ChangeLayer(_baseLayer);
+        }
+
+        private static void SetLayerRecursively(Transform target, int layer)
+        {
+            target.gameObject.layer = layer;
+            foreach (Transform child in target)
+            {
+                SetLayerRecursively(child, layer);
+            }
+        }
+
         void Awake()
         {
             _block = GetComponent<BlockController>();
             _initialColor = _blockRenderer.material.color;
+            _baseLayer = gameObject.layer;
         }
     }
 }

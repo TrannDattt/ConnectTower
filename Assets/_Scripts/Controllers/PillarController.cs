@@ -318,6 +318,7 @@ namespace Assets._Scripts.Controllers
             if (!(this as IMechanicHandler).IsHidden())
             {
                 EventBus<PillarClickedEvent>.Publish(new PillarClickedEvent { Pillar = this });
+                HapticManager.DoFeedBack();
                 // Debug.Log("Click to pillar");
             }
         }
